@@ -1,0 +1,60 @@
+name: "📊 Daily Compare & Build"
+
+on:
+  schedule:
+    - cron: '0 13 * * *'  # 8:00 AM EST = 13:00 UTC
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Date to compare (YYYY-MM-DD, default: yesterday)'
+        required: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  compare-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Fetch yesterday's actuals
+        run: |
+          if [ -n "${{ github.event.inputs.date }}" ]; then
+            python scripts/capture_openmeteo.py --actuals --date "${{ github.event.inputs.date }}"
+          else
+            python scripts/capture_openmeteo.py --actuals
+          fi
+
+      - name: Run comparison
+        run: |
+          if [ -n "${{ github.event.inputs.date }}" ]; then
+            python scripts/compare.py --date "${{ github.event.inputs.date }}"
+          else
+            python scripts/compare.py
+          fi
+
+      - name: Build site
+        run: python scripts/build_site.py
+
+      - name: Copy screenshots to docs directory
+        run: |
+          LATEST=$(ls -d data/predictions/*/ 2>/dev/null | sort | tail -1)
+          if [ -n "$LATEST" ]; then
+            mkdir -p docs/screenshots
+            cp -r "$LATEST"/*.png docs/screenshots/ 2>/dev/null || true
+          fi
+
+      - name: Commit results
+        run: |
+          git config user.name "DavesSweaterBot"
+          git config user.email "bot@davessweater.com"
+          git add data/ docs/
+          git commit -m "📊 Daily comparison $(date +%Y-%m-%d)" || echo "No changes to commit"
+          git push
