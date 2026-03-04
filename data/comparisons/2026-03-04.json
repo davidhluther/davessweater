@@ -1,0 +1,125 @@
+{
+  "date": "2026-03-04",
+  "generated_at": "2026-03-04T14:41:21.845156-05:00",
+  "actuals": {
+    "date": "2026-03-04",
+    "fetched_at": "2026-03-04T14:41:21.786012-05:00",
+    "location": "Boone",
+    "high_f": 69.2,
+    "low_f": 38.3,
+    "precip_in": 0.004,
+    "weather_code": 51,
+    "conditions": "Light drizzle",
+    "category": "drizzle"
+  },
+  "sweater_weather": {
+    "answer": "NO",
+    "detail": "It's 69\u00b0F. No sweater needed unless you're in aggressive AC.",
+    "layers": "0 (the sweater rests today)",
+    "emoji": "\u2600\ufe0f\u274c",
+    "sweater_count": 1
+  },
+  "sources": {
+    "openmeteo": {
+      "prediction": {
+        "date": "2026-03-04",
+        "high_f": 67.5,
+        "low_f": 42.3,
+        "precip_in": 0.0,
+        "precip_prob": 2,
+        "weather_code": 45,
+        "conditions": "Fog",
+        "category": "fog",
+        "wind_mph": 14.2
+      },
+      "score": {
+        "score": 72.9,
+        "grade": {
+          "label": "EH RAY \ud83e\udd37",
+          "detail": "Not great, not terrible. Like a 3.6 roentgen forecast.",
+          "verdict": "meh",
+          "ray_count": 3
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 67.5,
+            "actual": 69.2,
+            "error_f": 1.7,
+            "points": 24.9,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 42.3,
+            "actual": 38.3,
+            "error_f": 4.0,
+            "points": 18.0,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_any": false,
+            "actual_any": false,
+            "correct": true,
+            "points": 20,
+            "max": 20
+          },
+          "conditions": {
+            "predicted": "fog",
+            "actual": "drizzle",
+            "match": "close",
+            "points": 10,
+            "max": 20
+          }
+        }
+      }
+    },
+    "raysweather": {
+      "prediction": {
+        "date": "2026-03-04",
+        "day_name": "Wednesday",
+        "high_f": null,
+        "low_f": 46.0,
+        "daytime_desc": "",
+        "overnight_desc": "",
+        "category": "unknown",
+        "precip_in": 0.0
+      },
+      "score": {
+        "score": 26.9,
+        "grade": {
+          "label": "VERY WRONG RAY \u274c\u274c",
+          "detail": "Spectacularly wrong. Impressive, honestly.",
+          "verdict": "wrong",
+          "ray_count": 1
+        },
+        "breakdown": {
+          "high_temp": {
+            "error": "missing data",
+            "points": 0,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 46.0,
+            "actual": 38.3,
+            "error_f": 7.7,
+            "points": 6.9,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_any": false,
+            "actual_any": false,
+            "correct": true,
+            "points": 20,
+            "max": 20
+          },
+          "conditions": {
+            "predicted": "unknown",
+            "actual": "drizzle",
+            "match": "wrong",
+            "points": 0,
+            "max": 20
+          }
+        }
+      }
+    }
+  }
+}

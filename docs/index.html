@@ -159,7 +159,7 @@
     <p class="under-construction">&#128679; UNDER CONSTRUCTION &#128679;</p>
 
     <p>A public service for people who want to know (1) if it's sweater weather and (2) if Ray got yesterday's forecast right.</p>
-    <p style="font-size: 12px; color: #888;">Updated: March 04, 2026 at 02:36 PM EST</p>
+    <p style="font-size: 12px; color: #888;">Updated: March 04, 2026 at 02:41 PM EST</p>
 
     
     <div class="section sweater-check">
@@ -174,8 +174,8 @@
     
     <div class="section">
         <h2>RIGHT RAY / WRONG RAY</h2>
-        <p class="date">2026-03-03</p>
-        <p><b>ACTUAL WEATHER:</b> High 49.6&deg;F / Low 32.5&deg;F &mdash; Overcast</p>
+        <p class="date">2026-03-04</p>
+        <p><b>ACTUAL WEATHER:</b> High 69.2&deg;F / Low 38.3&deg;F &mdash; Light drizzle</p>
         <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; margin: 10px 0;">
             <tr style="background: #eee;">
                 <th>Source</th>
@@ -183,7 +183,29 @@
                 <th>Score</th>
                 <th>Verdict</th>
             </tr>
-            <tr><td colspan='4'>Scoring data not available yet</td></tr>
+            
+        <tr>
+            <td><b>Open-Meteo</b></td>
+            <td>Hi: 67.5&deg; / Lo: 42.3&deg;</td>
+            <td><b>72.9/100</b></td>
+            <td>
+                <div class="verdict-cell">
+                    <span class="verdict-label">EH RAY 🤷</span>
+                    <div class="scale-row-small"><span class="scale"><span class="ray-emoji active">&#128526;</span><span class="ray-emoji active">&#128526;</span><span class="ray-emoji active">&#128526;</span><span class="ray-emoji inactive">&#128526;</span><span class="ray-emoji inactive">&#128526;</span></span></div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td><b>Ray's Weather</b></td>
+            <td>Hi: None&deg; / Lo: 46.0&deg;</td>
+            <td><b>26.9/100</b></td>
+            <td>
+                <div class="verdict-cell">
+                    <span class="verdict-label">VERY WRONG RAY ❌❌</span>
+                    <div class="scale-row-small"><span class="scale"><span class="ray-emoji active">&#128526;</span><span class="ray-emoji inactive">&#128526;</span><span class="ray-emoji inactive">&#128526;</span><span class="ray-emoji inactive">&#128526;</span><span class="ray-emoji inactive">&#128526;</span></span></div>
+                </div>
+            </td>
+        </tr>
         </table>
         <p style="font-size: 11px; color: #888; margin-top: 5px;">Rating: 5 Rays = nailed it, 1 Ray = yikes</p>
     </div>
@@ -191,14 +213,24 @@
     
     <div class="section">
         <h2>RAY'S FORECAST (screenshot)</h2>
-        <p>Screenshot not captured yet. The robot that does this is still learning.</p>
+        <p class="date">2026-03-04</p>
+        <img src="screenshots/rays_forecast.png" alt="Ray's Weather forecast" style="max-width: 100%; border: 2px solid #ccc;">
+        <p style="font-size: 10px;">Screenshot from <a href="https://raysweather.com/Forecast/Boone">raysweather.com</a>. Go visit Ray, he's great.</p>
     </div>
 
     
-        <div class="section">
-            <h2>SEASON SCOREBOARD</h2>
-            <p>No scores recorded yet. We just started. Calm down.</p>
-        </div>
+    <div class="section">
+        <h2>SEASON SCOREBOARD</h2>
+        <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; margin: 10px 0;">
+            <tr style="background: #eee;">
+                <th>Source</th>
+                <th>Record</th>
+                <th>Avg Score</th>
+                <th>Days Tracked</th>
+            </tr>
+            <tr><td><b>Open-Meteo</b></td><td>0W - 0L - 1M</td><td>72.9/100</td><td>1</td></tr><tr><td><b>Ray's Weather</b></td><td>0W - 1L - 0M</td><td>26.9/100</td><td>1</td></tr>
+        </table>
+    </div>
 
     <div class="section">
         <h2>WHAT IS THIS</h2>
