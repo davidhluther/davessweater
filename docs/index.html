@@ -1,5 +1,221 @@
 <!DOCTYPE html>
-<html><body style="font-family:Georgia;background:#f5f5dc;padding:20px;">
-<h1>Dave's Sweater 🧣</h1>
-<p>Boone, NC's #2 weather resource. Launching soon.</p>
-</body></html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dave's Sweater</title>
+    <style>
+        body {
+            font-family: Georgia, 'Times New Roman', serif;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5dc;
+            color: #333;
+        }
+        h1 {
+            font-size: 28px;
+            border-bottom: 3px solid #2D5A47;
+            padding-bottom: 5px;
+        }
+        h1 span {
+            font-size: 14px;
+            font-weight: normal;
+            color: #666;
+        }
+        h2 {
+            font-size: 18px;
+            color: #2D5A47;
+            margin-top: 30px;
+            border-bottom: 1px solid #ccc;
+        }
+        .section {
+            background: white;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid #ccc;
+        }
+        .sweater-check {
+            text-align: center;
+        }
+        .big-answer {
+            font-size: 72px;
+            font-weight: bold;
+            margin: 10px 0;
+            line-height: 1;
+        }
+        .date {
+            color: #888;
+            font-size: 12px;
+        }
+        table {
+            font-size: 14px;
+        }
+        th {
+            text-align: left;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 10px;
+            border-top: 1px solid #ccc;
+            font-size: 11px;
+            color: #999;
+        }
+        .under-construction {
+            background: #ffff00;
+            color: black;
+            padding: 5px 10px;
+            display: inline-block;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-size: 14px;
+            transform: rotate(-2deg);
+            margin: 10px 0;
+        }
+        a {
+            color: #2D5A47;
+        }
+
+        /* ── Scales ─────────────────────────────── */
+        .scale {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .scale-row {
+            margin: 10px 0;
+        }
+        .scale-row-small {
+            margin-top: 4px;
+        }
+        .scale-label {
+            font-size: 13px;
+            color: #888;
+            margin-top: 0;
+        }
+
+        /* Sweater emoji scale */
+        .sweater-icon {
+            font-size: 48px;
+            line-height: 1;
+        }
+        .sweater-icon.inactive {
+            opacity: 0.15;
+        }
+        .scale-row-small .sweater-icon {
+            font-size: 22px;
+        }
+
+        /* Ray face scale */
+        .ray-face {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            object-fit: cover;
+        }
+        .scale-row .ray-face {
+            width: 56px;
+            height: 56px;
+        }
+        .scale-row-small .ray-face {
+            width: 28px;
+            height: 28px;
+            border-width: 1px;
+        }
+        .ray-active {
+            border-color: #2D5A47;
+            opacity: 1;
+        }
+        .ray-inactive {
+            filter: grayscale(100%) brightness(1.4);
+            opacity: 0.2;
+            border-color: #ddd;
+        }
+        .ray-emoji {
+            font-size: 28px;
+        }
+        .ray-emoji.inactive {
+            opacity: 0.15;
+        }
+
+        /* Verdict cell */
+        .verdict-cell {
+            min-width: 140px;
+        }
+        .verdict-label {
+            font-size: 13px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+    <h1>
+        Dave's Sweater
+        <span>&mdash; Boone, NC's #2 weather resource</span>
+    </h1>
+
+    <p class="under-construction">&#128679; UNDER CONSTRUCTION &#128679;</p>
+
+    <p>A public service for people who want to know (1) if it's sweater weather and (2) if Ray got yesterday's forecast right.</p>
+    <p style="font-size: 12px; color: #888;">Updated: March 04, 2026 at 12:53 PM EST</p>
+
+    
+    <div class="section sweater-check">
+        <h2>IS IT SWEATER WEATHER IN BOONE?</h2>
+        <p class="big-answer" style="color: #C9A227;">MAYBE</p>
+        <div class="scale-row"><span class="scale"><span class="sweater-icon active">&#129509;</span><span class="sweater-icon active">&#129509;</span><span class="sweater-icon inactive">&#129509;</span><span class="sweater-icon inactive">&#129509;</span><span class="sweater-icon inactive">&#129509;</span></span></div>
+        <p class="scale-label">2 out of 5 sweaters</p>
+        <p>It's 64°F. You could go either way. Bring it and decide later.</p>
+        <p><b>Recommended layers:</b> 0-1 (light layer, keep one in the car)</p>
+    </div>
+
+    
+    <div class="section">
+        <h2>RIGHT RAY / WRONG RAY</h2>
+        <p class="date">2026-03-03</p>
+        <p><b>ACTUAL WEATHER:</b> High 49.6&deg;F / Low 32.5&deg;F &mdash; Overcast</p>
+        <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; margin: 10px 0;">
+            <tr style="background: #eee;">
+                <th>Source</th>
+                <th>Predicted</th>
+                <th>Score</th>
+                <th>Verdict</th>
+            </tr>
+            <tr><td colspan='4'>Scoring data not available yet</td></tr>
+        </table>
+        <p style="font-size: 11px; color: #888; margin-top: 5px;">Rating: 5 Rays = nailed it, 1 Ray = yikes</p>
+    </div>
+
+    
+    <div class="section">
+        <h2>RAY'S FORECAST (screenshot)</h2>
+        <p>Screenshot not captured yet. The robot that does this is still learning.</p>
+    </div>
+
+    
+        <div class="section">
+            <h2>SEASON SCOREBOARD</h2>
+            <p>No scores recorded yet. We just started. Calm down.</p>
+        </div>
+
+    <div class="section">
+        <h2>WHAT IS THIS</h2>
+        <p>This is a website about sweaters and weather in Boone, North Carolina.</p>
+        <p>Every day, we check:</p>
+        <p>1. Is it sweater weather? (important)<br>
+           2. Did Ray get yesterday's forecast right? (also important)<br>
+           3. What did Ray's forecast actually look like? (evidence)</p>
+        <p>That's it. That's the whole site.</p>
+        <p style="font-size: 11px;">If you were expecting more, we apologize. We are one person with a sweater and a computer.</p>
+    </div>
+
+    <div class="footer">
+        <p>Dave's Sweater is not affiliated with <a href="https://raysweather.com">Ray's Weather</a>. Ray's great. Go use his site for actual weather information.</p>
+        <p>Weather data from <a href="https://open-meteo.com">Open-Meteo.com</a>. Sweater data from Dave.</p>
+        <p>davessweater.com &bull; est. 2026 &bull; "the weather site boone didn't ask for"</p>
+        <p style="font-size: 9px;">Made with basic HTML, no frameworks, and questionable judgment.</p>
+    </div>
+</body>
+</html>
