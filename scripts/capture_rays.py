@@ -31,7 +31,7 @@ OUT_DIR   = ROOT / "data" / "predictions" / TODAY
 OUT_JSON  = OUT_DIR / "rays_boone.json"
 OUT_PNG   = OUT_DIR / "rays_forecast.png"
 
-# Viewport that matches Ray's mobile card layout (matches the screenshot you shared)
+# Viewport that matches Ray's mobile card layout
 VIEWPORT  = {"width": 390, "height": 844}
 
 # How long to wait for the JS-rendered content to appear (ms)
@@ -40,10 +40,10 @@ TIMEOUT   = 20_000
 # ── helpers ───────────────────────────────────────────────────────────────────
 
 def parse_temp(raw: str) -> float | None:
-    """Extract numeric temp from strings like '72', '72°', 'Hi 72', 'Lo 47'."""
+    """Extract numeric temp from strings like '72', '72°', '72°F', 'Hi 72', 'Lo 47'."""
     if not raw:
         return None
-    m = re.search(r"[-\d.]+", raw.replace("°", "").strip())
+    m = re.search(r"[-\d.]+", raw.replace("°", "").replace("F", "").strip())
     return float(m.group()) if m else None
 
 
@@ -75,6 +75,9 @@ async def scrape() -> dict:
         "url":          URL,
         "current":      {},
         "forecast":     {},
+        "narrative":    "",
+        "raw_text":     "",
+        "daily":        [],
         "error":        None,
     }
 
@@ -92,60 +95,60 @@ async def scrape() -> dict:
         try:
             await page.goto(URL, wait_until="domcontentloaded", timeout=TIMEOUT)
 
-            # Wait for the Boone card to render — Ray's site uses Next.js so we
-            # need to wait for the JS to paint the weather data.
-            # We watch for something with "Boone" in a heading AND a temperature.
+            # Wait for the page to render
             await page.wait_for_selector("text=Boone", timeout=TIMEOUT)
-            # Give React a beat to fill in the numbers
-            await page.wait_for_timeout(3000)
+            await page.wait_for_timeout(4000)
 
-            # ── SCREENSHOT ──────────────────────────────────────────────────
+            # ── SCREENSHOT (Forecast tab) ────────────────────────────────
             OUT_DIR.mkdir(parents=True, exist_ok=True)
-            # Scroll to top first, screenshot the Boone card area
             await page.evaluate("window.scrollTo(0, 0)")
             await page.screenshot(path=str(OUT_PNG), full_page=False)
             print(f"  screenshot saved → {OUT_PNG}")
 
-            # ── SCRAPE CURRENT CONDITIONS ───────────────────────────────────
-            # Ray's page layout (from what we can see in the screenshot):
-            # Each location card has:
-            #   [location name]  [current temp large]
-            #   Feels Like: XX.X°
-            #   Wind: DIR @ X mph
-            #   Gust: X mph
-            #   Humidity: XX %
-            #   Rainfall: X.XX "
-            #   [forecast strip: Period Lo/Hi ...]
+            # ── GRAB FULL PAGE TEXT (Forecast tab) ────────────────────────
+            forecast_text = await page.inner_text("body")
+            result["raw_text"] = forecast_text
+            print(f"  raw text length: {len(forecast_text)} chars")
 
-            # Strategy: find the Boone card by locating the h2/h3 with "Boone",
-            # then scope all queries within its parent card element.
-            boone_card = None
-            for selector in [
-                "//h2[contains(text(),'Boone')]/ancestor::div[contains(@class,'card') or contains(@class,'Card') or contains(@class,'location')][1]",
-                "//h3[contains(text(),'Boone')]/ancestor::div[3]",
-                "//strong[contains(text(),'Boone')]/ancestor::div[3]",
-            ]:
-                els = await page.query_selector_all(f"xpath={selector}")
-                if els:
-                    boone_card = els[0]
-                    break
+            # Parse current temp from "Right Now" section: "XX.X°F"
+            result["current"] = _parse_current_from_text(forecast_text)
 
-            if not boone_card:
-                # Fallback: grab full page text and parse with regex
-                print("  WARNING: couldn't isolate Boone card, falling back to full-page text")
-                text = await page.inner_text("body")
-                result["current"] = _parse_current_from_text(text)
-                result["forecast"] = _parse_forecast_from_text(text)
-            else:
-                card_text = await boone_card.inner_text()
-                print(f"  Boone card text:\n{card_text[:400]}")
-                result["current"] = _parse_current_from_text(card_text)
-                result["forecast"] = _parse_forecast_from_text(card_text)
+            # Parse forecast Hi/Lo from the forecast strip
+            result["forecast"] = _parse_forecast_from_text(forecast_text)
+
+            # Parse the daily forecast entries
+            result["daily"] = _parse_daily_forecast(forecast_text)
+
+            # Extract narrative
+            result["narrative"] = _extract_narrative(forecast_text)
+
+            # Also try to get high from "Today's forecast" narrative line
+            # e.g. "Today's forecast: ...High 71°"
+            if result["forecast"]["today_high_f"] is None:
+                m = re.search(r"(?:Today'?s? forecast|Tonight'?s? forecast)[^.]*?High\s+([\d.]+)", forecast_text, re.I)
+                if m:
+                    result["forecast"]["today_high_f"] = float(m.group(1))
+                    print(f"  got high from narrative: {m.group(1)}")
+
+            # ── CLICK "Current" TAB for detailed conditions ───────────────
+            try:
+                current_tab = await page.query_selector("text=Current")
+                if current_tab:
+                    await current_tab.click()
+                    await page.wait_for_timeout(2000)
+                    current_text = await page.inner_text("body")
+                    current_conditions = _parse_current_conditions(current_text)
+                    # Merge into current — don't overwrite temp if we already have it
+                    for k, v in current_conditions.items():
+                        if v is not None and (result["current"].get(k) is None):
+                            result["current"][k] = v
+                    print(f"  current conditions from tab: {current_conditions}")
+            except Exception as e:
+                print(f"  WARNING: couldn't click Current tab: {e}")
 
         except PWTimeout:
             result["error"] = f"Timeout after {TIMEOUT}ms waiting for page to render"
             print(f"  ERROR: {result['error']}")
-            # Still save whatever screenshot we got
             OUT_DIR.mkdir(parents=True, exist_ok=True)
             try:
                 await page.screenshot(path=str(OUT_PNG), full_page=False)
@@ -162,14 +165,48 @@ async def scrape() -> dict:
 
 def _parse_current_from_text(text: str) -> dict:
     """
-    Parse current conditions from the raw text of Ray's Boone card.
-    Handles patterns like:
-      Feels Like: 60.9°
-      Wind: S @ 3 mph
-      Gust: 5 mph
-      Humidity: 75 %
-      Rainfall: 0.01 "
-      [large temp number like 60.9°]
+    Parse current temp from the Forecast tab text.
+    Looks for the "Right Now" section with temp like "45.4°F" or "67.9°F".
+    """
+    current = {
+        "temp_f":       None,
+        "feels_like_f": None,
+        "wind":         None,
+        "wind_dir":     None,
+        "wind_mph":     None,
+        "gust_mph":     None,
+        "humidity_pct": None,
+        "rainfall_in":  None,
+    }
+
+    # Current temp: look for "XX.X°F" pattern (Ray's format)
+    # The temp appears near "Right Now" as a standalone line like "45.4°F"
+    m = re.search(r"Right Now\s*\n\s*([\d.]+)\s*°\s*F", text, re.I)
+    if m:
+        current["temp_f"] = float(m.group(1))
+    else:
+        # Fallback: look for standalone "XX.X°F" lines
+        for line in text.splitlines():
+            line = line.strip()
+            m = re.fullmatch(r"([\d.]+)\s*°\s*F?", line)
+            if m:
+                val = float(m.group(1))
+                if 0 < val < 120:
+                    current["temp_f"] = val
+                    break
+
+    return current
+
+
+def _parse_current_conditions(text: str) -> dict:
+    """
+    Parse detailed current conditions from the 'Current' tab text.
+    Ray's format:
+      Feels Like: 46.1°
+      Wind: WNW @ 0 mph
+      Gust: 0 mph
+      Humidity: 95 %
+      Rainfall: 0 "
     """
     current = {
         "temp_f":       None,
@@ -186,50 +223,39 @@ def _parse_current_from_text(text: str) -> dict:
 
     for line in lines:
         ll = line.lower()
-        if "feels like" in ll or "feels like:" in ll:
+        if "feels like" in ll:
             current["feels_like_f"] = parse_temp(line.split(":")[-1])
-        elif ll.startswith("wind:") or ll.startswith("wind "):
+        elif re.match(r"^wind\s*:", ll):
             raw_wind = line.split(":", 1)[-1].strip()
             w = parse_wind(raw_wind)
             current["wind"]     = w["raw"]
             current["wind_dir"] = w["direction"]
             current["wind_mph"] = w["speed_mph"]
-        elif ll.startswith("gust:") or ll.startswith("gust "):
+        elif re.match(r"^gust\s*:", ll):
             current["gust_mph"] = parse_number(line.split(":", 1)[-1])
-        elif ll.startswith("humidity:") or ll.startswith("humidity "):
+        elif re.match(r"^humidity\s*:", ll):
             current["humidity_pct"] = parse_number(line.split(":", 1)[-1])
-        elif ll.startswith("rainfall:") or ll.startswith("rainfall "):
+        elif re.match(r"^rainfall\s*:", ll):
             current["rainfall_in"] = parse_number(line.split(":", 1)[-1])
 
-    # Current temp: look for a standalone large number like "60.9°"
-    # It typically appears as a line with just a number + degree sign
-    for line in lines:
-        m = re.fullmatch(r"([\d.]+)\s*°?", line.strip())
-        if m:
-            val = float(m.group(1))
-            if 0 < val < 120:   # sanity: plausible Fahrenheit
-                current["temp_f"] = val
-                break
-
-    # Fallback: feels_like → temp if temp still None
-    if current["temp_f"] is None and current["feels_like_f"] is not None:
-        current["temp_f"] = current["feels_like_f"]
+    # Also try to get temp from "XX.X°F" pattern
+    m = re.search(r"Right Now\s*\n\s*([\d.]+)\s*°\s*F", text, re.I)
+    if m:
+        current["temp_f"] = float(m.group(1))
 
     return current
 
 
 def _parse_forecast_from_text(text: str) -> dict:
     """
-    Parse the forecast strip from Ray's card text.
-    Ray's format (from screenshot):
-      Wed night  Thu      Thu night  Fri
-      Lo 47      Hi 72    Lo 50      Hi 74
-
-    We want the FIRST "Hi" value (= today's or tomorrow's daytime high)
-    and the NEXT "Lo" value (= tonight's low).
-
-    The text after JS render looks roughly like:
-      "Wed night\nLo 47\nThu\nHi 72\nThu night\nLo 50\nFri\nHi 74"
+    Parse forecast Hi/Lo from Ray's forecast strip.
+    Ray's actual format (from raw_text):
+      Thursday
+      Daytime
+      Hi: 72
+      Overnight
+      Lo: 50
+    Also handles "Hi 72" without colon.
     """
     forecast = {
         "today_high_f": None,
@@ -239,11 +265,11 @@ def _parse_forecast_from_text(text: str) -> dict:
 
     lines = [l.strip() for l in text.splitlines() if l.strip()]
 
-    # Collect all Hi/Lo pairs in order
+    # Collect all Hi/Lo values in order — handle both "Hi: 72" and "Hi 72"
     hi_lo_pairs = []
     for line in lines:
-        m_hi = re.match(r"^Hi\s+([\d.]+)", line, re.I)
-        m_lo = re.match(r"^Lo\s+([\d.]+)", line, re.I)
+        m_hi = re.match(r"^Hi:?\s+([\d.]+)", line, re.I)
+        m_lo = re.match(r"^Lo:?\s+([\d.]+)", line, re.I)
         if m_hi:
             hi_lo_pairs.append(("hi", float(m_hi.group(1))))
         elif m_lo:
@@ -252,16 +278,96 @@ def _parse_forecast_from_text(text: str) -> dict:
     forecast["raw_strip"] = hi_lo_pairs
 
     if hi_lo_pairs:
-        # First Lo = tonight's low (capture runs at 7am so first period is tonight)
-        # First Hi = today's daytime high
-        # But order varies: if current period is "overnight" the strip starts Lo, Hi, Lo, Hi...
-        # If current period is "daytime" the strip starts Hi, Lo, Hi, Lo...
         his = [v for t, v in hi_lo_pairs if t == "hi"]
         los = [v for t, v in hi_lo_pairs if t == "lo"]
         forecast["today_high_f"]  = his[0] if his else None
         forecast["tonight_low_f"] = los[0] if los else None
 
+    # Fallback: try to extract from narrative "High XX°" or "Low XX°"
+    if forecast["today_high_f"] is None:
+        m = re.search(r"\bHigh\s+([\d.]+)\s*°", text)
+        if m:
+            forecast["today_high_f"] = float(m.group(1))
+    if forecast["tonight_low_f"] is None:
+        m = re.search(r"\bLow\s+([\d.]+)\s*°", text)
+        if m:
+            forecast["tonight_low_f"] = float(m.group(1))
+
     return forecast
+
+
+def _parse_daily_forecast(text: str) -> list:
+    """
+    Parse multi-day forecast from Ray's text.
+    Format:
+      Thursday
+      Daytime
+      Hi: 72
+      Overnight
+      Lo: 50
+      Daytime: Partly sunny; Additional warming; SSW wind 5-10 mph
+      Overnight: Partly cloudy; Unseasonably mild; Light SW wind becoming calm
+    """
+    days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    lines = [l.strip() for l in text.splitlines() if l.strip()]
+
+    # Find day-name boundaries
+    day_indices = []
+    for i, line in enumerate(lines):
+        if line in days_of_week:
+            day_indices.append((i, line))
+
+    daily = []
+    today_dt = datetime.now(EST)
+
+    for idx, (start_i, day_name) in enumerate(day_indices):
+        end_i = day_indices[idx + 1][0] if idx + 1 < len(day_indices) else min(start_i + 20, len(lines))
+        chunk = lines[start_i:end_i]
+
+        high_f = None
+        low_f = None
+        daytime_desc = ""
+        overnight_desc = ""
+
+        for line in chunk:
+            m_hi = re.match(r"^Hi:?\s+([\d.]+)", line, re.I)
+            m_lo = re.match(r"^Lo:?\s+([\d.]+)", line, re.I)
+            if m_hi:
+                high_f = float(m_hi.group(1))
+            elif m_lo:
+                low_f = float(m_lo.group(1))
+            elif line.lower().startswith("daytime:"):
+                daytime_desc = line.split(":", 1)[-1].strip()
+            elif line.lower().startswith("overnight:"):
+                overnight_desc = line.split(":", 1)[-1].strip()
+
+        # Calculate date from day name
+        days_ahead = (days_of_week.index(day_name) - today_dt.weekday()) % 7
+        if days_ahead == 0 and len(daily) > 0:
+            days_ahead = 7  # avoid duplicate today
+        forecast_date = (today_dt + timedelta(days=days_ahead)).strftime("%Y-%m-%d")
+
+        daily.append({
+            "date": forecast_date,
+            "day_name": day_name,
+            "high_f": high_f,
+            "low_f": low_f,
+            "daytime_desc": daytime_desc,
+            "overnight_desc": overnight_desc,
+            "category": "unknown",
+            "precip_in": 0.0,
+        })
+
+    return daily
+
+
+def _extract_narrative(text: str) -> str:
+    """Extract the main forecast narrative text."""
+    # Look for text between the forecast title and the daily strip
+    m = re.search(r"Last Updated.*?by\s+\w+\s+\w+\s*\n(.+?)(?=\n(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\n)", text, re.S)
+    if m:
+        return m.group(1).strip()
+    return ""
 
 # ── entry point ───────────────────────────────────────────────────────────────
 
@@ -283,6 +389,10 @@ def main():
     print(f"   Wind: {c.get('wind')}  Gust: {c.get('gust_mph')} mph")
     print(f"   Humidity: {c.get('humidity_pct')}%  Rainfall: {c.get('rainfall_in')}\"")
     print(f"   Forecast: Hi {f.get('today_high_f')}° / Lo {f.get('tonight_low_f')}°")
+    if data.get("daily"):
+        print(f"   Daily entries: {len(data['daily'])}")
+        for d in data["daily"]:
+            print(f"     {d['day_name']}: Hi {d['high_f']}° / Lo {d['low_f']}°")
 
 
 if __name__ == "__main__":

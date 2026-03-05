@@ -198,6 +198,38 @@ def score_prediction(predicted, actual):
     }
 
 
+def _best_rays_prediction(rays_data, target_date):
+    """
+    Build the best prediction dict from Ray's data by merging forecast + daily.
+    The forecast dict has today_high_f/tonight_low_f (parsed from the strip).
+    The daily array has per-day entries with high_f/low_f.
+    We merge both, preferring whichever has actual values.
+    """
+    pred = {}
+
+    # Start with forecast dict
+    forecast = rays_data.get("forecast", {})
+    if forecast:
+        pred["today_high_f"] = forecast.get("today_high_f")
+        pred["tonight_low_f"] = forecast.get("tonight_low_f")
+
+    # Try to fill gaps from daily array
+    if rays_data.get("daily"):
+        for day in rays_data["daily"]:
+            if day.get("date") == target_date:
+                if pred.get("today_high_f") is None and day.get("high_f") is not None:
+                    pred["today_high_f"] = day["high_f"]
+                if pred.get("tonight_low_f") is None and day.get("low_f") is not None:
+                    pred["tonight_low_f"] = day["low_f"]
+                # Carry over other fields
+                for k in ("category", "precip_in", "daytime_desc"):
+                    if k in day and k not in pred:
+                        pred[k] = day[k]
+                break
+
+    return pred if pred else None
+
+
 def _categories_close(a, b):
     """Are two weather categories 'close enough'?"""
     close_pairs = [
@@ -295,26 +327,17 @@ def run_daily_comparison(target_date=None):
         # Attach Ray's current conditions if available
         if rays_data.get("current"):
             comparison["rays_current"] = rays_data["current"]
-        # Ray's capture outputs forecast as a single dict (today_high_f / tonight_low_f)
-        forecast = rays_data.get("forecast", {})
-        if forecast and (_get_high(forecast) is not None or _get_low(forecast) is not None):
-            result = score_prediction(forecast, actuals)
+
+        # Build the best prediction dict by merging forecast + daily data
+        rays_pred = _best_rays_prediction(rays_data, target_date)
+
+        if rays_pred and (_get_high(rays_pred) is not None or _get_low(rays_pred) is not None):
+            result = score_prediction(rays_pred, actuals)
             comparison["sources"]["raysweather"] = {
-                "prediction": forecast,
+                "prediction": rays_pred,
                 "score": result,
             }
             print(f"  Ray's Weather: {result['score']}/100 — {result['grade']['label']}")
-        elif rays_data.get("daily"):
-            # Legacy format: list of day dicts
-            for day in rays_data["daily"]:
-                if day.get("date") == target_date:
-                    result = score_prediction(day, actuals)
-                    comparison["sources"]["raysweather"] = {
-                        "prediction": day,
-                        "score": result,
-                    }
-                    print(f"  Ray's Weather: {result['score']}/100 — {result['grade']['label']}")
-                    break
         else:
             comparison["sources"]["raysweather"] = {
                 "note": "Screenshot captured but structured data extraction pending",
