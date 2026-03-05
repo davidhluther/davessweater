@@ -119,6 +119,7 @@ def score_prediction(predicted, actual):
     - Conditions category: up to 20 pts (clear/cloudy/rain/snow match)
     """
     score = 0
+    max_possible = 0
     breakdown = {}
 
     pred_high = _get_high(predicted)
@@ -131,6 +132,7 @@ def score_prediction(predicted, actual):
         high_err = abs(pred_high - actual_high)
         high_pts = max(0, 30 - high_err * 3)
         score += high_pts
+        max_possible += 30
         breakdown["high_temp"] = {
             "predicted": pred_high,
             "actual": actual_high,
@@ -139,13 +141,14 @@ def score_prediction(predicted, actual):
             "max": 30,
         }
     else:
-        breakdown["high_temp"] = {"error": "missing data", "points": 0, "max": 30}
+        breakdown["high_temp"] = {"error": "missing data", "points": 0, "max": 30, "excluded": True}
 
     # Low temp (30 pts)
     if pred_low is not None and actual_low is not None:
         low_err = abs(pred_low - actual_low)
         low_pts = max(0, 30 - low_err * 3)
         score += low_pts
+        max_possible += 30
         breakdown["low_temp"] = {
             "predicted": pred_low,
             "actual": actual_low,
@@ -154,7 +157,7 @@ def score_prediction(predicted, actual):
             "max": 30,
         }
     else:
-        breakdown["low_temp"] = {"error": "missing data", "points": 0, "max": 30}
+        breakdown["low_temp"] = {"error": "missing data", "points": 0, "max": 30, "excluded": True}
 
     # Precipitation (20 pts)
     pred_precip = (predicted.get("precip_in") or 0) > 0.01
@@ -164,6 +167,7 @@ def score_prediction(predicted, actual):
     else:
         precip_pts = 0
     score += precip_pts
+    max_possible += 20
     breakdown["precipitation"] = {
         "predicted_any": pred_precip,
         "actual_any": actual_precip,
@@ -175,22 +179,38 @@ def score_prediction(predicted, actual):
     # Conditions category (20 pts)
     pred_cat = predicted.get("category", "unknown")
     actual_cat = actual.get("category", "unknown")
-    if pred_cat == actual_cat:
-        cat_pts = 20
-    elif _categories_close(pred_cat, actual_cat):
-        cat_pts = 10
+    if pred_cat == "unknown":
+        # Don't penalize for missing category data
+        breakdown["conditions"] = {
+            "predicted": pred_cat,
+            "actual": actual_cat,
+            "match": "excluded",
+            "points": 0,
+            "max": 20,
+            "excluded": True,
+        }
     else:
-        cat_pts = 0
-    score += cat_pts
-    breakdown["conditions"] = {
-        "predicted": pred_cat,
-        "actual": actual_cat,
-        "match": "exact" if pred_cat == actual_cat else ("close" if cat_pts == 10 else "wrong"),
-        "points": cat_pts,
-        "max": 20,
-    }
+        if pred_cat == actual_cat:
+            cat_pts = 20
+        elif _categories_close(pred_cat, actual_cat):
+            cat_pts = 10
+        else:
+            cat_pts = 0
+        score += cat_pts
+        max_possible += 20
+        breakdown["conditions"] = {
+            "predicted": pred_cat,
+            "actual": actual_cat,
+            "match": "exact" if pred_cat == actual_cat else ("close" if cat_pts == 10 else "wrong"),
+            "points": cat_pts,
+            "max": 20,
+        }
 
-    total = round(score, 1)
+    # Scale to 100 based on available data
+    if max_possible > 0:
+        total = round((score / max_possible) * 100, 1)
+    else:
+        total = 0
     return {
         "score": total,
         "grade": _score_grade(total),

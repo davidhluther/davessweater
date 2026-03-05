@@ -225,8 +225,10 @@ def build_rightwrong_section(comp):
             continue
         pred      = p.get("prediction", {})
         score_obj = p.get("score", {})
-        pred_high = pred.get("today_high_f", pred.get("high_f", "?"))
-        pred_low  = pred.get("tonight_low_f", pred.get("low_f", "?"))
+        pred_high = pred.get("today_high_f", pred.get("high_f"))
+        pred_low  = pred.get("tonight_low_f", pred.get("low_f"))
+        pred_high = f"{pred_high}" if pred_high is not None else "N/A"
+        pred_low  = f"{pred_low}" if pred_low is not None else "N/A"
         sc        = score_obj.get("score", 0) if isinstance(score_obj, dict) else 0
         grade     = score_obj.get("grade", {}) if isinstance(score_obj, dict) else {}
         verd      = grade.get("label", "")
@@ -236,7 +238,7 @@ def build_rightwrong_section(comp):
     {icon}
     <span>{label}</span>
   </td>
-  <td>Hi: {pred_high}&deg; / Lo: {pred_low}&deg;</td>
+  <td>Hi: {pred_high + "&deg;" if pred_high != "N/A" else "N/A"} / Lo: {pred_low + "&deg;" if pred_low != "N/A" else "N/A"}</td>
   <td><strong>{sc:.1f}/100</strong></td>
   <td>{verdict_html(verd, sc)}</td>
 </tr>"""
