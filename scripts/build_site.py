@@ -968,9 +968,8 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
 
 <footer>
   <p>
-    <a href="https://davessweater.com">davessweater.com</a> &nbsp;&middot;&nbsp;
-    est. 2026 &nbsp;&middot;&nbsp;
-    Weather data: <a href="https://open-meteo.com">Open-Meteo</a>
+    <a href="https://davessweater.com">DavesSweater.com</a> &nbsp;&middot;&nbsp;
+    Est. 2026
   </p>
 </footer>
 
