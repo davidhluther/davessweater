@@ -1,5 +1,15 @@
 name: "📱 iPhone Screenshot Upload"
 
+# Triggered by iOS Shortcut via GitHub API:
+#   POST https://api.github.com/repos/davidhluther/davessweater/dispatches
+#   Body: {
+#     "event_type": "iphone-screenshot",
+#     "client_payload": {
+#       "screenshot": "<base64-encoded PNG>",
+#       "date": "2026-03-05"
+#     }
+#   }
+
 on:
   repository_dispatch:
     types: [iphone-screenshot]
@@ -27,29 +37,25 @@ jobs:
           DIR="data/predictions/${DATE}"
           mkdir -p "$DIR"
 
-          echo "$SCREENSHOT_B64" | base64 -d > "${DIR}/iphone_screenshot.png"
+          # Decode base64 screenshot
+          echo "$SCREENSHOT_B64" | base64 -d > "${DIR}/apple_weather.png"
 
           # Validate it's actually a PNG
-          if ! file "${DIR}/iphone_screenshot.png" | grep -q PNG; then
+          if ! file "${DIR}/apple_weather.png" | grep -q PNG; then
             echo "ERROR: Decoded file is not a valid PNG"
             exit 1
           fi
 
           echo "date=${DATE}" >> "$GITHUB_ENV"
-          echo "✅ Saved screenshot to ${DIR}/iphone_screenshot.png"
+          echo "Saved screenshot to ${DIR}/apple_weather.png"
 
       - name: Rebuild site
         run: python scripts/build_site.py
-
-      - name: Copy screenshot to docs
-        run: |
-          mkdir -p docs/screenshots
-          cp "data/predictions/${date}/iphone_screenshot.png" docs/screenshots/iphone_forecast.png
 
       - name: Commit and push
         run: |
           git config user.name "DavesSweaterBot"
           git config user.email "bot@davessweater.com"
           git add data/predictions/ docs/
-          git commit -m "📱 iPhone screenshot upload ${date}" || echo "No changes to commit"
+          git commit -m "📱 Apple Weather screenshot ${date}" || echo "No changes to commit"
           git push
