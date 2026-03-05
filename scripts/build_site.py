@@ -309,28 +309,31 @@ def build_rightwrong_section(comp):
 
 
 def build_phone_forecast(_forecast_data=None):
-    """Build iPhone Weather screenshot section. Shows actual screenshot if available."""
-    # Check for iPhone screenshot in latest predictions dir
+    """Build Apple Weather screenshot section.
+
+    Looks for the real iPhone Weather screenshot (iphone_screenshot.png)
+    uploaded daily via iOS Shortcut.
+    """
     screenshot_src = None
     if PREDS_DIR.exists():
         for d in sorted(PREDS_DIR.iterdir(), reverse=True):
-            png = d / "iphone_screenshot.png"
-            if png.exists():
-                screenshot_src = png
+            shot = d / "iphone_screenshot.png"
+            if shot.exists():
+                screenshot_src = shot
                 break
 
     if screenshot_src is not None:
         # Copy screenshot to docs for serving
         ss_dest = DOCS / "screenshots"
         ss_dest.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(screenshot_src, ss_dest / "iphone_forecast.png")
+        shutil.copy2(screenshot_src, ss_dest / "iphone_screenshot.png")
 
         return """
 <section class="card" id="weekly-forecast">
   <h2>Your iPhone Says&hellip;</h2>
   <p class="section-subtitle">Spoiler: it's about as accurate as Ray.</p>
   <div class="iphone-screenshot-wrap">
-    <img src="screenshots/iphone_forecast.png" alt="iPhone Weather forecast for Boone, NC"
+    <img src="screenshots/iphone_screenshot.png" alt="Apple Weather forecast for Boone, NC"
          class="iphone-screenshot" loading="lazy">
   </div>
 </section>

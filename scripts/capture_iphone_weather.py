@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
 capture_iphone_weather.py — fetch current conditions + forecast for Boone, NC
-from wttr.in (same underlying model as Apple Weather / iPhone Weather app).
+from Open-Meteo (same source as the live widget on the site).
 
 Captures:
-- Current temp, feels like, wind, gust, humidity, rainfall
+- Current temp, feels like, wind, humidity
 - Forecast Hi / Lo + wind, precip, conditions (for scoring)
 - iPhone Weather app screenshot (rendered via Playwright)
 
@@ -18,13 +18,13 @@ Run as part of daily_capture.yml at 7:00 AM EST (same time as capture_rays.py).
 import json
 import sys
 import urllib.request
-import urllib.parse
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
+
 # ── config ─────────────────────────────────────────────────────────────────────
 
-LOCATION  = "Boone,NC"
+LOCATION  = "Boone, NC"
 ROOT      = Path(__file__).resolve().parent.parent
 EST       = timezone(timedelta(hours=-5))
 TODAY     = datetime.now(EST).strftime("%Y-%m-%d")
@@ -32,8 +32,21 @@ OUT_DIR   = ROOT / "data" / "predictions" / TODAY
 OUT_JSON  = OUT_DIR / "iphone_forecast.json"
 OUT_PNG   = OUT_DIR / "iphone_screenshot.png"
 
-# wttr.in JSON v1 endpoint — returns rich current + 3-day forecast
-WTTR_URL  = f"https://wttr.in/{urllib.parse.quote(LOCATION)}?format=j1"
+# Boone, NC coordinates — same as build_site.py live widget
+BOONE_LAT = 36.2168
+BOONE_LON = -81.6746
+
+OPENMETEO_URL = (
+    f"https://api.open-meteo.com/v1/forecast?"
+    f"latitude={BOONE_LAT}&longitude={BOONE_LON}"
+    f"&current=temperature_2m,relative_humidity_2m,apparent_temperature,"
+    f"weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m"
+    f"&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,"
+    f"weather_code,wind_speed_10m_max"
+    f"&temperature_unit=fahrenheit&wind_speed_unit=mph"
+    f"&precipitation_unit=inch&timezone=America/New_York"
+    f"&forecast_days=3"
+)
 
 # ── helpers ────────────────────────────────────────────────────────────────────
 
@@ -42,13 +55,6 @@ def safe_float(val, default=None):
         return float(val)
     except (TypeError, ValueError):
         return default
-
-
-def mm_to_inches(mm):
-    """Convert millimeters to inches, rounded to 2 decimal places."""
-    if mm is None:
-        return None
-    return round(float(mm) / 25.4, 2)
 
 
 def compass_to_abbr(degrees: float | None) -> str | None:
@@ -61,46 +67,53 @@ def compass_to_abbr(degrees: float | None) -> str | None:
     return dirs[idx]
 
 
-# Map wttr.in weatherDesc text to our scoring categories
-WTTR_CATEGORY_MAP = {
-    "sunny": "clear", "clear": "clear",
-    "partly cloudy": "cloudy", "cloudy": "cloudy", "overcast": "cloudy",
-    "fog": "fog", "mist": "fog", "freezing fog": "fog",
-    "patchy rain possible": "drizzle", "light drizzle": "drizzle",
-    "patchy light drizzle": "drizzle", "light rain": "drizzle",
-    "patchy light rain": "drizzle",
-    "moderate rain": "rain", "heavy rain": "rain",
-    "moderate rain at times": "rain", "heavy rain at times": "rain",
-    "moderate or heavy rain shower": "rain", "light rain shower": "drizzle",
-    "torrential rain shower": "rain",
-    "patchy snow possible": "snow", "light snow": "snow",
-    "patchy light snow": "snow", "moderate snow": "snow",
-    "heavy snow": "snow", "blizzard": "snow",
-    "light snow showers": "snow", "moderate or heavy snow showers": "snow",
-    "patchy moderate snow": "snow", "patchy heavy snow": "snow",
-    "thundery outbreaks possible": "storm",
-    "moderate or heavy rain with thunder": "storm",
-    "patchy light rain with thunder": "storm",
-    "light sleet": "sleet", "moderate or heavy sleet": "sleet",
-    "light sleet showers": "sleet", "moderate or heavy sleet showers": "sleet",
-    "ice pellets": "sleet", "light showers of ice pellets": "sleet",
-    "freezing drizzle": "drizzle", "heavy freezing drizzle": "rain",
+# WMO weather code descriptions (same as capture_openmeteo.py)
+WMO_CODES = {
+    0: "Clear sky",
+    1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
+    45: "Fog", 48: "Depositing rime fog",
+    51: "Light drizzle", 53: "Moderate drizzle", 55: "Dense drizzle",
+    56: "Light freezing drizzle", 57: "Dense freezing drizzle",
+    61: "Slight rain", 63: "Moderate rain", 65: "Heavy rain",
+    66: "Light freezing rain", 67: "Heavy freezing rain",
+    71: "Slight snow", 73: "Moderate snow", 75: "Heavy snow",
+    77: "Snow grains",
+    80: "Slight rain showers", 81: "Moderate rain showers", 82: "Violent rain showers",
+    85: "Slight snow showers", 86: "Heavy snow showers",
+    95: "Thunderstorm", 96: "Thunderstorm w/ slight hail", 99: "Thunderstorm w/ heavy hail",
 }
 
 
-def wttr_desc_to_category(desc: str) -> str:
-    """Convert wttr.in weather description to scoring category."""
-    if not desc:
+def weather_category(code):
+    """Simplified category for scoring (same as capture_openmeteo.py)."""
+    if code is None:
         return "unknown"
-    return WTTR_CATEGORY_MAP.get(desc.lower().strip(), "unknown")
+    if code <= 1:
+        return "clear"
+    elif code <= 3:
+        return "cloudy"
+    elif code <= 48:
+        return "fog"
+    elif code <= 57:
+        return "drizzle"
+    elif code <= 67:
+        return "rain"
+    elif code <= 77:
+        return "snow"
+    elif code <= 82:
+        return "rain"
+    elif code <= 86:
+        return "snow"
+    else:
+        return "storm"
 
 
 # ── fetch ──────────────────────────────────────────────────────────────────────
 
-def fetch_wttr() -> dict:
-    """Fetch wttr.in JSON and return the raw parsed dict."""
+def fetch_openmeteo() -> dict:
+    """Fetch Open-Meteo JSON and return the raw parsed dict."""
     req = urllib.request.Request(
-        WTTR_URL,
+        OPENMETEO_URL,
         headers={
             "User-Agent": "DavesSweater/1.0 (weather accuracy tracker; davessweater.com)",
             "Accept":     "application/json",
@@ -110,18 +123,18 @@ def fetch_wttr() -> dict:
         return json.loads(resp.read().decode())
 
 
-def parse_wttr(raw: dict) -> dict:
+def parse_openmeteo(raw: dict) -> dict:
     """
-    Extract weather data from wttr.in JSON response.
+    Extract weather data from Open-Meteo JSON response.
 
-    Current: temp, feels_like, wind, gust, humidity, rainfall
+    Current: temp, feels_like, wind, humidity
     Forecast: high, low, wind, precip, conditions (for scoring)
     """
     captured_at = datetime.now(EST).isoformat()
     result = {
         "date":         TODAY,
         "captured_at":  captured_at,
-        "source":       "wttr.in (iPhone-equivalent / Apple Weather model)",
+        "source":       "Open-Meteo (same as live widget)",
         "location":     LOCATION,
         "current":      {},
         "forecast":     {},
@@ -130,23 +143,19 @@ def parse_wttr(raw: dict) -> dict:
     }
 
     try:
-        cur_raw  = raw["current_condition"][0]
-        day_raw  = raw["weather"][0]           # today's forecast block
+        cur = raw.get("current", {})
+        daily_raw = raw.get("daily", {})
 
         # ── current conditions ─────────────────────────────────────────────
-        temp_f      = safe_float(cur_raw.get("temp_F"))
-        feels_f     = safe_float(cur_raw.get("FeelsLikeF"))
-        wind_mph    = safe_float(cur_raw.get("windspeedMiles"))
-        wind_deg    = safe_float(cur_raw.get("winddirDegree"))
-        wind_dir    = cur_raw.get("winddir16Point") or compass_to_abbr(wind_deg)
-        gust_mph    = safe_float(cur_raw.get("windGustMiles"))
-        humidity    = safe_float(cur_raw.get("humidity"))
-        precip_mm   = safe_float(cur_raw.get("precipMM"))
-        rainfall_in = mm_to_inches(precip_mm)
-
-        # Weather description from current conditions
-        cur_desc_list = cur_raw.get("weatherDesc", [])
-        cur_desc = cur_desc_list[0].get("value", "") if cur_desc_list else ""
+        temp_f      = safe_float(cur.get("temperature_2m"))
+        feels_f     = safe_float(cur.get("apparent_temperature"))
+        wind_mph    = safe_float(cur.get("wind_speed_10m"))
+        wind_deg    = safe_float(cur.get("wind_direction_10m"))
+        wind_dir    = compass_to_abbr(wind_deg)
+        gust_mph    = safe_float(cur.get("wind_gusts_10m"))
+        humidity    = safe_float(cur.get("relative_humidity_2m"))
+        cur_code    = cur.get("weather_code")
+        cur_desc    = WMO_CODES.get(cur_code, "Unknown")
 
         # Format wind the same way Ray does: "S @ 3 mph"
         if wind_dir and wind_mph is not None:
@@ -159,106 +168,70 @@ def parse_wttr(raw: dict) -> dict:
         result["current"] = {
             "temp_f":       temp_f,
             "feels_like_f": feels_f,
-            "wind":         wind_str,          # "S @ 3 mph"
+            "wind":         wind_str,
             "wind_dir":     wind_dir,
             "wind_mph":     wind_mph,
             "gust_mph":     gust_mph,
             "humidity_pct": humidity,
-            "rainfall_in":  rainfall_in,
             "conditions":   cur_desc,
         }
 
-        # ── forecast hi / lo ───────────────────────────────────────────────
-        high_f = safe_float(day_raw.get("maxtempF"))
-        low_f  = safe_float(day_raw.get("mintempF"))
+        # ── daily forecast arrays ─────────────────────────────────────────
+        dates   = daily_raw.get("time", [])
+        highs   = daily_raw.get("temperature_2m_max", [])
+        lows    = daily_raw.get("temperature_2m_min", [])
+        precips = daily_raw.get("precipitation_sum", [])
+        codes   = daily_raw.get("weather_code", [])
+        winds   = daily_raw.get("wind_speed_10m_max", [])
 
-        # Extract wind and precip from hourly data for scoring
-        tonight_low = None
-        max_wind = None
-        total_precip_mm = 0.0
-        for hour in day_raw.get("hourly", []):
-            t = int(hour.get("time", 0))
-            # Tonight low: min temp from 6pm onward
-            if t >= 1800:
-                h_temp = safe_float(hour.get("tempF"))
-                if h_temp is not None:
-                    if tonight_low is None or h_temp < tonight_low:
-                        tonight_low = h_temp
-            # Max wind across all hours
-            h_wind = safe_float(hour.get("windspeedMiles"))
-            if h_wind is not None and (max_wind is None or h_wind > max_wind):
-                max_wind = h_wind
-            # Total precip across all hours
-            h_precip = safe_float(hour.get("precipMM"))
-            if h_precip is not None:
-                total_precip_mm += h_precip
-
-        # Weather description for today
-        desc_list = day_raw.get("hourly", [{}])[len(day_raw.get("hourly", [])) // 2].get("weatherDesc", [])
-        day_desc = desc_list[0].get("value", "") if desc_list else cur_desc
-        category = wttr_desc_to_category(day_desc)
-
-        result["forecast"] = {
-            "today_high_f":  high_f,
-            "tonight_low_f": tonight_low if tonight_low is not None else low_f,
-            "day_low_f":     low_f,
-            "wind_mph":      max_wind,
-            "precip_in":     mm_to_inches(total_precip_mm),
-            "conditions":    day_desc,
-            "category":      category,
-        }
+        # ── today's forecast (for scoring) ────────────────────────────────
+        if dates:
+            today_code = codes[0] if codes else None
+            today_desc = WMO_CODES.get(today_code, "Unknown")
+            result["forecast"] = {
+                "today_high_f":  highs[0] if highs else None,
+                "tonight_low_f": lows[0] if lows else None,
+                "day_low_f":     lows[0] if lows else None,
+                "wind_mph":      winds[0] if winds else None,
+                "precip_in":     precips[0] if precips else None,
+                "conditions":    today_desc,
+                "category":      weather_category(today_code),
+            }
 
         # ── multi-day forecast (for screenshot) ───────────────────────────
-        for weather_day in raw.get("weather", []):
-            date_str = weather_day.get("date", "")
-            d_high = safe_float(weather_day.get("maxtempF"))
-            d_low = safe_float(weather_day.get("mintempF"))
-            # Get midday weather description
-            hourly = weather_day.get("hourly", [])
-            mid_hour = hourly[len(hourly) // 2] if hourly else {}
-            d_desc_list = mid_hour.get("weatherDesc", [])
-            d_desc = d_desc_list[0].get("value", "") if d_desc_list else ""
-            # Get max wind and total precip for the day
-            d_max_wind = None
-            d_total_precip = 0.0
-            for h in hourly:
-                hw = safe_float(h.get("windspeedMiles"))
-                if hw is not None and (d_max_wind is None or hw > d_max_wind):
-                    d_max_wind = hw
-                hp = safe_float(h.get("precipMM"))
-                if hp is not None:
-                    d_total_precip += hp
-
+        for i in range(len(dates)):
+            code = codes[i] if i < len(codes) else None
             result["daily"].append({
-                "date":       date_str,
-                "high_f":     d_high,
-                "low_f":      d_low,
-                "wind_mph":   d_max_wind,
-                "precip_in":  mm_to_inches(d_total_precip),
-                "conditions": d_desc,
-                "category":   wttr_desc_to_category(d_desc),
+                "date":       dates[i],
+                "high_f":     highs[i] if i < len(highs) else None,
+                "low_f":      lows[i] if i < len(lows) else None,
+                "wind_mph":   winds[i] if i < len(winds) else None,
+                "precip_in":  precips[i] if i < len(precips) else None,
+                "conditions": WMO_CODES.get(code, "Unknown"),
+                "category":   weather_category(code),
             })
 
     except (KeyError, IndexError, TypeError) as e:
         result["error"] = f"Parse error: {e}"
-        print(f"  ERROR parsing wttr.in response: {e}", file=sys.stderr)
+        print(f"  ERROR parsing Open-Meteo response: {e}", file=sys.stderr)
 
     return result
 
 
 # ── screenshot ─────────────────────────────────────────────────────────────────
 
-# iOS Weather icon mapping for wttr.in descriptions
+# iOS Weather icon mapping for WMO descriptions
 WEATHER_ICONS = {
-    "clear": "☀️", "sunny": "☀️",
-    "cloudy": "☁️", "overcast": "☁️",
+    "clear": "☀️", "mainly clear": "☀️",
     "partly cloudy": "⛅",
-    "fog": "🌫️", "mist": "🌫️",
-    "drizzle": "🌦️", "light drizzle": "🌦️",
-    "rain": "🌧️", "heavy rain": "🌧️",
+    "overcast": "☁️",
+    "fog": "🌫️",
+    "drizzle": "🌦️", "light drizzle": "🌦️", "slight": "🌦️",
+    "rain": "🌧️", "heavy rain": "🌧️", "moderate rain": "🌧️",
     "snow": "🌨️", "light snow": "🌨️",
     "storm": "⛈️", "thunderstorm": "⛈️",
-    "sleet": "🌨️",
+    "sleet": "🌨️", "freezing": "🌨️",
+    "shower": "🌧️",
 }
 
 
@@ -494,23 +467,23 @@ async def take_screenshot(data: dict, output_path: Path):
 def main():
     import asyncio
 
-    print(f"📱 Capturing iPhone (wttr.in) weather for {TODAY}…")
+    print(f"📱 Capturing iPhone (Open-Meteo) weather for {TODAY}…")
 
     try:
-        raw  = fetch_wttr()
-        data = parse_wttr(raw)
+        raw  = fetch_openmeteo()
+        data = parse_openmeteo(raw)
     except Exception as e:
         data = {
             "date":        TODAY,
             "captured_at": datetime.now(EST).isoformat(),
-            "source":      "wttr.in",
+            "source":      "Open-Meteo",
             "location":    LOCATION,
             "current":     {},
             "forecast":    {},
             "daily":       [],
             "error":       str(e),
         }
-        print(f"  ERROR fetching wttr.in: {e}", file=sys.stderr)
+        print(f"  ERROR fetching Open-Meteo: {e}", file=sys.stderr)
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     OUT_JSON.write_text(json.dumps(data, indent=2))
@@ -533,7 +506,7 @@ def main():
     f = data.get("forecast", {})
     print(f"   Temp: {c.get('temp_f')}°F  (feels like {c.get('feels_like_f')}°F)")
     print(f"   Wind: {c.get('wind')}  Gust: {c.get('gust_mph')} mph")
-    print(f"   Humidity: {c.get('humidity_pct')}%  Rainfall: {c.get('rainfall_in')}\"")
+    print(f"   Humidity: {c.get('humidity_pct')}%")
     print(f"   Forecast: Hi {f.get('today_high_f')}° / Lo {f.get('tonight_low_f')}°")
     print(f"   Conditions: {f.get('conditions')} ({f.get('category')})")
 

@@ -1,0 +1,61 @@
+name: "📱 iPhone Screenshot Upload"
+
+# Triggered by iOS Shortcut via GitHub API:
+#   POST https://api.github.com/repos/davidhluther/davessweater/dispatches
+#   Body: {
+#     "event_type": "iphone-screenshot",
+#     "client_payload": {
+#       "screenshot": "<base64-encoded PNG>",
+#       "date": "2026-03-05"
+#     }
+#   }
+
+on:
+  repository_dispatch:
+    types: [iphone-screenshot]
+
+permissions:
+  contents: write
+
+jobs:
+  save-screenshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Decode and save screenshot
+        env:
+          SCREENSHOT_B64: ${{ github.event.client_payload.screenshot }}
+          CAPTURE_DATE: ${{ github.event.client_payload.date }}
+        run: |
+          # Use provided date or default to today (EST)
+          DATE="${CAPTURE_DATE:-$(TZ=America/New_York date +%Y-%m-%d)}"
+          DIR="data/predictions/${DATE}"
+          mkdir -p "$DIR"
+
+          # Decode base64 screenshot
+          echo "$SCREENSHOT_B64" | base64 -d > "${DIR}/apple_weather.png"
+
+          # Validate it's actually a PNG
+          if ! file "${DIR}/apple_weather.png" | grep -q PNG; then
+            echo "ERROR: Decoded file is not a valid PNG"
+            exit 1
+          fi
+
+          echo "date=${DATE}" >> "$GITHUB_ENV"
+          echo "Saved screenshot to ${DIR}/apple_weather.png"
+
+      - name: Rebuild site
+        run: python scripts/build_site.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "DavesSweaterBot"
+          git config user.email "bot@davessweater.com"
+          git add data/predictions/ docs/
+          git commit -m "📱 Apple Weather screenshot ${date}" || echo "No changes to commit"
+          git push
