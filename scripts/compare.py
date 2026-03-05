@@ -104,8 +104,8 @@ def _get_high(entry):
 
 
 def _get_low(entry):
-    """Get low temp, supporting both 'today_low_f' and 'low_f' keys."""
-    return entry.get("today_low_f", entry.get("low_f"))
+    """Get low temp, supporting 'tonight_low_f', 'today_low_f', and 'low_f' keys."""
+    return entry.get("tonight_low_f", entry.get("today_low_f", entry.get("low_f")))
 
 
 def score_prediction(predicted, actual):
