@@ -247,9 +247,10 @@ def build_rightwrong_section(comp):
 
     rows = ""
     for source_key, label, icon in [
-        ("openmeteo",    "Open-Meteo",      '<span class="source-icon">🌐</span>'),
-        ("raysweather",  "Ray's Weather",   ray_face_img()),
-        ("iphone",       "iPhone Weather",  '<span class="source-icon">📱</span>'),
+        ("openmeteo",      "Open-Meteo",       '<span class="source-icon">🌐</span>'),
+        ("raysweather",    "Ray's Weather",    ray_face_img()),
+        ("iphone",         "iPhone Weather",   '<span class="source-icon">📱</span>'),
+        ("apple_weather",  "Apple Weather",    '<span class="source-icon">🍎</span>'),
     ]:
         p = sources.get(source_key, {})
         if not p or "score" not in p:
@@ -362,7 +363,7 @@ def build_scoreboard_section(scores):
     # Also support the "totals" format from the existing scores.json
     if not rows:
         for source, totals in scores.get("totals", {}).items():
-            labels = {"raysweather": "Ray's Weather", "openmeteo": "Open-Meteo", "iphone": "iPhone Weather"}
+            labels = {"raysweather": "Ray's Weather", "openmeteo": "Open-Meteo", "iphone": "iPhone Weather", "apple_weather": "Apple Weather"}
             label = labels.get(source, source)
             days = totals.get("days", 0)
             avg = round(totals.get("total_score", 0) / days, 1) if days > 0 else 0
