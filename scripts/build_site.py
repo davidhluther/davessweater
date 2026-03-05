@@ -28,7 +28,7 @@ PREDS_DIR   = DATA / "predictions"
 # ── RSS feeds ──────────────────────────────────────────────────────────────────
 
 SUBSTACK_RSS = "https://davessweater.substack.com/feed"
-YOUTUBE_UC   = "UCxxxxxxxxxxxxxxxxxxxxxxxx"          # ← user: replace with real channel ID
+YOUTUBE_UC   = "UCLQdHEMoKkrNc3PgWs3SksA"
 YOUTUBE_RSS  = f"https://www.youtube.com/feeds/videos.xml?channel_id={YOUTUBE_UC}"
 
 # ── branding ───────────────────────────────────────────────────────────────────
@@ -250,7 +250,7 @@ def build_rightwrong_section(comp):
         ("openmeteo",      "Open-Meteo",       '<span class="source-icon">🌐</span>'),
         ("raysweather",    "Ray's Weather",    ray_face_img()),
         ("iphone",         "iPhone Weather",   '<span class="source-icon">📱</span>'),
-        ("apple_weather",  "Apple Weather",    '<span class="source-icon">🍎</span>'),
+        ("apple_weather",  "Apple Weather",    '<span class="source-icon">📱</span>'),
     ]:
         p = sources.get(source_key, {})
         if not p or "score" not in p:
@@ -929,7 +929,7 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dave's Sweater &mdash; Boone, NC's #2 weather resource</title>
+  <title>Dave's Sweater &mdash; Boone's most reliable weather service</title>
   <meta name="description" content="Is it sweater weather in Boone, NC? Did Ray get yesterday right? Find out.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -942,7 +942,7 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
   <a class="header-logo" href="/">
     {logo_html()}
   </a>
-  <span class="header-tagline">Boone, NC's #2 weather resource</span>
+  <span class="header-tagline">Boone's most reliable weather service</span>
   <nav>
     <button data-tab="weather">Weather</button>
     <button data-tab="videos">Videos</button>
@@ -1022,11 +1022,7 @@ def main():
     blog_items = fetch_rss(SUBSTACK_RSS)
 
     print("  fetching YouTube RSS…")
-    if "xxxxxxxx" in YOUTUBE_UC:
-        print("  (YouTube channel ID is placeholder — skipping)")
-        video_items = []
-    else:
-        video_items = fetch_rss(YOUTUBE_RSS)
+    video_items = fetch_rss(YOUTUBE_RSS)
 
     # copy assets
     print("  copying assets…")
