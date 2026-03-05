@@ -23,6 +23,7 @@ ASSETS_SRC  = ROOT / "assets"
 ASSETS_DEST = DOCS / "assets"
 SCORES_FILE = DATA / "scores.json"
 COMPS_DIR   = DATA / "comparisons"
+PREDS_DIR   = DATA / "predictions"
 
 # ── RSS feeds ──────────────────────────────────────────────────────────────────
 
@@ -58,6 +59,34 @@ def latest_comparison():
     if not files:
         return {}
     return load_json(files[-1])
+
+
+def latest_forecast():
+    """Return the most-recent Open-Meteo forecast dict, or {}."""
+    if not PREDS_DIR.exists():
+        return {}
+    pred_dirs = sorted(PREDS_DIR.iterdir())
+    for d in reversed(pred_dirs):
+        om = d / "openmeteo_forecast.json"
+        if om.exists():
+            return load_json(om)
+    return {}
+
+
+# WMO weather code → emoji icon
+WMO_ICONS = {
+    0: "☀️", 1: "🌤", 2: "⛅", 3: "☁️",
+    45: "🌫", 48: "🌫",
+    51: "🌦", 53: "🌧", 55: "🌧",
+    56: "🌧", 57: "🌧",
+    61: "🌧", 63: "🌧", 65: "🌧",
+    66: "🧊", 67: "🧊",
+    71: "🌨", 73: "❄️", 75: "❄️",
+    77: "❄️",
+    80: "🌦", 81: "🌧", 82: "⛈",
+    85: "🌨", 86: "❄️",
+    95: "⛈", 96: "⛈", 99: "⛈",
+}
 
 
 def fetch_rss(url, max_items=5):
@@ -255,8 +284,6 @@ def build_rightwrong_section(comp):
   <td>{verdict_html(verd, sc)}</td>
 </tr>"""
 
-    screenshot_path = f"screenshots/rays_forecast.png"
-
     return f"""
 <section class="card" id="rightwrong">
   <h2>Right Ray / Wrong Ray</h2>
@@ -277,10 +304,75 @@ def build_rightwrong_section(comp):
     </table>
   </div>
   <p class="rating-note">Rating: 5 Rays = nailed it &nbsp;|&nbsp; 1 Ray = yikes</p>
-  <div class="screenshot-block">
-    <p class="screenshot-label">Ray's forecast screenshot:</p>
-    <img src="{screenshot_path}" alt="Ray's Weather forecast" class="forecast-screenshot">
-    <p class="screenshot-credit">Screenshot from <a href="https://raysweather.com/Forecast/Boone">raysweather.com</a>. Go visit Ray, he's great.</p>
+</section>
+"""
+
+
+def build_phone_forecast(forecast_data):
+    """Build an iPhone-style 7-day forecast widget."""
+    daily = forecast_data.get("daily", [])
+    if not daily:
+        return ""
+
+    from datetime import datetime as dt
+
+    rows = ""
+    for i, day in enumerate(daily):
+        date_str = day.get("date", "")
+        try:
+            d = dt.strptime(date_str, "%Y-%m-%d")
+            day_name = "Today" if i == 0 else d.strftime("%a")
+        except ValueError:
+            day_name = "?"
+
+        icon = WMO_ICONS.get(day.get("weather_code", 0), "🌡")
+        hi = day.get("high_f")
+        lo = day.get("low_f")
+        hi_s = f"{hi:.0f}" if hi is not None else "--"
+        lo_s = f"{lo:.0f}" if lo is not None else "--"
+        precip_prob = day.get("precip_prob")
+        precip_s = f'<span class="phone-precip">{precip_prob}%</span>' if precip_prob and precip_prob > 10 else ""
+
+        # Temperature bar — scale between min/max of the week
+        all_lows = [d.get("low_f", 50) for d in daily if d.get("low_f") is not None]
+        all_highs = [d.get("high_f", 70) for d in daily if d.get("high_f") is not None]
+        week_min = min(all_lows) if all_lows else 30
+        week_max = max(all_highs) if all_highs else 80
+        temp_range = max(week_max - week_min, 1)
+
+        lo_pct = ((lo or week_min) - week_min) / temp_range * 100 if lo is not None else 0
+        hi_pct = ((hi or week_max) - week_min) / temp_range * 100 if hi is not None else 100
+        bar_left = lo_pct
+        bar_width = max(hi_pct - lo_pct, 5)
+
+        rows += f"""
+      <div class="phone-row">
+        <span class="phone-day">{day_name}</span>
+        <span class="phone-icon">{icon} {precip_s}</span>
+        <span class="phone-lo">{lo_s}&deg;</span>
+        <span class="phone-bar-wrap">
+          <span class="phone-bar" style="left:{bar_left:.0f}%;width:{bar_width:.0f}%"></span>
+        </span>
+        <span class="phone-hi">{hi_s}&deg;</span>
+      </div>"""
+
+    conditions = daily[0].get("conditions", "") if daily else ""
+
+    return f"""
+<section class="card" id="weekly-forecast">
+  <div class="phone-frame">
+    <div class="phone-notch"></div>
+    <div class="phone-header">
+      <div class="phone-location">Boone, NC</div>
+      <div class="phone-current-temp">{daily[0].get("high_f", "--"):.0f}&deg;</div>
+      <div class="phone-conditions">{conditions}</div>
+    </div>
+    <div class="phone-divider"></div>
+    <div class="phone-label">7-DAY FORECAST</div>
+    <div class="phone-forecast">
+      {rows}
+    </div>
+    <div class="phone-footer">Data: Open-Meteo</div>
   </div>
 </section>
 """
@@ -649,20 +741,112 @@ main {{
   color: var(--teal);
 }}
 
-/* ── forecast screenshot ── */
-.screenshot-block {{
-  margin-top: 1.25rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e5e7eb;
+/* ── phone-style forecast ── */
+.phone-frame {{
+  background: linear-gradient(180deg, #1c1c1e 0%, #2c2c2e 100%);
+  border-radius: 2.5rem;
+  padding: 1.5rem 1.25rem 1rem;
+  max-width: 22rem;
+  margin: 0 auto;
+  color: #fff;
+  font-family: -apple-system, 'SF Pro Display', 'Inter', sans-serif;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+  border: 3px solid #3a3a3c;
+  position: relative;
 }}
-
-.forecast-screenshot {{
-  width: 100%;
-  max-width: 36rem;
-  border-radius: 0.5rem;
-  border: 1px solid #d1d5db;
+.phone-notch {{
+  width: 7rem;
+  height: 0.35rem;
+  background: #3a3a3c;
+  border-radius: 1rem;
+  margin: 0 auto 1rem;
+}}
+.phone-header {{
+  text-align: center;
+  margin-bottom: 0.75rem;
+}}
+.phone-location {{
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}}
+.phone-current-temp {{
+  font-size: 3.5rem;
+  font-weight: 200;
+  line-height: 1.1;
+  margin: 0.1rem 0;
+}}
+.phone-conditions {{
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.6);
+}}
+.phone-divider {{
+  height: 1px;
+  background: rgba(255,255,255,0.15);
   margin: 0.5rem 0;
-  display: block;
+}}
+.phone-label {{
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}}
+.phone-forecast {{
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}}
+.phone-row {{
+  display: grid;
+  grid-template-columns: 2.5rem 3.5rem 2rem 1fr 2rem;
+  align-items: center;
+  font-size: 0.85rem;
+  padding: 0.2rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}}
+.phone-day {{
+  font-weight: 500;
+}}
+.phone-icon {{
+  text-align: center;
+  font-size: 1rem;
+}}
+.phone-precip {{
+  font-size: 0.6rem;
+  color: #5ac8fa;
+  vertical-align: super;
+}}
+.phone-lo {{
+  color: rgba(255,255,255,0.5);
+  text-align: right;
+  font-size: 0.8rem;
+}}
+.phone-hi {{
+  text-align: right;
+  font-weight: 500;
+  font-size: 0.8rem;
+}}
+.phone-bar-wrap {{
+  height: 0.25rem;
+  background: rgba(255,255,255,0.1);
+  border-radius: 0.125rem;
+  position: relative;
+  margin: 0 0.4rem;
+}}
+.phone-bar {{
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 0.125rem;
+  background: linear-gradient(90deg, #5ac8fa, #ffd60a, #ff9f0a);
+}}
+.phone-footer {{
+  text-align: center;
+  font-size: 0.55rem;
+  color: rgba(255,255,255,0.25);
+  margin-top: 0.75rem;
+  padding-bottom: 0.25rem;
 }}
 
 /* ── tab panels ── */
@@ -846,11 +1030,12 @@ JS = """
 # page assembly
 # ──────────────────────────────────────────────────────────────────────────────
 
-def build_page(comp, scores, video_items, blog_items):
+def build_page(comp, scores, video_items, blog_items, forecast=None):
     updated = now_est()
 
     weather_sections = (
         build_sweater_section(comp) +
+        build_phone_forecast(forecast or {}) +
         build_rightwrong_section(comp) +
         build_scoreboard_section(scores)
     )
@@ -931,16 +1116,7 @@ def copy_assets():
                 shutil.copy2(f, dest)
                 print(f"  copied asset: {f.name}")
 
-    # screenshots (Ray forecast PNGs live in data/predictions/*/rays_forecast.png)
-    # We symlink or copy the latest one to docs/screenshots/rays_forecast.png
-    screenshots_dest = DOCS / "screenshots"
-    screenshots_dest.mkdir(exist_ok=True)
-    pred_dirs = sorted((DATA / "predictions").glob("*/")) if (DATA / "predictions").exists() else []
-    if pred_dirs:
-        latest_ss = pred_dirs[-1] / "rays_forecast.png"
-        if latest_ss.exists():
-            shutil.copy2(latest_ss, screenshots_dest / "rays_forecast.png")
-            print(f"  copied screenshot from {pred_dirs[-1].name}")
+    # (Ray's screenshot copy removed — replaced by phone-style forecast widget)
 
     # Always preserve the CNAME file (GitHub Pages custom domain)
     cname_path = DOCS / "CNAME"
@@ -956,8 +1132,9 @@ def main():
     print("🧣 Building Dave's Sweater…")
 
     # load data
-    comp   = latest_comparison()
-    scores = load_json(SCORES_FILE, default={})
+    comp     = latest_comparison()
+    scores   = load_json(SCORES_FILE, default={})
+    forecast = latest_forecast()
 
     # fetch RSS
     print("  fetching Substack RSS…")
@@ -975,7 +1152,7 @@ def main():
     copy_assets()
 
     # build HTML
-    html = build_page(comp, scores, video_items, blog_items)
+    html = build_page(comp, scores, video_items, blog_items, forecast)
     out  = DOCS / "index.html"
     out.write_text(html, encoding="utf-8")
 
