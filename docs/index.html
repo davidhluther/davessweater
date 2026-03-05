@@ -1,504 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dave's Sweater &mdash; Boone, NC's #2 weather resource</title>
-  <meta name="description" content="Is it sweater weather in Boone, NC? Did Ray get yesterday right? Find out.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dave's Sweater</title>
+    <style>
+        body {
+            font-family: Georgia, 'Times New Roman', serif;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5dc;
+            color: #333;
+        }
+        h1 {
+            font-size: 28px;
+            border-bottom: 3px solid #2D5A47;
+            padding-bottom: 5px;
+        }
+        h1 span {
+            font-size: 14px;
+            font-weight: normal;
+            color: #666;
+        }
+        h2 {
+            font-size: 18px;
+            color: #2D5A47;
+            margin-top: 30px;
+            border-bottom: 1px solid #ccc;
+        }
+        .section {
+            background: white;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid #ccc;
+        }
+        .sweater-check {
+            text-align: center;
+        }
+        .big-answer {
+            font-size: 72px;
+            font-weight: bold;
+            margin: 10px 0;
+            line-height: 1;
+        }
+        .date {
+            color: #888;
+            font-size: 12px;
+        }
+        table {
+            font-size: 14px;
+        }
+        th {
+            text-align: left;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 10px;
+            border-top: 1px solid #ccc;
+            font-size: 11px;
+            color: #999;
+        }
+        .under-construction {
+            background: #ffff00;
+            color: black;
+            padding: 5px 10px;
+            display: inline-block;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-size: 14px;
+            transform: rotate(-2deg);
+            margin: 10px 0;
+        }
+        a {
+            color: #2D5A47;
+        }
 
-:root {
-  --teal:   #3C5468;
-  --orange: #f97316;
-  --bg:     #ffffff;
-  --card:   #F8F9FC;
-  --text:   #1a1a1a;
-  --muted:  #6b7280;
-  --radius: 0.75rem;
-}
+        /* ── Scales ─────────────────────────────── */
+        .scale {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .scale-row {
+            margin: 10px 0;
+        }
+        .scale-row-small {
+            margin-top: 4px;
+        }
+        .scale-label {
+            font-size: 13px;
+            color: #888;
+            margin-top: 0;
+        }
 
-body {
-  font-family: 'Inter', system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  font-size: 1rem;
-  line-height: 1.6;
-  min-height: 100vh;
-}
+        /* Sweater emoji scale */
+        .sweater-icon {
+            font-size: 48px;
+            line-height: 1;
+        }
+        .sweater-icon.inactive {
+            opacity: 0.15;
+        }
+        .scale-row-small .sweater-icon {
+            font-size: 22px;
+        }
 
-/* ── header ── */
-header {
-  background: var(--teal);
-  border-bottom: 4px solid var(--orange);
-  padding: 0 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  min-height: 4rem;
-}
+        /* Ray face scale */
+        .ray-face {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            object-fit: cover;
+        }
+        .scale-row .ray-face {
+            width: 56px;
+            height: 56px;
+        }
+        .scale-row-small .ray-face {
+            width: 28px;
+            height: 28px;
+            border-width: 1px;
+        }
+        .ray-active {
+            border-color: #2D5A47;
+            opacity: 1;
+        }
+        .ray-inactive {
+            filter: grayscale(100%) brightness(1.4);
+            opacity: 0.2;
+            border-color: #ddd;
+        }
+        .ray-emoji {
+            font-size: 28px;
+        }
+        .ray-emoji.inactive {
+            opacity: 0.15;
+        }
 
-.header-logo {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  text-decoration: none;
-  flex-shrink: 0;
-}
-
-.header-tagline {
-  color: rgba(255,255,255,0.75);
-  font-size: 0.82rem;
-  font-style: italic;
-  white-space: nowrap;
-}
-
-/* ── nav tabs ── */
-nav {
-  margin-left: auto;
-  display: flex;
-  gap: 0.25rem;
-}
-
-nav button {
-  background: transparent;
-  border: none;
-  color: rgba(255,255,255,0.75);
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  border-radius: 0.4rem;
-  transition: background 0.15s, color 0.15s;
-  white-space: nowrap;
-}
-
-nav button:hover,
-nav button.active {
-  background: rgba(255,255,255,0.15);
-  color: #fff;
-}
-
-nav button.active {
-  background: var(--orange);
-  color: #fff;
-}
-
-/* ── update bar ── */
-.update-bar {
-  background: var(--orange);
-  color: #fff;
-  text-align: center;
-  font-size: 0.78rem;
-  padding: 0.3rem 1rem;
-  font-weight: 500;
-}
-
-/* ── main ── */
-main {
-  max-width: 52rem;
-  margin: 0 auto;
-  padding: 1.5rem 1rem 3rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-/* ── cards ── */
-.card {
-  background: var(--card);
-  border: 1px solid #e5e7eb;
-  border-radius: var(--radius);
-  padding: 1.5rem 1.75rem;
-}
-
-.card h2 {
-  font-size: 1.15rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--teal);
-  margin-bottom: 1rem;
-  border-bottom: 2px solid var(--orange);
-  padding-bottom: 0.4rem;
-  display: inline-block;
-}
-
-/* ── sweater section ── */
-.sweater-verdict {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.sweater-score {
-  font-size: 0;   /* hide alt text */
-  display: flex;
-  gap: 0.35rem;
-  align-items: center;
-  margin-bottom: 0.25rem;
-}
-
-.sweater-temp {
-  font-size: 2.5rem;
-  font-weight: 800;
-  line-height: 1;
-  color: var(--teal);
-}
-
-.sweater-text {
-  font-size: 1.05rem;
-  color: var(--text);
-}
-
-.sweater-layers {
-  font-size: 0.9rem;
-  color: var(--muted);
-}
-
-/* ── tables ── */
-.table-wrap {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.scores-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-}
-
-.scores-table th {
-  background: var(--teal);
-  color: #fff;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0.5rem 0.75rem;
-  text-align: left;
-}
-
-.scores-table td {
-  padding: 0.6rem 0.75rem;
-  border-bottom: 1px solid #e5e7eb;
-  vertical-align: middle;
-}
-
-.scores-table tr:last-child td { border-bottom: none; }
-.scores-table tr:hover td { background: rgba(60,84,104,0.04); }
-
-.source-cell {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.source-icon { font-size: 1.4rem; }
-
-.verdict-label {
-  font-weight: 600;
-  font-size: 0.82rem;
-  margin-right: 0.35rem;
-}
-
-/* ── section meta ── */
-.section-date,
-.actual-weather,
-.rating-note,
-.screenshot-label,
-.screenshot-credit {
-  font-size: 0.88rem;
-  color: var(--muted);
-  margin-bottom: 0.75rem;
-}
-
-.actual-weather { color: var(--text); font-size: 0.95rem; }
-
-/* ── current conditions panel ── */
-.current-conditions {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
-  gap: 0.6rem;
-  margin: 0.75rem 0 1rem;
-  padding: 0.85rem 1rem;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-left: 3px solid var(--teal);
-  border-radius: 0.5rem;
-}
-
-.cond-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-}
-
-.cond-header {
-  grid-column: 1/-1;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  font-weight: 600;
-  margin-bottom: 0.2rem;
-}
-
-.cond-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--muted);
-}
-
-.cond-value {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--teal);
-}
-
-/* ── forecast screenshot ── */
-.screenshot-block {
-  margin-top: 1.25rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e5e7eb;
-}
-
-.forecast-screenshot {
-  width: 100%;
-  max-width: 36rem;
-  border-radius: 0.5rem;
-  border: 1px solid #d1d5db;
-  margin: 0.5rem 0;
-  display: block;
-}
-
-/* ── tab panels ── */
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
-
-/* ── videos ── */
-.video-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
-  gap: 1rem;
-  margin-top: 0.75rem;
-}
-
-.video-card {
-  text-decoration: none;
-  color: var(--text);
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  transition: box-shadow 0.15s;
-}
-
-.video-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-
-.video-thumb {
-  width: 100%;
-  aspect-ratio: 16/9;
-  object-fit: cover;
-  display: block;
-}
-
-.video-meta { padding: 0.6rem 0.75rem; }
-
-.video-title {
-  font-size: 0.88rem;
-  font-weight: 600;
-  line-height: 1.35;
-}
-
-.video-date { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
-
-/* ── blog ── */
-.blog-list { display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem; }
-
-.blog-post {
-  padding: 0.9rem 1rem;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  border-left: 3px solid var(--orange);
-}
-
-.blog-title {
-  font-weight: 600;
-  font-size: 1rem;
-  color: var(--teal);
-  text-decoration: none;
-  display: block;
-  margin-bottom: 0.2rem;
-}
-
-.blog-title:hover { text-decoration: underline; }
-
-.blog-date { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.4rem; }
-
-.blog-summary { font-size: 0.88rem; color: #4b5563; }
-
-/* ── empty feed ── */
-.empty-feed { color: var(--muted); font-style: italic; padding: 1rem 0; }
-
-/* ── footer ── */
-footer {
-  text-align: center;
-  padding: 1.25rem 1rem;
-  color: var(--muted);
-  font-size: 0.8rem;
-  border-top: 1px solid #e5e7eb;
-}
-
-footer a { color: var(--teal); text-decoration: none; }
-footer a:hover { text-decoration: underline; }
-
-/* ── responsive ── */
-@media (max-width: 600px) {
-  header { flex-wrap: wrap; padding: 0.5rem 1rem; gap: 0.5rem; }
-  nav { margin-left: 0; width: 100%; justify-content: flex-start; overflow-x: auto; }
-  .header-tagline { display: none; }
-  .sweater-temp { font-size: 2rem; }
-}
-</style>
+        /* Verdict cell */
+        .verdict-cell {
+            min-width: 140px;
+        }
+        .verdict-label {
+            font-size: 13px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 2px;
+        }
+    </style>
 </head>
 <body>
+    <h1>
+        Dave's Sweater
+        <span>&mdash; Boone, NC's #2 weather resource</span>
+    </h1>
 
-<header>
-  <a class="header-logo" href="/">
-    <span style="font-weight:800;font-size:1.25rem;letter-spacing:-0.03em;color:#fff;">Dave's Sweater</span>
-  </a>
-  <span class="header-tagline">Boone, NC's #2 weather resource</span>
-  <nav>
-    <button data-tab="weather">Weather</button>
-    <button data-tab="videos">Videos</button>
-    <button data-tab="blog">Blog</button>
-  </nav>
-</header>
+    <p class="under-construction">&#128679; UNDER CONSTRUCTION &#128679;</p>
 
-<div class="update-bar">Updated: March 04, 2026 at 10:07 PM EST</div>
+    <p>A public service for people who want to know (1) if it's sweater weather and (2) if Ray got yesterday's forecast right.</p>
+    <p style="font-size: 12px; color: #888;">Updated: March 04, 2026 at 10:11 PM EST</p>
 
-<main>
-  <!-- weather tab: sweater + right/wrong + scoreboard -->
-  <div id="weather-content" style="display:contents;">
     
-<section class="card" id="sweater">
-  <h2>Is it sweater weather in Boone?</h2>
-  <div class="sweater-verdict">
-    <div class="sweater-score"><img src="assets/sweater.png" alt="🧥" style="height:2rem;width:auto;vertical-align:middle;opacity:1;"><img src="assets/sweater.png" alt="🧥" style="height:2rem;width:auto;vertical-align:middle;opacity:0.18;"><img src="assets/sweater.png" alt="🧥" style="height:2rem;width:auto;vertical-align:middle;opacity:0.18;"><img src="assets/sweater.png" alt="🧥" style="height:2rem;width:auto;vertical-align:middle;opacity:0.18;"><img src="assets/sweater.png" alt="🧥" style="height:2rem;width:auto;vertical-align:middle;opacity:0.18;"></div>
-    <div class="sweater-temp">69.2&deg;F</div>
-    <p class="sweater-text">It's 69°F. No sweater needed unless you're in aggressive AC.</p>
-    <p class="sweater-layers"><strong>Recommended layers:</strong> 0 (the sweater rests today)</p>
-  </div>
-</section>
+    <div class="section sweater-check">
+        <h2>IS IT SWEATER WEATHER IN BOONE?</h2>
+        <p class="big-answer" style="color: #C9A227;">MAYBE</p>
+        <div class="scale-row"><span class="scale"><span class="sweater-icon active">&#129509;</span><span class="sweater-icon active">&#129509;</span><span class="sweater-icon inactive">&#129509;</span><span class="sweater-icon inactive">&#129509;</span><span class="sweater-icon inactive">&#129509;</span></span></div>
+        <p class="scale-label">2 out of 5 sweaters</p>
+        <p>It's 67°F. You could go either way. Bring it and decide later.</p>
+        <p><b>Recommended layers:</b> 0-1 (light layer, keep one in the car)</p>
+    </div>
 
-<section class="card" id="rightwrong">
-  <h2>Right Ray / Wrong Ray</h2>
-  <p class="section-date">2026-03-04</p>
-  <p class="actual-weather">
-    <strong>Actual weather:</strong> High 69.2&deg;F / Low 38.3&deg;F &mdash; Light drizzle
-  </p>
-  
-  <div class="table-wrap">
-    <table class="scores-table">
-      <thead>
-        <tr><th>Source</th><th>Predicted</th><th>Score</th><th>Verdict</th></tr>
-      </thead>
-      <tbody>
-<tr>
-  <td class="source-cell">
-    <span class="source-icon">🌐</span>
-    <span>Open-Meteo</span>
-  </td>
-  <td>Hi: 67.5&deg; / Lo: 42.3&deg;</td>
-  <td><strong>72.9/100</strong></td>
-  <td><span class="verdict-label">EH RAY</span> <img src="assets/ray_face.webp" alt="Ray" style="height:1.6rem;width:1.6rem;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;"><img src="assets/ray_face.webp" alt="Ray" style="height:1.6rem;width:1.6rem;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;"><img src="assets/ray_face.webp" alt="Ray" style="height:1.6rem;width:1.6rem;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;"><img src="assets/ray_face.webp" alt="Ray" style="height:1.6rem;width:1.6rem;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;"></td>
-</tr>
-<tr>
-  <td class="source-cell">
-    <img src="assets/ray_face.webp" alt="Ray" style="height:2.5rem;width:2.5rem;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;">
-    <span>Ray's Weather</span>
-  </td>
-  <td>Hi: None&deg; / Lo: 46.0&deg;</td>
-  <td><strong>26.9/100</strong></td>
-  <td><span class="verdict-label">VERY WRONG RAY</span> <img src="assets/ray_face.webp" alt="Ray" style="height:1.6rem;width:1.6rem;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;"></td>
-</tr></tbody>
-    </table>
-  </div>
-  <p class="rating-note">Rating: 5 Rays = nailed it &nbsp;|&nbsp; 1 Ray = yikes</p>
-  <div class="screenshot-block">
-    <p class="screenshot-label">Ray's forecast screenshot:</p>
-    <img src="screenshots/rays_forecast.png" alt="Ray's Weather forecast" class="forecast-screenshot">
-    <p class="screenshot-credit">Screenshot from <a href="https://raysweather.com/Forecast/Boone">raysweather.com</a>. Go visit Ray, he's great.</p>
-  </div>
-</section>
+    
+    <div class="section">
+        <h2>RIGHT RAY / WRONG RAY</h2>
+        <p class="date">2026-03-04</p>
+        <p><b>ACTUAL WEATHER:</b> High 69.2&deg;F / Low 38.3&deg;F &mdash; Light drizzle</p>
+        <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; margin: 10px 0;">
+            <tr style="background: #eee;">
+                <th>Source</th>
+                <th>Predicted</th>
+                <th>Score</th>
+                <th>Verdict</th>
+            </tr>
+            
+        <tr>
+            <td><b>Open-Meteo</b></td>
+            <td>Hi: 67.5&deg; / Lo: 42.3&deg;</td>
+            <td><b>72.9/100</b></td>
+            <td>
+                <div class="verdict-cell">
+                    <span class="verdict-label">EH RAY 🤷</span>
+                    <div class="scale-row-small"><span class="scale"><span class="ray-emoji active">&#128526;</span><span class="ray-emoji active">&#128526;</span><span class="ray-emoji active">&#128526;</span><span class="ray-emoji inactive">&#128526;</span><span class="ray-emoji inactive">&#128526;</span></span></div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td><b>Ray's Weather</b></td>
+            <td>Hi: None&deg; / Lo: 46.0&deg;</td>
+            <td><b>26.9/100</b></td>
+            <td>
+                <div class="verdict-cell">
+                    <span class="verdict-label">VERY WRONG RAY ❌❌</span>
+                    <div class="scale-row-small"><span class="scale"><span class="ray-emoji active">&#128526;</span><span class="ray-emoji inactive">&#128526;</span><span class="ray-emoji inactive">&#128526;</span><span class="ray-emoji inactive">&#128526;</span><span class="ray-emoji inactive">&#128526;</span></span></div>
+                </div>
+            </td>
+        </tr>
+        </table>
+        <p style="font-size: 11px; color: #888; margin-top: 5px;">Rating: 5 Rays = nailed it, 1 Ray = yikes</p>
+    </div>
 
-<section class="card" id="scoreboard">
-  <h2>Season Scoreboard</h2>
-  <div class="table-wrap">
-    <table class="scores-table">
-      <thead><tr><th>Source</th><th>Record</th><th>Avg Score</th><th>Days Tracked</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</section>
+    
+    <div class="section">
+        <h2>RAY'S FORECAST (screenshot)</h2>
+        <p class="date">2026-03-04</p>
+        <img src="screenshots/rays_forecast.png" alt="Ray's Weather forecast" style="max-width: 100%; border: 2px solid #ccc;">
+        <p style="font-size: 10px;">Screenshot from <a href="https://raysweather.com/Forecast/Boone">raysweather.com</a>. Go visit Ray, he's great.</p>
+    </div>
 
-  </div>
+    
+    <div class="section">
+        <h2>SEASON SCOREBOARD</h2>
+        <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; margin: 10px 0;">
+            <tr style="background: #eee;">
+                <th>Source</th>
+                <th>Record</th>
+                <th>Avg Score</th>
+                <th>Days Tracked</th>
+            </tr>
+            <tr><td><b>Open-Meteo</b></td><td>0W - 0L - 1M</td><td>72.9/100</td><td>1</td></tr><tr><td><b>Ray's Weather</b></td><td>0W - 1L - 0M</td><td>26.9/100</td><td>1</td></tr>
+        </table>
+    </div>
 
-  <!-- videos tab -->
-  <section class="card tab-panel" id="videos"><p class="empty-feed">No videos yet — check back soon.</p></section>
+    <div class="section">
+        <h2>WHAT IS THIS</h2>
+        <p>This is a website about sweaters and weather in Boone, North Carolina.</p>
+        <p>Every day, we check:</p>
+        <p>1. Is it sweater weather? (important)<br>
+           2. Did Ray get yesterday's forecast right? (also important)<br>
+           3. What did Ray's forecast actually look like? (evidence)</p>
+        <p>That's it. That's the whole site.</p>
+        <p style="font-size: 11px;">If you were expecting more, we apologize. We are one person with a sweater and a computer.</p>
+    </div>
 
-  <!-- blog tab -->
-  <section class="card tab-panel" id="blog"><p class="empty-feed">No posts yet — check back soon.</p></section>
-
-</main>
-
-<footer>
-  <p>
-    <a href="https://davessweater.com">davessweater.com</a> &nbsp;&middot;&nbsp;
-    est. 2026 &nbsp;&middot;&nbsp;
-    Weather data: <a href="https://open-meteo.com">Open-Meteo</a>
-  </p>
-</footer>
-
-<script>
-(function() {
-  const TABS = ['weather', 'videos', 'blog'];
-
-  function activate(tab) {
-    // nav buttons
-    document.querySelectorAll('nav button').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.tab === tab);
-    });
-    // weather sections (non-tab-panel cards inside #weather-content)
-    const weatherContent = document.getElementById('weather-content');
-    if (weatherContent) {
-      weatherContent.style.display = (tab === 'weather') ? 'contents' : 'none';
-    }
-    // tab panels
-    document.querySelectorAll('.tab-panel').forEach(el => {
-      el.classList.toggle('active', el.id === tab);
-    });
-    history.replaceState(null, '', '#' + tab);
-  }
-
-  document.querySelectorAll('nav button[data-tab]').forEach(btn => {
-    btn.addEventListener('click', () => activate(btn.dataset.tab));
-  });
-
-  // on load, check hash
-  const hash = location.hash.replace('#', '');
-  activate(TABS.includes(hash) ? hash : 'weather');
-})();
-</script>
-
+    <div class="footer">
+        <p>Dave's Sweater is not affiliated with <a href="https://raysweather.com">Ray's Weather</a>. Ray's great. Go use his site for actual weather information.</p>
+        <p>Weather data from <a href="https://open-meteo.com">Open-Meteo.com</a>. Sweater data from Dave.</p>
+        <p>davessweater.com &bull; est. 2026 &bull; "the weather site boone didn't ask for"</p>
+        <p style="font-size: 9px;">Made with basic HTML, no frameworks, and questionable judgment.</p>
+    </div>
 </body>
 </html>
