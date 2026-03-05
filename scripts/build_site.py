@@ -157,9 +157,9 @@ def build_sweater_section(comp):
   <h2>Is it sweater weather in Boone?</h2>
   <div class="sweater-verdict">
     <div class="sweater-score">{emoji_row}</div>
-    <div class="sweater-temp">{temp}&deg;F</div>
-    <p class="sweater-text">{verdict}</p>
-    {f'<p class="sweater-layers"><strong>Recommended layers:</strong> {layers}</p>' if layers else ''}
+    <div class="sweater-temp" id="live-temp">{temp}&deg;F</div>
+    <p class="sweater-text" id="live-verdict">{verdict}</p>
+    {f'<p class="sweater-layers" id="live-layers"><strong>Recommended layers:</strong> {layers}</p>' if layers else ''}
   </div>
 </section>
 """
@@ -770,6 +770,57 @@ JS = """
   // on load, check hash
   const hash = location.hash.replace('#', '');
   activate(TABS.includes(hash) ? hash : 'weather');
+})();
+
+// ── Live temperature from Open-Meteo (Boone, NC) ──
+(function() {
+  var BOONE_LAT = 36.2168, BOONE_LON = -81.6746;
+  var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + BOONE_LAT
+    + '&longitude=' + BOONE_LON
+    + '&current=temperature_2m,wind_speed_10m,relative_humidity_2m,apparent_temperature'
+    + '&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America/New_York';
+
+  fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var c = data.current;
+      if (!c || c.temperature_2m == null) return;
+      var temp = Math.round(c.temperature_2m * 10) / 10;
+      var wind = c.wind_speed_10m || 0;
+
+      // Update temperature display
+      var el = document.getElementById('live-temp');
+      if (el) el.innerHTML = temp + '&deg;F <span style=\"font-size:0.5em;color:#999;\">live</span>';
+
+      // Update sweater verdict based on live temp
+      var effective = temp - (wind > 5 ? (wind / 10) * 5 : 0);
+      var verdict, layers;
+      if (effective < 32) {
+        verdict = "It's " + Math.round(temp) + "\\u00b0F. That's not sweater weather, that's SWEATER EMERGENCY.";
+        layers = "3+ (sweater, fleece, AND a coat)";
+      } else if (effective < 45) {
+        verdict = "It's " + Math.round(temp) + "\\u00b0F. Classic sweater weather. This is what we're here for.";
+        layers = "2 (solid sweater + optional layer)";
+      } else if (effective < 55) {
+        verdict = "It's " + Math.round(temp) + "\\u00b0F. Still sweater territory. Don't let anyone tell you otherwise.";
+        layers = "1-2 (light to medium sweater)";
+      } else if (effective < 65) {
+        verdict = "It's " + Math.round(temp) + "\\u00b0F. You could go either way. Bring it and decide later.";
+        layers = "0-1 (light layer, keep one in the car)";
+      } else if (effective < 75) {
+        verdict = "It's " + Math.round(temp) + "\\u00b0F. No sweater needed unless you're in aggressive AC.";
+        layers = "0 (the sweater rests today)";
+      } else {
+        verdict = "It's " + Math.round(temp) + "\\u00b0F. Wearing a sweater would be a cry for help.";
+        layers = "0 (this is shorts weather, Dave)";
+      }
+
+      var vEl = document.getElementById('live-verdict');
+      if (vEl) vEl.textContent = verdict;
+      var lEl = document.getElementById('live-layers');
+      if (lEl) lEl.innerHTML = '<strong>Recommended layers:</strong> ' + layers;
+    })
+    .catch(function() { /* keep static fallback */ });
 })();
 """
 
