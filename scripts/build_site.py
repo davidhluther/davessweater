@@ -326,14 +326,14 @@ def build_phone_forecast(_forecast_data=None):
         # Copy screenshot to docs for serving
         ss_dest = DOCS / "screenshots"
         ss_dest.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(screenshot_src, ss_dest / "apple_weather.png")
+        shutil.copy2(screenshot_src, ss_dest / "iphone_screenshot.png")
 
         return """
 <section class="card" id="weekly-forecast">
   <h2>Your iPhone Says&hellip;</h2>
   <p class="section-subtitle">Spoiler: it's about as accurate as Ray.</p>
   <div class="iphone-screenshot-wrap">
-    <img src="screenshots/apple_weather.png" alt="Apple Weather forecast for Boone, NC"
+    <img src="screenshots/iphone_screenshot.png" alt="Apple Weather forecast for Boone, NC"
          class="iphone-screenshot" loading="lazy">
   </div>
 </section>
