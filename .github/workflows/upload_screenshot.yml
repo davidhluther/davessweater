@@ -38,16 +38,16 @@ jobs:
           mkdir -p "$DIR"
 
           # Decode base64 screenshot
-          echo "$SCREENSHOT_B64" | base64 -d > "${DIR}/apple_weather.png"
+          echo "$SCREENSHOT_B64" | base64 -d > "${DIR}/iphone_screenshot.png"
 
           # Validate it's actually a PNG
-          if ! file "${DIR}/apple_weather.png" | grep -q PNG; then
+          if ! file "${DIR}/iphone_screenshot.png" | grep -q PNG; then
             echo "ERROR: Decoded file is not a valid PNG"
             exit 1
           fi
 
           echo "date=${DATE}" >> "$GITHUB_ENV"
-          echo "Saved screenshot to ${DIR}/apple_weather.png"
+          echo "Saved screenshot to ${DIR}/iphone_screenshot.png"
 
       - name: Rebuild site
         run: python scripts/build_site.py
@@ -57,5 +57,6 @@ jobs:
           git config user.name "DavesSweaterBot"
           git config user.email "bot@davessweater.com"
           git add data/predictions/ docs/
-          git commit -m "📱 Apple Weather screenshot ${date}" || echo "No changes to commit"
-          git push
+          git commit -m "📱 iPhone screenshot ${date}" || echo "No changes to commit"
+          git pull --rebase origin main || true
+          git push || (sleep 5 && git pull --rebase origin main && git push)
