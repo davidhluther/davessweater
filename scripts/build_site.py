@@ -308,72 +308,39 @@ def build_rightwrong_section(comp):
 """
 
 
-def build_phone_forecast(forecast_data):
-    """Build an iPhone-style 7-day forecast widget."""
-    daily = forecast_data.get("daily", [])
-    if not daily:
-        return ""
+def build_phone_forecast(_forecast_data=None):
+    """Build iPhone Weather screenshot section. Shows actual screenshot if available."""
+    # Check for iPhone screenshot in latest predictions dir
+    screenshot_src = None
+    if PREDS_DIR.exists():
+        for d in sorted(PREDS_DIR.iterdir(), reverse=True):
+            png = d / "iphone_screenshot.png"
+            if png.exists():
+                screenshot_src = png
+                break
 
-    from datetime import datetime as dt
+    if screenshot_src is not None:
+        # Copy screenshot to docs for serving
+        ss_dest = DOCS / "screenshots"
+        ss_dest.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(screenshot_src, ss_dest / "iphone_forecast.png")
 
-    rows = ""
-    for i, day in enumerate(daily):
-        date_str = day.get("date", "")
-        try:
-            d = dt.strptime(date_str, "%Y-%m-%d")
-            day_name = "Today" if i == 0 else d.strftime("%a")
-        except ValueError:
-            day_name = "?"
-
-        icon = WMO_ICONS.get(day.get("weather_code", 0), "🌡")
-        hi = day.get("high_f")
-        lo = day.get("low_f")
-        hi_s = f"{hi:.0f}" if hi is not None else "--"
-        lo_s = f"{lo:.0f}" if lo is not None else "--"
-        precip_prob = day.get("precip_prob")
-        precip_s = f'<span class="phone-precip">{precip_prob}%</span>' if precip_prob and precip_prob > 10 else ""
-
-        # Temperature bar — scale between min/max of the week
-        all_lows = [d.get("low_f", 50) for d in daily if d.get("low_f") is not None]
-        all_highs = [d.get("high_f", 70) for d in daily if d.get("high_f") is not None]
-        week_min = min(all_lows) if all_lows else 30
-        week_max = max(all_highs) if all_highs else 80
-        temp_range = max(week_max - week_min, 1)
-
-        lo_pct = ((lo or week_min) - week_min) / temp_range * 100 if lo is not None else 0
-        hi_pct = ((hi or week_max) - week_min) / temp_range * 100 if hi is not None else 100
-        bar_left = lo_pct
-        bar_width = max(hi_pct - lo_pct, 5)
-
-        rows += f"""
-      <div class="phone-row">
-        <span class="phone-day">{day_name}</span>
-        <span class="phone-icon">{icon} {precip_s}</span>
-        <span class="phone-lo">{lo_s}&deg;</span>
-        <span class="phone-bar-wrap">
-          <span class="phone-bar" style="left:{bar_left:.0f}%;width:{bar_width:.0f}%"></span>
-        </span>
-        <span class="phone-hi">{hi_s}&deg;</span>
-      </div>"""
-
-    conditions = daily[0].get("conditions", "") if daily else ""
-
-    return f"""
+        return """
 <section class="card" id="weekly-forecast">
-  <div class="phone-frame">
-    <div class="phone-notch"></div>
-    <div class="phone-header">
-      <div class="phone-location">Boone, NC</div>
-      <div class="phone-current-temp">{daily[0].get("high_f", "--"):.0f}&deg;</div>
-      <div class="phone-conditions">{conditions}</div>
-    </div>
-    <div class="phone-divider"></div>
-    <div class="phone-label">7-DAY FORECAST</div>
-    <div class="phone-forecast">
-      {rows}
-    </div>
-    <div class="phone-footer">Data: Open-Meteo</div>
+  <h2>Your iPhone Says&hellip;</h2>
+  <p class="section-subtitle">Spoiler: it's about as accurate as Ray.</p>
+  <div class="iphone-screenshot-wrap">
+    <img src="screenshots/iphone_forecast.png" alt="iPhone Weather forecast for Boone, NC"
+         class="iphone-screenshot" loading="lazy">
   </div>
+</section>
+"""
+
+    # Fallback: no screenshot available yet
+    return """
+<section class="card" id="weekly-forecast">
+  <h2>Your iPhone Says&hellip;</h2>
+  <p class="section-subtitle">iPhone Weather screenshot not available yet. Check back tomorrow!</p>
 </section>
 """
 
@@ -741,112 +708,22 @@ main {{
   color: var(--teal);
 }}
 
-/* ── phone-style forecast ── */
-.phone-frame {{
-  background: linear-gradient(180deg, #1c1c1e 0%, #2c2c2e 100%);
-  border-radius: 2.5rem;
-  padding: 1.5rem 1.25rem 1rem;
-  max-width: 22rem;
-  margin: 0 auto;
-  color: #fff;
-  font-family: -apple-system, 'SF Pro Display', 'Inter', sans-serif;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+/* ── iPhone screenshot ── */
+.iphone-screenshot-wrap {{
+  text-align: center;
+  margin: 1rem 0;
+}}
+.iphone-screenshot {{
+  max-width: 320px;
+  width: 100%;
+  border-radius: 2rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
   border: 3px solid #3a3a3c;
-  position: relative;
 }}
-.phone-notch {{
-  width: 7rem;
-  height: 0.35rem;
-  background: #3a3a3c;
-  border-radius: 1rem;
-  margin: 0 auto 1rem;
-}}
-.phone-header {{
-  text-align: center;
-  margin-bottom: 0.75rem;
-}}
-.phone-location {{
-  font-size: 1.1rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-}}
-.phone-current-temp {{
-  font-size: 3.5rem;
-  font-weight: 200;
-  line-height: 1.1;
-  margin: 0.1rem 0;
-}}
-.phone-conditions {{
-  font-size: 0.85rem;
-  color: rgba(255,255,255,0.6);
-}}
-.phone-divider {{
-  height: 1px;
-  background: rgba(255,255,255,0.15);
-  margin: 0.5rem 0;
-}}
-.phone-label {{
-  font-size: 0.65rem;
-  color: rgba(255,255,255,0.4);
-  letter-spacing: 0.08em;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}}
-.phone-forecast {{
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}}
-.phone-row {{
-  display: grid;
-  grid-template-columns: 2.5rem 3.5rem 2rem 1fr 2rem;
-  align-items: center;
-  font-size: 0.85rem;
-  padding: 0.2rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}}
-.phone-day {{
-  font-weight: 500;
-}}
-.phone-icon {{
-  text-align: center;
-  font-size: 1rem;
-}}
-.phone-precip {{
-  font-size: 0.6rem;
-  color: #5ac8fa;
-  vertical-align: super;
-}}
-.phone-lo {{
-  color: rgba(255,255,255,0.5);
-  text-align: right;
-  font-size: 0.8rem;
-}}
-.phone-hi {{
-  text-align: right;
-  font-weight: 500;
-  font-size: 0.8rem;
-}}
-.phone-bar-wrap {{
-  height: 0.25rem;
-  background: rgba(255,255,255,0.1);
-  border-radius: 0.125rem;
-  position: relative;
-  margin: 0 0.4rem;
-}}
-.phone-bar {{
-  position: absolute;
-  top: 0;
-  height: 100%;
-  border-radius: 0.125rem;
-  background: linear-gradient(90deg, #5ac8fa, #ffd60a, #ff9f0a);
-}}
-.phone-footer {{
-  text-align: center;
-  font-size: 0.55rem;
-  color: rgba(255,255,255,0.25);
-  margin-top: 0.75rem;
-  padding-bottom: 0.25rem;
+.section-subtitle {{
+  color: {COLOR_MUTED};
+  font-size: 0.9rem;
+  margin-top: -0.25rem;
 }}
 
 /* ── tab panels ── */
