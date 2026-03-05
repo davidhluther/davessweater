@@ -147,10 +147,11 @@ def now_est():
 
 def build_sweater_section(comp):
     sw = comp.get("sweater_weather", {})
-    temp     = sw.get("temperature_f", "?")
-    verdict  = sw.get("verdict", "")
-    score    = sw.get("score", 0)           # 0-5 float
-    layers   = sw.get("recommended_layers", "")
+    actuals  = comp.get("actuals", {})
+    temp     = actuals.get("high_f", "?")
+    verdict  = sw.get("detail", sw.get("verdict", ""))
+    score    = sw.get("sweater_count", sw.get("score", 0))  # 0-5 scale
+    layers   = sw.get("layers", sw.get("recommended_layers", ""))
 
     emoji_row = sweater_emoji_img(score)
 
@@ -209,24 +210,33 @@ def build_current_conditions(comp):
 
 def build_rightwrong_section(comp):
     date     = comp.get("date", "")
-    actual   = comp.get("actual_weather", {})
-    preds    = comp.get("predictions", {})
+    actual   = comp.get("actuals", comp.get("actual_weather", {}))
+    sources  = comp.get("sources", comp.get("predictions", {}))
 
     act_high = actual.get("high_f", "?")
     act_low  = actual.get("low_f", "?")
     act_cond = actual.get("conditions", "")
 
     rows = ""
-    for source_key, label in [("openmeteo", "Open-Meteo"), ("rays", "Ray's Weather")]:
-        p = preds.get(source_key, {})
-        pred_high = p.get("predicted_high", "None")
-        pred_low  = p.get("predicted_low", "None")
-        sc        = p.get("score", 0)
-        verd      = p.get("verdict", "")
+    for source_key, label, icon in [
+        ("openmeteo",    "Open-Meteo",      '<span class="source-icon">🌐</span>'),
+        ("raysweather",  "Ray's Weather",   ray_face_img()),
+        ("iphone",       "iPhone Weather",  '<span class="source-icon">📱</span>'),
+    ]:
+        p = sources.get(source_key, {})
+        if not p or "score" not in p:
+            continue
+        pred      = p.get("prediction", {})
+        score_obj = p.get("score", {})
+        pred_high = pred.get("today_high_f", pred.get("high_f", "?"))
+        pred_low  = pred.get("tonight_low_f", pred.get("low_f", "?"))
+        sc        = score_obj.get("score", 0) if isinstance(score_obj, dict) else 0
+        grade     = score_obj.get("grade", {}) if isinstance(score_obj, dict) else {}
+        verd      = grade.get("label", "")
         rows += f"""
 <tr>
   <td class="source-cell">
-    {ray_face_img() if source_key == "rays" else '<span class="source-icon">🌐</span>'}
+    {icon}
     <span>{label}</span>
   </td>
   <td>Hi: {pred_high}&deg; / Lo: {pred_low}&deg;</td>

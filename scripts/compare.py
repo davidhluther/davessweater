@@ -295,9 +295,17 @@ def run_daily_comparison(target_date=None):
         # Attach Ray's current conditions if available
         if rays_data.get("current"):
             comparison["rays_current"] = rays_data["current"]
-        # Ray's data may not have structured daily forecasts yet
-        # We'll score what we have and note what's missing
-        if rays_data.get("daily"):
+        # Ray's capture outputs forecast as a single dict (today_high_f / tonight_low_f)
+        forecast = rays_data.get("forecast", {})
+        if forecast and (_get_high(forecast) is not None or _get_low(forecast) is not None):
+            result = score_prediction(forecast, actuals)
+            comparison["sources"]["raysweather"] = {
+                "prediction": forecast,
+                "score": result,
+            }
+            print(f"  Ray's Weather: {result['score']}/100 — {result['grade']['label']}")
+        elif rays_data.get("daily"):
+            # Legacy format: list of day dicts
             for day in rays_data["daily"]:
                 if day.get("date") == target_date:
                     result = score_prediction(day, actuals)
@@ -324,7 +332,17 @@ def run_daily_comparison(target_date=None):
         # Attach iPhone current conditions if available
         if iphone_data.get("current"):
             comparison["iphone_current"] = iphone_data["current"]
-        if iphone_data.get("daily"):
+        # iPhone capture outputs forecast as a single dict (today_high_f / tonight_low_f)
+        forecast = iphone_data.get("forecast", {})
+        if forecast and (_get_high(forecast) is not None or _get_low(forecast) is not None):
+            result = score_prediction(forecast, actuals)
+            comparison["sources"]["iphone"] = {
+                "prediction": forecast,
+                "score": result,
+            }
+            print(f"  iPhone Weather: {result['score']}/100 — {result['grade']['label']}")
+        elif iphone_data.get("daily"):
+            # Legacy format: list of day dicts
             for day in iphone_data["daily"]:
                 if day.get("date") == target_date:
                     result = score_prediction(day, actuals)
