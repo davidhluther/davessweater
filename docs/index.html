@@ -139,11 +139,19 @@ main {
 }
 
 .sweater-score {
-  font-size: 0;   /* hide alt text */
   display: flex;
   gap: 0.35rem;
   align-items: center;
   margin-bottom: 0.25rem;
+}
+
+.sweater-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.sweater-icon.inactive {
+  opacity: 0.18;
 }
 
 .sweater-temp {
@@ -374,7 +382,10 @@ footer a:hover { text-decoration: underline; }
 
 <header>
   <a class="header-logo" href="/">
-    <span style="font-weight:800;font-size:1.25rem;letter-spacing:-0.03em;color:#fff;">Dave's Sweater</span>
+    <svg style="height:2.5rem;width:auto;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 40" height="40">
+  <text x="0" y="30" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="26" fill="#ffffff" letter-spacing="-0.5">Dave's Sweater</text>
+</svg>
+
   </a>
   <span class="header-tagline">Boone, NC's #2 weather resource</span>
   <nav>
@@ -384,7 +395,7 @@ footer a:hover { text-decoration: underline; }
   </nav>
 </header>
 
-<div class="update-bar">Updated: March 04, 2026 at 10:15 PM EST</div>
+<div class="update-bar">Updated: March 04, 2026 at 10:31 PM EST</div>
 
 <main>
   <!-- weather tab: sweater + right/wrong + scoreboard -->
@@ -393,7 +404,7 @@ footer a:hover { text-decoration: underline; }
 <section class="card" id="sweater">
   <h2>Is it sweater weather in Boone?</h2>
   <div class="sweater-verdict">
-    <div class="sweater-score"><img src="assets/sweater.png" alt="🧥" style="height:2rem;width:auto;vertical-align:middle;opacity:1;"><img src="assets/sweater.png" alt="🧥" style="height:2rem;width:auto;vertical-align:middle;opacity:0.18;"><img src="assets/sweater.png" alt="🧥" style="height:2rem;width:auto;vertical-align:middle;opacity:0.18;"><img src="assets/sweater.png" alt="🧥" style="height:2rem;width:auto;vertical-align:middle;opacity:0.18;"><img src="assets/sweater.png" alt="🧥" style="height:2rem;width:auto;vertical-align:middle;opacity:0.18;"></div>
+    <div class="sweater-score"><span class="sweater-icon active">&#129509;</span><span class="sweater-icon inactive">&#129509;</span><span class="sweater-icon inactive">&#129509;</span><span class="sweater-icon inactive">&#129509;</span><span class="sweater-icon inactive">&#129509;</span></div>
     <div class="sweater-temp">69.2&deg;F</div>
     <p class="sweater-text">It's 69°F. No sweater needed unless you're in aggressive AC.</p>
     <p class="sweater-layers"><strong>Recommended layers:</strong> 0 (the sweater rests today)</p>
@@ -420,16 +431,16 @@ footer a:hover { text-decoration: underline; }
   </td>
   <td>Hi: 67.5&deg; / Lo: 42.3&deg;</td>
   <td><strong>72.9/100</strong></td>
-  <td><span class="verdict-label">EH RAY</span> <img src="assets/ray_face.webp" alt="Ray" style="height:1.6rem;width:1.6rem;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;"><img src="assets/ray_face.webp" alt="Ray" style="height:1.6rem;width:1.6rem;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;"><img src="assets/ray_face.webp" alt="Ray" style="height:1.6rem;width:1.6rem;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;"><img src="assets/ray_face.webp" alt="Ray" style="height:1.6rem;width:1.6rem;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;"></td>
+  <td><span class="verdict-label">EH RAY</span> <img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"></td>
 </tr>
 <tr>
   <td class="source-cell">
-    <img src="assets/ray_face.webp" alt="Ray" style="height:2.5rem;width:2.5rem;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;">
+    <img src="assets/ray_face.svg" alt="Ray" style="height:2.5rem;width:2.5rem;vertical-align:middle;">
     <span>Ray's Weather</span>
   </td>
   <td>Hi: None&deg; / Lo: 46.0&deg;</td>
   <td><strong>26.9/100</strong></td>
-  <td><span class="verdict-label">VERY WRONG RAY</span> <img src="assets/ray_face.webp" alt="Ray" style="height:1.6rem;width:1.6rem;border-radius:50%;object-fit:cover;object-position:center top;vertical-align:middle;"></td>
+  <td><span class="verdict-label">VERY WRONG RAY</span> <img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"></td>
 </tr></tbody>
     </table>
   </div>

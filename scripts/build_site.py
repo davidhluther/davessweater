@@ -106,25 +106,22 @@ def fetch_rss(url, max_items=5):
 
 
 def sweater_emoji_img(score):
-    """Return an <img> for the sweater graphic scaled by score (0-5)."""
+    """Return sweater emoji scale (0-5)."""
     filled = round(score)
     empty  = 5 - filled
-    imgs   = (
-        '<img src="assets/sweater.png" alt="🧥" '
-        'style="height:2rem;width:auto;vertical-align:middle;opacity:1;">'
+    imgs = (
+        '<span class="sweater-icon active">&#129509;</span>'
     ) * filled + (
-        '<img src="assets/sweater.png" alt="🧥" '
-        'style="height:2rem;width:auto;vertical-align:middle;opacity:0.18;">'
+        '<span class="sweater-icon inactive">&#129509;</span>'
     ) * empty
     return imgs
 
 
 def ray_face_img(size="2.5rem"):
-    """Circle-cropped Ray face image for Right Ray / Wrong Ray verdicts."""
+    """Circle Ray face image for Right Ray / Wrong Ray verdicts."""
     return (
-        f'<img src="assets/ray_face.webp" alt="Ray" '
-        f'style="height:{size};width:{size};border-radius:50%;object-fit:cover;'
-        f'object-position:center top;vertical-align:middle;">'
+        f'<img src="assets/ray_face.svg" alt="Ray" '
+        f'style="height:{size};width:{size};vertical-align:middle;">'
     )
 
 
@@ -502,11 +499,19 @@ main {{
 }}
 
 .sweater-score {{
-  font-size: 0;   /* hide alt text */
   display: flex;
   gap: 0.35rem;
   align-items: center;
   margin-bottom: 0.25rem;
+}}
+
+.sweater-icon {{
+  font-size: 2rem;
+  line-height: 1;
+}}
+
+.sweater-icon.inactive {{
+  opacity: 0.18;
 }}
 
 .sweater-temp {{
