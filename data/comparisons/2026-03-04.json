@@ -1,6 +1,6 @@
 {
   "date": "2026-03-04",
-  "generated_at": "2026-03-05T08:23:28.961143-05:00",
+  "generated_at": "2026-03-05T08:28:00.305359-05:00",
   "actuals": {
     "date": "2026-03-04",
     "fetched_at": "2026-03-04T14:41:21.786012-05:00",
@@ -33,7 +33,7 @@
         "wind_mph": 14.2
       },
       "score": {
-        "score": 72.9,
+        "score": 74.3,
         "grade": {
           "label": "EH RAY \ud83e\udd37",
           "detail": "Not great, not terrible. Like a 3.6 roentgen forecast.",
@@ -45,29 +45,36 @@
             "predicted": 67.5,
             "actual": 69.2,
             "error_f": 1.7,
-            "points": 24.9,
-            "max": 30
+            "points": 20.7,
+            "max": 25
           },
           "low_temp": {
             "predicted": 42.3,
             "actual": 38.3,
             "error_f": 4.0,
-            "points": 18.0,
-            "max": 30
+            "points": 15.0,
+            "max": 25
           },
           "precipitation": {
-            "predicted_any": false,
-            "actual_any": false,
-            "correct": true,
-            "points": 20,
+            "predicted_in": 0,
+            "actual_in": 0.004,
+            "binary_correct": true,
+            "error_in": 0.004,
+            "points": 19.9,
             "max": 20
+          },
+          "wind": {
+            "error": "missing data",
+            "points": 0,
+            "max": 15,
+            "excluded": true
           },
           "conditions": {
             "predicted": "fog",
             "actual": "drizzle",
             "match": "close",
-            "points": 10,
-            "max": 20
+            "points": 7.5,
+            "max": 15
           }
         }
       }
@@ -80,7 +87,7 @@
         "daytime_desc": ""
       },
       "score": {
-        "score": 53.8,
+        "score": 57.0,
         "grade": {
           "label": "WRONG RAY \u274c",
           "detail": "Missed it. Should've checked Dave's Sweater.",
@@ -91,29 +98,36 @@
           "high_temp": {
             "error": "missing data",
             "points": 0,
-            "max": 30,
+            "max": 25,
             "excluded": true
           },
           "low_temp": {
             "predicted": 46.0,
             "actual": 38.3,
             "error_f": 7.7,
-            "points": 6.9,
-            "max": 30
+            "points": 5.7,
+            "max": 25
           },
           "precipitation": {
-            "predicted_any": false,
-            "actual_any": false,
-            "correct": true,
-            "points": 20,
+            "predicted_in": 0,
+            "actual_in": 0.004,
+            "binary_correct": true,
+            "error_in": 0.004,
+            "points": 19.9,
             "max": 20
+          },
+          "wind": {
+            "error": "missing data",
+            "points": 0,
+            "max": 15,
+            "excluded": true
           },
           "conditions": {
             "predicted": "unknown",
             "actual": "drizzle",
             "match": "excluded",
             "points": 0,
-            "max": 20,
+            "max": 15,
             "excluded": true
           }
         }

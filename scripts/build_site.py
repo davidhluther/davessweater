@@ -210,9 +210,11 @@ def build_rightwrong_section(comp):
     actual   = comp.get("actuals", comp.get("actual_weather", {}))
     sources  = comp.get("sources", comp.get("predictions", {}))
 
-    act_high = actual.get("high_f", "?")
-    act_low  = actual.get("low_f", "?")
-    act_cond = actual.get("conditions", "")
+    act_high   = actual.get("high_f", "?")
+    act_low    = actual.get("low_f", "?")
+    act_cond   = actual.get("conditions", "")
+    act_wind   = actual.get("wind_mph")
+    act_precip = actual.get("precip_in")
 
     rows = ""
     for source_key, label, icon in [
@@ -227,18 +229,28 @@ def build_rightwrong_section(comp):
         score_obj = p.get("score", {})
         pred_high = pred.get("today_high_f", pred.get("high_f"))
         pred_low  = pred.get("tonight_low_f", pred.get("low_f"))
-        pred_high = f"{pred_high}" if pred_high is not None else "N/A"
-        pred_low  = f"{pred_low}" if pred_low is not None else "N/A"
+        pred_high_s = f"{pred_high}&deg;" if pred_high is not None else "N/A"
+        pred_low_s  = f"{pred_low}&deg;" if pred_low is not None else "N/A"
+        pred_wind = pred.get("wind_mph")
+        pred_precip = pred.get("precip_in")
         sc        = score_obj.get("score", 0) if isinstance(score_obj, dict) else 0
         grade     = score_obj.get("grade", {}) if isinstance(score_obj, dict) else {}
         verd      = grade.get("label", "")
+
+        # Build detail lines
+        detail_parts = [f"Hi: {pred_high_s} / Lo: {pred_low_s}"]
+        if pred_wind is not None:
+            detail_parts.append(f"Wind: {pred_wind} mph")
+        if pred_precip is not None:
+            detail_parts.append(f'Rain: {pred_precip}"')
+
         rows += f"""
 <tr>
   <td class="source-cell">
     {icon}
     <span>{label}</span>
   </td>
-  <td>Hi: {pred_high + "&deg;" if pred_high != "N/A" else "N/A"} / Lo: {pred_low + "&deg;" if pred_low != "N/A" else "N/A"}</td>
+  <td>{"<br>".join(detail_parts)}</td>
   <td><strong>{sc:.1f}/100</strong></td>
   <td>{verdict_html(verd, sc)}</td>
 </tr>"""
@@ -250,7 +262,10 @@ def build_rightwrong_section(comp):
   <h2>Right Ray / Wrong Ray</h2>
   <p class="section-date">{date}</p>
   <p class="actual-weather">
-    <strong>Actual weather:</strong> High {act_high}&deg;F / Low {act_low}&deg;F &mdash; {act_cond}
+    <strong>Actual weather:</strong> High {act_high}&deg;F / Low {act_low}&deg;F
+    {f" &middot; Wind: {act_wind} mph" if act_wind is not None else ""}
+    {f' &middot; Rain: {act_precip}"' if act_precip is not None else ""}
+    &mdash; {act_cond}
   </p>
   {build_current_conditions(comp)}
   <div class="table-wrap">

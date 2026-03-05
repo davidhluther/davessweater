@@ -39,8 +39,9 @@ ARCHIVE_URL_TEMPLATE = (
     f"https://archive-api.open-meteo.com/v1/archive?"
     f"latitude={LAT}&longitude={LON}"
     f"&start_date={{date}}&end_date={{date}}"
-    f"&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code"
-    f"&temperature_unit=fahrenheit&precipitation_unit=inch"
+    f"&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code,"
+    f"wind_speed_10m_max,wind_gusts_10m_max"
+    f"&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch"
     f"&timezone=America/New_York"
 )
 
@@ -197,6 +198,8 @@ def fetch_actuals(target_date=None):
         "high_f": daily.get("temperature_2m_max", [None])[0],
         "low_f": daily.get("temperature_2m_min", [None])[0],
         "precip_in": daily.get("precipitation_sum", [None])[0],
+        "wind_mph": daily.get("wind_speed_10m_max", [None])[0],
+        "gust_mph": daily.get("wind_gusts_10m_max", [None])[0],
         "weather_code": code,
         "conditions": WMO_CODES.get(code, "Unknown"),
         "category": weather_category(code),
