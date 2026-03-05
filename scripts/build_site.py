@@ -106,13 +106,13 @@ def fetch_rss(url, max_items=5):
 
 
 def sweater_emoji_img(score):
-    """Return sweater emoji scale (0-5)."""
+    """Return sweater icon scale (0-5) using custom sweater image."""
     filled = round(score)
     empty  = 5 - filled
     imgs = (
-        '<span class="sweater-icon active">&#129509;</span>'
+        '<img class="sweater-icon active" src="assets/sweateremoji.webp" alt="sweater">'
     ) * filled + (
-        '<span class="sweater-icon inactive">&#129509;</span>'
+        '<img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater">'
     ) * empty
     return imgs
 
@@ -523,8 +523,9 @@ main {{
 }}
 
 .sweater-icon {{
-  font-size: 2rem;
-  line-height: 1;
+  height: 2.5rem;
+  width: auto;
+  vertical-align: middle;
 }}
 
 .sweater-icon.inactive {{

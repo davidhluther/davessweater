@@ -146,8 +146,9 @@ main {
 }
 
 .sweater-icon {
-  font-size: 2rem;
-  line-height: 1;
+  height: 2.5rem;
+  width: auto;
+  vertical-align: middle;
 }
 
 .sweater-icon.inactive {
@@ -392,7 +393,7 @@ footer a:hover { text-decoration: underline; }
   </nav>
 </header>
 
-<div class="update-bar">Updated: March 05, 2026 at 08:29 AM EST</div>
+<div class="update-bar">Updated: March 05, 2026 at 08:32 AM EST</div>
 
 <main>
   <!-- weather tab: sweater + right/wrong + scoreboard -->
@@ -401,7 +402,7 @@ footer a:hover { text-decoration: underline; }
 <section class="card" id="sweater">
   <h2>Is it sweater weather in Boone?</h2>
   <div class="sweater-verdict">
-    <div class="sweater-score"><span class="sweater-icon active">&#129509;</span><span class="sweater-icon inactive">&#129509;</span><span class="sweater-icon inactive">&#129509;</span><span class="sweater-icon inactive">&#129509;</span><span class="sweater-icon inactive">&#129509;</span></div>
+    <div class="sweater-score"><img class="sweater-icon active" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"></div>
     <div class="sweater-temp" id="live-temp">69.2&deg;F</div>
     <p class="sweater-text" id="live-verdict">It's 69°F. No sweater needed unless you're in aggressive AC.</p>
     <p class="sweater-layers" id="live-layers"><strong>Recommended layers:</strong> 0 (the sweater rests today)</p>
