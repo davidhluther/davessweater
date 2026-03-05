@@ -311,20 +311,15 @@ def build_rightwrong_section(comp):
 def build_phone_forecast(_forecast_data=None):
     """Build Apple Weather screenshot section.
 
-    Prefers a real device screenshot (apple_weather.png uploaded via iOS Shortcut)
-    over the generated mock-up (iphone_screenshot.png).
+    Looks for the real iPhone Weather screenshot (iphone_screenshot.png)
+    uploaded daily via iOS Shortcut.
     """
     screenshot_src = None
     if PREDS_DIR.exists():
         for d in sorted(PREDS_DIR.iterdir(), reverse=True):
-            # Prefer real screenshot from iOS Shortcut
-            real = d / "apple_weather.png"
-            mock = d / "iphone_screenshot.png"
-            if real.exists():
-                screenshot_src = real
-                break
-            if mock.exists():
-                screenshot_src = mock
+            shot = d / "iphone_screenshot.png"
+            if shot.exists():
+                screenshot_src = shot
                 break
 
     if screenshot_src is not None:
