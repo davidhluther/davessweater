@@ -1,443 +1,917 @@
 #!/usr/bin/env python3
 """
-build_site.py - Generate the comically underdeveloped DavesSweater.com
+Dave's Sweater — build_site.py
+Generates docs/index.html from data/ and copies assets/ → docs/assets/
 """
 
 import json
 import os
+import re
+import shutil
+import sys
+import urllib.request
+import xml.etree.ElementTree as ET
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
-EST = timezone(timedelta(hours=-5))
-BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = BASE_DIR / "data"
-SITE_DIR = BASE_DIR / "docs"
+# ── paths ──────────────────────────────────────────────────────────────────────
 
-# Ray's face as base64
-_asset_path = BASE_DIR / "assets" / "ray_face_b64.txt"
-RAY_FACE_B64 = ""
-if _asset_path.exists():
-    RAY_FACE_B64 = _asset_path.read_text().strip()
+ROOT        = Path(__file__).resolve().parent.parent
+DATA        = ROOT / "data"
+DOCS        = ROOT / "docs"
+ASSETS_SRC  = ROOT / "assets"
+ASSETS_DEST = DOCS / "assets"
+SCORES_FILE = DATA / "scores.json"
+COMPS_DIR   = DATA / "comparisons"
+
+# ── RSS feeds ──────────────────────────────────────────────────────────────────
+
+SUBSTACK_RSS = "https://davessweater.substack.com/feed"
+YOUTUBE_UC   = "UCxxxxxxxxxxxxxxxxxxxxxxxx"          # ← user: replace with real channel ID
+YOUTUBE_RSS  = f"https://www.youtube.com/feeds/videos.xml?channel_id={YOUTUBE_UC}"
+
+# ── branding ───────────────────────────────────────────────────────────────────
+
+COLOR_TEAL   = "#3C5468"
+COLOR_ORANGE = "#f97316"
+COLOR_BG     = "#ffffff"
+COLOR_CARD   = "#F8F9FC"
+COLOR_TEXT   = "#1a1a1a"
+COLOR_MUTED  = "#6b7280"
+
+# ──────────────────────────────────────────────────────────────────────────────
+# helpers
+# ──────────────────────────────────────────────────────────────────────────────
+
+def load_json(path, default=None):
+    try:
+        return json.loads(Path(path).read_text())
+    except Exception:
+        return default if default is not None else {}
 
 
-def get_latest_comparison():
-    comp_dir = DATA_DIR / "comparisons"
-    if not comp_dir.exists():
-        return None
-    files = sorted(comp_dir.glob("*.json"), reverse=True)
+def latest_comparison():
+    """Return the most-recent comparison dict, or {}."""
+    if not COMPS_DIR.exists():
+        return {}
+    files = sorted(COMPS_DIR.glob("*.json"))
     if not files:
-        return None
-    with open(files[0]) as f:
-        return json.load(f)
+        return {}
+    return load_json(files[-1])
 
 
-def get_scores():
-    scores_path = DATA_DIR / "scores.json"
-    if not scores_path.exists():
-        return None
-    with open(scores_path) as f:
-        return json.load(f)
+def fetch_rss(url, max_items=5):
+    """Fetch an RSS/Atom feed, return list of {title, link, date, summary}."""
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "DavesSweater/1.0"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            raw = resp.read()
+        root = ET.fromstring(raw)
+    except Exception as e:
+        print(f"  [RSS] could not fetch {url}: {e}", file=sys.stderr)
+        return []
+
+    ns = {
+        "atom":    "http://www.w3.org/2005/Atom",
+        "media":   "http://search.yahoo.com/mrss/",
+        "yt":      "http://www.youtube.com/xml/schemas/2015",
+    }
+
+    items = []
+
+    # Atom (YouTube)
+    for entry in root.findall("atom:entry", ns)[:max_items]:
+        title   = entry.findtext("atom:title", "", ns)
+        link_el = entry.find("atom:link", ns)
+        link    = link_el.get("href", "") if link_el is not None else ""
+        pub     = entry.findtext("atom:published", "", ns)[:10]
+        thumb_el = entry.find(".//media:thumbnail", ns)
+        thumb   = thumb_el.get("url", "") if thumb_el is not None else ""
+        items.append({"title": title, "link": link, "date": pub, "thumb": thumb})
+
+    if items:
+        return items
+
+    # RSS 2.0 (Substack)
+    for item in root.findall(".//item")[:max_items]:
+        title   = item.findtext("title", "")
+        link    = item.findtext("link", "")
+        pub     = item.findtext("pubDate", "")[:16]
+        desc    = item.findtext("description", "")
+        # strip HTML tags crudely
+        desc = re.sub(r"<[^>]+>", "", desc)[:200].strip()
+        items.append({"title": title, "link": link, "date": pub, "summary": desc})
+
+    return items
 
 
-def get_current_sweater_check():
-    today = datetime.now(EST).strftime("%Y-%m-%d")
-    forecast_path = DATA_DIR / "predictions" / today / "openmeteo_forecast.json"
-    if not forecast_path.exists():
-        return None
-    with open(forecast_path) as f:
-        data = json.load(f)
-    current = data.get("current", {})
-    from compare import is_sweater_weather
-    return is_sweater_weather(current.get("temp_f"), current.get("wind_mph", 0))
+def sweater_emoji_img(score):
+    """Return an <img> for the sweater graphic scaled by score (0-5)."""
+    filled = round(score)
+    empty  = 5 - filled
+    imgs   = (
+        '<img src="assets/sweater.png" alt="🧥" '
+        'style="height:2rem;width:auto;vertical-align:middle;opacity:1;">'
+    ) * filled + (
+        '<img src="assets/sweater.png" alt="🧥" '
+        'style="height:2rem;width:auto;vertical-align:middle;opacity:0.18;">'
+    ) * empty
+    return imgs
 
 
-def sweater_scale_html(count):
-    """5-sweater emoji scale."""
-    parts = []
-    for i in range(5):
-        if i < count:
-            parts.append('<span class="sweater-icon active">&#129509;</span>')
-        else:
-            parts.append('<span class="sweater-icon inactive">&#129509;</span>')
-    return '<span class="scale">' + "".join(parts) + '</span>'
+def ray_face_img(size="2.5rem"):
+    """Circle-cropped Ray face image for Right Ray / Wrong Ray verdicts."""
+    return (
+        f'<img src="assets/ray_face.webp" alt="Ray" '
+        f'style="height:{size};width:{size};border-radius:50%;object-fit:cover;'
+        f'object-position:center top;vertical-align:middle;">'
+    )
 
 
-def ray_scale_html(count):
-    """5-Ray-face scale using his actual headshot."""
-    if not RAY_FACE_B64:
-        parts = []
-        for i in range(5):
-            cls = "active" if i < count else "inactive"
-            parts.append(f'<span class="ray-emoji {cls}">&#128526;</span>')
-        return '<span class="scale">' + "".join(parts) + '</span>'
-
-    parts = []
-    for i in range(5):
-        cls = "ray-active" if i < count else "ray-inactive"
-        parts.append(f'<img src="data:image/jpeg;base64,{RAY_FACE_B64}" class="ray-face {cls}" alt="Ray">')
-    return '<span class="scale">' + "".join(parts) + '</span>'
+def verdict_html(verdict_str, score):
+    """Render verdict with ray-face icons instead of emoji."""
+    # strip trailing emoji and replace with ray faces
+    clean = verdict_str.split("\U0001f60e")[0].strip().rstrip("\u274c\U0001f937\u2705").strip()
+    faces = int(round(score / 20)) if score else 0
+    face_row = "".join([ray_face_img("1.6rem")] * min(faces, 5))
+    return f'<span class="verdict-label">{clean}</span> {face_row}'
 
 
-def build_sweater_section(sweater_data):
-    if not sweater_data:
-        return """
-        <div class="section sweater-check">
-            <h2>IS IT SWEATER WEATHER?</h2>
-            <p class="big-answer">&#175;\\_(&#12484;)_/&#175;</p>
-            <p>No data yet. Try again after 7 AM.</p>
-        </div>"""
+def now_est():
+    est = timezone(timedelta(hours=-5))
+    return datetime.now(est).strftime("%B %d, %Y at %I:%M %p EST")
 
-    answer = sweater_data["answer"]
-    count = sweater_data.get("sweater_count", 0)
-    if answer in ("YES", "ABSOLUTELY"):
-        color = "#2D5A47"
-    elif answer == "MAYBE":
-        color = "#C9A227"
-    else:
-        color = "#8B0000"
-    scale = sweater_scale_html(count)
+# ──────────────────────────────────────────────────────────────────────────────
+# section builders
+# ──────────────────────────────────────────────────────────────────────────────
+
+def build_sweater_section(comp):
+    sw = comp.get("sweater_weather", {})
+    actuals  = comp.get("actuals", {})
+    temp     = actuals.get("high_f", "?")
+    verdict  = sw.get("detail", sw.get("verdict", ""))
+    score    = sw.get("sweater_count", sw.get("score", 0))  # 0-5 scale
+    layers   = sw.get("layers", sw.get("recommended_layers", ""))
+
+    emoji_row = sweater_emoji_img(score)
 
     return f"""
-    <div class="section sweater-check">
-        <h2>IS IT SWEATER WEATHER IN BOONE?</h2>
-        <p class="big-answer" style="color: {color};">{answer}</p>
-        <div class="scale-row">{scale}</div>
-        <p class="scale-label">{count} out of 5 sweaters</p>
-        <p>{sweater_data['detail']}</p>
-        <p><b>Recommended layers:</b> {sweater_data['layers']}</p>
-    </div>"""
+<section class="card" id="sweater">
+  <h2>Is it sweater weather in Boone?</h2>
+  <div class="sweater-verdict">
+    <div class="sweater-score">{emoji_row}</div>
+    <div class="sweater-temp">{temp}&deg;F</div>
+    <p class="sweater-text">{verdict}</p>
+    {f'<p class="sweater-layers"><strong>Recommended layers:</strong> {layers}</p>' if layers else ''}
+  </div>
+</section>
+"""
 
 
-def build_right_wrong_section(comparison):
-    if not comparison:
-        return """
-        <div class="section">
-            <h2>RIGHT RAY / WRONG RAY</h2>
-            <p>No data yet. Check back tomorrow.</p>
-            <p style="font-size: 10px;">(We're collecting Ray's predictions. This takes time. Be patient.)</p>
-        </div>"""
+def build_current_conditions(comp):
+    """Mini-panel showing current live conditions from Ray's station."""
+    cur = comp.get("rays_current", {})
+    if not cur:
+        return ""
 
-    date = comparison["date"]
-    actuals = comparison.get("actuals", {})
+    def item(label, value):
+        if value is None:
+            return ""
+        return (f'<div class="cond-item">'
+                f'<span class="cond-label">{label}</span>'
+                f'<span class="cond-value">{value}</span>'
+                f'</div>')
+
+    temp      = cur.get("temp_f")
+    feels     = cur.get("feels_like_f")
+    wind      = cur.get("wind")
+    gust      = cur.get("gust_mph")
+    humidity  = cur.get("humidity_pct")
+    rainfall  = cur.get("rainfall_in")
+
+    rows = (
+        item("Temp",       f"{temp}&deg;F"   if temp     is not None else None) +
+        item("Feels Like", f"{feels}&deg;F"  if feels    is not None else None) +
+        item("Wind",       wind) +
+        item("Gust",       f"{gust} mph"     if gust     is not None else None) +
+        item("Humidity",   f"{humidity}%"    if humidity is not None else None) +
+        item("Rainfall",   f'{rainfall}"'    if rainfall is not None else None)
+    )
+
+    if not rows.strip():
+        return ""
+
+    return f"""
+  <div class="current-conditions">
+    <div class="cond-header">📡 Current conditions (Ray's station)</div>
+    {rows}
+  </div>"""
+
+
+def build_rightwrong_section(comp):
+    date     = comp.get("date", "")
+    actual   = comp.get("actuals", comp.get("actual_weather", {}))
+    sources  = comp.get("sources", comp.get("predictions", {}))
+
+    act_high = actual.get("high_f", "?")
+    act_low  = actual.get("low_f", "?")
+    act_cond = actual.get("conditions", "")
 
     rows = ""
-    for source_name, source_data in comparison.get("sources", {}).items():
-        if "score" not in source_data:
+    for source_key, label, icon in [
+        ("openmeteo",    "Open-Meteo",      '<span class="source-icon">🌐</span>'),
+        ("raysweather",  "Ray's Weather",   ray_face_img()),
+        ("iphone",       "iPhone Weather",  '<span class="source-icon">📱</span>'),
+    ]:
+        p = sources.get(source_key, {})
+        if not p or "score" not in p:
             continue
-        score = source_data["score"]
-        pred = source_data.get("prediction", {})
-        label = "Ray's Weather" if source_name == "raysweather" else "Open-Meteo"
-        grade = score["grade"]
-        ray_count = grade.get("ray_count", 3)
-        scale = ray_scale_html(ray_count)
-
+        pred      = p.get("prediction", {})
+        score_obj = p.get("score", {})
+        pred_high = pred.get("today_high_f", pred.get("high_f", "?"))
+        pred_low  = pred.get("tonight_low_f", pred.get("low_f", "?"))
+        sc        = score_obj.get("score", 0) if isinstance(score_obj, dict) else 0
+        grade     = score_obj.get("grade", {}) if isinstance(score_obj, dict) else {}
+        verd      = grade.get("label", "")
         rows += f"""
-        <tr>
-            <td><b>{label}</b></td>
-            <td>Hi: {pred.get('high_f', '?')}&deg; / Lo: {pred.get('low_f', '?')}&deg;</td>
-            <td><b>{score['score']}/100</b></td>
-            <td>
-                <div class="verdict-cell">
-                    <span class="verdict-label">{grade['label']}</span>
-                    <div class="scale-row-small">{scale}</div>
-                </div>
-            </td>
-        </tr>"""
+<tr>
+  <td class="source-cell">
+    {icon}
+    <span>{label}</span>
+  </td>
+  <td>Hi: {pred_high}&deg; / Lo: {pred_low}&deg;</td>
+  <td><strong>{sc:.1f}/100</strong></td>
+  <td>{verdict_html(verd, sc)}</td>
+</tr>"""
+
+    screenshot_path = f"screenshots/rays_forecast.png"
+
+    return f"""
+<section class="card" id="rightwrong">
+  <h2>Right Ray / Wrong Ray</h2>
+  <p class="section-date">{date}</p>
+  <p class="actual-weather">
+    <strong>Actual weather:</strong> High {act_high}&deg;F / Low {act_low}&deg;F &mdash; {act_cond}
+  </p>
+  {build_current_conditions(comp)}
+  <div class="table-wrap">
+    <table class="scores-table">
+      <thead>
+        <tr><th>Source</th><th>Predicted</th><th>Score</th><th>Verdict</th></tr>
+      </thead>
+      <tbody>{rows}</tbody>
+    </table>
+  </div>
+  <p class="rating-note">Rating: 5 Rays = nailed it &nbsp;|&nbsp; 1 Ray = yikes</p>
+  <div class="screenshot-block">
+    <p class="screenshot-label">Ray's forecast screenshot:</p>
+    <img src="{screenshot_path}" alt="Ray's Weather forecast" class="forecast-screenshot">
+    <p class="screenshot-credit">Screenshot from <a href="https://raysweather.com/Forecast/Boone">raysweather.com</a>. Go visit Ray, he's great.</p>
+  </div>
+</section>
+"""
+
+
+def build_scoreboard_section(scores):
+    if not scores:
+        return ""
+    rows = ""
+    for src in scores.get("sources", []):
+        name   = src.get("name", "")
+        record = f'{src.get("wins",0)}W - {src.get("losses",0)}L - {src.get("maybes",0)}M'
+        avg    = src.get("avg_score", 0)
+        days   = src.get("days_tracked", 0)
+        rows += f"<tr><td><strong>{name}</strong></td><td>{record}</td><td>{avg:.1f}/100</td><td>{days}</td></tr>"
+
+    # Also support the "totals" format from the existing scores.json
+    if not rows:
+        for source, totals in scores.get("totals", {}).items():
+            labels = {"raysweather": "Ray's Weather", "openmeteo": "Open-Meteo", "iphone": "iPhone Weather"}
+            label = labels.get(source, source)
+            days = totals.get("days", 0)
+            avg = round(totals.get("total_score", 0) / days, 1) if days > 0 else 0
+            record = f'{totals.get("right",0)}W - {totals.get("wrong",0)}L - {totals.get("meh",0)}M'
+            rows += f"<tr><td><strong>{label}</strong></td><td>{record}</td><td>{avg}/100</td><td>{days}</td></tr>"
 
     if not rows:
-        rows = "<tr><td colspan='4'>Scoring data not available yet</td></tr>"
-
-    return f"""
-    <div class="section">
-        <h2>RIGHT RAY / WRONG RAY</h2>
-        <p class="date">{date}</p>
-        <p><b>ACTUAL WEATHER:</b> High {actuals.get('high_f', '?')}&deg;F / Low {actuals.get('low_f', '?')}&deg;F &mdash; {actuals.get('conditions', 'Unknown')}</p>
-        <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; margin: 10px 0;">
-            <tr style="background: #eee;">
-                <th>Source</th>
-                <th>Predicted</th>
-                <th>Score</th>
-                <th>Verdict</th>
-            </tr>
-            {rows}
-        </table>
-        <p style="font-size: 11px; color: #888; margin-top: 5px;">Rating: 5 Rays = nailed it, 1 Ray = yikes</p>
-    </div>"""
-
-
-def build_scores_section(scores):
-    if not scores or not scores.get("totals"):
-        return """
-        <div class="section">
-            <h2>SEASON SCOREBOARD</h2>
-            <p>No scores recorded yet. We just started. Calm down.</p>
-        </div>"""
-
-    rows = ""
-    for source, totals in scores["totals"].items():
-        label = "Ray's Weather" if source == "raysweather" else "Open-Meteo"
-        days = totals["days"]
-        avg = round(totals["total_score"] / days, 1) if days > 0 else 0
-        record = f'{totals["right"]}W - {totals["wrong"]}L - {totals["meh"]}M'
-        rows += f"<tr><td><b>{label}</b></td><td>{record}</td><td>{avg}/100</td><td>{days}</td></tr>"
-
-    return f"""
-    <div class="section">
-        <h2>SEASON SCOREBOARD</h2>
-        <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; margin: 10px 0;">
-            <tr style="background: #eee;">
-                <th>Source</th>
-                <th>Record</th>
-                <th>Avg Score</th>
-                <th>Days Tracked</th>
-            </tr>
-            {rows}
-        </table>
-    </div>"""
-
-
-def build_screenshot_section(comparison):
-    if not comparison:
         return ""
-    date = comparison["date"]
-    screenshot_path = DATA_DIR / "predictions" / date / "rays_forecast.png"
-    if not screenshot_path.exists():
-        return """
-    <div class="section">
-        <h2>RAY'S FORECAST (screenshot)</h2>
-        <p>Screenshot not captured yet. The robot that does this is still learning.</p>
-    </div>"""
 
     return f"""
-    <div class="section">
-        <h2>RAY'S FORECAST (screenshot)</h2>
-        <p class="date">{date}</p>
-        <img src="screenshots/rays_forecast.png" alt="Ray's Weather forecast" style="max-width: 100%; border: 2px solid #ccc;">
-        <p style="font-size: 10px;">Screenshot from <a href="https://raysweather.com/Forecast/Boone">raysweather.com</a>. Go visit Ray, he's great.</p>
-    </div>"""
+<section class="card" id="scoreboard">
+  <h2>Season Scoreboard</h2>
+  <div class="table-wrap">
+    <table class="scores-table">
+      <thead><tr><th>Source</th><th>Record</th><th>Avg Score</th><th>Days Tracked</th></tr></thead>
+      <tbody>{rows}</tbody>
+    </table>
+  </div>
+</section>
+"""
 
 
-def build_html():
-    now = datetime.now(EST)
-    comparison = get_latest_comparison()
-    scores = get_scores()
+def build_videos_section(items):
+    if not items:
+        return '<section class="card tab-panel" id="videos"><p class="empty-feed">No videos yet — check back soon.</p></section>'
+    cards = ""
+    for v in items:
+        thumb_html = f'<img src="{v["thumb"]}" alt="" class="video-thumb">' if v.get("thumb") else ""
+        cards += f"""
+<a class="video-card" href="{v['link']}" target="_blank" rel="noopener">
+  {thumb_html}
+  <div class="video-meta">
+    <p class="video-title">{v['title']}</p>
+    <p class="video-date">{v['date']}</p>
+  </div>
+</a>"""
+    return f"""
+<section class="card tab-panel" id="videos">
+  <h2>Videos</h2>
+  <div class="video-grid">{cards}</div>
+</section>
+"""
 
-    try:
-        sweater = get_current_sweater_check()
-    except Exception:
-        sweater = None
-    if not sweater and comparison:
-        sweater = comparison.get("sweater_weather")
 
-    sweater_html = build_sweater_section(sweater)
-    rightwrong_html = build_right_wrong_section(comparison)
-    scores_html = build_scores_section(scores)
-    screenshot_html = build_screenshot_section(comparison)
+def build_blog_section(items):
+    if not items:
+        return '<section class="card tab-panel" id="blog"><p class="empty-feed">No posts yet — check back soon.</p></section>'
+    posts = ""
+    for p in items:
+        summary = p.get("summary", "")
+        posts += f"""
+<article class="blog-post">
+  <a href="{p['link']}" target="_blank" rel="noopener" class="blog-title">{p['title']}</a>
+  <p class="blog-date">{p['date']}</p>
+  {f'<p class="blog-summary">{summary}</p>' if summary else ''}
+</article>"""
+    return f"""
+<section class="card tab-panel" id="blog">
+  <h2>Blog</h2>
+  <div class="blog-list">{posts}</div>
+</section>
+"""
 
-    html = f"""<!DOCTYPE html>
+# ──────────────────────────────────────────────────────────────────────────────
+# logo SVG (inline fallback if file not found)
+# ──────────────────────────────────────────────────────────────────────────────
+
+def logo_html():
+    logo_file = ASSETS_SRC / "logo.svg"
+    if logo_file.exists():
+        svg_text = logo_file.read_text()
+        # inject sizing
+        svg_text = svg_text.replace("<svg ", '<svg style="height:2.5rem;width:auto;" ', 1)
+        return svg_text
+    # text fallback
+    return (
+        '<span style="font-weight:800;font-size:1.25rem;letter-spacing:-0.03em;color:#fff;">'
+        "Dave's Sweater</span>"
+    )
+
+# ──────────────────────────────────────────────────────────────────────────────
+# CSS
+# ──────────────────────────────────────────────────────────────────────────────
+
+CSS = f"""
+*, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
+
+:root {{
+  --teal:   {COLOR_TEAL};
+  --orange: {COLOR_ORANGE};
+  --bg:     {COLOR_BG};
+  --card:   {COLOR_CARD};
+  --text:   {COLOR_TEXT};
+  --muted:  {COLOR_MUTED};
+  --radius: 0.75rem;
+}}
+
+body {{
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.6;
+  min-height: 100vh;
+}}
+
+/* ── header ── */
+header {{
+  background: var(--teal);
+  border-bottom: 4px solid var(--orange);
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  min-height: 4rem;
+}}
+
+.header-logo {{
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  flex-shrink: 0;
+}}
+
+.header-tagline {{
+  color: rgba(255,255,255,0.75);
+  font-size: 0.82rem;
+  font-style: italic;
+  white-space: nowrap;
+}}
+
+/* ── nav tabs ── */
+nav {{
+  margin-left: auto;
+  display: flex;
+  gap: 0.25rem;
+}}
+
+nav button {{
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.75);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 0.4rem;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}}
+
+nav button:hover,
+nav button.active {{
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}}
+
+nav button.active {{
+  background: var(--orange);
+  color: #fff;
+}}
+
+/* ── update bar ── */
+.update-bar {{
+  background: var(--orange);
+  color: #fff;
+  text-align: center;
+  font-size: 0.78rem;
+  padding: 0.3rem 1rem;
+  font-weight: 500;
+}}
+
+/* ── main ── */
+main {{
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}}
+
+/* ── cards ── */
+.card {{
+  background: var(--card);
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius);
+  padding: 1.5rem 1.75rem;
+}}
+
+.card h2 {{
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--teal);
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--orange);
+  padding-bottom: 0.4rem;
+  display: inline-block;
+}}
+
+/* ── sweater section ── */
+.sweater-verdict {{
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}}
+
+.sweater-score {{
+  font-size: 0;   /* hide alt text */
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}}
+
+.sweater-temp {{
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--teal);
+}}
+
+.sweater-text {{
+  font-size: 1.05rem;
+  color: var(--text);
+}}
+
+.sweater-layers {{
+  font-size: 0.9rem;
+  color: var(--muted);
+}}
+
+/* ── tables ── */
+.table-wrap {{
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}}
+
+.scores-table {{
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}}
+
+.scores-table th {{
+  background: var(--teal);
+  color: #fff;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}}
+
+.scores-table td {{
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+}}
+
+.scores-table tr:last-child td {{ border-bottom: none; }}
+.scores-table tr:hover td {{ background: rgba(60,84,104,0.04); }}
+
+.source-cell {{
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}}
+
+.source-icon {{ font-size: 1.4rem; }}
+
+.verdict-label {{
+  font-weight: 600;
+  font-size: 0.82rem;
+  margin-right: 0.35rem;
+}}
+
+/* ── section meta ── */
+.section-date,
+.actual-weather,
+.rating-note,
+.screenshot-label,
+.screenshot-credit {{
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}}
+
+.actual-weather {{ color: var(--text); font-size: 0.95rem; }}
+
+/* ── current conditions panel ── */
+.current-conditions {{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+  gap: 0.6rem;
+  margin: 0.75rem 0 1rem;
+  padding: 0.85rem 1rem;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-left: 3px solid var(--teal);
+  border-radius: 0.5rem;
+}}
+
+.cond-item {{
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}}
+
+.cond-header {{
+  grid-column: 1/-1;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}}
+
+.cond-label {{
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}}
+
+.cond-value {{
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--teal);
+}}
+
+/* ── forecast screenshot ── */
+.screenshot-block {{
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}}
+
+.forecast-screenshot {{
+  width: 100%;
+  max-width: 36rem;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  margin: 0.5rem 0;
+  display: block;
+}}
+
+/* ── tab panels ── */
+.tab-panel {{ display: none; }}
+.tab-panel.active {{ display: block; }}
+
+/* ── videos ── */
+.video-grid {{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 1rem;
+  margin-top: 0.75rem;
+}}
+
+.video-card {{
+  text-decoration: none;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: box-shadow 0.15s;
+}}
+
+.video-card:hover {{ box-shadow: 0 4px 12px rgba(0,0,0,0.1); }}
+
+.video-thumb {{
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  display: block;
+}}
+
+.video-meta {{ padding: 0.6rem 0.75rem; }}
+
+.video-title {{
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.35;
+}}
+
+.video-date {{ font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }}
+
+/* ── blog ── */
+.blog-list {{ display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem; }}
+
+.blog-post {{
+  padding: 0.9rem 1rem;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  border-left: 3px solid var(--orange);
+}}
+
+.blog-title {{
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--teal);
+  text-decoration: none;
+  display: block;
+  margin-bottom: 0.2rem;
+}}
+
+.blog-title:hover {{ text-decoration: underline; }}
+
+.blog-date {{ font-size: 0.78rem; color: var(--muted); margin-bottom: 0.4rem; }}
+
+.blog-summary {{ font-size: 0.88rem; color: #4b5563; }}
+
+/* ── empty feed ── */
+.empty-feed {{ color: var(--muted); font-style: italic; padding: 1rem 0; }}
+
+/* ── footer ── */
+footer {{
+  text-align: center;
+  padding: 1.25rem 1rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  border-top: 1px solid #e5e7eb;
+}}
+
+footer a {{ color: var(--teal); text-decoration: none; }}
+footer a:hover {{ text-decoration: underline; }}
+
+/* ── responsive ── */
+@media (max-width: 600px) {{
+  header {{ flex-wrap: wrap; padding: 0.5rem 1rem; gap: 0.5rem; }}
+  nav {{ margin-left: 0; width: 100%; justify-content: flex-start; overflow-x: auto; }}
+  .header-tagline {{ display: none; }}
+  .sweater-temp {{ font-size: 2rem; }}
+}}
+"""
+
+# ──────────────────────────────────────────────────────────────────────────────
+# JS
+# ──────────────────────────────────────────────────────────────────────────────
+
+JS = """
+(function() {
+  const TABS = ['weather', 'videos', 'blog'];
+
+  function activate(tab) {
+    // nav buttons
+    document.querySelectorAll('nav button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === tab);
+    });
+    // weather sections (non-tab-panel cards inside #weather-content)
+    const weatherContent = document.getElementById('weather-content');
+    if (weatherContent) {
+      weatherContent.style.display = (tab === 'weather') ? 'contents' : 'none';
+    }
+    // tab panels
+    document.querySelectorAll('.tab-panel').forEach(el => {
+      el.classList.toggle('active', el.id === tab);
+    });
+    history.replaceState(null, '', '#' + tab);
+  }
+
+  document.querySelectorAll('nav button[data-tab]').forEach(btn => {
+    btn.addEventListener('click', () => activate(btn.dataset.tab));
+  });
+
+  // on load, check hash
+  const hash = location.hash.replace('#', '');
+  activate(TABS.includes(hash) ? hash : 'weather');
+})();
+"""
+
+# ──────────────────────────────────────────────────────────────────────────────
+# page assembly
+# ──────────────────────────────────────────────────────────────────────────────
+
+def build_page(comp, scores, video_items, blog_items):
+    updated = now_est()
+
+    weather_sections = (
+        build_sweater_section(comp) +
+        build_rightwrong_section(comp) +
+        build_scoreboard_section(scores)
+    )
+
+    videos_section = build_videos_section(video_items)
+    blog_section   = build_blog_section(blog_items)
+
+    return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dave's Sweater</title>
-    <style>
-        body {{
-            font-family: Georgia, 'Times New Roman', serif;
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 20px;
-            background: #f5f5dc;
-            color: #333;
-        }}
-        h1 {{
-            font-size: 28px;
-            border-bottom: 3px solid #2D5A47;
-            padding-bottom: 5px;
-        }}
-        h1 span {{
-            font-size: 14px;
-            font-weight: normal;
-            color: #666;
-        }}
-        h2 {{
-            font-size: 18px;
-            color: #2D5A47;
-            margin-top: 30px;
-            border-bottom: 1px solid #ccc;
-        }}
-        .section {{
-            background: white;
-            padding: 15px;
-            margin: 15px 0;
-            border: 1px solid #ccc;
-        }}
-        .sweater-check {{
-            text-align: center;
-        }}
-        .big-answer {{
-            font-size: 72px;
-            font-weight: bold;
-            margin: 10px 0;
-            line-height: 1;
-        }}
-        .date {{
-            color: #888;
-            font-size: 12px;
-        }}
-        table {{
-            font-size: 14px;
-        }}
-        th {{
-            text-align: left;
-        }}
-        .footer {{
-            margin-top: 40px;
-            padding-top: 10px;
-            border-top: 1px solid #ccc;
-            font-size: 11px;
-            color: #999;
-        }}
-        .under-construction {{
-            background: #ffff00;
-            color: black;
-            padding: 5px 10px;
-            display: inline-block;
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            font-size: 14px;
-            transform: rotate(-2deg);
-            margin: 10px 0;
-        }}
-        a {{
-            color: #2D5A47;
-        }}
-
-        /* ── Scales ─────────────────────────────── */
-        .scale {{
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }}
-        .scale-row {{
-            margin: 10px 0;
-        }}
-        .scale-row-small {{
-            margin-top: 4px;
-        }}
-        .scale-label {{
-            font-size: 13px;
-            color: #888;
-            margin-top: 0;
-        }}
-
-        /* Sweater emoji scale */
-        .sweater-icon {{
-            font-size: 48px;
-            line-height: 1;
-        }}
-        .sweater-icon.inactive {{
-            opacity: 0.15;
-        }}
-        .scale-row-small .sweater-icon {{
-            font-size: 22px;
-        }}
-
-        /* Ray face scale */
-        .ray-face {{
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid #ccc;
-            object-fit: cover;
-        }}
-        .scale-row .ray-face {{
-            width: 56px;
-            height: 56px;
-        }}
-        .scale-row-small .ray-face {{
-            width: 28px;
-            height: 28px;
-            border-width: 1px;
-        }}
-        .ray-active {{
-            border-color: #2D5A47;
-            opacity: 1;
-        }}
-        .ray-inactive {{
-            filter: grayscale(100%) brightness(1.4);
-            opacity: 0.2;
-            border-color: #ddd;
-        }}
-        .ray-emoji {{
-            font-size: 28px;
-        }}
-        .ray-emoji.inactive {{
-            opacity: 0.15;
-        }}
-
-        /* Verdict cell */
-        .verdict-cell {{
-            min-width: 140px;
-        }}
-        .verdict-label {{
-            font-size: 13px;
-            font-weight: bold;
-            display: block;
-            margin-bottom: 2px;
-        }}
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dave's Sweater &mdash; Boone, NC's #2 weather resource</title>
+  <meta name="description" content="Is it sweater weather in Boone, NC? Did Ray get yesterday right? Find out.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>{CSS}</style>
 </head>
 <body>
-    <h1>
-        Dave's Sweater
-        <span>&mdash; Boone, NC's #2 weather resource</span>
-    </h1>
 
-    <p class="under-construction">&#128679; UNDER CONSTRUCTION &#128679;</p>
+<header>
+  <a class="header-logo" href="/">
+    {logo_html()}
+  </a>
+  <span class="header-tagline">Boone, NC's #2 weather resource</span>
+  <nav>
+    <button data-tab="weather">Weather</button>
+    <button data-tab="videos">Videos</button>
+    <button data-tab="blog">Blog</button>
+  </nav>
+</header>
 
-    <p>A public service for people who want to know (1) if it's sweater weather and (2) if Ray got yesterday's forecast right.</p>
-    <p style="font-size: 12px; color: #888;">Updated: {now.strftime("%B %d, %Y at %I:%M %p")} EST</p>
+<div class="update-bar">Updated: {updated}</div>
 
-    {sweater_html}
+<main>
+  <!-- weather tab: sweater + right/wrong + scoreboard -->
+  <div id="weather-content" style="display:contents;">
+    {weather_sections}
+  </div>
 
-    {rightwrong_html}
+  <!-- videos tab -->
+  {videos_section}
 
-    {screenshot_html}
+  <!-- blog tab -->
+  {blog_section}
 
-    {scores_html}
+</main>
 
-    <div class="section">
-        <h2>WHAT IS THIS</h2>
-        <p>This is a website about sweaters and weather in Boone, North Carolina.</p>
-        <p>Every day, we check:</p>
-        <p>1. Is it sweater weather? (important)<br>
-           2. Did Ray get yesterday's forecast right? (also important)<br>
-           3. What did Ray's forecast actually look like? (evidence)</p>
-        <p>That's it. That's the whole site.</p>
-        <p style="font-size: 11px;">If you were expecting more, we apologize. We are one person with a sweater and a computer.</p>
-    </div>
+<footer>
+  <p>
+    <a href="https://davessweater.com">davessweater.com</a> &nbsp;&middot;&nbsp;
+    est. 2026 &nbsp;&middot;&nbsp;
+    Weather data: <a href="https://open-meteo.com">Open-Meteo</a>
+  </p>
+</footer>
 
-    <div class="footer">
-        <p>Dave's Sweater is not affiliated with <a href="https://raysweather.com">Ray's Weather</a>. Ray's great. Go use his site for actual weather information.</p>
-        <p>Weather data from <a href="https://open-meteo.com">Open-Meteo.com</a>. Sweater data from Dave.</p>
-        <p>davessweater.com &bull; est. 2026 &bull; "the weather site boone didn't ask for"</p>
-        <p style="font-size: 9px;">Made with basic HTML, no frameworks, and questionable judgment.</p>
-    </div>
+<script>{JS}</script>
+
 </body>
-</html>"""
+</html>
+"""
 
-    SITE_DIR.mkdir(parents=True, exist_ok=True)
-    output_path = SITE_DIR / "index.html"
-    with open(output_path, "w") as f:
-        f.write(html)
-    print(f"  Built site: {output_path}")
+# ──────────────────────────────────────────────────────────────────────────────
+# asset copy
+# ──────────────────────────────────────────────────────────────────────────────
+
+def copy_assets():
+    """Copy assets/ → docs/assets/ and screenshots/ → docs/screenshots/."""
+    DOCS.mkdir(exist_ok=True)
+    ASSETS_DEST.mkdir(exist_ok=True)
+
+    # assets/
+    if ASSETS_SRC.exists():
+        for f in ASSETS_SRC.iterdir():
+            if f.is_file():
+                dest = ASSETS_DEST / f.name
+                shutil.copy2(f, dest)
+                print(f"  copied asset: {f.name}")
+
+    # screenshots (Ray forecast PNGs live in data/predictions/*/rays_forecast.png)
+    # We symlink or copy the latest one to docs/screenshots/rays_forecast.png
+    screenshots_dest = DOCS / "screenshots"
+    screenshots_dest.mkdir(exist_ok=True)
+    pred_dirs = sorted((DATA / "predictions").glob("*/")) if (DATA / "predictions").exists() else []
+    if pred_dirs:
+        latest_ss = pred_dirs[-1] / "rays_forecast.png"
+        if latest_ss.exists():
+            shutil.copy2(latest_ss, screenshots_dest / "rays_forecast.png")
+            print(f"  copied screenshot from {pred_dirs[-1].name}")
 
     # Always preserve the CNAME file (GitHub Pages custom domain)
-    cname_path = SITE_DIR / "CNAME"
+    cname_path = DOCS / "CNAME"
     if not cname_path.exists():
         cname_path.write_text("davessweater.com\n")
         print(f"  Created CNAME: {cname_path}")
-    return output_path
+
+# ──────────────────────────────────────────────────────────────────────────────
+# main
+# ──────────────────────────────────────────────────────────────────────────────
+
+def main():
+    print("🧣 Building Dave's Sweater…")
+
+    # load data
+    comp   = latest_comparison()
+    scores = load_json(SCORES_FILE, default={})
+
+    # fetch RSS
+    print("  fetching Substack RSS…")
+    blog_items = fetch_rss(SUBSTACK_RSS)
+
+    print("  fetching YouTube RSS…")
+    if "xxxxxxxx" in YOUTUBE_UC:
+        print("  (YouTube channel ID is placeholder — skipping)")
+        video_items = []
+    else:
+        video_items = fetch_rss(YOUTUBE_RSS)
+
+    # copy assets
+    print("  copying assets…")
+    copy_assets()
+
+    # build HTML
+    html = build_page(comp, scores, video_items, blog_items)
+    out  = DOCS / "index.html"
+    out.write_text(html, encoding="utf-8")
+
+    kb = len(html.encode()) / 1024
+    print(f"✅ Wrote {out} ({kb:.1f} KB)")
+    if comp:
+        print(f"   date: {comp.get('date', '?')}")
+    if not blog_items:
+        print("   ⚠  No Substack posts fetched (feed empty or error)")
 
 
 if __name__ == "__main__":
-    build_html()
+    main()

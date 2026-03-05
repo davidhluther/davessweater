@@ -31,6 +31,10 @@ jobs:
       - name: Capture Open-Meteo forecast
         run: python scripts/capture_openmeteo.py --forecast
 
+      - name: Capture iPhone (wttr.in) forecast
+        run: python scripts/capture_iphone_weather.py
+        continue-on-error: true
+
       - name: Commit captures
         run: |
           git config user.name "DavesSweaterBot"
