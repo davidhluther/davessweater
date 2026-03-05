@@ -272,112 +272,22 @@ main {
   color: var(--teal);
 }
 
-/* ── phone-style forecast ── */
-.phone-frame {
-  background: linear-gradient(180deg, #1c1c1e 0%, #2c2c2e 100%);
-  border-radius: 2.5rem;
-  padding: 1.5rem 1.25rem 1rem;
-  max-width: 22rem;
-  margin: 0 auto;
-  color: #fff;
-  font-family: -apple-system, 'SF Pro Display', 'Inter', sans-serif;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+/* ── iPhone screenshot ── */
+.iphone-screenshot-wrap {
+  text-align: center;
+  margin: 1rem 0;
+}
+.iphone-screenshot {
+  max-width: 320px;
+  width: 100%;
+  border-radius: 2rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
   border: 3px solid #3a3a3c;
-  position: relative;
 }
-.phone-notch {
-  width: 7rem;
-  height: 0.35rem;
-  background: #3a3a3c;
-  border-radius: 1rem;
-  margin: 0 auto 1rem;
-}
-.phone-header {
-  text-align: center;
-  margin-bottom: 0.75rem;
-}
-.phone-location {
-  font-size: 1.1rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-}
-.phone-current-temp {
-  font-size: 3.5rem;
-  font-weight: 200;
-  line-height: 1.1;
-  margin: 0.1rem 0;
-}
-.phone-conditions {
-  font-size: 0.85rem;
-  color: rgba(255,255,255,0.6);
-}
-.phone-divider {
-  height: 1px;
-  background: rgba(255,255,255,0.15);
-  margin: 0.5rem 0;
-}
-.phone-label {
-  font-size: 0.65rem;
-  color: rgba(255,255,255,0.4);
-  letter-spacing: 0.08em;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-.phone-forecast {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-.phone-row {
-  display: grid;
-  grid-template-columns: 2.5rem 3.5rem 2rem 1fr 2rem;
-  align-items: center;
-  font-size: 0.85rem;
-  padding: 0.2rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.phone-day {
-  font-weight: 500;
-}
-.phone-icon {
-  text-align: center;
-  font-size: 1rem;
-}
-.phone-precip {
-  font-size: 0.6rem;
-  color: #5ac8fa;
-  vertical-align: super;
-}
-.phone-lo {
-  color: rgba(255,255,255,0.5);
-  text-align: right;
-  font-size: 0.8rem;
-}
-.phone-hi {
-  text-align: right;
-  font-weight: 500;
-  font-size: 0.8rem;
-}
-.phone-bar-wrap {
-  height: 0.25rem;
-  background: rgba(255,255,255,0.1);
-  border-radius: 0.125rem;
-  position: relative;
-  margin: 0 0.4rem;
-}
-.phone-bar {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  border-radius: 0.125rem;
-  background: linear-gradient(90deg, #5ac8fa, #ffd60a, #ff9f0a);
-}
-.phone-footer {
-  text-align: center;
-  font-size: 0.55rem;
-  color: rgba(255,255,255,0.25);
-  margin-top: 0.75rem;
-  padding-bottom: 0.25rem;
+.section-subtitle {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-top: -0.25rem;
 }
 
 /* ── tab panels ── */
@@ -485,7 +395,7 @@ footer a:hover { text-decoration: underline; }
   </nav>
 </header>
 
-<div class="update-bar">Updated: March 05, 2026 at 09:02 AM EST</div>
+<div class="update-bar">Updated: March 05, 2026 at 09:53 AM EST</div>
 
 <main>
   <!-- weather tab: sweater + right/wrong + scoreboard -->
@@ -502,82 +412,11 @@ footer a:hover { text-decoration: underline; }
 </section>
 
 <section class="card" id="weekly-forecast">
-  <div class="phone-frame">
-    <div class="phone-notch"></div>
-    <div class="phone-header">
-      <div class="phone-location">Boone, NC</div>
-      <div class="phone-current-temp">70&deg;</div>
-      <div class="phone-conditions">Overcast</div>
-    </div>
-    <div class="phone-divider"></div>
-    <div class="phone-label">7-DAY FORECAST</div>
-    <div class="phone-forecast">
-      
-      <div class="phone-row">
-        <span class="phone-day">Today</span>
-        <span class="phone-icon">☁️ </span>
-        <span class="phone-lo">48&deg;</span>
-        <span class="phone-bar-wrap">
-          <span class="phone-bar" style="left:0%;width:96%"></span>
-        </span>
-        <span class="phone-hi">70&deg;</span>
-      </div>
-      <div class="phone-row">
-        <span class="phone-day">Fri</span>
-        <span class="phone-icon">🌧 <span class="phone-precip">28%</span></span>
-        <span class="phone-lo">54&deg;</span>
-        <span class="phone-bar-wrap">
-          <span class="phone-bar" style="left:27%;width:73%"></span>
-        </span>
-        <span class="phone-hi">71&deg;</span>
-      </div>
-      <div class="phone-row">
-        <span class="phone-day">Sat</span>
-        <span class="phone-icon">🌦 <span class="phone-precip">52%</span></span>
-        <span class="phone-lo">54&deg;</span>
-        <span class="phone-bar-wrap">
-          <span class="phone-bar" style="left:26%;width:44%"></span>
-        </span>
-        <span class="phone-hi">64&deg;</span>
-      </div>
-      <div class="phone-row">
-        <span class="phone-day">Sun</span>
-        <span class="phone-icon">🌧 <span class="phone-precip">47%</span></span>
-        <span class="phone-lo">53&deg;</span>
-        <span class="phone-bar-wrap">
-          <span class="phone-bar" style="left:20%;width:49%"></span>
-        </span>
-        <span class="phone-hi">64&deg;</span>
-      </div>
-      <div class="phone-row">
-        <span class="phone-day">Mon</span>
-        <span class="phone-icon">🌦 <span class="phone-precip">34%</span></span>
-        <span class="phone-lo">52&deg;</span>
-        <span class="phone-bar-wrap">
-          <span class="phone-bar" style="left:15%;width:71%"></span>
-        </span>
-        <span class="phone-hi">68&deg;</span>
-      </div>
-      <div class="phone-row">
-        <span class="phone-day">Tue</span>
-        <span class="phone-icon">🌦 <span class="phone-precip">38%</span></span>
-        <span class="phone-lo">52&deg;</span>
-        <span class="phone-bar-wrap">
-          <span class="phone-bar" style="left:15%;width:77%"></span>
-        </span>
-        <span class="phone-hi">69&deg;</span>
-      </div>
-      <div class="phone-row">
-        <span class="phone-day">Wed</span>
-        <span class="phone-icon">🌦 <span class="phone-precip">57%</span></span>
-        <span class="phone-lo">54&deg;</span>
-        <span class="phone-bar-wrap">
-          <span class="phone-bar" style="left:26%;width:49%"></span>
-        </span>
-        <span class="phone-hi">65&deg;</span>
-      </div>
-    </div>
-    <div class="phone-footer">Data: Open-Meteo</div>
+  <h2>Your iPhone Says&hellip;</h2>
+  <p class="section-subtitle">Spoiler: it's about as accurate as Ray.</p>
+  <div class="iphone-screenshot-wrap">
+    <img src="screenshots/iphone_forecast.png" alt="iPhone Weather forecast for Boone, NC"
+         class="iphone-screenshot" loading="lazy">
   </div>
 </section>
 
