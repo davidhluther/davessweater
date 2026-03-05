@@ -98,6 +98,16 @@ def is_sweater_weather(temp_f, wind_mph=0, humidity=None):
 # RIGHT RAY / WRONG RAY LOGIC
 # ═══════════════════════════════════════════════════════════════════
 
+def _get_high(entry):
+    """Get high temp, supporting both 'today_high_f' and 'high_f' keys."""
+    return entry.get("today_high_f", entry.get("high_f"))
+
+
+def _get_low(entry):
+    """Get low temp, supporting both 'today_low_f' and 'low_f' keys."""
+    return entry.get("today_low_f", entry.get("low_f"))
+
+
 def score_prediction(predicted, actual):
     """
     Score a prediction against actuals. Returns 0-100.
@@ -111,14 +121,19 @@ def score_prediction(predicted, actual):
     score = 0
     breakdown = {}
 
+    pred_high = _get_high(predicted)
+    pred_low = _get_low(predicted)
+    actual_high = _get_high(actual)
+    actual_low = _get_low(actual)
+
     # High temp (30 pts)
-    if predicted.get("high_f") is not None and actual.get("high_f") is not None:
-        high_err = abs(predicted["high_f"] - actual["high_f"])
+    if pred_high is not None and actual_high is not None:
+        high_err = abs(pred_high - actual_high)
         high_pts = max(0, 30 - high_err * 3)
         score += high_pts
         breakdown["high_temp"] = {
-            "predicted": predicted["high_f"],
-            "actual": actual["high_f"],
+            "predicted": pred_high,
+            "actual": actual_high,
             "error_f": round(high_err, 1),
             "points": round(high_pts, 1),
             "max": 30,
@@ -127,13 +142,13 @@ def score_prediction(predicted, actual):
         breakdown["high_temp"] = {"error": "missing data", "points": 0, "max": 30}
 
     # Low temp (30 pts)
-    if predicted.get("low_f") is not None and actual.get("low_f") is not None:
-        low_err = abs(predicted["low_f"] - actual["low_f"])
+    if pred_low is not None and actual_low is not None:
+        low_err = abs(pred_low - actual_low)
         low_pts = max(0, 30 - low_err * 3)
         score += low_pts
         breakdown["low_temp"] = {
-            "predicted": predicted["low_f"],
-            "actual": actual["low_f"],
+            "predicted": pred_low,
+            "actual": actual_low,
             "error_f": round(low_err, 1),
             "points": round(low_pts, 1),
             "max": 30,
@@ -277,6 +292,9 @@ def run_daily_comparison(target_date=None):
     if rays_path.exists():
         with open(rays_path) as f:
             rays_data = json.load(f)
+        # Attach Ray's current conditions if available
+        if rays_data.get("current"):
+            comparison["rays_current"] = rays_data["current"]
         # Ray's data may not have structured daily forecasts yet
         # We'll score what we have and note what's missing
         if rays_data.get("daily"):
@@ -297,6 +315,29 @@ def run_daily_comparison(target_date=None):
             print(f"  Ray's Weather: Screenshot only (no structured data to score yet)")
     else:
         print(f"  No Ray's Weather prediction found for {target_date}")
+
+    # Score iPhone Weather prediction
+    iphone_path = pred_dir / "iphone_forecast.json"
+    if iphone_path.exists():
+        with open(iphone_path) as f:
+            iphone_data = json.load(f)
+        # Attach iPhone current conditions if available
+        if iphone_data.get("current"):
+            comparison["iphone_current"] = iphone_data["current"]
+        if iphone_data.get("daily"):
+            for day in iphone_data["daily"]:
+                if day.get("date") == target_date:
+                    result = score_prediction(day, actuals)
+                    comparison["sources"]["iphone"] = {
+                        "prediction": day,
+                        "score": result,
+                    }
+                    print(f"  iPhone Weather: {result['score']}/100 — {result['grade']['label']}")
+                    break
+        else:
+            print(f"  iPhone Weather: No daily forecast data to score")
+    else:
+        print(f"  No iPhone Weather prediction found for {target_date}")
 
     # Sweater weather verdict
     sw = comparison["sweater_weather"]
