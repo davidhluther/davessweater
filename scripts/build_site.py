@@ -373,7 +373,7 @@ def logo_html():
     if logo_file.exists():
         svg_text = logo_file.read_text()
         # inject sizing
-        svg_text = svg_text.replace("<svg ", '<svg style="height:2.5rem;width:auto;" ', 1)
+        svg_text = svg_text.replace("<svg ", '<svg style="height:4.5rem;width:auto;" ', 1)
         return svg_text
     # text fallback
     return (
@@ -411,14 +411,14 @@ body {{
 header {{
   background: var(--teal);
   border-bottom: 4px solid var(--orange);
-  padding: 0 1.5rem;
+  padding: 0.5rem 1.5rem;
   display: flex;
   align-items: center;
   gap: 1rem;
   position: sticky;
   top: 0;
   z-index: 100;
-  min-height: 4rem;
+  min-height: 5.5rem;
 }}
 
 .header-logo {{
@@ -431,7 +431,7 @@ header {{
 
 .header-tagline {{
   color: rgba(255,255,255,0.75);
-  font-size: 0.82rem;
+  font-size: 0.95rem;
   font-style: italic;
   white-space: nowrap;
 }}
