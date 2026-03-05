@@ -118,11 +118,8 @@ def sweater_emoji_img(score):
 
 
 def ray_face_img(size="2.5rem"):
-    """Circle Ray face image for Right Ray / Wrong Ray verdicts."""
-    return (
-        f'<img src="assets/ray_face.svg" alt="Ray" '
-        f'style="height:{size};width:{size};vertical-align:middle;">'
-    )
+    """Sweater emoji for verdict ratings."""
+    return f'<span style="font-size:{size};vertical-align:middle;">&#129509;</span>'
 
 
 def verdict_html(verdict_str, score):
