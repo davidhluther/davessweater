@@ -381,7 +381,7 @@ def build_scoreboard_section(scores):
 <section class="card" id="scoreboard">
   <h2>Season Scoreboard</h2>
   <div class="table-wrap">
-    <table class="scores-table">
+    <table class="scores-table scoreboard-table">
       <thead><tr><th>Source</th><th>Record</th><th>Avg Score</th><th>Days Tracked</th></tr></thead>
       <tbody>{rows}</tbody>
     </table>
@@ -707,6 +707,10 @@ main {{
   padding-left: 0.6rem;
 }}
 
+.scores-table th:nth-child(2) {{
+  padding-left: 0.6rem;
+}}
+
 .scores-table td {{
   padding: 0.4rem 0.3rem;
   border-bottom: 1px solid #e5e7eb;
@@ -716,6 +720,19 @@ main {{
 
 .scores-table td:first-child {{
   padding-left: 0.6rem;
+}}
+
+.scores-table td:nth-child(2) {{
+  padding-left: 0.6rem;
+}}
+
+.scoreboard-table {{
+  table-layout: auto;
+}}
+
+.scoreboard-table th,
+.scoreboard-table td {{
+  white-space: nowrap;
 }}
 
 .scoreboard-key {{
