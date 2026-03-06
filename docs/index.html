@@ -433,17 +433,11 @@ footer a:hover { text-decoration: underline; }
   nav { margin-left: 0; width: 100%; justify-content: flex-start; }
   .sweater-temp { font-size: 2rem; }
   .source-icon, .source-cell img { display: none; }
-  .scores-table { font-size: 0.68rem; table-layout: fixed; }
-  .scores-table th { font-size: 0.6rem; padding: 0.3rem 0.15rem; }
-  .scores-table td { padding: 0.35rem 0.15rem; word-wrap: break-word; overflow-wrap: break-word; }
-  .scores-table th:nth-child(1),
-  .scores-table td:nth-child(1) { width: 22%; white-space: nowrap; }
-  .scores-table th:nth-child(2),
-  .scores-table td:nth-child(2) { width: 36%; }
-  .scores-table th:nth-child(3),
-  .scores-table td:nth-child(3) { width: 20%; font-size: 0.62rem; }
-  .scores-table th:nth-child(4),
-  .scores-table td:nth-child(4) { width: 22%; }
+  .scores-table { font-size: 0.68rem; table-layout: auto; }
+  .scores-table th { font-size: 0.6rem; padding: 0.3rem 0.25rem; }
+  .scores-table td { padding: 0.35rem 0.25rem; }
+  .scores-table td:nth-child(3),
+  .scores-table th:nth-child(3) { font-size: 0.62rem; }
   .scores-table td:nth-child(3) strong { font-size: 0.62rem; }
   .verdict-label { font-size: 0.68rem; }
   .verdict-faces img { width: 1.3rem !important; height: 1.3rem !important; }
@@ -473,7 +467,7 @@ footer a:hover { text-decoration: underline; }
   </nav>
 </header>
 
-<div class="update-bar">Updated: March 06, 2026 at 04:06 AM EST</div>
+<div class="update-bar">Updated: March 06, 2026 at 04:12 AM EST</div>
 
 <main>
   <!-- weather tab -->
@@ -541,9 +535,9 @@ footer a:hover { text-decoration: underline; }
     <span class="source-icon">📱</span>
     <span>Apple Weather</span>
   </td>
-  <td>Hi: 69&deg; / Lo: 50&deg;<br>Wind: 2.6 mph<br>Rain: 0.0"</td>
+  <td><span style="white-space:nowrap">Hi: 69&deg; / Lo: 50&deg;</span><br>Wind: 2.6 mph<br>Rain: 0.0"</td>
   <td><strong>88.8/100</strong></td>
-  <td><span class="verdict-faces"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"></span></td>
+  <td><span class="verdict-faces"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"></span></td>
 </tr></tbody>
     </table>
   </div>
