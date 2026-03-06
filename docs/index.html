@@ -473,7 +473,7 @@ footer a:hover { text-decoration: underline; }
   </nav>
 </header>
 
-<div class="update-bar">Updated: March 06, 2026 at 03:56 AM EST</div>
+<div class="update-bar">Updated: March 06, 2026 at 04:01 AM EST</div>
 
 <main>
   <!-- weather tab -->
@@ -482,7 +482,7 @@ footer a:hover { text-decoration: underline; }
 <section class="card" id="sweater">
   <h2>Sweater weather in Boone?</h2>
   <div class="sweater-verdict">
-    <div class="sweater-score"><img class="sweater-icon active" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"></div>
+    <div class="sweater-score" id="live-sweaters"><img class="sweater-icon active" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"></div>
     <div class="sweater-temp" id="live-temp">69.1&deg;F</div>
     <div class="sweater-high" id="live-high"></div>
     <p class="sweater-text" id="live-verdict">It's 69°F. No sweater needed unless you're in aggressive AC.</p>
@@ -688,6 +688,28 @@ document.querySelectorAll('.blog-expand').forEach(function(btn) {
       } else {
         verdict = "Wearing a sweater would be a cry for help.";
         layers = "0 (this is shorts weather, Dave)";
+      }
+
+      // Compute sweater score (0-5)
+      var score;
+      if (effective < 35) score = 5;
+      else if (effective < 45) score = 4;
+      else if (effective < 55) score = 3;
+      else if (effective < 65) score = 2;
+      else if (effective < 75) score = 1;
+      else score = 0;
+
+      // Update sweater icons
+      var sEl = document.getElementById('live-sweaters');
+      if (sEl) {
+        var icons = sEl.querySelectorAll('.sweater-icon');
+        for (var i = 0; i < icons.length; i++) {
+          if (i < score) {
+            icons[i].className = 'sweater-icon active';
+          } else {
+            icons[i].className = 'sweater-icon inactive';
+          }
+        }
       }
 
       var vEl = document.getElementById('live-verdict');

@@ -223,7 +223,7 @@ def build_sweater_section(comp):
 <section class="card" id="sweater">
   <h2>Sweater weather in Boone?</h2>
   <div class="sweater-verdict">
-    <div class="sweater-score">{emoji_row}</div>
+    <div class="sweater-score" id="live-sweaters">{emoji_row}</div>
     <div class="sweater-temp" id="live-temp">{temp}&deg;F</div>
     <div class="sweater-high" id="live-high"></div>
     <p class="sweater-text" id="live-verdict">{verdict}</p>
@@ -1045,6 +1045,28 @@ document.querySelectorAll('.blog-expand').forEach(function(btn) {
       } else {
         verdict = "Wearing a sweater would be a cry for help.";
         layers = "0 (this is shorts weather, Dave)";
+      }
+
+      // Compute sweater score (0-5)
+      var score;
+      if (effective < 35) score = 5;
+      else if (effective < 45) score = 4;
+      else if (effective < 55) score = 3;
+      else if (effective < 65) score = 2;
+      else if (effective < 75) score = 1;
+      else score = 0;
+
+      // Update sweater icons
+      var sEl = document.getElementById('live-sweaters');
+      if (sEl) {
+        var icons = sEl.querySelectorAll('.sweater-icon');
+        for (var i = 0; i < icons.length; i++) {
+          if (i < score) {
+            icons[i].className = 'sweater-icon active';
+          } else {
+            icons[i].className = 'sweater-icon inactive';
+          }
+        }
       }
 
       var vEl = document.getElementById('live-verdict');
