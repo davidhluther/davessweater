@@ -199,8 +199,8 @@ def verdict_html(verdict_str, score):
     # strip trailing emoji and replace with ray faces
     clean = verdict_str.split("\U0001f60e")[0].strip().rstrip("\u274c\U0001f937\u2705").strip()
     faces = int(round(score / 20)) if score else 0
-    face_row = "".join([ray_face_img("1.6rem")] * min(faces, 5))
-    return f'<span class="verdict-label">{clean}</span> {face_row}'
+    face_row = "".join([ray_face_img("1.2rem")] * min(faces, 5))
+    return f'<span class="verdict-label">{clean}</span><span class="verdict-faces">{face_row}</span>'
 
 
 def now_est():
@@ -719,25 +719,24 @@ main {{
 .scores-table {{
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.82rem;
-  table-layout: fixed;
-  word-wrap: break-word;
+  font-size: 0.78rem;
 }}
 
 .scores-table th {{
   background: var(--teal);
   color: #fff;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  padding: 0.4rem 0.4rem;
+  letter-spacing: 0.02em;
+  padding: 0.35rem 0.3rem;
   text-align: left;
 }}
 
 .scores-table td {{
-  padding: 0.45rem 0.4rem;
+  padding: 0.4rem 0.3rem;
   border-bottom: 1px solid #e5e7eb;
   vertical-align: middle;
+  font-size: 0.76rem;
 }}
 
 .scores-table tr:last-child td {{ border-bottom: none; }}
@@ -746,8 +745,11 @@ main {{
 .source-cell {{
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.3rem;
 }}
+
+.verdict-label {{ display: block; font-size: 0.7rem; font-weight: 600; }}
+.verdict-faces {{ display: flex; flex-wrap: wrap; gap: 0.1rem; }}
 
 .source-icon {{ font-size: 1.4rem; }}
 
@@ -966,9 +968,9 @@ footer a:hover {{ text-decoration: underline; }}
 
 /* ── responsive ── */
 @media (max-width: 600px) {{
-  header {{ flex-wrap: wrap; padding: 0.5rem 1rem; gap: 0.5rem; }}
-  nav {{ margin-left: 0; width: 100%; justify-content: flex-start; overflow-x: auto; }}
-  .header-tagline {{ display: none; }}
+  header {{ flex-wrap: wrap; padding: 0.5rem 1rem; gap: 0.3rem; }}
+  nav {{ margin-left: 0; width: 100%; justify-content: flex-start; }}
+  .header-tagline {{ font-size: 0.75rem; white-space: normal; width: 100%; }}
   .sweater-temp {{ font-size: 2rem; }}
 }}
 """
