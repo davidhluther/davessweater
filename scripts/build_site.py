@@ -451,18 +451,38 @@ def build_videos_section(items):
 def build_blog_section(items):
     if not items:
         return '<section class="card tab-panel" id="blog"><p class="empty-feed">No posts yet — check back soon.</p></section>'
+
+    # Build table of contents
+    toc_links = ""
+    for i, p in enumerate(items):
+        slug = f"post-{i}"
+        toc_links += f'<li><a href="#{slug}" class="toc-link">{p["title"]}</a><span class="toc-date">{p["date"]}</span></li>\n'
+    toc = f'<nav class="blog-toc"><h3>Posts</h3><ol>{toc_links}</ol></nav>'
+
+    # Build post articles
     posts = ""
-    for p in items:
+    for i, p in enumerate(items):
+        slug = f"post-{i}"
         summary = p.get("summary", "")
+        content = p.get("content", "")
+        if content:
+            body = f'<div class="blog-body">{content}</div>'
+        elif summary:
+            body = f'<p class="blog-summary">{summary}</p>'
+        else:
+            body = ""
+        substack_link = f'<a href="{p["link"]}" target="_blank" rel="noopener" class="read-on-substack">Read on Substack &rarr;</a>'
         posts += f"""
-<article class="blog-post">
-  <a href="{p['link']}" target="_blank" rel="noopener" class="blog-title">{p['title']}</a>
+<article class="blog-post" id="{slug}">
+  <h3 class="blog-title">{p['title']}</h3>
   <p class="blog-date">{p['date']}</p>
-  {f'<p class="blog-summary">{summary}</p>' if summary else ''}
+  {body}
+  {substack_link}
 </article>"""
     return f"""
 <section class="card tab-panel" id="blog">
   <h2>Blog</h2>
+  {toc}
   <div class="blog-list">{posts}</div>
 </section>
 """
@@ -812,10 +832,24 @@ main {{
 .video-date {{ font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }}
 
 /* ── blog ── */
-.blog-list {{ display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem; }}
+.blog-toc {{
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.5rem;
+}}
+.blog-toc h3 {{ font-size: 0.95rem; color: var(--teal); margin-bottom: 0.5rem; }}
+.blog-toc ol {{ padding-left: 1.2rem; margin: 0; }}
+.blog-toc li {{ margin-bottom: 0.3rem; }}
+.toc-link {{ color: var(--teal); text-decoration: none; font-weight: 500; font-size: 0.9rem; }}
+.toc-link:hover {{ text-decoration: underline; }}
+.toc-date {{ font-size: 0.75rem; color: var(--muted); margin-left: 0.5rem; }}
+
+.blog-list {{ display: flex; flex-direction: column; gap: 1.5rem; margin-top: 0.5rem; }}
 
 .blog-post {{
-  padding: 0.9rem 1rem;
+  padding: 1.2rem 1.4rem;
   background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
@@ -824,18 +858,31 @@ main {{
 
 .blog-title {{
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: var(--teal);
-  text-decoration: none;
-  display: block;
   margin-bottom: 0.2rem;
 }}
 
-.blog-title:hover {{ text-decoration: underline; }}
-
-.blog-date {{ font-size: 0.78rem; color: var(--muted); margin-bottom: 0.4rem; }}
+.blog-date {{ font-size: 0.78rem; color: var(--muted); margin-bottom: 0.8rem; }}
 
 .blog-summary {{ font-size: 0.88rem; color: #4b5563; }}
+
+.blog-body {{ font-size: 0.92rem; color: #374151; line-height: 1.7; }}
+.blog-body h4 {{ color: var(--teal); margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.05rem; }}
+.blog-body p {{ margin-bottom: 0.8rem; }}
+.blog-body ul {{ padding-left: 1.5rem; margin-bottom: 0.8rem; }}
+.blog-body li {{ margin-bottom: 0.3rem; }}
+.blog-body strong {{ color: var(--teal); }}
+
+.read-on-substack {{
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--orange);
+  font-weight: 600;
+  font-size: 0.88rem;
+  text-decoration: none;
+}}
+.read-on-substack:hover {{ text-decoration: underline; }}
 
 /* ── empty feed ── */
 .empty-feed {{ color: var(--muted); font-style: italic; padding: 1rem 0; }}
