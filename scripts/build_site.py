@@ -482,16 +482,19 @@ def build_blog_section(items):
     if not items:
         return '<section class="card tab-panel" id="blog"><p class="empty-feed">No posts yet — check back soon.</p></section>'
 
+    # Sort posts by date, newest first
+    sorted_items = sorted(items, key=lambda p: p.get("date", ""), reverse=True)
+
     # Build table of contents
     toc_links = ""
-    for i, p in enumerate(items):
+    for i, p in enumerate(sorted_items):
         slug = f"post-{i}"
         toc_links += f'<li><a href="#{slug}" class="toc-link">{p["title"]}</a></li>\n'
-    toc = f'<nav class="blog-toc"><h3>Posts</h3><ol>{toc_links}</ol></nav>'
+    toc = f'<nav class="blog-toc"><h3>Posts</h3><ul>{toc_links}</ul></nav>'
 
     # Build post articles
     posts = ""
-    for i, p in enumerate(items):
+    for i, p in enumerate(sorted_items):
         slug = f"post-{i}"
         summary = p.get("summary", "")
         content = p.get("content", "")
@@ -876,9 +879,9 @@ main {{
   padding: 1rem 1.2rem;
   margin-bottom: 1.5rem;
 }}
-.blog-toc h3 {{ font-size: 0.95rem; color: var(--teal); margin-bottom: 0.5rem; }}
-.blog-toc ol {{ padding-left: 1.2rem; margin: 0; }}
-.blog-toc li {{ margin-bottom: 0.3rem; }}
+.blog-toc h3 {{ font-size: 0.95rem; color: var(--teal); margin-bottom: 0.6rem; }}
+.blog-toc ul {{ list-style: none; padding: 0; margin: 0; }}
+.blog-toc li {{ margin-bottom: 0.35rem; padding-left: 0.5rem; }}
 .toc-link {{ color: var(--teal); text-decoration: none; font-weight: 500; font-size: 0.9rem; }}
 .toc-link:hover {{ text-decoration: underline; }}
 
