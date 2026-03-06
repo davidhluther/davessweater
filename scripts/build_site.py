@@ -414,16 +414,16 @@ def build_videos_section(items):
 
 
 def _split_content_at_first_heading(html):
-    """Split HTML content into intro (before first <h4>) and rest."""
+    """Split HTML content into intro (before first heading h2-h4) and rest."""
     import re
-    m = re.search(r'<h4[\s>]', html)
+    m = re.search(r'<h[234][\s>]', html)
     if m:
         return html[:m.start()], html[m.start():]
     return html, ""
 
 
 def _add_heading_ids_and_toc(html, slug_prefix):
-    """Add id attrs to <h2>/<h4> tags and return (modified_html, toc_html)."""
+    """Add id attrs to <h2>/<h3>/<h4> tags and return (modified_html, toc_html)."""
     import re
     headings = []
     counter = [0]
@@ -439,7 +439,7 @@ def _add_heading_ids_and_toc(html, slug_prefix):
         headings.append((hid, title, level))
         return f'<{tag} id="{hid}"{attrs}>{content}</{tag}>'
 
-    modified = re.sub(r'<(h[24])([^>]*)>(.*?)</\1>', replacer, html)
+    modified = re.sub(r'<(h[234])([^>]*)>(.*?)</\1>', replacer, html)
     if not headings:
         return modified, ""
     min_level = min(h[2] for h in headings)
@@ -897,7 +897,9 @@ main {{
 .toc-indent {{ padding-left: 1rem; }}
 
 .blog-body, .blog-rest {{ font-size: 0.92rem; color: #374151; line-height: 1.7; }}
-.blog-body h4, .blog-rest h4 {{ color: var(--teal); margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.05rem; }}
+.blog-body h2, .blog-rest h2 {{ color: var(--teal); margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.15rem; }}
+.blog-body h3, .blog-rest h3 {{ color: var(--teal); margin-top: 1.2rem; margin-bottom: 0.4rem; font-size: 1.05rem; }}
+.blog-body h4, .blog-rest h4 {{ color: var(--teal); margin-top: 1rem; margin-bottom: 0.4rem; font-size: 0.95rem; }}
 .blog-body p, .blog-rest p {{ margin-bottom: 0.8rem; }}
 .blog-body ul, .blog-rest ul {{ padding-left: 1.5rem; margin-bottom: 0.8rem; }}
 .blog-body li, .blog-rest li {{ margin-bottom: 0.3rem; }}
