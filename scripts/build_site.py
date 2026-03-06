@@ -716,21 +716,23 @@ main {{
 .scores-table {{
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
+  table-layout: fixed;
+  word-wrap: break-word;
 }}
 
 .scores-table th {{
   background: var(--teal);
   color: #fff;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0.5rem 0.75rem;
+  letter-spacing: 0.03em;
+  padding: 0.4rem 0.4rem;
   text-align: left;
 }}
 
 .scores-table td {{
-  padding: 0.6rem 0.75rem;
+  padding: 0.45rem 0.4rem;
   border-bottom: 1px solid #e5e7eb;
   vertical-align: middle;
 }}
@@ -907,7 +909,7 @@ main {{
   margin-bottom: 1.2rem;
 }}
 .post-toc strong {{ font-size: 0.85rem; color: var(--teal); display: block; margin-bottom: 0.4rem; }}
-.post-toc ul {{ list-style: none; padding: 0; margin: 0; }}
+.post-toc ul {{ list-style: none; padding-left: 0.8rem; margin: 0; }}
 .post-toc li {{ margin-bottom: 0.25rem; }}
 .post-toc-link {{ color: var(--orange); text-decoration: none; font-size: 0.85rem; font-weight: 500; }}
 .post-toc-link:hover {{ text-decoration: underline; }}
