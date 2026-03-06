@@ -23,31 +23,37 @@ DATA_DIR = BASE_DIR / "data"
 # SWEATER WEATHER LOGIC
 # ═══════════════════════════════════════════════════════════════════
 
-def is_sweater_weather(temp_f, wind_mph=0, humidity=None):
+def is_sweater_weather(high_f, current_f=None, wind_mph=0, humidity=None):
     """
     The sacred algorithm. Is it sweater weather?
 
-    Rules (for Boone, NC — a mountain town):
-    - Below 45°F: YES. Obviously.
-    - 45-55°F: YES, but you might survive without one.
-    - 55-65°F: MAYBE. Depends on wind and your courage.
-    - Above 65°F: NO. Put the sweater away, Dave.
+    Uses a blended effective temperature:
+        effective_temp = (high * 0.5) + (current * 0.5)
 
-    Wind chill adjustment: every 10 mph of wind drops the
-    effective "sweater threshold" by ~5°F.
+    If only the high is available (e.g. daily actuals with no live reading),
+    the high is used on its own.
+
+    Scale (for Boone, NC — a mountain town):
+        75°F+   → 0 sweaters — No sweater needed
+        65-74°F → 1 sweater  — Light layer at most
+        55-64°F → 2 sweaters — Light sweater
+        45-54°F → 3 sweaters — Sweater weather
+        35-44°F → 4 sweaters — Heavy sweater
+        <35°F   → 5 sweaters — Full sweater stack
     """
-    if temp_f is None:
+    if high_f is None:
         return {"answer": "UNKNOWN", "detail": "No temperature data. Wear one just in case.", "layers": "?"}
 
-    # Wind chill adjustment (simplified)
-    effective_temp = temp_f
-    if wind_mph and wind_mph > 5:
-        effective_temp = temp_f - (wind_mph / 10) * 5
+    # Blend high and current when both are available
+    if current_f is not None:
+        effective_temp = (high_f * 0.5) + (current_f * 0.5)
+    else:
+        effective_temp = high_f
 
-    if effective_temp < 32:
+    if effective_temp < 35:
         return {
             "answer": "ABSOLUTELY",
-            "detail": f"It's {temp_f:.0f}°F. That's not sweater weather, that's SWEATER EMERGENCY.",
+            "detail": "That's not sweater weather, that's SWEATER EMERGENCY.",
             "layers": "3+ (sweater, fleece, AND a coat)",
             "emoji": "🥶🧥",
             "sweater_count": 5,
@@ -55,7 +61,7 @@ def is_sweater_weather(temp_f, wind_mph=0, humidity=None):
     elif effective_temp < 45:
         return {
             "answer": "YES",
-            "detail": f"It's {temp_f:.0f}°F. Classic sweater weather. This is what we're here for.",
+            "detail": "Classic sweater weather. This is what we're here for.",
             "layers": "2 (solid sweater + optional layer)",
             "emoji": "🧣✅",
             "sweater_count": 4,
@@ -63,7 +69,7 @@ def is_sweater_weather(temp_f, wind_mph=0, humidity=None):
     elif effective_temp < 55:
         return {
             "answer": "YES",
-            "detail": f"It's {temp_f:.0f}°F. Still sweater territory. Don't let anyone tell you otherwise.",
+            "detail": "Still sweater territory. Don't let anyone tell you otherwise.",
             "layers": "1-2 (light to medium sweater)",
             "emoji": "🧶👍",
             "sweater_count": 3,
@@ -71,7 +77,7 @@ def is_sweater_weather(temp_f, wind_mph=0, humidity=None):
     elif effective_temp < 65:
         return {
             "answer": "MAYBE",
-            "detail": f"It's {temp_f:.0f}°F. You could go either way. Bring it and decide later.",
+            "detail": "You could go either way. Bring it and decide later.",
             "layers": "0-1 (light layer, keep one in the car)",
             "emoji": "🤔",
             "sweater_count": 2,
@@ -79,7 +85,7 @@ def is_sweater_weather(temp_f, wind_mph=0, humidity=None):
     elif effective_temp < 75:
         return {
             "answer": "NO",
-            "detail": f"It's {temp_f:.0f}°F. No sweater needed unless you're in aggressive AC.",
+            "detail": "No sweater needed unless you're in aggressive AC.",
             "layers": "0 (the sweater rests today)",
             "emoji": "☀️❌",
             "sweater_count": 1,
@@ -87,7 +93,7 @@ def is_sweater_weather(temp_f, wind_mph=0, humidity=None):
     else:
         return {
             "answer": "ABSOLUTELY NOT",
-            "detail": f"It's {temp_f:.0f}°F. Wearing a sweater would be a cry for help.",
+            "detail": "Wearing a sweater would be a cry for help.",
             "layers": "0 (this is shorts weather, Dave)",
             "emoji": "🥵🩳",
             "sweater_count": 0,
