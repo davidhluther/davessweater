@@ -26,7 +26,7 @@ jobs:
         run: |
           git config user.name "DavesSweaterBot"
           git config user.email "bot@davessweater.com"
-          git add docs/
+          git add -f docs/
           git commit -m "🔄 Rebuild site with new screenshot" || echo "No changes to commit"
           git pull origin main --no-rebase -X ours || true
           git push origin main || (sleep 5 && git pull origin main --no-rebase -X ours && git push origin main)

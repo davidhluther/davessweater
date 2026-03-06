@@ -199,8 +199,8 @@ def verdict_html(verdict_str, score):
     # strip trailing emoji and replace with ray faces
     clean = verdict_str.split("\U0001f60e")[0].strip().rstrip("\u274c\U0001f937\u2705").strip()
     faces = int(round(score / 20)) if score else 0
-    face_row = "".join([ray_face_img("1.6rem")] * min(faces, 5))
-    return f'<span class="verdict-label">{clean}</span> {face_row}'
+    face_row = "".join([ray_face_img("1.2rem")] * min(faces, 5))
+    return f'<span class="verdict-label">{clean}</span><span class="verdict-faces">{face_row}</span>'
 
 
 def now_est():
@@ -482,16 +482,19 @@ def build_blog_section(items):
     if not items:
         return '<section class="card tab-panel" id="blog"><p class="empty-feed">No posts yet — check back soon.</p></section>'
 
+    # Sort posts by date, newest first
+    sorted_items = sorted(items, key=lambda p: p.get("date", ""), reverse=True)
+
     # Build table of contents
     toc_links = ""
-    for i, p in enumerate(items):
+    for i, p in enumerate(sorted_items):
         slug = f"post-{i}"
         toc_links += f'<li><a href="#{slug}" class="toc-link">{p["title"]}</a></li>\n'
-    toc = f'<nav class="blog-toc"><h3>Posts</h3><ol>{toc_links}</ol></nav>'
+    toc = f'<nav class="blog-toc"><h3>Posts</h3><ul>{toc_links}</ul></nav>'
 
     # Build post articles
     posts = ""
-    for i, p in enumerate(items):
+    for i, p in enumerate(sorted_items):
         slug = f"post-{i}"
         summary = p.get("summary", "")
         content = p.get("content", "")
@@ -716,23 +719,24 @@ main {{
 .scores-table {{
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: 0.78rem;
 }}
 
 .scores-table th {{
   background: var(--teal);
   color: #fff;
-  font-size: 0.78rem;
+  font-size: 0.68rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0.5rem 0.75rem;
+  letter-spacing: 0.02em;
+  padding: 0.35rem 0.3rem;
   text-align: left;
 }}
 
 .scores-table td {{
-  padding: 0.6rem 0.75rem;
+  padding: 0.4rem 0.3rem;
   border-bottom: 1px solid #e5e7eb;
   vertical-align: middle;
+  font-size: 0.76rem;
 }}
 
 .scores-table tr:last-child td {{ border-bottom: none; }}
@@ -741,8 +745,11 @@ main {{
 .source-cell {{
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.3rem;
 }}
+
+.verdict-label {{ display: block; font-size: 0.7rem; font-weight: 600; }}
+.verdict-faces {{ display: flex; flex-wrap: wrap; gap: 0.1rem; }}
 
 .source-icon {{ font-size: 1.4rem; }}
 
@@ -874,9 +881,9 @@ main {{
   padding: 1rem 1.2rem;
   margin-bottom: 1.5rem;
 }}
-.blog-toc h3 {{ font-size: 0.95rem; color: var(--teal); margin-bottom: 0.5rem; }}
-.blog-toc ol {{ padding-left: 1.2rem; margin: 0; }}
-.blog-toc li {{ margin-bottom: 0.3rem; }}
+.blog-toc h3 {{ font-size: 0.95rem; color: var(--teal); margin-bottom: 0.6rem; }}
+.blog-toc ul {{ list-style: none; padding: 0; margin: 0; }}
+.blog-toc li {{ margin-bottom: 0.35rem; padding-left: 0.5rem; }}
 .toc-link {{ color: var(--teal); text-decoration: none; font-weight: 500; font-size: 0.9rem; }}
 .toc-link:hover {{ text-decoration: underline; }}
 
@@ -907,7 +914,7 @@ main {{
   margin-bottom: 1.2rem;
 }}
 .post-toc strong {{ font-size: 0.85rem; color: var(--teal); display: block; margin-bottom: 0.4rem; }}
-.post-toc ul {{ list-style: none; padding: 0; margin: 0; }}
+.post-toc ul {{ list-style: none; padding-left: 0.8rem; margin: 0; }}
 .post-toc li {{ margin-bottom: 0.25rem; }}
 .post-toc-link {{ color: var(--orange); text-decoration: none; font-size: 0.85rem; font-weight: 500; }}
 .post-toc-link:hover {{ text-decoration: underline; }}
@@ -961,9 +968,9 @@ footer a:hover {{ text-decoration: underline; }}
 
 /* ── responsive ── */
 @media (max-width: 600px) {{
-  header {{ flex-wrap: wrap; padding: 0.5rem 1rem; gap: 0.5rem; }}
-  nav {{ margin-left: 0; width: 100%; justify-content: flex-start; overflow-x: auto; }}
-  .header-tagline {{ display: none; }}
+  header {{ flex-wrap: wrap; padding: 0.5rem 1rem; gap: 0.3rem; }}
+  nav {{ margin-left: 0; width: 100%; justify-content: flex-start; }}
+  .header-tagline {{ font-size: 0.75rem; white-space: normal; width: 100%; }}
   .sweater-temp {{ font-size: 2rem; }}
 }}
 """

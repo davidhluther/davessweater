@@ -490,7 +490,7 @@ def run_daily_comparison(target_date=None):
 
 
 def _update_running_scores(date, comparison):
-    """Append today's scores to the running tally (skip if date already recorded)."""
+    """Append today's scores and recalculate totals from all comparison files."""
     scores_path = DATA_DIR / "scores.json"
     if scores_path.exists():
         with open(scores_path) as f:
@@ -501,22 +501,34 @@ def _update_running_scores(date, comparison):
     # Skip if this date is already in the entries
     if any(e.get("date") == date for e in scores["entries"]):
         print(f"  Scores already recorded for {date}, skipping")
-        return
+    else:
+        entry = {"date": date}
+        for source, data in comparison.get("sources", {}).items():
+            if "score" in data:
+                entry[source] = data["score"]["score"]
+        entry["sweater_weather"] = comparison["sweater_weather"]["answer"]
+        scores["entries"].append(entry)
 
-    entry = {"date": date}
-    for source, data in comparison.get("sources", {}).items():
-        if "score" in data:
-            entry[source] = data["score"]["score"]
-            # Update running totals
-            if source not in scores["totals"]:
-                scores["totals"][source] = {"right": 0, "wrong": 0, "meh": 0, "total_score": 0, "days": 0}
+    # Recalculate totals from all comparison files (source of truth)
+    totals = {}
+    comp_dir = DATA_DIR / "comparisons"
+    for comp_file in sorted(comp_dir.glob("*.json")):
+        try:
+            with open(comp_file) as f:
+                comp = json.load(f)
+        except (json.JSONDecodeError, OSError):
+            continue
+        for source, data in comp.get("sources", {}).items():
+            if "score" not in data:
+                continue
+            if source not in totals:
+                totals[source] = {"right": 0, "wrong": 0, "meh": 0, "total_score": 0, "days": 0}
             verdict = data["score"]["grade"]["verdict"]
-            scores["totals"][source][verdict] += 1
-            scores["totals"][source]["total_score"] += data["score"]["score"]
-            scores["totals"][source]["days"] += 1
+            totals[source][verdict] += 1
+            totals[source]["total_score"] += data["score"]["score"]
+            totals[source]["days"] += 1
 
-    entry["sweater_weather"] = comparison["sweater_weather"]["answer"]
-    scores["entries"].append(entry)
+    scores["totals"] = totals
 
     with open(scores_path, "w") as f:
         json.dump(scores, f, indent=2)
