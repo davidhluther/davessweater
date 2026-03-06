@@ -232,46 +232,6 @@ def build_sweater_section(comp):
 """
 
 
-def build_current_conditions(comp):
-    """Mini-panel showing current live conditions from Ray's station."""
-    cur = comp.get("rays_current", {})
-    if not cur:
-        return ""
-
-    def item(label, value):
-        if value is None:
-            return ""
-        return (f'<div class="cond-item">'
-                f'<span class="cond-label">{label}</span>'
-                f'<span class="cond-value">{value}</span>'
-                f'</div>')
-
-    temp      = cur.get("temp_f")
-    feels     = cur.get("feels_like_f")
-    wind      = cur.get("wind")
-    gust      = cur.get("gust_mph")
-    humidity  = cur.get("humidity_pct")
-    rainfall  = cur.get("rainfall_in")
-
-    rows = (
-        item("Temp",       f"{temp}&deg;F"   if temp     is not None else None) +
-        item("Feels Like", f"{feels}&deg;F"  if feels    is not None else None) +
-        item("Wind",       wind) +
-        item("Gust",       f"{gust} mph"     if gust     is not None else None) +
-        item("Humidity",   f"{humidity}%"    if humidity is not None else None) +
-        item("Rainfall",   f'{rainfall}"'    if rainfall is not None else None)
-    )
-
-    if not rows.strip():
-        return ""
-
-    return f"""
-  <div class="current-conditions">
-    <div class="cond-header">📡 Current conditions (Ray's station)</div>
-    {rows}
-  </div>"""
-
-
 def build_rightwrong_section(comp):
     date     = comp.get("date", "")
     actual   = comp.get("actuals", comp.get("actual_weather", {}))
@@ -339,7 +299,6 @@ def build_rightwrong_section(comp):
 <section class="card" id="rightwrong-content">
   <h2>Right Ray / Wrong Ray</h2>
   <p class="section-subtitle">When you trust us to tell you how many rays of sunshine, golfballs, or snowmen you can expect, we need to be held to account. To that end, I'll be posting the "Right Ray, Wrong Ray" scoreboard that tracks the forecasts and compares them to the actual weather recorded each day.</p>
-  {build_current_conditions(comp)}
   <div class="table-wrap">
     <table class="scores-table">
       <thead>
@@ -776,48 +735,6 @@ main {{
 }}
 
 .actual-weather {{ color: var(--text); font-size: 0.95rem; }}
-
-/* ── current conditions panel ── */
-.current-conditions {{
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
-  gap: 0.6rem;
-  margin: 0.75rem 0 1rem;
-  padding: 0.85rem 1rem;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-left: 3px solid var(--teal);
-  border-radius: 0.5rem;
-}}
-
-.cond-item {{
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-}}
-
-.cond-header {{
-  grid-column: 1/-1;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  font-weight: 600;
-  margin-bottom: 0.2rem;
-}}
-
-.cond-label {{
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--muted);
-}}
-
-.cond-value {{
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--teal);
-}}
 
 /* ── iPhone screenshot ── */
 .iphone-screenshot-wrap {{
