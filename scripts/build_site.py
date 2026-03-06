@@ -423,23 +423,31 @@ def _split_content_at_first_heading(html):
 
 
 def _add_heading_ids_and_toc(html, slug_prefix):
-    """Add id attrs to <h4> tags and return (modified_html, toc_html)."""
+    """Add id attrs to <h2>/<h4> tags and return (modified_html, toc_html)."""
     import re
     headings = []
     counter = [0]
 
     def replacer(m):
         counter[0] += 1
+        tag = m.group(1)  # "h2" or "h4"
+        attrs = m.group(2)
+        content = m.group(3)
         hid = f"{slug_prefix}-s{counter[0]}"
-        title = re.sub(r'<[^>]+>', '', m.group(2))
-        headings.append((hid, title))
-        return f'<h4 id="{hid}"{m.group(1)}>{m.group(2)}</h4>'
+        title = re.sub(r'<[^>]+>', '', content)
+        level = int(tag[1])  # 2 or 4
+        headings.append((hid, title, level))
+        return f'<{tag} id="{hid}"{attrs}>{content}</{tag}>'
 
-    modified = re.sub(r'<h4([^>]*)>(.*?)</h4>', replacer, html)
+    modified = re.sub(r'<(h[24])([^>]*)>(.*?)</\1>', replacer, html)
     if not headings:
         return modified, ""
-    links = "".join(f'<li><a href="#{hid}" class="post-toc-link">{title}</a></li>' for hid, title in headings)
-    toc = f'<nav class="post-toc"><strong>In this post</strong><ul>{links}</ul></nav>'
+    min_level = min(h[2] for h in headings)
+    links = []
+    for hid, title, level in headings:
+        indent_class = ' class="toc-indent"' if level > min_level else ''
+        links.append(f'<li{indent_class}><a href="#{hid}" class="post-toc-link">{title}</a></li>')
+    toc = f'<nav class="post-toc"><strong>In this post</strong><ul>{"".join(links)}</ul></nav>'
     return modified, toc
 
 
@@ -833,6 +841,15 @@ main {{
 .video-date {{ font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }}
 
 /* ── blog ── */
+.blog-toc, .post-toc {{
+  text-align: center;
+}}
+
+.blog-toc ul, .post-toc ul {{
+  display: inline-block;
+  text-align: left;
+}}
+
 .blog-toc {{
   background: #fff;
   border: 1px solid #e5e7eb;
@@ -877,6 +894,7 @@ main {{
 .post-toc li {{ margin-bottom: 0.25rem; }}
 .post-toc-link {{ color: var(--orange); text-decoration: none; font-size: 0.85rem; font-weight: 500; }}
 .post-toc-link:hover {{ text-decoration: underline; }}
+.toc-indent {{ padding-left: 1rem; }}
 
 .blog-body, .blog-rest {{ font-size: 0.92rem; color: #374151; line-height: 1.7; }}
 .blog-body h4, .blog-rest h4 {{ color: var(--teal); margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.05rem; }}
