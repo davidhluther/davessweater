@@ -325,23 +325,32 @@ def build_rightwrong_section(comp):
   <td>{verdict_html(verd, sc)}</td>
 </tr>"""
 
+    # Build actual weather row for the table
+    actual_parts = [f"Hi: {act_high}&deg; / Lo: {act_low}&deg;"]
+    if act_wind is not None:
+        actual_parts.append(f"Wind: {act_wind} mph")
+    if act_precip is not None:
+        actual_parts.append(f'Rain: {act_precip}"')
+    if act_cond:
+        actual_parts.append(act_cond)
+    actual_row = f"""
+<tr class="actual-row">
+  <td><strong>Actual</strong></td>
+  <td>{"<br>".join(actual_parts)}</td>
+  <td colspan="2">&mdash;</td>
+</tr>"""
+
     return f"""
 <section class="card" id="rightwrong-content">
   <h2>Right Ray / Wrong Ray</h2>
-  <p class="section-date">{date}</p>
-  <p class="actual-weather">
-    <strong>Actual weather:</strong> High {act_high}&deg;F / Low {act_low}&deg;F
-    {f" &middot; Wind: {act_wind} mph" if act_wind is not None else ""}
-    {f' &middot; Rain: {act_precip}"' if act_precip is not None else ""}
-    &mdash; {act_cond}
-  </p>
+  <p class="section-subtitle">When you trust us to tell you how many rays of sunshine, golfballs, or snowmen you can expect, we need to be held to account. To that end, I'll be posting the "Right Ray, Wrong Ray" scoreboard that tracks the forecasts and compares them to the actual weather recorded each day.</p>
   {build_current_conditions(comp)}
   <div class="table-wrap">
     <table class="scores-table">
       <thead>
         <tr><th>Source</th><th>Predicted</th><th>Score</th><th>Verdict</th></tr>
       </thead>
-      <tbody>{rows}</tbody>
+      <tbody>{actual_row}{rows}</tbody>
     </table>
   </div>
   <p class="rating-note">Rating: 5 Rays = nailed it &nbsp;|&nbsp; 1 Ray = yikes</p>
@@ -741,6 +750,7 @@ main {{
 
 .scores-table tr:last-child td {{ border-bottom: none; }}
 .scores-table tr:hover td {{ background: rgba(60,84,104,0.04); }}
+.actual-row td {{ background: #f0f7fa; font-weight: 500; }}
 
 .source-cell {{
   display: flex;
@@ -1106,6 +1116,8 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dave's Sweater &mdash; Boone's most mostly reliable weather tracker and resource</title>
   <meta name="description" content="Is it sweater weather in Boone, NC? Did Ray get yesterday right? Find out.">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">

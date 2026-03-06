@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dave's Sweater &mdash; Boone's most mostly reliable weather tracker and resource</title>
   <meta name="description" content="Is it sweater weather in Boone, NC? Did Ray get yesterday right? Find out.">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -205,6 +207,7 @@ main {
 
 .scores-table tr:last-child td { border-bottom: none; }
 .scores-table tr:hover td { background: rgba(60,84,104,0.04); }
+.actual-row td { background: #f0f7fa; font-weight: 500; }
 
 .source-cell {
   display: flex;
@@ -500,13 +503,7 @@ footer a:hover { text-decoration: underline; }
     
 <section class="card" id="rightwrong-content">
   <h2>Right Ray / Wrong Ray</h2>
-  <p class="section-date">2026-03-04</p>
-  <p class="actual-weather">
-    <strong>Actual weather:</strong> High 68.8&deg;F / Low 38.3&deg;F
-     &middot; Wind: 9.9 mph
-     &middot; Rain: 0.004"
-    &mdash; Light drizzle
-  </p>
+  <p class="section-subtitle">When you trust us to tell you how many rays of sunshine, golfballs, or snowmen you can expect, we need to be held to account. To that end, I'll be posting the "Right Ray, Wrong Ray" scoreboard that tracks the forecasts and compares them to the actual weather recorded each day.</p>
   
   <div class="table-wrap">
     <table class="scores-table">
@@ -514,6 +511,11 @@ footer a:hover { text-decoration: underline; }
         <tr><th>Source</th><th>Predicted</th><th>Score</th><th>Verdict</th></tr>
       </thead>
       <tbody>
+<tr class="actual-row">
+  <td><strong>Actual</strong></td>
+  <td>Hi: 68.8&deg; / Lo: 38.3&deg;<br>Wind: 9.9 mph<br>Rain: 0.004"<br>Light drizzle</td>
+  <td colspan="2">&mdash;</td>
+</tr>
 <tr>
   <td class="source-cell">
     <span class="source-icon">🌐</span>
