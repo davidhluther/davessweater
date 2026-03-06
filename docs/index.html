@@ -166,6 +166,12 @@ main {
   color: var(--teal);
 }
 
+.sweater-high {
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin-top: 0.2rem;
+}
+
 .sweater-text {
   font-size: 1.05rem;
   color: var(--text);
@@ -238,48 +244,6 @@ main {
 }
 
 .actual-weather { color: var(--text); font-size: 0.95rem; }
-
-/* ── current conditions panel ── */
-.current-conditions {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
-  gap: 0.6rem;
-  margin: 0.75rem 0 1rem;
-  padding: 0.85rem 1rem;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-left: 3px solid var(--teal);
-  border-radius: 0.5rem;
-}
-
-.cond-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-}
-
-.cond-header {
-  grid-column: 1/-1;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  font-weight: 600;
-  margin-bottom: 0.2rem;
-}
-
-.cond-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--muted);
-}
-
-.cond-value {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--teal);
-}
 
 /* ── iPhone screenshot ── */
 .iphone-screenshot-wrap {
@@ -492,6 +456,7 @@ footer a:hover { text-decoration: underline; }
   <div class="sweater-verdict">
     <div class="sweater-score"><img class="sweater-icon active" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"></div>
     <div class="sweater-temp" id="live-temp">69.1&deg;F</div>
+    <div class="sweater-high" id="live-high"></div>
     <p class="sweater-text" id="live-verdict">It's 69°F. No sweater needed unless you're in aggressive AC.</p>
     <p class="sweater-layers" id="live-layers"><strong>Recommended layers:</strong> 0 (the sweater rests today)</p>
   </div>
@@ -514,11 +479,6 @@ footer a:hover { text-decoration: underline; }
 <section class="card" id="rightwrong-content">
   <h2>Right Ray / Wrong Ray</h2>
   <p class="section-subtitle">When you trust us to tell you how many rays of sunshine, golfballs, or snowmen you can expect, we need to be held to account. To that end, I'll be posting the "Right Ray, Wrong Ray" scoreboard that tracks the forecasts and compares them to the actual weather recorded each day.</p>
-  
-  <div class="current-conditions">
-    <div class="cond-header">📡 Current conditions (Ray's station)</div>
-    <div class="cond-item"><span class="cond-label">Temp</span><span class="cond-value">71.9&deg;F</span></div>
-  </div>
   <div class="table-wrap">
     <table class="scores-table">
       <thead>
@@ -655,6 +615,7 @@ document.querySelectorAll('.blog-expand').forEach(function(btn) {
   var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + BOONE_LAT
     + '&longitude=' + BOONE_LON
     + '&current=temperature_2m,wind_speed_10m,relative_humidity_2m,apparent_temperature'
+    + '&daily=temperature_2m_max&forecast_days=1'
     + '&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America/New_York';
 
   fetch(url)
@@ -667,7 +628,14 @@ document.querySelectorAll('.blog-expand').forEach(function(btn) {
 
       // Update temperature display
       var el = document.getElementById('live-temp');
-      if (el) el.innerHTML = temp + '&deg;F <span style="font-size:0.5em;color:#999;">live</span>';
+      if (el) el.innerHTML = temp + '&deg;F <span style="font-size:0.5em;color:#999;">now</span>';
+
+      // Update projected high
+      var hiEl = document.getElementById('live-high');
+      if (hiEl && data.daily && data.daily.temperature_2m_max) {
+        var high = Math.round(data.daily.temperature_2m_max[0]);
+        hiEl.innerHTML = 'High of ' + high + '&deg;F today';
+      }
 
       // Update sweater verdict based on live temp
       var effective = temp - (wind > 5 ? (wind / 10) * 5 : 0);
