@@ -490,13 +490,18 @@ def run_daily_comparison(target_date=None):
 
 
 def _update_running_scores(date, comparison):
-    """Append today's scores to the running tally."""
+    """Append today's scores to the running tally (skip if date already recorded)."""
     scores_path = DATA_DIR / "scores.json"
     if scores_path.exists():
         with open(scores_path) as f:
             scores = json.load(f)
     else:
         scores = {"entries": [], "totals": {}}
+
+    # Skip if this date is already in the entries
+    if any(e.get("date") == date for e in scores["entries"]):
+        print(f"  Scores already recorded for {date}, skipping")
+        return
 
     entry = {"date": date}
     for source, data in comparison.get("sources", {}).items():
