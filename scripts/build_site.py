@@ -1057,6 +1057,7 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="google-site-verification" content="WvhDdIhrlNBhsVYElbFc39q-Ib8J2UZZJKoy8pzn-KQ">
   <style>{CSS}</style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-7XL0TZ4GSS"></script>
