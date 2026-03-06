@@ -197,7 +197,7 @@ def ray_face_img(size="2.5rem"):
 def verdict_html(verdict_str, score):
     """Render verdict with ray-face icons (no text label)."""
     faces = int(round(score / 20)) if score else 0
-    face_row = "".join([ray_face_img("1.2rem")] * min(faces, 5))
+    face_row = "".join([ray_face_img("1.6rem")] * min(faces, 5))
     return f'<span class="verdict-faces">{face_row}</span>'
 
 
@@ -223,53 +223,14 @@ def build_sweater_section(comp):
 <section class="card" id="sweater">
   <h2>Sweater weather in Boone?</h2>
   <div class="sweater-verdict">
-    <div class="sweater-score">{emoji_row}</div>
+    <div class="sweater-score" id="live-sweaters">{emoji_row}</div>
     <div class="sweater-temp" id="live-temp">{temp}&deg;F</div>
+    <div class="sweater-high" id="live-high"></div>
     <p class="sweater-text" id="live-verdict">{verdict}</p>
     {f'<p class="sweater-layers" id="live-layers"><strong>Recommended layers:</strong> {layers}</p>' if layers else ''}
   </div>
 </section>
 """
-
-
-def build_current_conditions(comp):
-    """Mini-panel showing current live conditions from Ray's station."""
-    cur = comp.get("rays_current", {})
-    if not cur:
-        return ""
-
-    def item(label, value):
-        if value is None:
-            return ""
-        return (f'<div class="cond-item">'
-                f'<span class="cond-label">{label}</span>'
-                f'<span class="cond-value">{value}</span>'
-                f'</div>')
-
-    temp      = cur.get("temp_f")
-    feels     = cur.get("feels_like_f")
-    wind      = cur.get("wind")
-    gust      = cur.get("gust_mph")
-    humidity  = cur.get("humidity_pct")
-    rainfall  = cur.get("rainfall_in")
-
-    rows = (
-        item("Temp",       f"{temp}&deg;F"   if temp     is not None else None) +
-        item("Feels Like", f"{feels}&deg;F"  if feels    is not None else None) +
-        item("Wind",       wind) +
-        item("Gust",       f"{gust} mph"     if gust     is not None else None) +
-        item("Humidity",   f"{humidity}%"    if humidity is not None else None) +
-        item("Rainfall",   f'{rainfall}"'    if rainfall is not None else None)
-    )
-
-    if not rows.strip():
-        return ""
-
-    return f"""
-  <div class="current-conditions">
-    <div class="cond-header">📡 Current conditions (Ray's station)</div>
-    {rows}
-  </div>"""
 
 
 def build_rightwrong_section(comp):
@@ -305,7 +266,7 @@ def build_rightwrong_section(comp):
 
         shrug = r"&macr;\_(&#12484;)_/&macr;"
         # Build detail lines — always show all four stats
-        detail_parts = [f"Hi: {pred_high_s} / Lo: {pred_low_s}"]
+        detail_parts = [f'<span style="white-space:nowrap">Hi: {pred_high_s} / Lo: {pred_low_s}</span>']
         detail_parts.append(f"Wind: {round(pred_wind, 1)} mph" if pred_wind is not None else f"Wind: {shrug}")
         detail_parts.append(f'Rain: {pred_precip}"' if pred_precip is not None else f"Rain: {shrug}")
 
@@ -321,7 +282,7 @@ def build_rightwrong_section(comp):
 </tr>"""
 
     # Build actual weather row for the table
-    actual_parts = [f"Hi: {act_high}&deg; / Lo: {act_low}&deg;"]
+    actual_parts = [f'<span style="white-space:nowrap">Hi: {act_high}&deg; / Lo: {act_low}&deg;</span>']
     if act_wind is not None:
         actual_parts.append(f"Wind: {round(act_wind, 1)} mph")
     if act_precip is not None:
@@ -339,7 +300,6 @@ def build_rightwrong_section(comp):
 <section class="card" id="rightwrong-content">
   <h2>Right Ray / Wrong Ray</h2>
   <p class="section-subtitle">When you trust us to tell you how many rays of sunshine, golfballs, or snowmen you can expect, we need to be held to account. To that end, I'll be posting the "Right Ray, Wrong Ray" scoreboard that tracks the forecasts and compares them to the actual weather recorded each day.</p>
-  {build_current_conditions(comp)}
   <div class="table-wrap">
     <table class="scores-table">
       <thead>
@@ -421,11 +381,12 @@ def build_scoreboard_section(scores):
 <section class="card" id="scoreboard">
   <h2>Season Scoreboard</h2>
   <div class="table-wrap">
-    <table class="scores-table">
+    <table class="scores-table scoreboard-table">
       <thead><tr><th>Source</th><th>Record</th><th>Avg Score</th><th>Days Tracked</th></tr></thead>
       <tbody>{rows}</tbody>
     </table>
   </div>
+  <p class="scoreboard-key">W = best forecast that day &middot; L = worst &middot; M = somewhere in the middle</p>
 </section>
 """
 
@@ -704,6 +665,12 @@ main {{
   color: var(--teal);
 }}
 
+.sweater-high {{
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin-top: 0.2rem;
+}}
+
 .sweater-text {{
   font-size: 1.05rem;
   color: var(--text);
@@ -736,11 +703,39 @@ main {{
   text-align: left;
 }}
 
+.scores-table th:first-child {{
+  padding-left: 0.6rem;
+}}
+
+.scores-table th:nth-child(2) {{
+  padding-left: 0.6rem;
+}}
+
 .scores-table td {{
   padding: 0.4rem 0.3rem;
   border-bottom: 1px solid #e5e7eb;
   vertical-align: middle;
   font-size: 0.76rem;
+}}
+
+.scores-table td:first-child {{
+  padding-left: 0.6rem;
+}}
+
+.scores-table td:nth-child(2) {{
+  padding-left: 0.6rem;
+}}
+
+.scoreboard-table {{
+  table-layout: auto;
+}}
+
+.scoreboard-key {{
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.6rem;
+  text-align: center;
+  font-style: italic;
 }}
 
 .scores-table tr:last-child td {{ border-bottom: none; }}
@@ -776,48 +771,6 @@ main {{
 }}
 
 .actual-weather {{ color: var(--text); font-size: 0.95rem; }}
-
-/* ── current conditions panel ── */
-.current-conditions {{
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
-  gap: 0.6rem;
-  margin: 0.75rem 0 1rem;
-  padding: 0.85rem 1rem;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-left: 3px solid var(--teal);
-  border-radius: 0.5rem;
-}}
-
-.cond-item {{
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-}}
-
-.cond-header {{
-  grid-column: 1/-1;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  font-weight: 600;
-  margin-bottom: 0.2rem;
-}}
-
-.cond-label {{
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--muted);
-}}
-
-.cond-value {{
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--teal);
-}}
 
 /* ── iPhone screenshot ── */
 .iphone-screenshot-wrap {{
@@ -983,16 +936,16 @@ footer a:hover {{ text-decoration: underline; }}
   .scores-table th {{ font-size: 0.6rem; padding: 0.3rem 0.15rem; }}
   .scores-table td {{ padding: 0.35rem 0.15rem; word-wrap: break-word; overflow-wrap: break-word; }}
   .scores-table th:nth-child(1),
-  .scores-table td:nth-child(1) {{ width: 20%; }}
+  .scores-table td:nth-child(1) {{ width: 22%; white-space: nowrap; }}
   .scores-table th:nth-child(2),
-  .scores-table td:nth-child(2) {{ width: 34%; }}
+  .scores-table td:nth-child(2) {{ width: 36%; }}
   .scores-table th:nth-child(3),
   .scores-table td:nth-child(3) {{ width: 20%; font-size: 0.62rem; }}
   .scores-table th:nth-child(4),
-  .scores-table td:nth-child(4) {{ width: 26%; }}
+  .scores-table td:nth-child(4) {{ width: 22%; }}
   .scores-table td:nth-child(3) strong {{ font-size: 0.62rem; }}
   .verdict-label {{ font-size: 0.68rem; }}
-  .verdict-faces img {{ width: 1rem !important; height: 1rem !important; }}
+  .verdict-faces img {{ width: 1.3rem !important; height: 1.3rem !important; }}
 }}
 """
 
@@ -1048,6 +1001,7 @@ document.querySelectorAll('.blog-expand').forEach(function(btn) {
   var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + BOONE_LAT
     + '&longitude=' + BOONE_LON
     + '&current=temperature_2m,wind_speed_10m,relative_humidity_2m,apparent_temperature'
+    + '&daily=temperature_2m_max&forecast_days=1'
     + '&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America/New_York';
 
   fetch(url)
@@ -1060,29 +1014,59 @@ document.querySelectorAll('.blog-expand').forEach(function(btn) {
 
       // Update temperature display
       var el = document.getElementById('live-temp');
-      if (el) el.innerHTML = temp + '&deg;F <span style=\"font-size:0.5em;color:#999;\">live</span>';
+      if (el) el.innerHTML = temp + '&deg;F <span style=\"font-size:0.5em;color:#999;\">now</span>';
 
-      // Update sweater verdict based on live temp
-      var effective = temp - (wind > 5 ? (wind / 10) * 5 : 0);
+      // Update projected high
+      var hiEl = document.getElementById('live-high');
+      if (hiEl && data.daily && data.daily.temperature_2m_max) {
+        var high = Math.round(data.daily.temperature_2m_max[0]);
+        hiEl.innerHTML = 'High of ' + high + '&deg;F today';
+      }
+
+      // Update sweater verdict using blended formula
+      var high = (data.daily && data.daily.temperature_2m_max) ? data.daily.temperature_2m_max[0] : temp;
+      var effective = (high * 0.5) + (temp * 0.5);
       var verdict, layers;
-      if (effective < 32) {
-        verdict = "It's " + Math.round(temp) + "\\u00b0F. That's not sweater weather, that's SWEATER EMERGENCY.";
+      if (effective < 35) {
+        verdict = "That's not sweater weather, that's SWEATER EMERGENCY.";
         layers = "3+ (sweater, fleece, AND a coat)";
       } else if (effective < 45) {
-        verdict = "It's " + Math.round(temp) + "\\u00b0F. Classic sweater weather. This is what we're here for.";
+        verdict = "Classic sweater weather. This is what we're here for.";
         layers = "2 (solid sweater + optional layer)";
       } else if (effective < 55) {
-        verdict = "It's " + Math.round(temp) + "\\u00b0F. Still sweater territory. Don't let anyone tell you otherwise.";
+        verdict = "Still sweater territory. Don't let anyone tell you otherwise.";
         layers = "1-2 (light to medium sweater)";
       } else if (effective < 65) {
-        verdict = "It's " + Math.round(temp) + "\\u00b0F. You could go either way. Bring it and decide later.";
+        verdict = "You could go either way. Bring it and decide later.";
         layers = "0-1 (light layer, keep one in the car)";
       } else if (effective < 75) {
-        verdict = "It's " + Math.round(temp) + "\\u00b0F. No sweater needed unless you're in aggressive AC.";
+        verdict = "No sweater needed unless you're in aggressive AC.";
         layers = "0 (the sweater rests today)";
       } else {
-        verdict = "It's " + Math.round(temp) + "\\u00b0F. Wearing a sweater would be a cry for help.";
+        verdict = "Wearing a sweater would be a cry for help.";
         layers = "0 (this is shorts weather, Dave)";
+      }
+
+      // Compute sweater score (0-5)
+      var score;
+      if (effective < 35) score = 5;
+      else if (effective < 45) score = 4;
+      else if (effective < 55) score = 3;
+      else if (effective < 65) score = 2;
+      else if (effective < 75) score = 1;
+      else score = 0;
+
+      // Update sweater icons
+      var sEl = document.getElementById('live-sweaters');
+      if (sEl) {
+        var icons = sEl.querySelectorAll('.sweater-icon');
+        for (var i = 0; i < icons.length; i++) {
+          if (i < score) {
+            icons[i].className = 'sweater-icon active';
+          } else {
+            icons[i].className = 'sweater-icon inactive';
+          }
+        }
       }
 
       var vEl = document.getElementById('live-verdict');
