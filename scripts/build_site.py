@@ -457,6 +457,27 @@ def _split_content_at_first_heading(html):
     return html, ""
 
 
+def _add_heading_ids_and_toc(html, slug_prefix):
+    """Add id attrs to <h4> tags and return (modified_html, toc_html)."""
+    import re
+    headings = []
+    counter = [0]
+
+    def replacer(m):
+        counter[0] += 1
+        hid = f"{slug_prefix}-s{counter[0]}"
+        title = re.sub(r'<[^>]+>', '', m.group(2))
+        headings.append((hid, title))
+        return f'<h4 id="{hid}"{m.group(1)}>{m.group(2)}</h4>'
+
+    modified = re.sub(r'<h4([^>]*)>(.*?)</h4>', replacer, html)
+    if not headings:
+        return modified, ""
+    links = "".join(f'<li><a href="#{hid}" class="post-toc-link">{title}</a></li>' for hid, title in headings)
+    toc = f'<nav class="post-toc"><strong>In this post</strong><ul>{links}</ul></nav>'
+    return modified, toc
+
+
 def build_blog_section(items):
     if not items:
         return '<section class="card tab-panel" id="blog"><p class="empty-feed">No posts yet — check back soon.</p></section>'
@@ -478,7 +499,8 @@ def build_blog_section(items):
             intro, rest = _split_content_at_first_heading(content)
             body = f'<div class="blog-body">{intro}</div>'
             if rest:
-                body += f'<div class="blog-rest" id="{slug}-rest" style="display:none">{rest}</div>'
+                rest, post_toc = _add_heading_ids_and_toc(rest, slug)
+                body += f'<div class="blog-rest" id="{slug}-rest" style="display:none">{post_toc}{rest}</div>'
                 body += f'<button class="blog-expand" data-target="{slug}-rest" aria-expanded="false">Read more &darr;</button>'
         elif summary:
             body = f'<p class="blog-summary">{summary}</p>'
@@ -875,6 +897,19 @@ main {{
 }}
 
 .blog-summary {{ font-size: 0.88rem; color: #4b5563; }}
+
+.post-toc {{
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.4rem;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.2rem;
+}}
+.post-toc strong {{ font-size: 0.85rem; color: var(--teal); display: block; margin-bottom: 0.4rem; }}
+.post-toc ul {{ list-style: none; padding: 0; margin: 0; }}
+.post-toc li {{ margin-bottom: 0.25rem; }}
+.post-toc-link {{ color: var(--orange); text-decoration: none; font-size: 0.85rem; font-weight: 500; }}
+.post-toc-link:hover {{ text-decoration: underline; }}
 
 .blog-body, .blog-rest {{ font-size: 0.92rem; color: #374151; line-height: 1.7; }}
 .blog-body h4, .blog-rest h4 {{ color: var(--teal); margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.05rem; }}
