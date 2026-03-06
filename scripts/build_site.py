@@ -969,9 +969,15 @@ footer a:hover {{ text-decoration: underline; }}
 /* ── responsive ── */
 @media (max-width: 600px) {{
   header {{ flex-wrap: wrap; padding: 0.5rem 1rem; gap: 0.3rem; }}
+  .header-tagline {{ font-size: 0.72rem; white-space: normal; flex: 1; min-width: 0; }}
   nav {{ margin-left: 0; width: 100%; justify-content: flex-start; }}
-  .header-tagline {{ font-size: 0.75rem; white-space: normal; width: 100%; }}
   .sweater-temp {{ font-size: 2rem; }}
+  .source-icon, .source-cell img {{ display: none; }}
+  .scores-table {{ font-size: 0.72rem; }}
+  .scores-table th {{ font-size: 0.62rem; padding: 0.3rem 0.2rem; }}
+  .scores-table td {{ padding: 0.35rem 0.2rem; }}
+  .verdict-label {{ font-size: 0.62rem; }}
+  .verdict-faces img {{ width: 0.9rem !important; height: 0.9rem !important; }}
 }}
 """
 
