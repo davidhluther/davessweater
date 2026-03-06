@@ -112,15 +112,13 @@ def score_prediction(predicted, actual):
     """
     Score a prediction against actuals. Returns 0-100.
 
-    Scoring (scaled proportionally based on available data):
-    - High temp: up to 25 pts (lose 2.5 pts per degree off)
-    - Low temp: up to 25 pts (lose 2.5 pts per degree off)
+    Scoring (fixed 100-point scale, missing predictions score 0):
+    - High temp: up to 30 pts (within 2°F = full, scaled down from there)
+    - Low temp: up to 30 pts (same scale)
+    - Wind speed: up to 20 pts (within 3 mph = full, scaled down from there)
     - Precipitation: up to 20 pts (10 binary + 10 amount accuracy)
-    - Wind speed: up to 15 pts (lose 1.5 pts per mph off)
-    - Conditions category: up to 15 pts (clear/cloudy/rain/snow match)
     """
     score = 0
-    max_possible = 0
     breakdown = {}
 
     pred_high = _get_high(predicted)
@@ -128,115 +126,82 @@ def score_prediction(predicted, actual):
     actual_high = _get_high(actual)
     actual_low = _get_low(actual)
 
-    # High temp (25 pts)
+    # High temp (30 pts — within 2°F = full, lose 3 pts per degree beyond that)
     if pred_high is not None and actual_high is not None:
         high_err = abs(pred_high - actual_high)
-        high_pts = max(0, 25 - high_err * 2.5)
+        high_pts = max(0, 30 - max(0, high_err - 2) * 3)
         score += high_pts
-        max_possible += 25
         breakdown["high_temp"] = {
             "predicted": pred_high,
             "actual": actual_high,
             "error_f": round(high_err, 1),
             "points": round(high_pts, 1),
-            "max": 25,
+            "max": 30,
         }
     else:
-        breakdown["high_temp"] = {"error": "missing data", "points": 0, "max": 25, "excluded": True}
+        breakdown["high_temp"] = {"error": "missing data", "points": 0, "max": 30}
 
-    # Low temp (25 pts)
+    # Low temp (30 pts — within 2°F = full, lose 3 pts per degree beyond that)
     if pred_low is not None and actual_low is not None:
         low_err = abs(pred_low - actual_low)
-        low_pts = max(0, 25 - low_err * 2.5)
+        low_pts = max(0, 30 - max(0, low_err - 2) * 3)
         score += low_pts
-        max_possible += 25
         breakdown["low_temp"] = {
             "predicted": pred_low,
             "actual": actual_low,
             "error_f": round(low_err, 1),
             "points": round(low_pts, 1),
-            "max": 25,
+            "max": 30,
         }
     else:
-        breakdown["low_temp"] = {"error": "missing data", "points": 0, "max": 25, "excluded": True}
+        breakdown["low_temp"] = {"error": "missing data", "points": 0, "max": 30}
 
     # Precipitation (20 pts: 10 binary call + 10 amount accuracy)
-    pred_precip_in = predicted.get("precip_in") or 0
+    pred_precip_in = predicted.get("precip_in")
     actual_precip_in = actual.get("precip_in") or 0
-    pred_precip = pred_precip_in > 0.01
-    actual_precip = actual_precip_in > 0.01
+    if pred_precip_in is not None:
+        pred_precip_val = pred_precip_in or 0
+        pred_precip = pred_precip_val > 0.01
+        actual_precip = actual_precip_in > 0.01
 
-    # Binary: did it rain or not? (10 pts)
-    binary_pts = 10 if pred_precip == actual_precip else 0
+        # Binary: did it rain or not? (10 pts)
+        binary_pts = 10 if pred_precip == actual_precip else 0
 
-    # Amount accuracy (10 pts) — lose 2 pts per 0.1" difference
-    precip_err = abs(pred_precip_in - actual_precip_in)
-    amount_pts = max(0, 10 - precip_err * 20)
+        # Amount accuracy (10 pts) — lose 2 pts per 0.1" difference
+        precip_err = abs(pred_precip_val - actual_precip_in)
+        amount_pts = max(0, 10 - precip_err * 20)
 
-    precip_pts = binary_pts + amount_pts
-    score += precip_pts
-    max_possible += 20
-    breakdown["precipitation"] = {
-        "predicted_in": round(pred_precip_in, 3),
-        "actual_in": round(actual_precip_in, 3),
-        "binary_correct": pred_precip == actual_precip,
-        "error_in": round(precip_err, 3),
-        "points": round(precip_pts, 1),
-        "max": 20,
-    }
+        precip_pts = binary_pts + amount_pts
+        score += precip_pts
+        breakdown["precipitation"] = {
+            "predicted_in": round(pred_precip_val, 3),
+            "actual_in": round(actual_precip_in, 3),
+            "binary_correct": pred_precip == actual_precip,
+            "error_in": round(precip_err, 3),
+            "points": round(precip_pts, 1),
+            "max": 20,
+        }
+    else:
+        breakdown["precipitation"] = {"error": "missing data", "points": 0, "max": 20}
 
-    # Wind speed (15 pts — lose 1.5 pts per mph off)
+    # Wind speed (20 pts — within 3 mph = full, lose 2 pts per mph beyond that)
     pred_wind = predicted.get("wind_mph")
     actual_wind = actual.get("wind_mph")
     if pred_wind is not None and actual_wind is not None:
         wind_err = abs(pred_wind - actual_wind)
-        wind_pts = max(0, 15 - wind_err * 1.5)
+        wind_pts = max(0, 20 - max(0, wind_err - 3) * 2)
         score += wind_pts
-        max_possible += 15
         breakdown["wind"] = {
             "predicted_mph": round(pred_wind, 1),
             "actual_mph": round(actual_wind, 1),
             "error_mph": round(wind_err, 1),
             "points": round(wind_pts, 1),
-            "max": 15,
+            "max": 20,
         }
     else:
-        breakdown["wind"] = {"error": "missing data", "points": 0, "max": 15, "excluded": True}
+        breakdown["wind"] = {"error": "missing data", "points": 0, "max": 20}
 
-    # Conditions category (15 pts)
-    pred_cat = predicted.get("category", "unknown")
-    actual_cat = actual.get("category", "unknown")
-    if pred_cat == "unknown":
-        breakdown["conditions"] = {
-            "predicted": pred_cat,
-            "actual": actual_cat,
-            "match": "excluded",
-            "points": 0,
-            "max": 15,
-            "excluded": True,
-        }
-    else:
-        if pred_cat == actual_cat:
-            cat_pts = 15
-        elif _categories_close(pred_cat, actual_cat):
-            cat_pts = 7.5
-        else:
-            cat_pts = 0
-        score += cat_pts
-        max_possible += 15
-        breakdown["conditions"] = {
-            "predicted": pred_cat,
-            "actual": actual_cat,
-            "match": "exact" if pred_cat == actual_cat else ("close" if cat_pts > 0 else "wrong"),
-            "points": round(cat_pts, 1),
-            "max": 15,
-        }
-
-    # Scale to 100 based on available data
-    if max_possible > 0:
-        total = round((score / max_possible) * 100, 1)
-    else:
-        total = 0
+    total = round(score, 1)
     return {
         "score": total,
         "grade": _score_grade(total),

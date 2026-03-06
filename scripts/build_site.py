@@ -347,7 +347,7 @@ def build_rightwrong_section(comp):
       <tbody>{actual_row}{rows}</tbody>
     </table>
   </div>
-  <p class="rating-note">Rating: 5 Rays = nailed it &nbsp;|&nbsp; 1 Ray = yikes</p>
+  <p class="rating-note"><em>Each source is scored out of 100 points across four fields: high temperature (30 pts), low temperature (30 pts), wind speed (20 pts), and precipitation (20 pts). Scores are based on how close each prediction was to actual recorded conditions. If a source doesn&rsquo;t make a prediction for a field, it scores 0 for that field &mdash; forecasting is about commitment, and sitting one out isn&rsquo;t the same as getting it right.</em></p>
 </section>
 """
 
