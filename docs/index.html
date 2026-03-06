@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="google-site-verification" content="WvhDdIhrlNBhsVYElbFc39q-Ib8J2UZZJKoy8pzn-KQ">
   <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -344,7 +345,6 @@ main {
 .blog-toc li { margin-bottom: 0.3rem; }
 .toc-link { color: var(--teal); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
 .toc-link:hover { text-decoration: underline; }
-.toc-date { font-size: 0.75rem; color: var(--muted); margin-left: 0.5rem; }
 
 .blog-list { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 0.5rem; }
 
@@ -363,16 +363,42 @@ main {
   margin-bottom: 0.2rem;
 }
 
-.blog-date { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.8rem; }
-
 .blog-summary { font-size: 0.88rem; color: #4b5563; }
 
-.blog-body { font-size: 0.92rem; color: #374151; line-height: 1.7; }
-.blog-body h4 { color: var(--teal); margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.05rem; }
-.blog-body p { margin-bottom: 0.8rem; }
-.blog-body ul { padding-left: 1.5rem; margin-bottom: 0.8rem; }
-.blog-body li { margin-bottom: 0.3rem; }
-.blog-body strong { color: var(--teal); }
+.post-toc {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.4rem;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.2rem;
+}
+.post-toc strong { font-size: 0.85rem; color: var(--teal); display: block; margin-bottom: 0.4rem; }
+.post-toc ul { list-style: none; padding: 0; margin: 0; }
+.post-toc li { margin-bottom: 0.25rem; }
+.post-toc-link { color: var(--orange); text-decoration: none; font-size: 0.85rem; font-weight: 500; }
+.post-toc-link:hover { text-decoration: underline; }
+
+.blog-body, .blog-rest { font-size: 0.92rem; color: #374151; line-height: 1.7; }
+.blog-body h4, .blog-rest h4 { color: var(--teal); margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.05rem; }
+.blog-body p, .blog-rest p { margin-bottom: 0.8rem; }
+.blog-body ul, .blog-rest ul { padding-left: 1.5rem; margin-bottom: 0.8rem; }
+.blog-body li, .blog-rest li { margin-bottom: 0.3rem; }
+.blog-body strong, .blog-rest strong { color: var(--teal); }
+
+.blog-expand {
+  display: block;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: none;
+  border: 1px solid var(--orange);
+  border-radius: 0.4rem;
+  color: var(--orange);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.blog-expand:hover { background: var(--orange); color: #fff; }
 
 .read-on-substack {
   display: inline-block;
@@ -407,6 +433,14 @@ footer a:hover { text-decoration: underline; }
   .sweater-temp { font-size: 2rem; }
 }
 </style>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7XL0TZ4GSS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7XL0TZ4GSS');
+  </script>
 </head>
 <body>
 
@@ -417,15 +451,16 @@ footer a:hover { text-decoration: underline; }
   <span class="header-tagline">Boone's most reliable weather service</span>
   <nav>
     <button data-tab="weather">Weather</button>
+    <button data-tab="rightwrong">Right Ray / Wrong Ray</button>
     <button data-tab="videos">Videos</button>
     <button data-tab="blog">Blog</button>
   </nav>
 </header>
 
-<div class="update-bar">Updated: March 05, 2026 at 09:51 PM EST</div>
+<div class="update-bar">Updated: March 05, 2026 at 10:06 PM EST</div>
 
 <main>
-  <!-- weather tab: sweater + right/wrong + scoreboard -->
+  <!-- weather tab -->
   <div id="weather-content" style="display:contents;">
     
 <section class="card" id="sweater">
@@ -447,6 +482,11 @@ footer a:hover { text-decoration: underline; }
   </div>
 </section>
 
+  </div>
+
+  <!-- right ray / wrong ray tab -->
+  <div class="tab-panel" id="rightwrong" style="display:none;">
+    
 <section class="card" id="rightwrong">
   <h2>Right Ray / Wrong Ray</h2>
   <p class="section-date">2026-03-04</p>
@@ -491,7 +531,7 @@ footer a:hover { text-decoration: underline; }
   <div class="table-wrap">
     <table class="scores-table">
       <thead><tr><th>Source</th><th>Record</th><th>Avg Score</th><th>Days Tracked</th></tr></thead>
-      <tbody><tr><td><strong>Open-Meteo</strong></td><td>0W - 0L - 18M</td><td>72.8/100</td><td>18</td></tr><tr><td><strong>Ray's Weather</strong></td><td>0W - 18L - 0M</td><td>55.2/100</td><td>18</td></tr></tbody>
+      <tbody><tr><td><strong>Open-Meteo</strong></td><td>0W - 0L - 11M</td><td>72.9/100</td><td>11</td></tr><tr><td><strong>Ray's Weather</strong></td><td>0W - 11L - 0M</td><td>54.0/100</td><td>11</td></tr></tbody>
     </table>
   </div>
 </section>
@@ -505,19 +545,17 @@ footer a:hover { text-decoration: underline; }
   
 <section class="card tab-panel" id="blog">
   <h2>Blog</h2>
-  <nav class="blog-toc"><h3>Posts</h3><ol><li><a href="#post-0" class="toc-link">Welcome to Dave's Sweater</a><span class="toc-date">2026-03-05</span></li>
-<li><a href="#post-1" class="toc-link">Coming soon</a><span class="toc-date">2026-03-01</span></li>
+  <nav class="blog-toc"><h3>Posts</h3><ol><li><a href="#post-0" class="toc-link">Welcome to Dave's Sweater</a></li>
+<li><a href="#post-1" class="toc-link">Coming soon</a></li>
 </ol></nav>
   <div class="blog-list">
 <article class="blog-post" id="post-0">
   <h3 class="blog-title">Welcome to Dave's Sweater</h3>
-  <p class="blog-date">2026-03-05</p>
-  <div class="blog-body"><p>I learned many things while speaking to hundreds, or even thousands, of people in Watauga County over the past few months.</p><p>Some were concerned about the state of things around here, and they were excited to learn more about someone finally listening to them and offering solutions.</p><p>Nerds.</p><p>The ones who really knew how things worked were more concerned about the weather.</p><h4>The real questions</h4><p>What is weather, anyway? Where does it come from? Does it really have to change all of the time?</p><p>But what people really needed to know was much more important:</p><ul><li>If you're so smart, why don't you have a weather website?</li><li>Why haven't I known you thirty years?</li><li>How do I know if I should wear a sweater tomorrow?</li></ul><p>I couldn't answer those questions, and it led me to question myself.</p><p>How could I ever hope to improve housing security and affordability if I don't have my name on a weather website?</p><p>What do I know about improving the community when I wasn't clever enough to move here when I was four years old?</p><p>Why trust me with public safety and the school system, when I can't even tell you if it'll feel just fine to wear that cute fleece sweater in the morning, only to find out that you get all drippy by the time the sun comes out?</p><h4>Becoming a weather expert</h4><p>We already have free weather apps on our phones, and the National Weather Service provides us with critical warnings ahead of time.</p><p>Why would anyone trust me, and how could I hope to compete with free services staffed my expert meteorologists?</p><p>I spent countless minutes doing my research and studying the market, and it turns out that you don't need any training at all. You don't need to be a scientist. You don't need to be competent. You don't need to be accurate.</p><p><em>Anyone</em> can become a local weather influencer — all you need is a website, the ability to scrape the real experts' data, maybe a few consumer-grade weather stations, and the audacity to pass off the work as your own.</p><h4>The Dave's Sweater Difference</h4><p>Since you're reading this on a website with my name on it, you know that I've done enough to call myself a meteorologist now. So, let me tell you how Dave's Sweater is just as good as or better than other local weather websites.</p><p><strong>Is it sweater weather?</strong></p><p>The main difference is that I'll tell you all you need to know: if it's sweater weather today, how many layers you'll need, and if you'll get all sweaty if you keep it on.</p><p>If you don't want all of the kids laughing at your for walking around looking like a 90s sitcom with it tied around your waist or a knotted around your shoulders like goober, then you've come to the right place.</p><h4>Rays of sunshine scoreboard</h4><p>Even people with my level of training get it wrong sometimes. Sometimes a lot. In fact, a lot of the time, it's a lot. And you forget about it by the next day anyway.</p><p>When you trust us to tell you how many rays of sunshine, golfballs, or snowmen you can expect, we need to be held to account. To that end, I'll be posting the "Right Ray, Wrong Ray" scoreboard that tracks the forecasts and compares them to the actual weather recorded each day.</p><p>You deserve to know how accurate we are so you can make your own decisions about whether it makes since to pay $0 for Dave's Sweater, $0 for the Weather App, or $5 for another one.</p><h4>Free service</h4><p>This service will be offered for free. The domain hosting is $14 a year, any ad revenue, merch sales, and donations beyond that will go to local non-profits.</p><p>I've only lived here for six years and Carolina's business school isn't that good — I'm no small businessman with a computer science degree that pre-dates the internet, so I don't think I've got the experience to balance the books if I took payments.</p><h4>No phone apps</h4><p>Another expert meteorologist with qualifications similar to mine once noted that phone apps are making it all up. So, I'm only posting my forecasts on a website and social media.</p><p>I respect their subtle, long-term plan to make people use them less (for their own good) by providing a really bad app, charging $3 for it, and then switching to a subscription fee model.</p><p>But I don't have that type of vision, so this will stay browser-based. That way, you know I'm just as accurate.</p><h4>More to come</h4><p>We've got big plans for DavesSweater.com, and I can't wait to unveil some of our upcoming partnerships, educational content, and video series.</p><p>Please follow us on social media to stay updated and get the most mostly accurate forecasts you can reasonably expect from some dude with a website.</p><p>Facebook: <strong>Dave's Sweater</strong> · TikTok: <strong>@davessweater</strong> · Instagram: <strong>@davessweater</strong></p></div>
+  <div class="blog-body"><p>I learned many things while speaking to hundreds, or even thousands, of people in Watauga County over the past few months.</p><p>Some were concerned about the state of things around here, and they were excited to learn more about someone finally listening to them and offering solutions.</p><p>Nerds.</p><p>The ones who really knew how things worked were more concerned about the weather.</p></div><div class="blog-rest" id="post-0-rest" style="display:none"><nav class="post-toc"><strong>In this post</strong><ul><li><a href="#post-0-s1" class="post-toc-link">The real questions</a></li><li><a href="#post-0-s2" class="post-toc-link">Becoming a weather expert</a></li><li><a href="#post-0-s3" class="post-toc-link">The Dave's Sweater Difference</a></li><li><a href="#post-0-s4" class="post-toc-link">Rays of sunshine scoreboard</a></li><li><a href="#post-0-s5" class="post-toc-link">Free service</a></li><li><a href="#post-0-s6" class="post-toc-link">No phone apps</a></li><li><a href="#post-0-s7" class="post-toc-link">More to come</a></li></ul></nav><h4 id="post-0-s1">The real questions</h4><p>What is weather, anyway? Where does it come from? Does it really have to change all of the time?</p><p>But what people really needed to know was much more important:</p><ul><li>If you're so smart, why don't you have a weather website?</li><li>Why haven't I known you thirty years?</li><li>How do I know if I should wear a sweater tomorrow?</li></ul><p>I couldn't answer those questions, and it led me to question myself.</p><p>How could I ever hope to improve housing security and affordability if I don't have my name on a weather website?</p><p>What do I know about improving the community when I wasn't clever enough to move here when I was four years old?</p><p>Why trust me with public safety and the school system, when I can't even tell you if it'll feel just fine to wear that cute fleece sweater in the morning, only to find out that you get all drippy by the time the sun comes out?</p><h4 id="post-0-s2">Becoming a weather expert</h4><p>We already have free weather apps on our phones, and the National Weather Service provides us with critical warnings ahead of time.</p><p>Why would anyone trust me, and how could I hope to compete with free services staffed my expert meteorologists?</p><p>I spent countless minutes doing my research and studying the market, and it turns out that you don't need any training at all. You don't need to be a scientist. You don't need to be competent. You don't need to be accurate.</p><p><em>Anyone</em> can become a local weather influencer — all you need is a website, the ability to scrape the real experts' data, maybe a few consumer-grade weather stations, and the audacity to pass off the work as your own.</p><h4 id="post-0-s3">The Dave's Sweater Difference</h4><p>Since you're reading this on a website with my name on it, you know that I've done enough to call myself a meteorologist now. So, let me tell you how Dave's Sweater is just as good as or better than other local weather websites.</p><p><strong>Is it sweater weather?</strong></p><p>The main difference is that I'll tell you all you need to know: if it's sweater weather today, how many layers you'll need, and if you'll get all sweaty if you keep it on.</p><p>If you don't want all of the kids laughing at your for walking around looking like a 90s sitcom with it tied around your waist or a knotted around your shoulders like goober, then you've come to the right place.</p><h4 id="post-0-s4">Rays of sunshine scoreboard</h4><p>Even people with my level of training get it wrong sometimes. Sometimes a lot. In fact, a lot of the time, it's a lot. And you forget about it by the next day anyway.</p><p>When you trust us to tell you how many rays of sunshine, golfballs, or snowmen you can expect, we need to be held to account. To that end, I'll be posting the "Right Ray, Wrong Ray" scoreboard that tracks the forecasts and compares them to the actual weather recorded each day.</p><p>You deserve to know how accurate we are so you can make your own decisions about whether it makes since to pay $0 for Dave's Sweater, $0 for the Weather App, or $5 for another one.</p><h4 id="post-0-s5">Free service</h4><p>This service will be offered for free. The domain hosting is $14 a year, any ad revenue, merch sales, and donations beyond that will go to local non-profits.</p><p>I've only lived here for six years and Carolina's business school isn't that good — I'm no small businessman with a computer science degree that pre-dates the internet, so I don't think I've got the experience to balance the books if I took payments.</p><h4 id="post-0-s6">No phone apps</h4><p>Another expert meteorologist with qualifications similar to mine once noted that phone apps are making it all up. So, I'm only posting my forecasts on a website and social media.</p><p>I respect their subtle, long-term plan to make people use them less (for their own good) by providing a really bad app, charging $3 for it, and then switching to a subscription fee model.</p><p>But I don't have that type of vision, so this will stay browser-based. That way, you know I'm just as accurate.</p><h4 id="post-0-s7">More to come</h4><p>We've got big plans for DavesSweater.com, and I can't wait to unveil some of our upcoming partnerships, educational content, and video series.</p><p>Please follow us on social media to stay updated and get the most mostly accurate forecasts you can reasonably expect from some dude with a website.</p><p>Facebook: <strong>Dave's Sweater</strong> · TikTok: <strong>@davessweater</strong> · Instagram: <strong>@davessweater</strong></p></div><button class="blog-expand" data-target="post-0-rest" aria-expanded="false">Read more &darr;</button>
   <a href="https://davessweater.substack.com/p/welcome-to-daves-sweater" target="_blank" rel="noopener" class="read-on-substack">Read on Substack &rarr;</a>
 </article>
 <article class="blog-post" id="post-1">
   <h3 class="blog-title">Coming soon</h3>
-  <p class="blog-date">2026-03-01</p>
   <p class="blog-summary">This is David's Substack.</p>
   <a href="https://davessweater.substack.com/p/coming-soon" target="_blank" rel="noopener" class="read-on-substack">Read on Substack &rarr;</a>
 </article></div>
@@ -535,7 +573,7 @@ footer a:hover { text-decoration: underline; }
 
 <script>
 (function() {
-  const TABS = ['weather', 'videos', 'blog'];
+  const TABS = ['weather', 'rightwrong', 'videos', 'blog'];
 
   function activate(tab) {
     // nav buttons
@@ -562,6 +600,18 @@ footer a:hover { text-decoration: underline; }
   const hash = location.hash.replace('#', '');
   activate(TABS.includes(hash) ? hash : 'weather');
 })();
+
+// ── Blog expand / collapse ──
+document.querySelectorAll('.blog-expand').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var target = document.getElementById(btn.dataset.target);
+    if (!target) return;
+    var expanded = btn.getAttribute('aria-expanded') === 'true';
+    target.style.display = expanded ? 'none' : 'block';
+    btn.setAttribute('aria-expanded', String(!expanded));
+    btn.innerHTML = expanded ? 'Read more &darr;' : 'Show less &uarr;';
+  });
+});
 
 // ── Live temperature from Open-Meteo (Boone, NC) ──
 (function() {
