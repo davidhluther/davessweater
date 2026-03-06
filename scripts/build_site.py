@@ -973,7 +973,7 @@ footer a:hover {{ text-decoration: underline; }}
 
 JS = """
 (function() {
-  const TABS = ['weather', 'videos', 'blog'];
+  const TABS = ['weather', 'rightwrong', 'videos', 'blog'];
 
   function activate(tab) {
     // nav buttons
@@ -1074,7 +1074,10 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
 
     weather_sections = (
         build_sweater_section(comp) +
-        build_phone_forecast(forecast or {}) +
+        build_phone_forecast(forecast or {})
+    )
+
+    rightwrong_sections = (
         build_rightwrong_section(comp) +
         build_scoreboard_section(scores)
     )
@@ -1112,6 +1115,7 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
   <span class="header-tagline">Boone's most reliable weather service</span>
   <nav>
     <button data-tab="weather">Weather</button>
+    <button data-tab="rightwrong">Right Ray / Wrong Ray</button>
     <button data-tab="videos">Videos</button>
     <button data-tab="blog">Blog</button>
   </nav>
@@ -1120,9 +1124,14 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
 <div class="update-bar">Updated: {updated}</div>
 
 <main>
-  <!-- weather tab: sweater + right/wrong + scoreboard -->
+  <!-- weather tab -->
   <div id="weather-content" style="display:contents;">
     {weather_sections}
+  </div>
+
+  <!-- right ray / wrong ray tab -->
+  <div class="tab-panel" id="rightwrong" style="display:none;">
+    {rightwrong_sections}
   </div>
 
   <!-- videos tab -->
