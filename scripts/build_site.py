@@ -448,6 +448,15 @@ def build_videos_section(items):
 """
 
 
+def _split_content_at_first_heading(html):
+    """Split HTML content into intro (before first <h4>) and rest."""
+    import re
+    m = re.search(r'<h4[\s>]', html)
+    if m:
+        return html[:m.start()], html[m.start():]
+    return html, ""
+
+
 def build_blog_section(items):
     if not items:
         return '<section class="card tab-panel" id="blog"><p class="empty-feed">No posts yet — check back soon.</p></section>'
@@ -456,7 +465,7 @@ def build_blog_section(items):
     toc_links = ""
     for i, p in enumerate(items):
         slug = f"post-{i}"
-        toc_links += f'<li><a href="#{slug}" class="toc-link">{p["title"]}</a><span class="toc-date">{p["date"]}</span></li>\n'
+        toc_links += f'<li><a href="#{slug}" class="toc-link">{p["title"]}</a></li>\n'
     toc = f'<nav class="blog-toc"><h3>Posts</h3><ol>{toc_links}</ol></nav>'
 
     # Build post articles
@@ -466,7 +475,11 @@ def build_blog_section(items):
         summary = p.get("summary", "")
         content = p.get("content", "")
         if content:
-            body = f'<div class="blog-body">{content}</div>'
+            intro, rest = _split_content_at_first_heading(content)
+            body = f'<div class="blog-body">{intro}</div>'
+            if rest:
+                body += f'<div class="blog-rest" id="{slug}-rest" style="display:none">{rest}</div>'
+                body += f'<button class="blog-expand" data-target="{slug}-rest" aria-expanded="false">Read more &darr;</button>'
         elif summary:
             body = f'<p class="blog-summary">{summary}</p>'
         else:
@@ -475,7 +488,6 @@ def build_blog_section(items):
         posts += f"""
 <article class="blog-post" id="{slug}">
   <h3 class="blog-title">{p['title']}</h3>
-  <p class="blog-date">{p['date']}</p>
   {body}
   {substack_link}
 </article>"""
@@ -844,7 +856,6 @@ main {{
 .blog-toc li {{ margin-bottom: 0.3rem; }}
 .toc-link {{ color: var(--teal); text-decoration: none; font-weight: 500; font-size: 0.9rem; }}
 .toc-link:hover {{ text-decoration: underline; }}
-.toc-date {{ font-size: 0.75rem; color: var(--muted); margin-left: 0.5rem; }}
 
 .blog-list {{ display: flex; flex-direction: column; gap: 1.5rem; margin-top: 0.5rem; }}
 
@@ -863,16 +874,29 @@ main {{
   margin-bottom: 0.2rem;
 }}
 
-.blog-date {{ font-size: 0.78rem; color: var(--muted); margin-bottom: 0.8rem; }}
-
 .blog-summary {{ font-size: 0.88rem; color: #4b5563; }}
 
-.blog-body {{ font-size: 0.92rem; color: #374151; line-height: 1.7; }}
-.blog-body h4 {{ color: var(--teal); margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.05rem; }}
-.blog-body p {{ margin-bottom: 0.8rem; }}
-.blog-body ul {{ padding-left: 1.5rem; margin-bottom: 0.8rem; }}
-.blog-body li {{ margin-bottom: 0.3rem; }}
-.blog-body strong {{ color: var(--teal); }}
+.blog-body, .blog-rest {{ font-size: 0.92rem; color: #374151; line-height: 1.7; }}
+.blog-body h4, .blog-rest h4 {{ color: var(--teal); margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.05rem; }}
+.blog-body p, .blog-rest p {{ margin-bottom: 0.8rem; }}
+.blog-body ul, .blog-rest ul {{ padding-left: 1.5rem; margin-bottom: 0.8rem; }}
+.blog-body li, .blog-rest li {{ margin-bottom: 0.3rem; }}
+.blog-body strong, .blog-rest strong {{ color: var(--teal); }}
+
+.blog-expand {{
+  display: block;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: none;
+  border: 1px solid var(--orange);
+  border-radius: 0.4rem;
+  color: var(--orange);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}}
+.blog-expand:hover {{ background: var(--orange); color: #fff; }}
 
 .read-on-substack {{
   display: inline-block;
@@ -941,6 +965,18 @@ JS = """
   const hash = location.hash.replace('#', '');
   activate(TABS.includes(hash) ? hash : 'weather');
 })();
+
+// ── Blog expand / collapse ──
+document.querySelectorAll('.blog-expand').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var target = document.getElementById(btn.dataset.target);
+    if (!target) return;
+    var expanded = btn.getAttribute('aria-expanded') === 'true';
+    target.style.display = expanded ? 'none' : 'block';
+    btn.setAttribute('aria-expanded', String(!expanded));
+    btn.innerHTML = expanded ? 'Read more &darr;' : 'Show less &uarr;';
+  });
+});
 
 // ── Live temperature from Open-Meteo (Boone, NC) ──
 (function() {
