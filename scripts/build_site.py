@@ -225,6 +225,7 @@ def build_sweater_section(comp):
   <div class="sweater-verdict">
     <div class="sweater-score">{emoji_row}</div>
     <div class="sweater-temp" id="live-temp">{temp}&deg;F</div>
+    <div class="sweater-high" id="live-high"></div>
     <p class="sweater-text" id="live-verdict">{verdict}</p>
     {f'<p class="sweater-layers" id="live-layers"><strong>Recommended layers:</strong> {layers}</p>' if layers else ''}
   </div>
@@ -663,6 +664,12 @@ main {{
   color: var(--teal);
 }}
 
+.sweater-high {{
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin-top: 0.2rem;
+}}
+
 .sweater-text {{
   font-size: 1.05rem;
   color: var(--text);
@@ -965,6 +972,7 @@ document.querySelectorAll('.blog-expand').forEach(function(btn) {
   var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + BOONE_LAT
     + '&longitude=' + BOONE_LON
     + '&current=temperature_2m,wind_speed_10m,relative_humidity_2m,apparent_temperature'
+    + '&daily=temperature_2m_max&forecast_days=1'
     + '&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America/New_York';
 
   fetch(url)
@@ -977,7 +985,14 @@ document.querySelectorAll('.blog-expand').forEach(function(btn) {
 
       // Update temperature display
       var el = document.getElementById('live-temp');
-      if (el) el.innerHTML = temp + '&deg;F <span style=\"font-size:0.5em;color:#999;\">live</span>';
+      if (el) el.innerHTML = temp + '&deg;F <span style=\"font-size:0.5em;color:#999;\">now</span>';
+
+      // Update projected high
+      var hiEl = document.getElementById('live-high');
+      if (hiEl && data.daily && data.daily.temperature_2m_max) {
+        var high = Math.round(data.daily.temperature_2m_max[0]);
+        hiEl.innerHTML = 'High of ' + high + '&deg;F today';
+      }
 
       // Update sweater verdict based on live temp
       var effective = temp - (wind > 5 ? (wind / 10) * 5 : 0);
