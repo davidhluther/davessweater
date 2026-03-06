@@ -730,11 +730,6 @@ main {{
   table-layout: auto;
 }}
 
-.scoreboard-table th,
-.scoreboard-table td {{
-  white-space: nowrap;
-}}
-
 .scoreboard-key {{
   font-size: 0.75rem;
   color: var(--muted);
