@@ -276,6 +276,17 @@ def _best_rays_prediction(rays_data, target_date):
     return pred if pred else None
 
 
+def _parse_apple_forecast(path):
+    """Load Apple Weather JSON, tolerating units like '69°F' or '2.6 mph'."""
+    import re
+    with open(path) as f:
+        raw = f.read()
+    # Fix values like 69°F or 2.607 mph → bare numbers
+    # Match: a number (with optional decimal) followed by non-quote, non-comma junk
+    raw = re.sub(r':\s*(\d+\.?\d*)[^",}\]]*([,}\]])', r': \1\2', raw)
+    return json.loads(raw)
+
+
 def _apple_condition_to_category(condition_str):
     """Map Apple Weather condition strings to scoring categories."""
     if not condition_str:
@@ -418,8 +429,7 @@ def run_daily_comparison(target_date=None):
     # Score Apple Weather prediction (from iPhone Shortcut)
     apple_path = pred_dir / "iphone_forecast_apple.json"
     if apple_path.exists():
-        with open(apple_path) as f:
-            apple_data = json.load(f)
+        apple_data = _parse_apple_forecast(apple_path)
         # The Shortcut uploads a flat dict: today_high_f, tonight_low_f, wind_mph, conditions
         # Map conditions string to a category for scoring
         if apple_data.get("conditions") and not apple_data.get("category"):
