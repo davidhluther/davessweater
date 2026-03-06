@@ -197,7 +197,7 @@ def ray_face_img(size="2.5rem"):
 def verdict_html(verdict_str, score):
     """Render verdict with ray-face icons (no text label)."""
     faces = int(round(score / 20)) if score else 0
-    face_row = "".join([ray_face_img("1.2rem")] * min(faces, 5))
+    face_row = "".join([ray_face_img("1.6rem")] * min(faces, 5))
     return f'<span class="verdict-faces">{face_row}</span>'
 
 
@@ -916,7 +916,7 @@ footer a:hover {{ text-decoration: underline; }}
   .scores-table td:nth-child(4) {{ width: 26%; }}
   .scores-table td:nth-child(3) strong {{ font-size: 0.62rem; }}
   .verdict-label {{ font-size: 0.68rem; }}
-  .verdict-faces img {{ width: 1rem !important; height: 1rem !important; }}
+  .verdict-faces img {{ width: 1.3rem !important; height: 1.3rem !important; }}
 }}
 """
 
@@ -998,22 +998,22 @@ document.querySelectorAll('.blog-expand').forEach(function(btn) {
       var effective = temp - (wind > 5 ? (wind / 10) * 5 : 0);
       var verdict, layers;
       if (effective < 32) {
-        verdict = "It's " + Math.round(temp) + "\\u00b0F. That's not sweater weather, that's SWEATER EMERGENCY.";
+        verdict = "That's not sweater weather, that's SWEATER EMERGENCY.";
         layers = "3+ (sweater, fleece, AND a coat)";
       } else if (effective < 45) {
-        verdict = "It's " + Math.round(temp) + "\\u00b0F. Classic sweater weather. This is what we're here for.";
+        verdict = "Classic sweater weather. This is what we're here for.";
         layers = "2 (solid sweater + optional layer)";
       } else if (effective < 55) {
-        verdict = "It's " + Math.round(temp) + "\\u00b0F. Still sweater territory. Don't let anyone tell you otherwise.";
+        verdict = "Still sweater territory. Don't let anyone tell you otherwise.";
         layers = "1-2 (light to medium sweater)";
       } else if (effective < 65) {
-        verdict = "It's " + Math.round(temp) + "\\u00b0F. You could go either way. Bring it and decide later.";
+        verdict = "You could go either way. Bring it and decide later.";
         layers = "0-1 (light layer, keep one in the car)";
       } else if (effective < 75) {
-        verdict = "It's " + Math.round(temp) + "\\u00b0F. No sweater needed unless you're in aggressive AC.";
+        verdict = "No sweater needed unless you're in aggressive AC.";
         layers = "0 (the sweater rests today)";
       } else {
-        verdict = "It's " + Math.round(temp) + "\\u00b0F. Wearing a sweater would be a cry for help.";
+        verdict = "Wearing a sweater would be a cry for help.";
         layers = "0 (this is shorts weather, Dave)";
       }
 
