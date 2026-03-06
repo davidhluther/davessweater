@@ -1,126 +1,147 @@
 #!/usr/bin/env python3
 """
-fetch_substack.py — fetch Substack RSS feed using Playwright to bypass Cloudflare.
-Saves parsed feed items to data/substack_feed.json.
+fetch_substack.py — fetch blog posts from Substack.
+Uses the Substack API endpoint and homepage scraping (avoids Cloudflare-blocked /feed).
+Saves parsed items to data/substack_feed.json.
 """
 
-import asyncio
 import json
 import re
+import subprocess
 import sys
-import xml.etree.ElementTree as ET
+import urllib.request
 from pathlib import Path
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
-FEED_URL = "https://davessweater.substack.com/feed"
+SUBSTACK_SLUG = "davessweater"
+BASE_URL = f"https://{SUBSTACK_SLUG}.substack.com"
+API_URL = f"{BASE_URL}/api/v1/archive?sort=new&limit=5"
 OUTPUT = DATA_DIR / "substack_feed.json"
 
+UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
-async def fetch_feed():
+
+def fetch_via_api():
+    """Try Substack's JSON API endpoint."""
+    print(f"  Trying Substack API: {API_URL}")
     try:
-        from playwright.async_api import async_playwright
-    except ImportError:
-        print("Playwright not installed, skipping Substack feed fetch", file=sys.stderr)
-        return
+        result = subprocess.run(
+            ["curl", "-sL", "--max-time", "15",
+             "-H", f"User-Agent: {UA}",
+             "-H", "Accept: application/json",
+             API_URL],
+            capture_output=True, timeout=20,
+        )
+        if result.returncode != 0 or not result.stdout:
+            print(f"  API curl failed (exit {result.returncode})", file=sys.stderr)
+            return []
 
-    print(f"Fetching Substack RSS via Playwright: {FEED_URL}")
+        data = json.loads(result.stdout)
+        if not isinstance(data, list):
+            print(f"  API returned unexpected type: {type(data)}", file=sys.stderr)
+            print(f"  Preview: {result.stdout[:300]}", file=sys.stderr)
+            return []
 
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        page = await browser.new_page()
-
-        try:
-            await page.goto(FEED_URL, wait_until="networkidle", timeout=30000)
-            # Wait for Cloudflare challenge to resolve
-            await page.wait_for_timeout(3000)
-            content = await page.content()
-        except Exception as e:
-            print(f"  Error loading feed page: {e}", file=sys.stderr)
-            await browser.close()
-            return
-        await browser.close()
-
-    # The page content will be the XML wrapped in HTML by the browser
-    # Try to extract the raw XML from the page source
-    # Playwright renders XML as HTML, so we need to extract text content
-    # Try fetching the raw response instead
-    items = []
-
-    # Try parsing as XML directly (in case Cloudflare passed through)
-    try:
-        root = ET.fromstring(content)
-        for item in root.findall(".//item"):
-            title = item.findtext("title", "")
-            link = item.findtext("link", "")
-            pub = item.findtext("pubDate", "")[:16]
-            desc = item.findtext("description", "")
+        items = []
+        for post in data[:5]:
+            title = post.get("title", "")
+            slug = post.get("slug", "")
+            link = post.get("canonical_url", f"{BASE_URL}/p/{slug}")
+            date = post.get("post_date", "")[:10]
+            desc = post.get("subtitle", "") or post.get("description", "")
             desc = re.sub(r"<[^>]+>", "", desc)[:200].strip()
-            items.append({"title": title, "link": link, "date": pub, "summary": desc})
-    except ET.ParseError:
-        pass
+            items.append({"title": title, "link": link, "date": date, "summary": desc})
 
-    # If XML parsing failed, the browser rendered the XML as HTML
-    # Try a different approach: use route interception
+        print(f"  API returned {len(items)} posts")
+        return items
+
+    except json.JSONDecodeError:
+        print(f"  API response is not JSON, preview: {result.stdout[:300]}", file=sys.stderr)
+        return []
+    except Exception as e:
+        print(f"  API fetch error: {e}", file=sys.stderr)
+        return []
+
+
+def fetch_via_homepage():
+    """Scrape the Substack homepage for post links."""
+    print(f"  Trying homepage scrape: {BASE_URL}")
+    try:
+        result = subprocess.run(
+            ["curl", "-sL", "--max-time", "15",
+             "-H", f"User-Agent: {UA}",
+             "-H", "Accept: text/html",
+             BASE_URL],
+            capture_output=True, timeout=20,
+        )
+        if result.returncode != 0 or not result.stdout:
+            return []
+
+        html = result.stdout.decode("utf-8", errors="replace")
+
+        # Look for Next.js __NEXT_DATA__ JSON which contains post data
+        match = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.DOTALL)
+        if match:
+            try:
+                next_data = json.loads(match.group(1))
+                posts = next_data.get("props", {}).get("pageProps", {}).get("posts", [])
+                items = []
+                for post in posts[:5]:
+                    title = post.get("title", "")
+                    slug = post.get("slug", "")
+                    link = post.get("canonical_url", f"{BASE_URL}/p/{slug}")
+                    date = post.get("post_date", "")[:10]
+                    desc = post.get("subtitle", "") or post.get("description", "")
+                    desc = re.sub(r"<[^>]+>", "", desc)[:200].strip()
+                    items.append({"title": title, "link": link, "date": date, "summary": desc})
+                if items:
+                    print(f"  Found {len(items)} posts via __NEXT_DATA__")
+                    return items
+            except (json.JSONDecodeError, KeyError):
+                pass
+
+        # Fallback: parse post links from HTML
+        post_links = re.findall(
+            r'<a[^>]+href="(https://davessweater\.substack\.com/p/[^"]+)"[^>]*>.*?</a>',
+            html, re.DOTALL
+        )
+        if post_links:
+            items = []
+            seen = set()
+            for link in post_links:
+                if link in seen:
+                    continue
+                seen.add(link)
+                # Extract slug for title
+                slug = link.split("/p/")[-1].split("?")[0]
+                title = slug.replace("-", " ").title()
+                items.append({"title": title, "link": link, "date": "", "summary": ""})
+            print(f"  Found {len(items)} posts via HTML parsing")
+            return items[:5]
+
+        print("  No posts found in homepage HTML", file=sys.stderr)
+        return []
+
+    except Exception as e:
+        print(f"  Homepage scrape error: {e}", file=sys.stderr)
+        return []
+
+
+def main():
+    print(f"Fetching posts from {BASE_URL}")
+
+    # Try API first, then homepage
+    items = fetch_via_api()
     if not items:
-        items = await fetch_feed_intercepted()
+        items = fetch_via_homepage()
 
     if items:
         OUTPUT.parent.mkdir(parents=True, exist_ok=True)
         OUTPUT.write_text(json.dumps(items, indent=2))
-        print(f"  Saved {len(items)} posts to {OUTPUT}")
+        print(f"Saved {len(items)} posts to {OUTPUT}")
     else:
-        print("  No posts found in feed", file=sys.stderr)
-
-
-async def fetch_feed_intercepted():
-    """Use Playwright with response interception to get raw XML."""
-    from playwright.async_api import async_playwright
-
-    items = []
-    raw_xml = None
-
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        context = await browser.new_context()
-        page = await context.new_page()
-
-        async def handle_response(response):
-            nonlocal raw_xml
-            url = response.url
-            if "substack.com/feed" in url or response.headers.get("content-type", "").startswith(("text/xml", "application/xml", "application/rss")):
-                try:
-                    body = await response.body()
-                    if b"<item>" in body or b"<entry>" in body:
-                        raw_xml = body
-                except Exception:
-                    pass
-
-        page.on("response", handle_response)
-
-        try:
-            await page.goto(FEED_URL, wait_until="networkidle", timeout=30000)
-            await page.wait_for_timeout(5000)
-        except Exception as e:
-            print(f"  Error during intercepted fetch: {e}", file=sys.stderr)
-
-        await browser.close()
-
-    if raw_xml:
-        try:
-            root = ET.fromstring(raw_xml)
-            for item in root.findall(".//item")[:5]:
-                title = item.findtext("title", "")
-                link = item.findtext("link", "")
-                pub = item.findtext("pubDate", "")[:16]
-                desc = item.findtext("description", "")
-                desc = re.sub(r"<[^>]+>", "", desc)[:200].strip()
-                items.append({"title": title, "link": link, "date": pub, "summary": desc})
-            print(f"  Parsed {len(items)} items from intercepted response")
-        except ET.ParseError as e:
-            print(f"  XML parse error on intercepted response: {e}", file=sys.stderr)
-
-    return items
+        print("Could not fetch any posts", file=sys.stderr)
 
 
 if __name__ == "__main__":
-    asyncio.run(fetch_feed())
+    main()

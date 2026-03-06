@@ -24,13 +24,7 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install Playwright
-        run: |
-          pip install playwright
-          playwright install chromium
-          playwright install-deps chromium
-
-      - name: Fetch Substack RSS feed
+      - name: Fetch Substack posts
         run: python scripts/fetch_substack.py
         continue-on-error: true
 
