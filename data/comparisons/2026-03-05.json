@@ -1,0 +1,174 @@
+{
+  "date": "2026-03-05",
+  "generated_at": "2026-03-06T03:53:25.124448-05:00",
+  "actuals": {
+    "date": "2026-03-05",
+    "fetched_at": "2026-03-06T03:53:25.052913-05:00",
+    "location": "Boone",
+    "high_f": 69.1,
+    "low_f": 46.9,
+    "precip_in": 0.004,
+    "wind_mph": 9.5,
+    "gust_mph": 23.5,
+    "weather_code": 51,
+    "conditions": "Light drizzle",
+    "category": "drizzle"
+  },
+  "sweater_weather": {
+    "answer": "NO",
+    "detail": "It's 69\u00b0F. No sweater needed unless you're in aggressive AC.",
+    "layers": "0 (the sweater rests today)",
+    "emoji": "\u2600\ufe0f\u274c",
+    "sweater_count": 1
+  },
+  "sources": {
+    "openmeteo": {
+      "prediction": {
+        "date": "2026-03-05",
+        "high_f": 69.5,
+        "low_f": 48.3,
+        "precip_in": 0.0,
+        "precip_prob": 9,
+        "weather_code": 3,
+        "conditions": "Overcast",
+        "category": "cloudy",
+        "wind_mph": 9.4
+      },
+      "score": {
+        "score": 99.9,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 5
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 69.5,
+            "actual": 69.1,
+            "error_f": 0.4,
+            "points": 30,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 48.3,
+            "actual": 46.9,
+            "error_f": 1.4,
+            "points": 30,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0.004,
+            "binary_correct": true,
+            "error_in": 0.004,
+            "points": 19.9,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 9.4,
+            "actual_mph": 9.5,
+            "error_mph": 0.1,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    },
+    "raysweather": {
+      "prediction": {
+        "today_high_f": 74.0,
+        "tonight_low_f": 49.0
+      },
+      "score": {
+        "score": 51.0,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 74.0,
+            "actual": 69.1,
+            "error_f": 4.9,
+            "points": 21.3,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 49.0,
+            "actual": 46.9,
+            "error_f": 2.1,
+            "points": 29.7,
+            "max": 30
+          },
+          "precipitation": {
+            "error": "missing data",
+            "points": 0,
+            "max": 20
+          },
+          "wind": {
+            "error": "missing data",
+            "points": 0,
+            "max": 20
+          }
+        }
+      }
+    },
+    "apple_weather": {
+      "prediction": {
+        "today_high_f": 69,
+        "tonight_low_f": 50,
+        "wind_mph": 2.607,
+        "conditions": "Partly Cloudy",
+        "category": "cloudy",
+        "precip_in": 0.0
+      },
+      "score": {
+        "score": 88.8,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 4
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 69,
+            "actual": 69.1,
+            "error_f": 0.1,
+            "points": 30,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 50,
+            "actual": 46.9,
+            "error_f": 3.1,
+            "points": 26.7,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0.004,
+            "binary_correct": true,
+            "error_in": 0.004,
+            "points": 19.9,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 2.6,
+            "actual_mph": 9.5,
+            "error_mph": 6.9,
+            "points": 12.2,
+            "max": 20
+          }
+        }
+      }
+    }
+  },
+  "rays_current": {
+    "temp_f": 71.9,
+    "feels_like_f": null,
+    "wind": null,
+    "wind_dir": null,
+    "wind_mph": null,
+    "gust_mph": null,
+    "humidity_pct": null,
+    "rainfall_in": null
+  }
+}
