@@ -397,6 +397,13 @@ def run_daily_comparison(target_date=None):
         # Map conditions string to a category for scoring
         if apple_data.get("conditions") and not apple_data.get("category"):
             apple_data["category"] = _apple_condition_to_category(apple_data["conditions"])
+        # Infer precip from conditions: non-precipitation conditions imply 0.0"
+        if "precip_in" not in apple_data and apple_data.get("category"):
+            cat = apple_data["category"]
+            if cat in ("rain", "drizzle", "storm", "snow"):
+                apple_data["precip_in"] = 0.01  # known precip, unknown amount
+            elif cat != "unknown":
+                apple_data["precip_in"] = 0.0
         if _get_high(apple_data) is not None or _get_low(apple_data) is not None:
             result = score_prediction(apple_data, actuals)
             comparison["sources"]["apple_weather"] = {
