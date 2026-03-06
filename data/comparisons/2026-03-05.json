@@ -1,9 +1,9 @@
 {
   "date": "2026-03-05",
-  "generated_at": "2026-03-06T01:12:52.889472-05:00",
+  "generated_at": "2026-03-06T01:49:28.145454-05:00",
   "actuals": {
     "date": "2026-03-05",
-    "fetched_at": "2026-03-06T01:12:52.824959-05:00",
+    "fetched_at": "2026-03-06T01:49:28.079493-05:00",
     "location": "Boone",
     "high_f": 69.1,
     "low_f": 46.9,
@@ -35,27 +35,25 @@
         "wind_mph": 9.4
       },
       "score": {
-        "score": 80.3,
+        "score": 99.9,
         "grade": {
-          "label": "MOSTLY RIGHT RAY",
-          "detail": "Close enough. We'll give him this one.",
           "verdict": "right",
-          "ray_count": 4
+          "ray_count": 5
         },
         "breakdown": {
           "high_temp": {
             "predicted": 69.5,
             "actual": 69.1,
             "error_f": 0.4,
-            "points": 24.0,
-            "max": 25
+            "points": 30,
+            "max": 30
           },
           "low_temp": {
             "predicted": 48.3,
             "actual": 46.9,
             "error_f": 1.4,
-            "points": 21.5,
-            "max": 25
+            "points": 30,
+            "max": 30
           },
           "precipitation": {
             "predicted_in": 0,
@@ -69,15 +67,8 @@
             "predicted_mph": 9.4,
             "actual_mph": 9.5,
             "error_mph": 0.1,
-            "points": 14.9,
-            "max": 15
-          },
-          "conditions": {
-            "predicted": "cloudy",
-            "actual": "drizzle",
-            "match": "wrong",
-            "points": 0,
-            "max": 15
+            "points": 20,
+            "max": 20
           }
         }
       }
@@ -88,49 +79,35 @@
         "tonight_low_f": 49.0
       },
       "score": {
-        "score": 74.9,
+        "score": 51.0,
         "grade": {
-          "label": "EH RAY \ud83e\udd37",
-          "detail": "Not great, not terrible. Like a 3.6 roentgen forecast.",
-          "verdict": "meh",
-          "ray_count": 3
+          "verdict": "wrong",
+          "ray_count": 2
         },
         "breakdown": {
           "high_temp": {
             "predicted": 74.0,
             "actual": 69.1,
             "error_f": 4.9,
-            "points": 12.7,
-            "max": 25
+            "points": 21.3,
+            "max": 30
           },
           "low_temp": {
             "predicted": 49.0,
             "actual": 46.9,
             "error_f": 2.1,
-            "points": 19.7,
-            "max": 25
+            "points": 29.7,
+            "max": 30
           },
           "precipitation": {
-            "predicted_in": 0,
-            "actual_in": 0.004,
-            "binary_correct": true,
-            "error_in": 0.004,
-            "points": 19.9,
+            "error": "missing data",
+            "points": 0,
             "max": 20
           },
           "wind": {
             "error": "missing data",
             "points": 0,
-            "max": 15,
-            "excluded": true
-          },
-          "conditions": {
-            "predicted": "unknown",
-            "actual": "drizzle",
-            "match": "excluded",
-            "points": 0,
-            "max": 15,
-            "excluded": true
+            "max": 20
           }
         }
       }
@@ -144,10 +121,8 @@
         "category": "cloudy"
       },
       "score": {
-        "score": 66.6,
+        "score": 68.9,
         "grade": {
-          "label": "EH RAY \ud83e\udd37",
-          "detail": "Not great, not terrible. Like a 3.6 roentgen forecast.",
           "verdict": "meh",
           "ray_count": 3
         },
@@ -156,37 +131,27 @@
             "predicted": 69,
             "actual": 69.1,
             "error_f": 0.1,
-            "points": 24.8,
-            "max": 25
+            "points": 30,
+            "max": 30
           },
           "low_temp": {
             "predicted": 50,
             "actual": 46.9,
             "error_f": 3.1,
-            "points": 17.2,
-            "max": 25
+            "points": 26.7,
+            "max": 30
           },
           "precipitation": {
-            "predicted_in": 0,
-            "actual_in": 0.004,
-            "binary_correct": true,
-            "error_in": 0.004,
-            "points": 19.9,
+            "error": "missing data",
+            "points": 0,
             "max": 20
           },
           "wind": {
             "predicted_mph": 2.6,
             "actual_mph": 9.5,
             "error_mph": 6.9,
-            "points": 4.7,
-            "max": 15
-          },
-          "conditions": {
-            "predicted": "cloudy",
-            "actual": "drizzle",
-            "match": "wrong",
-            "points": 0,
-            "max": 15
+            "points": 12.2,
+            "max": 20
           }
         }
       }
