@@ -326,7 +326,7 @@ def build_rightwrong_section(comp):
 </tr>"""
 
     return f"""
-<section class="card" id="rightwrong">
+<section class="card" id="rightwrong-content">
   <h2>Right Ray / Wrong Ray</h2>
   <p class="section-date">{date}</p>
   <p class="actual-weather">
@@ -597,7 +597,9 @@ header {{
 nav {{
   margin-left: auto;
   display: flex;
-  gap: 0.25rem;
+  gap: 0.15rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }}
 
 nav button {{
@@ -605,13 +607,12 @@ nav button {{
   border: none;
   color: rgba(255,255,255,0.75);
   font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   font-weight: 500;
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.6rem;
   cursor: pointer;
   border-radius: 0.4rem;
   transition: background 0.15s, color 0.15s;
-  white-space: nowrap;
 }}
 
 nav button:hover,
@@ -1130,7 +1131,7 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
   </div>
 
   <!-- right ray / wrong ray tab -->
-  <div class="tab-panel" id="rightwrong" style="display:none;">
+  <div class="tab-panel" id="rightwrong">
     {rightwrong_sections}
   </div>
 
