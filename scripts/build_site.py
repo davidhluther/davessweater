@@ -223,7 +223,7 @@ def build_sweater_section(comp):
 <section class="card" id="sweater">
   <h2>Sweater weather in Boone?</h2>
   <div class="sweater-verdict">
-    <div class="sweater-score">{emoji_row}</div>
+    <div class="sweater-score" id="live-sweaters">{emoji_row}</div>
     <div class="sweater-temp" id="live-temp">{temp}&deg;F</div>
     <div class="sweater-high" id="live-high"></div>
     <p class="sweater-text" id="live-verdict">{verdict}</p>
@@ -936,13 +936,13 @@ footer a:hover {{ text-decoration: underline; }}
   .scores-table th {{ font-size: 0.6rem; padding: 0.3rem 0.15rem; }}
   .scores-table td {{ padding: 0.35rem 0.15rem; word-wrap: break-word; overflow-wrap: break-word; }}
   .scores-table th:nth-child(1),
-  .scores-table td:nth-child(1) {{ width: 17%; }}
+  .scores-table td:nth-child(1) {{ width: 22%; white-space: nowrap; }}
   .scores-table th:nth-child(2),
-  .scores-table td:nth-child(2) {{ width: 40%; }}
+  .scores-table td:nth-child(2) {{ width: 36%; }}
   .scores-table th:nth-child(3),
   .scores-table td:nth-child(3) {{ width: 20%; font-size: 0.62rem; }}
   .scores-table th:nth-child(4),
-  .scores-table td:nth-child(4) {{ width: 23%; }}
+  .scores-table td:nth-child(4) {{ width: 22%; }}
   .scores-table td:nth-child(3) strong {{ font-size: 0.62rem; }}
   .verdict-label {{ font-size: 0.68rem; }}
   .verdict-faces img {{ width: 1.3rem !important; height: 1.3rem !important; }}
@@ -1045,6 +1045,28 @@ document.querySelectorAll('.blog-expand').forEach(function(btn) {
       } else {
         verdict = "Wearing a sweater would be a cry for help.";
         layers = "0 (this is shorts weather, Dave)";
+      }
+
+      // Compute sweater score (0-5)
+      var score;
+      if (effective < 35) score = 5;
+      else if (effective < 45) score = 4;
+      else if (effective < 55) score = 3;
+      else if (effective < 65) score = 2;
+      else if (effective < 75) score = 1;
+      else score = 0;
+
+      // Update sweater icons
+      var sEl = document.getElementById('live-sweaters');
+      if (sEl) {
+        var icons = sEl.querySelectorAll('.sweater-icon');
+        for (var i = 0; i < icons.length; i++) {
+          if (i < score) {
+            icons[i].className = 'sweater-icon active';
+          } else {
+            icons[i].className = 'sweater-icon inactive';
+          }
+        }
       }
 
       var vEl = document.getElementById('live-verdict');
