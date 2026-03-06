@@ -91,13 +91,27 @@ WMO_ICONS = {
 
 def fetch_rss(url, max_items=5):
     """Fetch an RSS/Atom feed, return list of {title, link, date, summary}."""
+    headers = {
+        "User-Agent": "Mozilla/5.0 (compatible; DavesSweater/1.0; +https://davessweater.com)",
+        "Accept": "application/rss+xml, application/xml, text/xml, */*",
+    }
+    raw = None
+    for attempt in range(3):
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                raw = resp.read()
+            break
+        except Exception as e:
+            print(f"  [RSS] attempt {attempt+1} failed for {url}: {e}", file=sys.stderr)
+            if attempt < 2:
+                import time; time.sleep(2 ** attempt)
+    if raw is None:
+        return []
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "DavesSweater/1.0"})
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            raw = resp.read()
         root = ET.fromstring(raw)
-    except Exception as e:
-        print(f"  [RSS] could not fetch {url}: {e}", file=sys.stderr)
+    except ET.ParseError as e:
+        print(f"  [RSS] XML parse error for {url}: {e}", file=sys.stderr)
         return []
 
     ns = {
