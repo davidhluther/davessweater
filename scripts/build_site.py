@@ -266,7 +266,7 @@ def build_rightwrong_section(comp):
 
         shrug = r"&macr;\_(&#12484;)_/&macr;"
         # Build detail lines — always show all four stats
-        detail_parts = [f"Hi: {pred_high_s} / Lo: {pred_low_s}"]
+        detail_parts = [f'<span style="white-space:nowrap">Hi: {pred_high_s} / Lo: {pred_low_s}</span>']
         detail_parts.append(f"Wind: {round(pred_wind, 1)} mph" if pred_wind is not None else f"Wind: {shrug}")
         detail_parts.append(f'Rain: {pred_precip}"' if pred_precip is not None else f"Rain: {shrug}")
 
@@ -282,7 +282,7 @@ def build_rightwrong_section(comp):
 </tr>"""
 
     # Build actual weather row for the table
-    actual_parts = [f"Hi: {act_high}&deg; / Lo: {act_low}&deg;"]
+    actual_parts = [f'<span style="white-space:nowrap">Hi: {act_high}&deg; / Lo: {act_low}&deg;</span>']
     if act_wind is not None:
         actual_parts.append(f"Wind: {round(act_wind, 1)} mph")
     if act_precip is not None:
@@ -381,7 +381,7 @@ def build_scoreboard_section(scores):
 <section class="card" id="scoreboard">
   <h2>Season Scoreboard</h2>
   <div class="table-wrap">
-    <table class="scores-table">
+    <table class="scores-table scoreboard-table">
       <thead><tr><th>Source</th><th>Record</th><th>Avg Score</th><th>Days Tracked</th></tr></thead>
       <tbody>{rows}</tbody>
     </table>
@@ -707,6 +707,10 @@ main {{
   padding-left: 0.6rem;
 }}
 
+.scores-table th:nth-child(2) {{
+  padding-left: 0.6rem;
+}}
+
 .scores-table td {{
   padding: 0.4rem 0.3rem;
   border-bottom: 1px solid #e5e7eb;
@@ -716,6 +720,19 @@ main {{
 
 .scores-table td:first-child {{
   padding-left: 0.6rem;
+}}
+
+.scores-table td:nth-child(2) {{
+  padding-left: 0.6rem;
+}}
+
+.scoreboard-table {{
+  table-layout: auto;
+}}
+
+.scoreboard-table th,
+.scoreboard-table td {{
+  white-space: nowrap;
 }}
 
 .scoreboard-key {{
@@ -924,13 +941,13 @@ footer a:hover {{ text-decoration: underline; }}
   .scores-table th {{ font-size: 0.6rem; padding: 0.3rem 0.15rem; }}
   .scores-table td {{ padding: 0.35rem 0.15rem; word-wrap: break-word; overflow-wrap: break-word; }}
   .scores-table th:nth-child(1),
-  .scores-table td:nth-child(1) {{ width: 20%; }}
+  .scores-table td:nth-child(1) {{ width: 17%; }}
   .scores-table th:nth-child(2),
-  .scores-table td:nth-child(2) {{ width: 34%; }}
+  .scores-table td:nth-child(2) {{ width: 40%; }}
   .scores-table th:nth-child(3),
   .scores-table td:nth-child(3) {{ width: 20%; font-size: 0.62rem; }}
   .scores-table th:nth-child(4),
-  .scores-table td:nth-child(4) {{ width: 26%; }}
+  .scores-table td:nth-child(4) {{ width: 23%; }}
   .scores-table td:nth-child(3) strong {{ font-size: 0.62rem; }}
   .verdict-label {{ font-size: 0.68rem; }}
   .verdict-faces img {{ width: 1.3rem !important; height: 1.3rem !important; }}
