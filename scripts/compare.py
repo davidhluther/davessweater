@@ -28,7 +28,7 @@ def is_sweater_weather(high_f, current_f=None, wind_mph=0, humidity=None):
     The sacred algorithm. Is it sweater weather?
 
     Uses a blended effective temperature:
-        effective_temp = (high * 0.7) + (current * 0.3)
+        effective_temp = (high * 0.5) + (current * 0.5)
 
     If only the high is available (e.g. daily actuals with no live reading),
     the high is used on its own.
@@ -46,7 +46,7 @@ def is_sweater_weather(high_f, current_f=None, wind_mph=0, humidity=None):
 
     # Blend high and current when both are available
     if current_f is not None:
-        effective_temp = (high_f * 0.7) + (current_f * 0.3)
+        effective_temp = (high_f * 0.5) + (current_f * 0.5)
     else:
         effective_temp = high_f
 

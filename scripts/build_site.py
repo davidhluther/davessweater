@@ -730,11 +730,6 @@ main {{
   table-layout: auto;
 }}
 
-.scoreboard-table th,
-.scoreboard-table td {{
-  white-space: nowrap;
-}}
-
 .scoreboard-key {{
   font-size: 0.75rem;
   color: var(--muted);
@@ -1030,7 +1025,7 @@ document.querySelectorAll('.blog-expand').forEach(function(btn) {
 
       // Update sweater verdict using blended formula
       var high = (data.daily && data.daily.temperature_2m_max) ? data.daily.temperature_2m_max[0] : temp;
-      var effective = (high * 0.7) + (temp * 0.3);
+      var effective = (high * 0.5) + (temp * 0.5);
       var verdict, layers;
       if (effective < 35) {
         verdict = "That's not sweater weather, that's SWEATER EMERGENCY.";
