@@ -91,23 +91,49 @@ WMO_ICONS = {
 
 def fetch_rss(url, max_items=5):
     """Fetch an RSS/Atom feed, return list of {title, link, date, summary}."""
-    headers = {
-        "User-Agent": "Mozilla/5.0 (compatible; DavesSweater/1.0; +https://davessweater.com)",
-        "Accept": "application/rss+xml, application/xml, text/xml, */*",
-    }
+    import subprocess
     raw = None
-    for attempt in range(3):
-        try:
-            req = urllib.request.Request(url, headers=headers)
-            with urllib.request.urlopen(req, timeout=15) as resp:
-                raw = resp.read()
-            break
-        except Exception as e:
-            print(f"  [RSS] attempt {attempt+1} failed for {url}: {e}", file=sys.stderr)
-            if attempt < 2:
-                import time; time.sleep(2 ** attempt)
+
+    # Try curl first (more reliable with Substack/Cloudflare)
+    try:
+        result = subprocess.run(
+            ["curl", "-sL", "--max-time", "15",
+             "-H", "User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+             "-H", "Accept: application/rss+xml, application/xml, text/xml, */*",
+             url],
+            capture_output=True, timeout=20,
+        )
+        if result.returncode == 0 and result.stdout:
+            raw = result.stdout
+            print(f"  [RSS] fetched {len(raw)} bytes via curl from {url}")
+    except Exception as e:
+        print(f"  [RSS] curl failed for {url}: {e}", file=sys.stderr)
+
+    # Fallback to urllib
     if raw is None:
+        headers = {
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "application/rss+xml, application/xml, text/xml, */*",
+        }
+        for attempt in range(3):
+            try:
+                req = urllib.request.Request(url, headers=headers)
+                with urllib.request.urlopen(req, timeout=15) as resp:
+                    raw = resp.read()
+                print(f"  [RSS] fetched {len(raw)} bytes via urllib from {url}")
+                break
+            except Exception as e:
+                print(f"  [RSS] urllib attempt {attempt+1} failed for {url}: {e}", file=sys.stderr)
+                if attempt < 2:
+                    import time; time.sleep(2 ** attempt)
+
+    if raw is None:
+        print(f"  [RSS] all fetch methods failed for {url}", file=sys.stderr)
         return []
+
+    # Debug: show first 300 chars of response
+    print(f"  [RSS] response preview: {raw[:300]}")
+
     try:
         root = ET.fromstring(raw)
     except ET.ParseError as e:
