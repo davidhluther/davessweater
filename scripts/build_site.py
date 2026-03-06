@@ -386,6 +386,7 @@ def build_scoreboard_section(scores):
       <tbody>{rows}</tbody>
     </table>
   </div>
+  <p class="scoreboard-key">W = best forecast that day &middot; L = worst &middot; M = somewhere in the middle</p>
 </section>
 """
 
@@ -702,11 +703,27 @@ main {{
   text-align: left;
 }}
 
+.scores-table th:first-child {{
+  padding-left: 0.6rem;
+}}
+
 .scores-table td {{
   padding: 0.4rem 0.3rem;
   border-bottom: 1px solid #e5e7eb;
   vertical-align: middle;
   font-size: 0.76rem;
+}}
+
+.scores-table td:first-child {{
+  padding-left: 0.6rem;
+}}
+
+.scoreboard-key {{
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.6rem;
+  text-align: center;
+  font-style: italic;
 }}
 
 .scores-table tr:last-child td {{ border-bottom: none; }}
