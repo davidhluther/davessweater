@@ -10,7 +10,7 @@ name: "📱 iPhone Screenshot Upload"
 #       "today_high_f": 58,
 #       "tonight_low_f": 35,
 #       "wind_mph": 12,
-#       "precip_in": 0.0,
+#       "rainfall_in": 0.0,
 #       "conditions": "Partly Cloudy"
 #     }
 #   }
@@ -39,7 +39,7 @@ jobs:
           TODAY_HIGH_F: ${{ github.event.client_payload.today_high_f }}
           TONIGHT_LOW_F: ${{ github.event.client_payload.tonight_low_f }}
           WIND_MPH: ${{ github.event.client_payload.wind_mph }}
-          PRECIP_IN: ${{ github.event.client_payload.precip_in }}
+          RAINFALL_IN: ${{ github.event.client_payload.rainfall_in }}
           CONDITIONS: ${{ github.event.client_payload.conditions }}
         run: |
           # Use provided date or default to today (EST)
@@ -66,7 +66,7 @@ jobs:
               'today_high_f': float('${TODAY_HIGH_F}') if '${TODAY_HIGH_F}' else None,
               'tonight_low_f': float('${TONIGHT_LOW_F}') if '${TONIGHT_LOW_F}' else None,
               'wind_mph': float('${WIND_MPH}') if '${WIND_MPH}' else None,
-              'precip_in': float('${PRECIP_IN}') if '${PRECIP_IN}' else None,
+              'rainfall_in': float('${RAINFALL_IN}') if '${RAINFALL_IN}' else None,
               'conditions': '${CONDITIONS}' or None,
           }
           # Drop None values

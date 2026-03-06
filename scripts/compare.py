@@ -391,6 +391,9 @@ def run_daily_comparison(target_date=None):
     if apple_path.exists():
         apple_data = _parse_apple_forecast(apple_path)
         # The Shortcut uploads a flat dict: today_high_f, tonight_low_f, wind_mph, conditions
+        # Map rainfall_in → precip_in for scoring compatibility
+        if "rainfall_in" in apple_data and "precip_in" not in apple_data:
+            apple_data["precip_in"] = apple_data["rainfall_in"]
         # Map conditions string to a category for scoring
         if apple_data.get("conditions") and not apple_data.get("category"):
             apple_data["category"] = _apple_condition_to_category(apple_data["conditions"])
