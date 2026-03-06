@@ -140,7 +140,10 @@ def main():
         OUTPUT.write_text(json.dumps(items, indent=2))
         print(f"Saved {len(items)} posts to {OUTPUT}")
     else:
-        print("Could not fetch any posts", file=sys.stderr)
+        if OUTPUT.exists():
+            print(f"Fetch failed, keeping existing cache at {OUTPUT}")
+        else:
+            print("Could not fetch any posts (no cache exists)", file=sys.stderr)
 
 
 if __name__ == "__main__":
