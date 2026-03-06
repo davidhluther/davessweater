@@ -515,7 +515,7 @@ def build_blog_section(items):
 </article>"""
     return f"""
 <section class="card tab-panel" id="blog">
-  <h2>Blog</h2>
+  <h2>Substack</h2>
   {toc}
   <div class="blog-list">{posts}</div>
 </section>
