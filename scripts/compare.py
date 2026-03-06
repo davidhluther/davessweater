@@ -415,39 +415,6 @@ def run_daily_comparison(target_date=None):
     else:
         print(f"  No Ray's Weather prediction found for {target_date}")
 
-    # Score iPhone Weather prediction
-    iphone_path = pred_dir / "iphone_forecast.json"
-    if iphone_path.exists():
-        with open(iphone_path) as f:
-            iphone_data = json.load(f)
-        # Attach iPhone current conditions if available
-        if iphone_data.get("current"):
-            comparison["iphone_current"] = iphone_data["current"]
-        # iPhone capture outputs forecast as a single dict (today_high_f / tonight_low_f)
-        forecast = iphone_data.get("forecast", {})
-        if forecast and (_get_high(forecast) is not None or _get_low(forecast) is not None):
-            result = score_prediction(forecast, actuals)
-            comparison["sources"]["iphone"] = {
-                "prediction": forecast,
-                "score": result,
-            }
-            print(f"  iPhone Weather: {result['score']}/100 — {result['grade']['label']}")
-        elif iphone_data.get("daily"):
-            # Legacy format: list of day dicts
-            for day in iphone_data["daily"]:
-                if day.get("date") == target_date:
-                    result = score_prediction(day, actuals)
-                    comparison["sources"]["iphone"] = {
-                        "prediction": day,
-                        "score": result,
-                    }
-                    print(f"  iPhone Weather: {result['score']}/100 — {result['grade']['label']}")
-                    break
-        else:
-            print(f"  iPhone Weather: No daily forecast data to score")
-    else:
-        print(f"  No iPhone Weather prediction found for {target_date}")
-
     # Score Apple Weather prediction (from iPhone Shortcut)
     apple_path = pred_dir / "iphone_forecast_apple.json"
     if apple_path.exists():

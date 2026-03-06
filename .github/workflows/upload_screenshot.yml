@@ -6,7 +6,11 @@ name: "📱 iPhone Screenshot Upload"
 #     "event_type": "iphone-screenshot",
 #     "client_payload": {
 #       "screenshot": "<base64-encoded PNG>",
-#       "date": "2026-03-05"
+#       "date": "2026-03-05",
+#       "today_high_f": 58,
+#       "tonight_low_f": 35,
+#       "wind_mph": 12,
+#       "conditions": "Partly Cloudy"
 #     }
 #   }
 
@@ -27,10 +31,14 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Decode and save screenshot
+      - name: Decode and save screenshot + forecast
         env:
           SCREENSHOT_B64: ${{ github.event.client_payload.screenshot }}
           CAPTURE_DATE: ${{ github.event.client_payload.date }}
+          TODAY_HIGH_F: ${{ github.event.client_payload.today_high_f }}
+          TONIGHT_LOW_F: ${{ github.event.client_payload.tonight_low_f }}
+          WIND_MPH: ${{ github.event.client_payload.wind_mph }}
+          CONDITIONS: ${{ github.event.client_payload.conditions }}
         run: |
           # Use provided date or default to today (EST)
           DATE="${CAPTURE_DATE:-$(TZ=America/New_York date +%Y-%m-%d)}"
@@ -44,6 +52,28 @@ jobs:
           if ! file "${DIR}/iphone_screenshot.png" | grep -q PNG; then
             echo "ERROR: Decoded file is not a valid PNG"
             exit 1
+          fi
+
+          # Save Apple Weather forecast numbers if provided
+          if [ -n "$TODAY_HIGH_F" ] || [ -n "$TONIGHT_LOW_F" ]; then
+            python3 -c "
+          import json, os
+          data = {
+              'date': '$DATE',
+              'source': 'Apple Weather (iPhone Shortcut)',
+              'today_high_f': float('${TODAY_HIGH_F}') if '${TODAY_HIGH_F}' else None,
+              'tonight_low_f': float('${TONIGHT_LOW_F}') if '${TONIGHT_LOW_F}' else None,
+              'wind_mph': float('${WIND_MPH}') if '${WIND_MPH}' else None,
+              'conditions': '${CONDITIONS}' or None,
+          }
+          # Drop None values
+          data = {k: v for k, v in data.items() if v is not None}
+          with open('$DIR/iphone_forecast_apple.json', 'w') as f:
+              json.dump(data, f, indent=2)
+          print(f'Saved Apple Weather forecast: {json.dumps(data)}')
+          "
+          else
+            echo "No forecast numbers provided, skipping iphone_forecast_apple.json"
           fi
 
           echo "date=${DATE}" >> "$GITHUB_ENV"

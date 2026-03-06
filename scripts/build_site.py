@@ -287,9 +287,8 @@ def build_rightwrong_section(comp):
 
     rows = ""
     for source_key, label, icon in [
-        ("openmeteo",      "Open-Meteo",       '<span class="source-icon">🌐</span>'),
         ("raysweather",    "Ray's Weather",    ray_face_img()),
-        ("iphone",         "iPhone Weather",   '<span class="source-icon">📱</span>'),
+        ("openmeteo",      "Open-Meteo",       '<span class="source-icon">🌐</span>'),
         ("apple_weather",  "Apple Weather",    '<span class="source-icon">📱</span>'),
     ]:
         p = sources.get(source_key, {})
@@ -412,7 +411,7 @@ def build_scoreboard_section(scores):
     # Also support the "totals" format from the existing scores.json
     if not rows:
         for source, totals in scores.get("totals", {}).items():
-            labels = {"raysweather": "Ray's Weather", "openmeteo": "Open-Meteo", "iphone": "iPhone Weather", "apple_weather": "Apple Weather"}
+            labels = {"raysweather": "Ray's Weather", "openmeteo": "Open-Meteo", "apple_weather": "Apple Weather"}
             label = labels.get(source, source)
             days = totals.get("days", 0)
             avg = round(totals.get("total_score", 0) / days, 1) if days > 0 else 0
@@ -840,6 +839,7 @@ main {{
   color: {COLOR_MUTED};
   font-size: 0.9rem;
   margin-top: -0.25rem;
+  margin-bottom: 1.2rem;
 }}
 
 /* ── tab panels ── */
@@ -983,11 +983,20 @@ footer a:hover {{ text-decoration: underline; }}
   nav {{ margin-left: 0; width: 100%; justify-content: flex-start; }}
   .sweater-temp {{ font-size: 2rem; }}
   .source-icon, .source-cell img {{ display: none; }}
-  .scores-table {{ font-size: 0.72rem; }}
-  .scores-table th {{ font-size: 0.62rem; padding: 0.3rem 0.2rem; }}
-  .scores-table td {{ padding: 0.35rem 0.2rem; }}
-  .verdict-label {{ font-size: 0.62rem; }}
-  .verdict-faces img {{ width: 0.9rem !important; height: 0.9rem !important; }}
+  .scores-table {{ font-size: 0.68rem; table-layout: fixed; }}
+  .scores-table th {{ font-size: 0.6rem; padding: 0.3rem 0.15rem; }}
+  .scores-table td {{ padding: 0.35rem 0.15rem; word-wrap: break-word; overflow-wrap: break-word; }}
+  .scores-table th:nth-child(1),
+  .scores-table td:nth-child(1) {{ width: 20%; }}
+  .scores-table th:nth-child(2),
+  .scores-table td:nth-child(2) {{ width: 34%; }}
+  .scores-table th:nth-child(3),
+  .scores-table td:nth-child(3) {{ width: 20%; font-size: 0.62rem; }}
+  .scores-table th:nth-child(4),
+  .scores-table td:nth-child(4) {{ width: 26%; }}
+  .scores-table td:nth-child(3) strong {{ font-size: 0.62rem; }}
+  .verdict-label {{ font-size: 0.68rem; }}
+  .verdict-faces img {{ width: 1rem !important; height: 1rem !important; }}
 }}
 """
 
