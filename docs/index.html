@@ -204,11 +204,27 @@ main {
   text-align: left;
 }
 
+.scores-table th:first-child {
+  padding-left: 0.6rem;
+}
+
 .scores-table td {
   padding: 0.4rem 0.3rem;
   border-bottom: 1px solid #e5e7eb;
   vertical-align: middle;
   font-size: 0.76rem;
+}
+
+.scores-table td:first-child {
+  padding-left: 0.6rem;
+}
+
+.scoreboard-key {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.6rem;
+  text-align: center;
+  font-style: italic;
 }
 
 .scores-table tr:last-child td { border-bottom: none; }
@@ -418,7 +434,7 @@ footer a:hover { text-decoration: underline; }
   .scores-table td:nth-child(4) { width: 26%; }
   .scores-table td:nth-child(3) strong { font-size: 0.62rem; }
   .verdict-label { font-size: 0.68rem; }
-  .verdict-faces img { width: 1rem !important; height: 1rem !important; }
+  .verdict-faces img { width: 1.3rem !important; height: 1.3rem !important; }
 }
 </style>
   <!-- Google tag (gtag.js) -->
@@ -445,7 +461,7 @@ footer a:hover { text-decoration: underline; }
   </nav>
 </header>
 
-<div class="update-bar">Updated: March 06, 2026 at 03:28 AM EST</div>
+<div class="update-bar">Updated: March 06, 2026 at 03:34 AM EST</div>
 
 <main>
   <!-- weather tab -->
@@ -497,7 +513,7 @@ footer a:hover { text-decoration: underline; }
   </td>
   <td>Hi: 74.0&deg; / Lo: 49.0&deg;<br>Wind: &macr;\_(&#12484;)_/&macr;<br>Rain: &macr;\_(&#12484;)_/&macr;</td>
   <td><strong>51.0/100</strong></td>
-  <td><span class="verdict-faces"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"></span></td>
+  <td><span class="verdict-faces"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"></span></td>
 </tr>
 <tr>
   <td class="source-cell">
@@ -506,7 +522,7 @@ footer a:hover { text-decoration: underline; }
   </td>
   <td>Hi: 69.5&deg; / Lo: 48.3&deg;<br>Wind: 9.4 mph<br>Rain: 0.0"</td>
   <td><strong>99.9/100</strong></td>
-  <td><span class="verdict-faces"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"></span></td>
+  <td><span class="verdict-faces"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"></span></td>
 </tr>
 <tr>
   <td class="source-cell">
@@ -515,7 +531,7 @@ footer a:hover { text-decoration: underline; }
   </td>
   <td>Hi: 69&deg; / Lo: 50&deg;<br>Wind: 2.6 mph<br>Rain: 0.0"</td>
   <td><strong>88.8/100</strong></td>
-  <td><span class="verdict-faces"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"></span></td>
+  <td><span class="verdict-faces"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.6rem;width:1.6rem;vertical-align:middle;"></span></td>
 </tr></tbody>
     </table>
   </div>
@@ -530,6 +546,7 @@ footer a:hover { text-decoration: underline; }
       <tbody><tr><td><strong>Open-Meteo</strong></td><td>1W - 0L - 1M</td><td>86.3/100</td><td>2</td></tr><tr><td><strong>Ray's Weather</strong></td><td>0W - 2L - 0M</td><td>54.0/100</td><td>2</td></tr><tr><td><strong>Apple Weather</strong></td><td>1W - 0L - 0M</td><td>88.8/100</td><td>1</td></tr></tbody>
     </table>
   </div>
+  <p class="scoreboard-key">W = best forecast that day &middot; L = worst &middot; M = somewhere in the middle</p>
 </section>
 
   </div>
@@ -637,26 +654,27 @@ document.querySelectorAll('.blog-expand').forEach(function(btn) {
         hiEl.innerHTML = 'High of ' + high + '&deg;F today';
       }
 
-      // Update sweater verdict based on live temp
-      var effective = temp - (wind > 5 ? (wind / 10) * 5 : 0);
+      // Update sweater verdict using blended formula
+      var high = (data.daily && data.daily.temperature_2m_max) ? data.daily.temperature_2m_max[0] : temp;
+      var effective = (high * 0.7) + (temp * 0.3);
       var verdict, layers;
-      if (effective < 32) {
-        verdict = "It's " + Math.round(temp) + "\u00b0F. That's not sweater weather, that's SWEATER EMERGENCY.";
+      if (effective < 35) {
+        verdict = "That's not sweater weather, that's SWEATER EMERGENCY.";
         layers = "3+ (sweater, fleece, AND a coat)";
       } else if (effective < 45) {
-        verdict = "It's " + Math.round(temp) + "\u00b0F. Classic sweater weather. This is what we're here for.";
+        verdict = "Classic sweater weather. This is what we're here for.";
         layers = "2 (solid sweater + optional layer)";
       } else if (effective < 55) {
-        verdict = "It's " + Math.round(temp) + "\u00b0F. Still sweater territory. Don't let anyone tell you otherwise.";
+        verdict = "Still sweater territory. Don't let anyone tell you otherwise.";
         layers = "1-2 (light to medium sweater)";
       } else if (effective < 65) {
-        verdict = "It's " + Math.round(temp) + "\u00b0F. You could go either way. Bring it and decide later.";
+        verdict = "You could go either way. Bring it and decide later.";
         layers = "0-1 (light layer, keep one in the car)";
       } else if (effective < 75) {
-        verdict = "It's " + Math.round(temp) + "\u00b0F. No sweater needed unless you're in aggressive AC.";
+        verdict = "No sweater needed unless you're in aggressive AC.";
         layers = "0 (the sweater rests today)";
       } else {
-        verdict = "It's " + Math.round(temp) + "\u00b0F. Wearing a sweater would be a cry for help.";
+        verdict = "Wearing a sweater would be a cry for help.";
         layers = "0 (this is shorts weather, Dave)";
       }
 
