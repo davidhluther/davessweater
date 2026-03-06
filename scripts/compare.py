@@ -322,22 +322,17 @@ def _categories_close(a, b):
 
 
 def _score_grade(score):
-    """Convert score to a sweater-themed grade."""
+    """Convert score to a grade with ray_count for face icons."""
     if score >= 90:
-        return {"label": "RIGHT RAY ✅", "detail": "Nailed it. Even a broken clock, etc.",
-                "verdict": "right", "ray_count": 5}
+        return {"verdict": "right", "ray_count": 5}
     elif score >= 75:
-        return {"label": "MOSTLY RIGHT RAY", "detail": "Close enough. We'll give him this one.",
-                "verdict": "right", "ray_count": 4}
+        return {"verdict": "right", "ray_count": 4}
     elif score >= 60:
-        return {"label": "EH RAY 🤷", "detail": "Not great, not terrible. Like a 3.6 roentgen forecast.",
-                "verdict": "meh", "ray_count": 3}
+        return {"verdict": "meh", "ray_count": 3}
     elif score >= 40:
-        return {"label": "WRONG RAY ❌", "detail": "Missed it. Should've checked Dave's Sweater.",
-                "verdict": "wrong", "ray_count": 2}
+        return {"verdict": "wrong", "ray_count": 2}
     else:
-        return {"label": "VERY WRONG RAY ❌❌", "detail": "Spectacularly wrong. Impressive, honestly.",
-                "verdict": "wrong", "ray_count": 1}
+        return {"verdict": "wrong", "ray_count": 1}
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -393,7 +388,7 @@ def run_daily_comparison(target_date=None):
                     "prediction": day,
                     "score": result,
                 }
-                print(f"  Open-Meteo: {result['score']}/100 — {result['grade']['label']}")
+                print(f"  Open-Meteo: {result['score']}/100")
                 break
     else:
         print(f"  No Open-Meteo prediction found for {target_date}")
@@ -416,7 +411,7 @@ def run_daily_comparison(target_date=None):
                 "prediction": rays_pred,
                 "score": result,
             }
-            print(f"  Ray's Weather: {result['score']}/100 — {result['grade']['label']}")
+            print(f"  Ray's Weather: {result['score']}/100")
         else:
             comparison["sources"]["raysweather"] = {
                 "note": "Screenshot captured but structured data extraction pending",
@@ -440,7 +435,7 @@ def run_daily_comparison(target_date=None):
                 "prediction": apple_data,
                 "score": result,
             }
-            print(f"  Apple Weather: {result['score']}/100 — {result['grade']['label']}")
+            print(f"  Apple Weather: {result['score']}/100")
         else:
             print(f"  Apple Weather: No temperature data to score")
     else:

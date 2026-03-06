@@ -195,12 +195,10 @@ def ray_face_img(size="2.5rem"):
 
 
 def verdict_html(verdict_str, score):
-    """Render verdict with ray-face icons instead of emoji."""
-    # strip trailing emoji and replace with ray faces
-    clean = verdict_str.split("\U0001f60e")[0].strip().rstrip("\u274c\U0001f937\u2705").strip()
+    """Render verdict with ray-face icons (no text label)."""
     faces = int(round(score / 20)) if score else 0
     face_row = "".join([ray_face_img("1.2rem")] * min(faces, 5))
-    return f'<span class="verdict-label">{clean}</span><span class="verdict-faces">{face_row}</span>'
+    return f'<span class="verdict-faces">{face_row}</span>'
 
 
 def now_est():
@@ -304,7 +302,6 @@ def build_rightwrong_section(comp):
         pred_precip = pred.get("precip_in")
         sc        = score_obj.get("score", 0) if isinstance(score_obj, dict) else 0
         grade     = score_obj.get("grade", {}) if isinstance(score_obj, dict) else {}
-        verd      = grade.get("label", "")
 
         # Build detail lines
         detail_parts = [f"Hi: {pred_high_s} / Lo: {pred_low_s}"]
@@ -321,7 +318,7 @@ def build_rightwrong_section(comp):
   </td>
   <td>{"<br>".join(detail_parts)}</td>
   <td><strong>{sc:.1f}/100</strong></td>
-  <td>{verdict_html(verd, sc)}</td>
+  <td>{verdict_html("", sc)}</td>
 </tr>"""
 
     # Build actual weather row for the table
