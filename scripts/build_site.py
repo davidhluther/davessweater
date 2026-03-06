@@ -223,7 +223,7 @@ def build_sweater_section(comp):
 
     return f"""
 <section class="card" id="sweater">
-  <h2>Is it sweater weather in Boone?</h2>
+  <h2>Sweater weather in Boone?</h2>
   <div class="sweater-verdict">
     <div class="sweater-score">{emoji_row}</div>
     <div class="sweater-temp" id="live-temp">{temp}&deg;F</div>
@@ -371,8 +371,8 @@ def build_phone_forecast(_forecast_data=None):
 
         return """
 <section class="card" id="weekly-forecast">
-  <h2>Your iPhone Says&hellip;</h2>
-  <p class="section-subtitle">Spoiler: it's about as accurate as Ray.</p>
+  <h2>Forecast</h2>
+  <p class="section-subtitle">Our meteorological experts predict the following forecast</p>
   <div class="iphone-screenshot-wrap">
     <img src="screenshots/iphone_screenshot.png" alt="Apple Weather forecast for Boone, NC"
          class="iphone-screenshot" loading="lazy">
@@ -383,7 +383,7 @@ def build_phone_forecast(_forecast_data=None):
     # Fallback: no screenshot available yet
     return """
 <section class="card" id="weekly-forecast">
-  <h2>Your iPhone Says&hellip;</h2>
+  <h2>Forecast</h2>
   <p class="section-subtitle">iPhone Weather screenshot not available yet. Check back tomorrow!</p>
 </section>
 """
