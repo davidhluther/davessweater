@@ -223,7 +223,7 @@ def build_sweater_section(comp):
 
     return f"""
 <section class="card" id="sweater">
-  <h2>Is it sweater weather in Boone?</h2>
+  <h2>Sweater weather in Boone?</h2>
   <div class="sweater-verdict">
     <div class="sweater-score">{emoji_row}</div>
     <div class="sweater-temp" id="live-temp">{temp}&deg;F</div>
@@ -371,8 +371,8 @@ def build_phone_forecast(_forecast_data=None):
 
         return """
 <section class="card" id="weekly-forecast">
-  <h2>Your iPhone Says&hellip;</h2>
-  <p class="section-subtitle">Spoiler: it's about as accurate as Ray.</p>
+  <h2>Forecast</h2>
+  <p class="section-subtitle">Our meteorological experts predict the following forecast</p>
   <div class="iphone-screenshot-wrap">
     <img src="screenshots/iphone_screenshot.png" alt="Apple Weather forecast for Boone, NC"
          class="iphone-screenshot" loading="lazy">
@@ -383,7 +383,7 @@ def build_phone_forecast(_forecast_data=None):
     # Fallback: no screenshot available yet
     return """
 <section class="card" id="weekly-forecast">
-  <h2>Your iPhone Says&hellip;</h2>
+  <h2>Forecast</h2>
   <p class="section-subtitle">iPhone Weather screenshot not available yet. Check back tomorrow!</p>
 </section>
 """
@@ -448,6 +448,36 @@ def build_videos_section(items):
 """
 
 
+def _split_content_at_first_heading(html):
+    """Split HTML content into intro (before first <h4>) and rest."""
+    import re
+    m = re.search(r'<h4[\s>]', html)
+    if m:
+        return html[:m.start()], html[m.start():]
+    return html, ""
+
+
+def _add_heading_ids_and_toc(html, slug_prefix):
+    """Add id attrs to <h4> tags and return (modified_html, toc_html)."""
+    import re
+    headings = []
+    counter = [0]
+
+    def replacer(m):
+        counter[0] += 1
+        hid = f"{slug_prefix}-s{counter[0]}"
+        title = re.sub(r'<[^>]+>', '', m.group(2))
+        headings.append((hid, title))
+        return f'<h4 id="{hid}"{m.group(1)}>{m.group(2)}</h4>'
+
+    modified = re.sub(r'<h4([^>]*)>(.*?)</h4>', replacer, html)
+    if not headings:
+        return modified, ""
+    links = "".join(f'<li><a href="#{hid}" class="post-toc-link">{title}</a></li>' for hid, title in headings)
+    toc = f'<nav class="post-toc"><strong>In this post</strong><ul>{links}</ul></nav>'
+    return modified, toc
+
+
 def build_blog_section(items):
     if not items:
         return '<section class="card tab-panel" id="blog"><p class="empty-feed">No posts yet — check back soon.</p></section>'
@@ -456,7 +486,7 @@ def build_blog_section(items):
     toc_links = ""
     for i, p in enumerate(items):
         slug = f"post-{i}"
-        toc_links += f'<li><a href="#{slug}" class="toc-link">{p["title"]}</a><span class="toc-date">{p["date"]}</span></li>\n'
+        toc_links += f'<li><a href="#{slug}" class="toc-link">{p["title"]}</a></li>\n'
     toc = f'<nav class="blog-toc"><h3>Posts</h3><ol>{toc_links}</ol></nav>'
 
     # Build post articles
@@ -466,7 +496,12 @@ def build_blog_section(items):
         summary = p.get("summary", "")
         content = p.get("content", "")
         if content:
-            body = f'<div class="blog-body">{content}</div>'
+            intro, rest = _split_content_at_first_heading(content)
+            body = f'<div class="blog-body">{intro}</div>'
+            if rest:
+                rest, post_toc = _add_heading_ids_and_toc(rest, slug)
+                body += f'<div class="blog-rest" id="{slug}-rest" style="display:none">{post_toc}{rest}</div>'
+                body += f'<button class="blog-expand" data-target="{slug}-rest" aria-expanded="false">Read more &darr;</button>'
         elif summary:
             body = f'<p class="blog-summary">{summary}</p>'
         else:
@@ -475,13 +510,12 @@ def build_blog_section(items):
         posts += f"""
 <article class="blog-post" id="{slug}">
   <h3 class="blog-title">{p['title']}</h3>
-  <p class="blog-date">{p['date']}</p>
   {body}
   {substack_link}
 </article>"""
     return f"""
 <section class="card tab-panel" id="blog">
-  <h2>Blog</h2>
+  <h2>Substack</h2>
   {toc}
   <div class="blog-list">{posts}</div>
 </section>
@@ -844,7 +878,6 @@ main {{
 .blog-toc li {{ margin-bottom: 0.3rem; }}
 .toc-link {{ color: var(--teal); text-decoration: none; font-weight: 500; font-size: 0.9rem; }}
 .toc-link:hover {{ text-decoration: underline; }}
-.toc-date {{ font-size: 0.75rem; color: var(--muted); margin-left: 0.5rem; }}
 
 .blog-list {{ display: flex; flex-direction: column; gap: 1.5rem; margin-top: 0.5rem; }}
 
@@ -863,16 +896,42 @@ main {{
   margin-bottom: 0.2rem;
 }}
 
-.blog-date {{ font-size: 0.78rem; color: var(--muted); margin-bottom: 0.8rem; }}
-
 .blog-summary {{ font-size: 0.88rem; color: #4b5563; }}
 
-.blog-body {{ font-size: 0.92rem; color: #374151; line-height: 1.7; }}
-.blog-body h4 {{ color: var(--teal); margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.05rem; }}
-.blog-body p {{ margin-bottom: 0.8rem; }}
-.blog-body ul {{ padding-left: 1.5rem; margin-bottom: 0.8rem; }}
-.blog-body li {{ margin-bottom: 0.3rem; }}
-.blog-body strong {{ color: var(--teal); }}
+.post-toc {{
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.4rem;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.2rem;
+}}
+.post-toc strong {{ font-size: 0.85rem; color: var(--teal); display: block; margin-bottom: 0.4rem; }}
+.post-toc ul {{ list-style: none; padding: 0; margin: 0; }}
+.post-toc li {{ margin-bottom: 0.25rem; }}
+.post-toc-link {{ color: var(--orange); text-decoration: none; font-size: 0.85rem; font-weight: 500; }}
+.post-toc-link:hover {{ text-decoration: underline; }}
+
+.blog-body, .blog-rest {{ font-size: 0.92rem; color: #374151; line-height: 1.7; }}
+.blog-body h4, .blog-rest h4 {{ color: var(--teal); margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.05rem; }}
+.blog-body p, .blog-rest p {{ margin-bottom: 0.8rem; }}
+.blog-body ul, .blog-rest ul {{ padding-left: 1.5rem; margin-bottom: 0.8rem; }}
+.blog-body li, .blog-rest li {{ margin-bottom: 0.3rem; }}
+.blog-body strong, .blog-rest strong {{ color: var(--teal); }}
+
+.blog-expand {{
+  display: block;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: none;
+  border: 1px solid var(--orange);
+  border-radius: 0.4rem;
+  color: var(--orange);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}}
+.blog-expand:hover {{ background: var(--orange); color: #fff; }}
 
 .read-on-substack {{
   display: inline-block;
@@ -914,7 +973,7 @@ footer a:hover {{ text-decoration: underline; }}
 
 JS = """
 (function() {
-  const TABS = ['weather', 'videos', 'blog'];
+  const TABS = ['weather', 'rightwrong', 'videos', 'blog'];
 
   function activate(tab) {
     // nav buttons
@@ -941,6 +1000,18 @@ JS = """
   const hash = location.hash.replace('#', '');
   activate(TABS.includes(hash) ? hash : 'weather');
 })();
+
+// ── Blog expand / collapse ──
+document.querySelectorAll('.blog-expand').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var target = document.getElementById(btn.dataset.target);
+    if (!target) return;
+    var expanded = btn.getAttribute('aria-expanded') === 'true';
+    target.style.display = expanded ? 'none' : 'block';
+    btn.setAttribute('aria-expanded', String(!expanded));
+    btn.innerHTML = expanded ? 'Read more &darr;' : 'Show less &uarr;';
+  });
+});
 
 // ── Live temperature from Open-Meteo (Boone, NC) ──
 (function() {
@@ -1003,7 +1074,10 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
 
     weather_sections = (
         build_sweater_section(comp) +
-        build_phone_forecast(forecast or {}) +
+        build_phone_forecast(forecast or {})
+    )
+
+    rightwrong_sections = (
         build_rightwrong_section(comp) +
         build_scoreboard_section(scores)
     )
@@ -1016,12 +1090,21 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dave's Sweater &mdash; Boone's most reliable weather service</title>
+  <title>Dave's Sweater &mdash; Boone's most mostly reliable weather tracker and resource</title>
   <meta name="description" content="Is it sweater weather in Boone, NC? Did Ray get yesterday right? Find out.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="google-site-verification" content="WvhDdIhrlNBhsVYElbFc39q-Ib8J2UZZJKoy8pzn-KQ">
   <style>{CSS}</style>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7XL0TZ4GSS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){{dataLayer.push(arguments);}}
+    gtag('js', new Date());
+    gtag('config', 'G-7XL0TZ4GSS');
+  </script>
 </head>
 <body>
 
@@ -1029,9 +1112,10 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
   <a class="header-logo" href="/">
     {logo_html()}
   </a>
-  <span class="header-tagline">Boone's most reliable weather service</span>
+  <span class="header-tagline">Boone's most mostly reliable weather tracker and resource</span>
   <nav>
     <button data-tab="weather">Weather</button>
+    <button data-tab="rightwrong">Right Ray / Wrong Ray</button>
     <button data-tab="videos">Videos</button>
     <button data-tab="blog">Blog</button>
   </nav>
@@ -1040,9 +1124,14 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
 <div class="update-bar">Updated: {updated}</div>
 
 <main>
-  <!-- weather tab: sweater + right/wrong + scoreboard -->
+  <!-- weather tab -->
   <div id="weather-content" style="display:contents;">
     {weather_sections}
+  </div>
+
+  <!-- right ray / wrong ray tab -->
+  <div class="tab-panel" id="rightwrong" style="display:none;">
+    {rightwrong_sections}
   </div>
 
   <!-- videos tab -->
