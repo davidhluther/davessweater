@@ -1090,7 +1090,7 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dave's Sweater &mdash; Boone's most reliable weather service</title>
+  <title>Dave's Sweater &mdash; Boone's most mostly reliable weather tracker and resource</title>
   <meta name="description" content="Is it sweater weather in Boone, NC? Did Ray get yesterday right? Find out.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1112,7 +1112,7 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
   <a class="header-logo" href="/">
     {logo_html()}
   </a>
-  <span class="header-tagline">Boone's most reliable weather service</span>
+  <span class="header-tagline">Boone's most mostly reliable weather tracker and resource</span>
   <nav>
     <button data-tab="weather">Weather</button>
     <button data-tab="rightwrong">Right Ray / Wrong Ray</button>
