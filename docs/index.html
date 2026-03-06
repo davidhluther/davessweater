@@ -481,7 +481,7 @@ footer a:hover { text-decoration: underline; }
   </nav>
 </header>
 
-<div class="update-bar">Updated: March 06, 2026 at 01:03 AM EST</div>
+<div class="update-bar">Updated: March 06, 2026 at 01:12 AM EST</div>
 
 <main>
   <!-- weather tab -->
@@ -491,7 +491,7 @@ footer a:hover { text-decoration: underline; }
   <h2>Sweater weather in Boone?</h2>
   <div class="sweater-verdict">
     <div class="sweater-score"><img class="sweater-icon active" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"><img class="sweater-icon inactive" src="assets/sweateremoji.webp" alt="sweater"></div>
-    <div class="sweater-temp" id="live-temp">68.8&deg;F</div>
+    <div class="sweater-temp" id="live-temp">69.1&deg;F</div>
     <p class="sweater-text" id="live-verdict">It's 69°F. No sweater needed unless you're in aggressive AC.</p>
     <p class="sweater-layers" id="live-layers"><strong>Recommended layers:</strong> 0 (the sweater rests today)</p>
   </div>
@@ -515,6 +515,10 @@ footer a:hover { text-decoration: underline; }
   <h2>Right Ray / Wrong Ray</h2>
   <p class="section-subtitle">When you trust us to tell you how many rays of sunshine, golfballs, or snowmen you can expect, we need to be held to account. To that end, I'll be posting the "Right Ray, Wrong Ray" scoreboard that tracks the forecasts and compares them to the actual weather recorded each day.</p>
   
+  <div class="current-conditions">
+    <div class="cond-header">📡 Current conditions (Ray's station)</div>
+    <div class="cond-item"><span class="cond-label">Temp</span><span class="cond-value">71.9&deg;F</span></div>
+  </div>
   <div class="table-wrap">
     <table class="scores-table">
       <thead>
@@ -523,7 +527,7 @@ footer a:hover { text-decoration: underline; }
       <tbody>
 <tr class="actual-row">
   <td><strong>Actual</strong></td>
-  <td>Hi: 68.8&deg; / Lo: 38.3&deg;<br>Wind: 9.9 mph<br>Rain: 0.004"<br>Light drizzle</td>
+  <td>Hi: 69.1&deg; / Lo: 46.9&deg;<br>Wind: 9.5 mph<br>Rain: 0.004"<br>Light drizzle</td>
   <td colspan="2">&mdash;</td>
 </tr>
 <tr>
@@ -531,18 +535,27 @@ footer a:hover { text-decoration: underline; }
     <img src="assets/ray_face.svg" alt="Ray" style="height:2.5rem;width:2.5rem;vertical-align:middle;">
     <span>Ray's Weather</span>
   </td>
-  <td>Hi: N/A / Lo: 46.0&deg;<br>Rain: 0.0"</td>
-  <td><strong>57.0/100</strong></td>
-  <td><span class="verdict-label">WRONG RAY</span><span class="verdict-faces"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"></span></td>
+  <td>Hi: 74.0&deg; / Lo: 49.0&deg;</td>
+  <td><strong>74.9/100</strong></td>
+  <td><span class="verdict-label">EH RAY</span><span class="verdict-faces"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"></span></td>
 </tr>
 <tr>
   <td class="source-cell">
     <span class="source-icon">🌐</span>
     <span>Open-Meteo</span>
   </td>
-  <td>Hi: 67.5&deg; / Lo: 42.3&deg;<br>Wind: 14.2 mph<br>Rain: 0.0"</td>
-  <td><strong>72.7/100</strong></td>
-  <td><span class="verdict-label">EH RAY</span><span class="verdict-faces"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"></span></td>
+  <td>Hi: 69.5&deg; / Lo: 48.3&deg;<br>Wind: 9.4 mph<br>Rain: 0.0"</td>
+  <td><strong>80.3/100</strong></td>
+  <td><span class="verdict-label">MOSTLY RIGHT RAY</span><span class="verdict-faces"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"></span></td>
+</tr>
+<tr>
+  <td class="source-cell">
+    <span class="source-icon">📱</span>
+    <span>Apple Weather</span>
+  </td>
+  <td>Hi: 69&deg; / Lo: 50&deg;<br>Wind: 2.607 mph</td>
+  <td><strong>66.6/100</strong></td>
+  <td><span class="verdict-label">EH RAY</span><span class="verdict-faces"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"><img src="assets/ray_face.svg" alt="Ray" style="height:1.2rem;width:1.2rem;vertical-align:middle;"></span></td>
 </tr></tbody>
     </table>
   </div>
@@ -554,7 +567,7 @@ footer a:hover { text-decoration: underline; }
   <div class="table-wrap">
     <table class="scores-table">
       <thead><tr><th>Source</th><th>Record</th><th>Avg Score</th><th>Days Tracked</th></tr></thead>
-      <tbody><tr><td><strong>Open-Meteo</strong></td><td>0W - 0L - 1M</td><td>72.7/100</td><td>1</td></tr><tr><td><strong>Ray's Weather</strong></td><td>0W - 1L - 0M</td><td>57.0/100</td><td>1</td></tr></tbody>
+      <tbody><tr><td><strong>Open-Meteo</strong></td><td>1W - 0L - 1M</td><td>76.5/100</td><td>2</td></tr><tr><td><strong>Ray's Weather</strong></td><td>0W - 1L - 1M</td><td>66.0/100</td><td>2</td></tr><tr><td><strong>Apple Weather</strong></td><td>0W - 0L - 1M</td><td>66.6/100</td><td>1</td></tr></tbody>
     </table>
   </div>
 </section>
