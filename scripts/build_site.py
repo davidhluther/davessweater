@@ -28,7 +28,7 @@ PREDS_DIR   = DATA / "predictions"
 # ── RSS feeds ──────────────────────────────────────────────────────────────────
 
 SUBSTACK_RSS = "https://davessweater.substack.com/feed"
-YOUTUBE_UC   = "UCxxxxxxxxxxxxxxxxxxxxxxxx"          # ← user: replace with real channel ID
+YOUTUBE_UC   = "UCLQdHEMoKkrNc3PgWs3SksA"
 YOUTUBE_RSS  = f"https://www.youtube.com/feeds/videos.xml?channel_id={YOUTUBE_UC}"
 
 # ── branding ───────────────────────────────────────────────────────────────────
@@ -91,13 +91,27 @@ WMO_ICONS = {
 
 def fetch_rss(url, max_items=5):
     """Fetch an RSS/Atom feed, return list of {title, link, date, summary}."""
+    headers = {
+        "User-Agent": "Mozilla/5.0 (compatible; DavesSweater/1.0; +https://davessweater.com)",
+        "Accept": "application/rss+xml, application/xml, text/xml, */*",
+    }
+    raw = None
+    for attempt in range(3):
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                raw = resp.read()
+            break
+        except Exception as e:
+            print(f"  [RSS] attempt {attempt+1} failed for {url}: {e}", file=sys.stderr)
+            if attempt < 2:
+                import time; time.sleep(2 ** attempt)
+    if raw is None:
+        return []
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "DavesSweater/1.0"})
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            raw = resp.read()
         root = ET.fromstring(raw)
-    except Exception as e:
-        print(f"  [RSS] could not fetch {url}: {e}", file=sys.stderr)
+    except ET.ParseError as e:
+        print(f"  [RSS] XML parse error for {url}: {e}", file=sys.stderr)
         return []
 
     ns = {
@@ -247,9 +261,10 @@ def build_rightwrong_section(comp):
 
     rows = ""
     for source_key, label, icon in [
-        ("openmeteo",    "Open-Meteo",      '<span class="source-icon">🌐</span>'),
-        ("raysweather",  "Ray's Weather",   ray_face_img()),
-        ("iphone",       "iPhone Weather",  '<span class="source-icon">📱</span>'),
+        ("openmeteo",      "Open-Meteo",       '<span class="source-icon">🌐</span>'),
+        ("raysweather",    "Ray's Weather",    ray_face_img()),
+        ("iphone",         "iPhone Weather",   '<span class="source-icon">📱</span>'),
+        ("apple_weather",  "Apple Weather",    '<span class="source-icon">📱</span>'),
     ]:
         p = sources.get(source_key, {})
         if not p or "score" not in p:
@@ -362,7 +377,7 @@ def build_scoreboard_section(scores):
     # Also support the "totals" format from the existing scores.json
     if not rows:
         for source, totals in scores.get("totals", {}).items():
-            labels = {"raysweather": "Ray's Weather", "openmeteo": "Open-Meteo", "iphone": "iPhone Weather"}
+            labels = {"raysweather": "Ray's Weather", "openmeteo": "Open-Meteo", "iphone": "iPhone Weather", "apple_weather": "Apple Weather"}
             label = labels.get(source, source)
             days = totals.get("days", 0)
             avg = round(totals.get("total_score", 0) / days, 1) if days > 0 else 0
@@ -928,7 +943,7 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dave's Sweater &mdash; Boone, NC's #2 weather resource</title>
+  <title>Dave's Sweater &mdash; Boone's most reliable weather service</title>
   <meta name="description" content="Is it sweater weather in Boone, NC? Did Ray get yesterday right? Find out.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -941,7 +956,7 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
   <a class="header-logo" href="/">
     {logo_html()}
   </a>
-  <span class="header-tagline">Boone, NC's #2 weather resource</span>
+  <span class="header-tagline">Boone's most reliable weather service</span>
   <nav>
     <button data-tab="weather">Weather</button>
     <button data-tab="videos">Videos</button>
@@ -967,9 +982,8 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
 
 <footer>
   <p>
-    <a href="https://davessweater.com">davessweater.com</a> &nbsp;&middot;&nbsp;
-    est. 2026 &nbsp;&middot;&nbsp;
-    Weather data: <a href="https://open-meteo.com">Open-Meteo</a>
+    <a href="https://davessweater.com">DavesSweater.com</a> &nbsp;&middot;&nbsp;
+    Est. 2026
   </p>
 </footer>
 
@@ -1021,11 +1035,7 @@ def main():
     blog_items = fetch_rss(SUBSTACK_RSS)
 
     print("  fetching YouTube RSS…")
-    if "xxxxxxxx" in YOUTUBE_UC:
-        print("  (YouTube channel ID is placeholder — skipping)")
-        video_items = []
-    else:
-        video_items = fetch_rss(YOUTUBE_RSS)
+    video_items = fetch_rss(YOUTUBE_RSS)
 
     # copy assets
     print("  copying assets…")

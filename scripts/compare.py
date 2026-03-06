@@ -276,6 +276,28 @@ def _best_rays_prediction(rays_data, target_date):
     return pred if pred else None
 
 
+def _apple_condition_to_category(condition_str):
+    """Map Apple Weather condition strings to scoring categories."""
+    if not condition_str:
+        return "unknown"
+    c = condition_str.lower()
+    if any(w in c for w in ("thunder", "severe", "tornado", "hurricane")):
+        return "storm"
+    if any(w in c for w in ("snow", "flurr", "blizzard", "sleet", "ice", "freez")):
+        return "snow"
+    if any(w in c for w in ("rain", "shower", "downpour")):
+        return "rain"
+    if any(w in c for w in ("drizzle", "sprinkle")):
+        return "drizzle"
+    if any(w in c for w in ("fog", "haze", "mist")):
+        return "fog"
+    if any(w in c for w in ("cloud", "overcast")):
+        return "cloudy"
+    if any(w in c for w in ("clear", "sunny", "sun", "fair")):
+        return "clear"
+    return "unknown"
+
+
 def _categories_close(a, b):
     """Are two weather categories 'close enough'?"""
     close_pairs = [
@@ -425,6 +447,27 @@ def run_daily_comparison(target_date=None):
             print(f"  iPhone Weather: No daily forecast data to score")
     else:
         print(f"  No iPhone Weather prediction found for {target_date}")
+
+    # Score Apple Weather prediction (from iPhone Shortcut)
+    apple_path = pred_dir / "iphone_forecast_apple.json"
+    if apple_path.exists():
+        with open(apple_path) as f:
+            apple_data = json.load(f)
+        # The Shortcut uploads a flat dict: today_high_f, tonight_low_f, wind_mph, conditions
+        # Map conditions string to a category for scoring
+        if apple_data.get("conditions") and not apple_data.get("category"):
+            apple_data["category"] = _apple_condition_to_category(apple_data["conditions"])
+        if _get_high(apple_data) is not None or _get_low(apple_data) is not None:
+            result = score_prediction(apple_data, actuals)
+            comparison["sources"]["apple_weather"] = {
+                "prediction": apple_data,
+                "score": result,
+            }
+            print(f"  Apple Weather: {result['score']}/100 — {result['grade']['label']}")
+        else:
+            print(f"  Apple Weather: No temperature data to score")
+    else:
+        print(f"  No Apple Weather prediction found for {target_date}")
 
     # Sweater weather verdict
     sw = comparison["sweater_weather"]
