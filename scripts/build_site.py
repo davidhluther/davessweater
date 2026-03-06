@@ -303,12 +303,10 @@ def build_rightwrong_section(comp):
         sc        = score_obj.get("score", 0) if isinstance(score_obj, dict) else 0
         grade     = score_obj.get("grade", {}) if isinstance(score_obj, dict) else {}
 
-        # Build detail lines
+        # Build detail lines — always show all four stats
         detail_parts = [f"Hi: {pred_high_s} / Lo: {pred_low_s}"]
-        if pred_wind is not None:
-            detail_parts.append(f"Wind: {pred_wind} mph")
-        if pred_precip is not None:
-            detail_parts.append(f'Rain: {pred_precip}"')
+        detail_parts.append(f"Wind: {pred_wind} mph" if pred_wind is not None else "Wind: N/A")
+        detail_parts.append(f'Rain: {pred_precip}"' if pred_precip is not None else "Rain: N/A")
 
         rows += f"""
 <tr>
