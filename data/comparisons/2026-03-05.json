@@ -1,9 +1,9 @@
 {
   "date": "2026-03-05",
-  "generated_at": "2026-03-06T01:49:28.145454-05:00",
+  "generated_at": "2026-03-06T03:57:30.068893-05:00",
   "actuals": {
     "date": "2026-03-05",
-    "fetched_at": "2026-03-06T01:49:28.079493-05:00",
+    "fetched_at": "2026-03-06T03:57:30.000728-05:00",
     "location": "Boone",
     "high_f": 69.1,
     "low_f": 46.9,
@@ -118,13 +118,14 @@
         "tonight_low_f": 50,
         "wind_mph": 2.607,
         "conditions": "Partly Cloudy",
-        "category": "cloudy"
+        "category": "cloudy",
+        "precip_in": 0.0
       },
       "score": {
-        "score": 68.9,
+        "score": 88.8,
         "grade": {
-          "verdict": "meh",
-          "ray_count": 3
+          "verdict": "right",
+          "ray_count": 4
         },
         "breakdown": {
           "high_temp": {
@@ -142,8 +143,11 @@
             "max": 30
           },
           "precipitation": {
-            "error": "missing data",
-            "points": 0,
+            "predicted_in": 0,
+            "actual_in": 0.004,
+            "binary_correct": true,
+            "error_in": 0.004,
+            "points": 19.9,
             "max": 20
           },
           "wind": {
