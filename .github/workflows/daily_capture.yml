@@ -24,6 +24,10 @@ jobs:
           playwright install chromium
           playwright install-deps chromium
 
+      - name: Fetch Substack RSS feed
+        run: python scripts/fetch_substack.py
+        continue-on-error: true
+
       - name: Capture Ray's Weather forecast
         run: python scripts/capture_rays.py
         continue-on-error: true
@@ -39,6 +43,6 @@ jobs:
         run: |
           git config user.name "DavesSweaterBot"
           git config user.email "bot@davessweater.com"
-          git add data/predictions/
+          git add data/predictions/ data/substack_feed.json
           git commit -m "📸 Daily capture $(date +%Y-%m-%d)" || echo "No changes to commit"
           git push
