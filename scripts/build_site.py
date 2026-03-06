@@ -1056,9 +1056,14 @@ def main():
     scores   = load_json(SCORES_FILE, default={})
     forecast = latest_forecast()
 
-    # fetch RSS
-    print("  fetching Substack RSS…")
-    blog_items = fetch_rss(SUBSTACK_RSS)
+    # load Substack blog posts (cached by fetch_substack.py via Playwright)
+    substack_cache = ROOT / "data" / "substack_feed.json"
+    if substack_cache.exists():
+        blog_items = json.loads(substack_cache.read_text())
+        print(f"  loaded {len(blog_items)} blog posts from cache")
+    else:
+        print("  fetching Substack RSS (live)…")
+        blog_items = fetch_rss(SUBSTACK_RSS)
 
     print("  fetching YouTube RSS…")
     video_items = fetch_rss(YOUTUBE_RSS)
