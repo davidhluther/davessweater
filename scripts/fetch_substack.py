@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-fetch_substack.py — fetch blog posts from Substack.
+fetch_substack.py — fetch ALL blog posts from Substack.
 Uses the Substack API endpoint and homepage scraping (avoids Cloudflare-blocked /feed).
+Always fetches the full list so edits on Substack carry over.
 Saves parsed items to data/substack_feed.json.
 """
 
@@ -15,7 +16,7 @@ from pathlib import Path
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 SUBSTACK_SLUG = "davessweater"
 BASE_URL = f"https://{SUBSTACK_SLUG}.substack.com"
-API_URL = f"{BASE_URL}/api/v1/archive?sort=new&limit=5"
+API_URL = f"{BASE_URL}/api/v1/archive?sort=new&limit=50"
 OUTPUT = DATA_DIR / "substack_feed.json"
 
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -43,7 +44,7 @@ def fetch_via_api():
             return []
 
         items = []
-        for post in data[:5]:
+        for post in data:
             title = post.get("title", "")
             slug = post.get("slug", "")
             link = post.get("canonical_url", f"{BASE_URL}/p/{slug}")
@@ -86,7 +87,7 @@ def fetch_via_homepage():
                 next_data = json.loads(match.group(1))
                 posts = next_data.get("props", {}).get("pageProps", {}).get("posts", [])
                 items = []
-                for post in posts[:5]:
+                for post in posts:
                     title = post.get("title", "")
                     slug = post.get("slug", "")
                     link = post.get("canonical_url", f"{BASE_URL}/p/{slug}")
@@ -117,7 +118,7 @@ def fetch_via_homepage():
                 title = slug.replace("-", " ").title()
                 items.append({"title": title, "link": link, "date": "", "summary": ""})
             print(f"  Found {len(items)} posts via HTML parsing")
-            return items[:5]
+            return items
 
         print("  No posts found in homepage HTML", file=sys.stderr)
         return []
