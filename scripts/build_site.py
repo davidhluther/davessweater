@@ -195,12 +195,10 @@ def ray_face_img(size="2.5rem"):
 
 
 def verdict_html(verdict_str, score):
-    """Render verdict with ray-face icons instead of emoji."""
-    # strip trailing emoji and replace with ray faces
-    clean = verdict_str.split("\U0001f60e")[0].strip().rstrip("\u274c\U0001f937\u2705").strip()
+    """Render verdict with ray-face icons (no text label)."""
     faces = int(round(score / 20)) if score else 0
     face_row = "".join([ray_face_img("1.2rem")] * min(faces, 5))
-    return f'<span class="verdict-label">{clean}</span><span class="verdict-faces">{face_row}</span>'
+    return f'<span class="verdict-faces">{face_row}</span>'
 
 
 def now_est():
@@ -301,17 +299,15 @@ def build_rightwrong_section(comp):
         pred_high_s = f"{pred_high}&deg;" if pred_high is not None else "N/A"
         pred_low_s  = f"{pred_low}&deg;" if pred_low is not None else "N/A"
         pred_wind = pred.get("wind_mph")
-        pred_precip = pred.get("precip_in")
+        pred_precip = pred.get("precip_in", pred.get("rainfall_in"))
         sc        = score_obj.get("score", 0) if isinstance(score_obj, dict) else 0
         grade     = score_obj.get("grade", {}) if isinstance(score_obj, dict) else {}
-        verd      = grade.get("label", "")
 
-        # Build detail lines
+        shrug = r"&macr;\_(&#12484;)_/&macr;"
+        # Build detail lines — always show all four stats
         detail_parts = [f"Hi: {pred_high_s} / Lo: {pred_low_s}"]
-        if pred_wind is not None:
-            detail_parts.append(f"Wind: {pred_wind} mph")
-        if pred_precip is not None:
-            detail_parts.append(f'Rain: {pred_precip}"')
+        detail_parts.append(f"Wind: {round(pred_wind, 1)} mph" if pred_wind is not None else f"Wind: {shrug}")
+        detail_parts.append(f'Rain: {pred_precip}"' if pred_precip is not None else f"Rain: {shrug}")
 
         rows += f"""
 <tr>
@@ -321,13 +317,13 @@ def build_rightwrong_section(comp):
   </td>
   <td>{"<br>".join(detail_parts)}</td>
   <td><strong>{sc:.1f}/100</strong></td>
-  <td>{verdict_html(verd, sc)}</td>
+  <td>{verdict_html("", sc)}</td>
 </tr>"""
 
     # Build actual weather row for the table
     actual_parts = [f"Hi: {act_high}&deg; / Lo: {act_low}&deg;"]
     if act_wind is not None:
-        actual_parts.append(f"Wind: {act_wind} mph")
+        actual_parts.append(f"Wind: {round(act_wind, 1)} mph")
     if act_precip is not None:
         actual_parts.append(f'Rain: {act_precip}"')
     if act_cond:
@@ -352,7 +348,7 @@ def build_rightwrong_section(comp):
       <tbody>{actual_row}{rows}</tbody>
     </table>
   </div>
-  <p class="rating-note">Rating: 5 Rays = nailed it &nbsp;|&nbsp; 1 Ray = yikes</p>
+  <p class="rating-note"><em>Each source is scored out of 100 points across four fields: high temperature (30 pts), low temperature (30 pts), wind speed (20 pts), and precipitation (20 pts). Scores are based on how close each prediction was to actual recorded conditions. If a source doesn&rsquo;t make a prediction for a field, it scores 0 for that field &mdash; forecasting is about commitment, and sitting one out isn&rsquo;t the same as getting it right.</em></p>
 </section>
 """
 
