@@ -994,10 +994,11 @@ document.querySelectorAll('.blog-expand').forEach(function(btn) {
         hiEl.innerHTML = 'High of ' + high + '&deg;F today';
       }
 
-      // Update sweater verdict based on live temp
-      var effective = temp - (wind > 5 ? (wind / 10) * 5 : 0);
+      // Update sweater verdict using blended formula
+      var high = (data.daily && data.daily.temperature_2m_max) ? data.daily.temperature_2m_max[0] : temp;
+      var effective = (high * 0.7) + (temp * 0.3);
       var verdict, layers;
-      if (effective < 32) {
+      if (effective < 35) {
         verdict = "That's not sweater weather, that's SWEATER EMERGENCY.";
         layers = "3+ (sweater, fleece, AND a coat)";
       } else if (effective < 45) {
