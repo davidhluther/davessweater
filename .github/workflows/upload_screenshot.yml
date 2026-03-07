@@ -59,14 +59,25 @@ jobs:
           # Save Apple Weather forecast numbers if provided
           if [ -n "$TODAY_HIGH_F" ] || [ -n "$TONIGHT_LOW_F" ]; then
             python3 -c "
-          import json, os
+          import json, re, os
+
+          def parse_num(s):
+              if not s:
+                  return None
+              # Strip units like °F, mph, in — keep only digits, dots, minus
+              cleaned = re.sub(r'[^0-9.\-]', '', s)
+              try:
+                  return float(cleaned)
+              except (ValueError, TypeError):
+                  return None
+
           data = {
               'date': '$DATE',
               'source': 'Apple Weather (iPhone Shortcut)',
-              'today_high_f': float('${TODAY_HIGH_F}') if '${TODAY_HIGH_F}' else None,
-              'tonight_low_f': float('${TONIGHT_LOW_F}') if '${TONIGHT_LOW_F}' else None,
-              'wind_mph': float('${WIND_MPH}') if '${WIND_MPH}' else None,
-              'rainfall_in': float('${RAINFALL_IN}') if '${RAINFALL_IN}' else None,
+              'today_high_f': parse_num('${TODAY_HIGH_F}'),
+              'tonight_low_f': parse_num('${TONIGHT_LOW_F}'),
+              'wind_mph': parse_num('${WIND_MPH}'),
+              'rainfall_in': parse_num('${RAINFALL_IN}'),
               'conditions': '${CONDITIONS}' or None,
           }
           # Drop None values
