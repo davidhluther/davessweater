@@ -51,7 +51,8 @@ def fetch_via_api():
             date = post.get("post_date", "")[:10]
             desc = post.get("subtitle", "") or post.get("description", "")
             desc = re.sub(r"<[^>]+>", "", desc)[:200].strip()
-            items.append({"title": title, "link": link, "date": date, "summary": desc})
+            body = post.get("body_html", "")
+            items.append({"title": title, "link": link, "date": date, "summary": desc, "content": body})
 
         print(f"  API returned {len(items)} posts")
         return items
@@ -94,7 +95,8 @@ def fetch_via_homepage():
                     date = post.get("post_date", "")[:10]
                     desc = post.get("subtitle", "") or post.get("description", "")
                     desc = re.sub(r"<[^>]+>", "", desc)[:200].strip()
-                    items.append({"title": title, "link": link, "date": date, "summary": desc})
+                    body = post.get("body_html", "")
+                    items.append({"title": title, "link": link, "date": date, "summary": desc, "content": body})
                 if items:
                     print(f"  Found {len(items)} posts via __NEXT_DATA__")
                     return items
