@@ -296,22 +296,48 @@ def _parse_forecast_from_text(text: str) -> dict:
     return forecast
 
 
+def _parse_wind_from_desc(desc: str) -> float | None:
+    """
+    Extract wind speed from a forecast description string.
+    Handles patterns like:
+      "SSW wind 5-15 mph"  → 10.0  (midpoint)
+      "West wind 5-15 mph" → 10.0
+      "NW 5-15"            → 10.0
+      "Light SW wind becoming NW 5-15 & breezy" → 10.0
+    Returns the midpoint of the range, or the single value if no range.
+    """
+    # Match "wind 5-15 mph" or "wind 5-15" or direction + "5-15"
+    m = re.search(r"(?:wind\s+|[NSEW]{1,3}\s+)([\d]+)\s*[-–&]\s*([\d]+)", desc, re.I)
+    if m:
+        lo, hi = float(m.group(1)), float(m.group(2))
+        return round((lo + hi) / 2, 1)
+    # Single value: "wind 10 mph"
+    m = re.search(r"wind\s+([\d]+)\s*mph", desc, re.I)
+    if m:
+        return float(m.group(1))
+    return None
+
+
 def _parse_daily_forecast(text: str) -> list:
     """
     Parse multi-day forecast from Ray's text.
-    Format:
-      Thursday
-      Daytime
+    Ray's actual format in raw_text:
       Hi: 72
-      Overnight
-      Lo: 50
-      Daytime: Partly sunny; Additional warming; SSW wind 5-10 mph
-      Overnight: Partly cloudy; Unseasonably mild; Light SW wind becoming calm
+      Saturday
+      Partly to mostly cloudy; SSW wind 5-15 mph, breezy at times
+      Lo: 53
+      Saturday night
+      Mostly cloudy; SW wind 5-15 mph, breezy
+      Hi: 65
+      Sunday
+      ...
+    Description lines sit between day-name and next Hi:/Lo: line (no prefix).
     """
     days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    night_names = {f"{d} night" for d in days_of_week}
     lines = [l.strip() for l in text.splitlines() if l.strip()]
 
-    # Find day-name boundaries
+    # Find day-name boundaries (exclude "Saturday night" etc.)
     day_indices = []
     for i, line in enumerate(lines):
         if line in days_of_week:
@@ -329,6 +355,8 @@ def _parse_daily_forecast(text: str) -> list:
         daytime_desc = ""
         overnight_desc = ""
 
+        # Walk through the chunk and assign description lines based on position
+        in_night = False
         for line in chunk:
             m_hi = re.match(r"^Hi:?\s+([\d.]+)", line, re.I)
             m_lo = re.match(r"^Lo:?\s+([\d.]+)", line, re.I)
@@ -336,10 +364,34 @@ def _parse_daily_forecast(text: str) -> list:
                 high_f = float(m_hi.group(1))
             elif m_lo:
                 low_f = float(m_lo.group(1))
+            elif line.lower() in {n.lower() for n in night_names}:
+                in_night = True
+            elif line in days_of_week:
+                continue  # skip the day-name header itself
             elif line.lower().startswith("daytime:"):
                 daytime_desc = line.split(":", 1)[-1].strip()
             elif line.lower().startswith("overnight:"):
                 overnight_desc = line.split(":", 1)[-1].strip()
+                in_night = True
+            elif line.lower().startswith(("daytime", "overnight", "extended", "subscribe", "station")):
+                continue
+            else:
+                # Plain description line — assign to daytime or overnight
+                if in_night:
+                    if overnight_desc:
+                        overnight_desc += "; " + line
+                    else:
+                        overnight_desc = line
+                else:
+                    if daytime_desc:
+                        daytime_desc += "; " + line
+                    else:
+                        daytime_desc = line
+
+        # Extract wind from descriptions (use daytime wind as primary)
+        wind_mph = _parse_wind_from_desc(daytime_desc)
+        if wind_mph is None:
+            wind_mph = _parse_wind_from_desc(overnight_desc)
 
         # Calculate date from day name
         days_ahead = (days_of_week.index(day_name) - today_dt.weekday()) % 7
@@ -352,6 +404,7 @@ def _parse_daily_forecast(text: str) -> list:
             "day_name": day_name,
             "high_f": high_f,
             "low_f": low_f,
+            "wind_mph": wind_mph,
             "daytime_desc": daytime_desc,
             "overnight_desc": overnight_desc,
             "category": "unknown",
