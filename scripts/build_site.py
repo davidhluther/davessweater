@@ -289,9 +289,19 @@ def build_rightwrong_section(comp):
         actual_parts.append(f'Rain: {act_precip}"')
     if act_cond:
         actual_parts.append(act_cond)
+    # Format date for display (e.g. "Mar 6")
+    date_label = ""
+    if date:
+        try:
+            from datetime import datetime as _dt
+            _d = _dt.strptime(date, "%Y-%m-%d")
+            date_label = f' <span class="actual-date">({_d.strftime("%-m/%d")})</span>'
+        except ValueError:
+            pass
+
     actual_row = f"""
 <tr class="actual-row">
-  <td><strong>Actual</strong></td>
+  <td><strong>Actual</strong>{date_label}</td>
   <td>{"<br>".join(actual_parts)}</td>
   <td colspan="2">&mdash;</td>
 </tr>"""
