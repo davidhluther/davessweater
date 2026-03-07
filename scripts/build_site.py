@@ -295,7 +295,7 @@ def build_rightwrong_section(comp):
         try:
             from datetime import datetime as _dt
             _d = _dt.strptime(date, "%Y-%m-%d")
-            date_label = f' <span class="actual-date">({_d.strftime("%-m/%d")})</span>'
+            date_label = f' <span class="actual-date">({_d.strftime("%-m/%-d/%y")})</span>'
         except ValueError:
             pass
 
