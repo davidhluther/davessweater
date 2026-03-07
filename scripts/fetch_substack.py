@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 fetch_substack.py — fetch ALL blog posts from Substack.
-Uses the Substack API endpoint and homepage scraping (avoids Cloudflare-blocked /feed).
+Uses the Substack API endpoint, RSS feed, and homepage scraping as fallbacks.
 Always fetches the full list so edits on Substack carry over.
 Saves parsed items to data/substack_feed.json.
 """
@@ -62,6 +62,66 @@ def fetch_via_api():
         return []
     except Exception as e:
         print(f"  API fetch error: {e}", file=sys.stderr)
+        return []
+
+
+def fetch_via_rss():
+    """Try Substack's RSS feed (/feed endpoint)."""
+    rss_url = f"{BASE_URL}/feed"
+    print(f"  Trying Substack RSS: {rss_url}")
+    try:
+        result = subprocess.run(
+            ["curl", "-sL", "--max-time", "15",
+             "-H", f"User-Agent: {UA}",
+             "-H", "Accept: application/rss+xml, application/xml, text/xml",
+             rss_url],
+            capture_output=True, timeout=20,
+        )
+        if result.returncode != 0 or not result.stdout:
+            print(f"  RSS curl failed (exit {result.returncode})", file=sys.stderr)
+            return []
+
+        xml = result.stdout.decode("utf-8", errors="replace")
+        if "<item>" not in xml:
+            print("  RSS response has no <item> elements", file=sys.stderr)
+            return []
+
+        items = []
+        for item_match in re.finditer(r"<item>(.*?)</item>", xml, re.DOTALL):
+            block = item_match.group(1)
+
+            title_m = re.search(r"<title><!\[CDATA\[(.*?)\]\]></title>", block, re.DOTALL)
+            if not title_m:
+                title_m = re.search(r"<title>(.*?)</title>", block, re.DOTALL)
+            title = title_m.group(1).strip() if title_m else ""
+
+            link_m = re.search(r"<link>(.*?)</link>", block)
+            link = link_m.group(1).strip() if link_m else ""
+
+            date_m = re.search(r"<pubDate>(.*?)</pubDate>", block)
+            date = ""
+            if date_m:
+                from email.utils import parsedate_to_datetime
+                try:
+                    date = parsedate_to_datetime(date_m.group(1)).strftime("%Y-%m-%d")
+                except Exception:
+                    date = date_m.group(1)[:10]
+
+            desc_m = re.search(r"<description><!\[CDATA\[(.*?)\]\]></description>", block, re.DOTALL)
+            if not desc_m:
+                desc_m = re.search(r"<description>(.*?)</description>", block, re.DOTALL)
+            desc = re.sub(r"<[^>]+>", "", desc_m.group(1))[:200].strip() if desc_m else ""
+
+            content_m = re.search(r"<content:encoded><!\[CDATA\[(.*?)\]\]></content:encoded>", block, re.DOTALL)
+            content = content_m.group(1).strip() if content_m else ""
+
+            items.append({"title": title, "link": link, "date": date, "summary": desc, "content": content})
+
+        print(f"  RSS returned {len(items)} posts")
+        return items
+
+    except Exception as e:
+        print(f"  RSS fetch error: {e}", file=sys.stderr)
         return []
 
 
@@ -133,8 +193,10 @@ def fetch_via_homepage():
 def main():
     print(f"Fetching posts from {BASE_URL}")
 
-    # Try API first, then homepage
+    # Try API first, then RSS, then homepage scrape
     items = fetch_via_api()
+    if not items:
+        items = fetch_via_rss()
     if not items:
         items = fetch_via_homepage()
 
