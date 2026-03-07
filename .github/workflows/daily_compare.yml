@@ -47,6 +47,9 @@ jobs:
             python scripts/compare.py
           fi
 
+      - name: Export scores CSV
+        run: python scripts/export_scores_csv.py
+
       - name: Build site
         run: python scripts/build_site.py
 
