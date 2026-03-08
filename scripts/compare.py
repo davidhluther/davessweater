@@ -392,10 +392,24 @@ def run_daily_comparison(target_date=None):
     else:
         print(f"  No Ray's Weather prediction found for {target_date}")
 
-    # Score Apple Weather prediction (from iPhone Shortcut)
+    # Score Apple Weather prediction (prefer iPhone Shortcut, fall back to Open-Meteo capture)
     apple_path = pred_dir / "iphone_forecast_apple.json"
+    apple_fallback = pred_dir / "iphone_forecast.json"
     if apple_path.exists():
         apple_data = _parse_apple_forecast(apple_path)
+        apple_source = "iPhone Shortcut"
+    elif apple_fallback.exists():
+        with open(apple_fallback) as f:
+            raw_fallback = json.load(f)
+        # The fallback has forecast dict with today_high_f/tonight_low_f/wind_mph etc.
+        apple_data = raw_fallback.get("forecast", {})
+        apple_data["source"] = "Open-Meteo (iPhone fallback)"
+        apple_source = "Open-Meteo fallback"
+    else:
+        apple_data = None
+        apple_source = None
+
+    if apple_data:
         # The Shortcut uploads a flat dict: today_high_f, tonight_low_f, wind_mph, conditions
         # Map rainfall_in → precip_in for scoring compatibility
         if "rainfall_in" in apple_data and "precip_in" not in apple_data:
@@ -416,7 +430,7 @@ def run_daily_comparison(target_date=None):
                 "prediction": apple_data,
                 "score": result,
             }
-            print(f"  Apple Weather: {result['score']}/100")
+            print(f"  Apple Weather ({apple_source}): {result['score']}/100")
         else:
             print(f"  Apple Weather: No temperature data to score")
     else:
