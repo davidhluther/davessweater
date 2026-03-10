@@ -95,6 +95,8 @@ jobs:
 
       - name: Rebuild site
         run: python scripts/build_site.py
+        env:
+          FOURTHWALL_TOKEN: ${{ secrets.FOURTHWALL_TOKEN }}
 
       - name: Commit and push
         run: |
