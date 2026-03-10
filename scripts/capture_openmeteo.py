@@ -11,11 +11,12 @@ import json
 import os
 import sys
 from datetime import datetime, timezone, timedelta
+from zoneinfo import ZoneInfo
 from pathlib import Path
 from urllib.request import urlopen, Request
 from urllib.error import URLError
 
-EST = timezone(timedelta(hours=-5))
+EST = ZoneInfo("America/New_York")
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 
