@@ -652,7 +652,7 @@ def build_shop_section(products):
     return f"""
 <section class="card tab-panel" id="shop">
   <h2 style="margin:0 0 .5rem;">Swag Shop</h2>
-  <p style="margin:0 0 1rem;color:var(--muted);">Official Dave's Sweater merch &mdash; powered by Fourthwall.</p>
+  <p style="margin:0 0 1rem;color:var(--muted);">The official Dave's Sweater better merch, powered by a platform that dropships so we don't have to keep boxes of stuff at our meteorological megaplex. Everything is set to the minimum price with a mandatory $3 &ldquo;profit&rdquo; over costs baked into each price, which we'll donate to charities each month.</p>
   <div id="shop-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem;">
     {cards}
   </div>
