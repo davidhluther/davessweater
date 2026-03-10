@@ -575,7 +575,7 @@ def fetch_fourthwall_products():
 
 
 def build_shop_section(products):
-    """Build the Swag Shop tab with product cards or a fallback link."""
+    """Build the Swag Shop tab with product cards and a client-side JS fallback."""
     shop_link = f"""<a href="{FOURTHWALL_STORE}/"
        target="_blank" rel="noopener"
        style="display:inline-block;padding:.75rem 2rem;background:var(--orange);color:#fff;
@@ -583,35 +583,21 @@ def build_shop_section(products):
       Visit the Swag Shop &rarr;
     </a>"""
 
-    if not products:
-        return f"""
-<section class="card tab-panel" id="shop">
-  <h2 style="margin:0 0 .5rem;">Swag Shop</h2>
-  <p style="margin:0 0 1rem;color:var(--muted);">Official Dave's Sweater merch &mdash; powered by Fourthwall.</p>
-  {shop_link}
-</section>"""
-
     cards = ""
     for p in products:
         name = p.get("name", p.get("title", ""))
         slug = p.get("slug", p.get("handle", ""))
         product_url = f"{FOURTHWALL_STORE}/products/{slug}" if slug else f"{FOURTHWALL_STORE}/"
 
-        # Get first image
         images = p.get("images", [])
-        if images:
-            img = images[0].get("url", images[0].get("src", ""))
-        else:
-            img = ""
+        img = images[0].get("url", images[0].get("src", "")) if images else ""
 
-        # Get price from variants
         variants = p.get("variants", [])
         price_str = ""
         if variants:
             price_obj = variants[0].get("unitPrice", variants[0].get("price", {}))
             if isinstance(price_obj, dict):
                 amount = price_obj.get("value", price_obj.get("amount", ""))
-                currency = price_obj.get("currency", "USD")
                 if amount:
                     try:
                         price_str = f"${float(amount) / 100:.2f}" if float(amount) > 100 else f"${float(amount):.2f}"
@@ -634,15 +620,70 @@ def build_shop_section(products):
       </div>
     </a>"""
 
+    # Client-side JS fallback: if no products were rendered at build time,
+    # fetch them from the Fourthwall API directly in the browser.
+    # Storefront tokens are public/client-safe by design.
+    token_val = FOURTHWALL_TOKEN if FOURTHWALL_TOKEN else ""
+    js_fallback = ""
+    if not products and token_val:
+        js_fallback = f"""
+<script>
+(function() {{
+  var grid = document.getElementById('shop-grid');
+  if (grid && grid.children.length > 0) return;
+  var API = '{FOURTHWALL_API}';
+  var TOKEN = '{token_val}';
+  var STORE = '{FOURTHWALL_STORE}';
+  fetch(API + '/collections?storefront_token=' + TOKEN)
+    .then(function(r) {{ return r.json(); }})
+    .then(function(d) {{
+      var cols = d.results || d.collections || [];
+      if (!cols.length) return;
+      var slug = cols[0].slug || cols[0].handle || '';
+      if (!slug) return;
+      return fetch(API + '/collections/' + slug + '/products?storefront_token=' + TOKEN + '&currency=USD');
+    }})
+    .then(function(r) {{ if (r) return r.json(); }})
+    .then(function(d) {{
+      if (!d) return;
+      var products = d.results || d.products || [];
+      if (!products.length) return;
+      var html = '';
+      products.forEach(function(p) {{
+        var name = p.name || p.title || '';
+        var pslug = p.slug || p.handle || '';
+        var url = pslug ? STORE + '/products/' + pslug : STORE + '/';
+        var imgs = p.images || [];
+        var img = imgs.length ? (imgs[0].url || imgs[0].src || '') : '';
+        var variants = p.variants || [];
+        var price = '';
+        if (variants.length) {{
+          var po = variants[0].unitPrice || variants[0].price || {{}};
+          if (po && po.value != null) {{
+            var v = parseFloat(po.value);
+            price = '$' + (v > 100 ? (v/100) : v).toFixed(2);
+          }}
+        }}
+        var imgHtml = img ? '<img src="' + img + '" alt="' + name + '" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;">' : '';
+        var priceHtml = price ? '<span style="font-weight:700;color:var(--orange);">' + price + '</span>' : '';
+        html += '<a href="' + url + '" target="_blank" rel="noopener" style="display:block;text-decoration:none;color:inherit;background:var(--card);border-radius:10px;overflow:hidden;border:1px solid #e5e7eb;transition:box-shadow .2s;">' + imgHtml + '<div style="padding:.75rem;"><div style="font-weight:600;font-size:.95rem;margin-bottom:.25rem;">' + name + '</div>' + priceHtml + '</div></a>';
+      }});
+      if (grid && html) grid.innerHTML = html;
+    }})
+    .catch(function(e) {{ console.log('[shop] client-side fetch error:', e); }});
+}})();
+</script>"""
+
     return f"""
 <section class="card tab-panel" id="shop">
   <h2 style="margin:0 0 .5rem;">Swag Shop</h2>
   <p style="margin:0 0 1rem;color:var(--muted);">Official Dave's Sweater merch &mdash; powered by Fourthwall.</p>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem;">
+  <div id="shop-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem;">
     {cards}
   </div>
   {shop_link}
-</section>"""
+</section>
+{js_fallback}"""
 
 
 # ──────────────────────────────────────────────────────────────────────────────
