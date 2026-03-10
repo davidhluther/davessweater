@@ -528,8 +528,13 @@ def _fw_get(path, params=None):
         qs += "&" + "&".join(f"{k}={v}" for k, v in params.items())
     url = f"{FOURTHWALL_API}/{path}?{qs}"
     req = urllib.request.Request(url, headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=15) as resp:
-        return json.loads(resp.read())
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            return json.loads(resp.read())
+    except urllib.error.HTTPError as e:
+        print(f"  [shop] HTTP {e.code} from {FOURTHWALL_API}/{path} "
+              f"(token: {FOURTHWALL_TOKEN[:8]}…)", file=sys.stderr)
+        raise
 
 
 def fetch_fourthwall_products():
