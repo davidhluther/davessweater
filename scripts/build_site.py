@@ -583,19 +583,19 @@ def fetch_fourthwall_products():
         if key in seen_groups:
             continue  # skip variant duplicates
 
-        title = item.findtext("title", "")
-        link = item.findtext("link", "")
+        # Try both plain and namespaced title
+        title = item.findtext("g:title", "", ns) or item.findtext("title", "")
+        # g:link has the actual product URL; plain <link> is often the store root
+        link = item.findtext("g:link", "", ns) or item.findtext("link", "")
         img = item.findtext("g:image_link", "", ns)
         price_raw = item.findtext("g:price", "", ns)  # e.g. "25.10 USD"
 
         # Strip variant info from title (e.g. "Get Mogged Mug - Black" → "Get Mogged Mug")
-        # Fourthwall appends " - Variant" to variant titles
         if group_id and " - " in title:
             title = title.rsplit(" - ", 1)[0]
 
-        # Fix link: ensure it points to the product page, not the homepage
-        # Merchant feed links should already be correct, but verify
-        if link and not link.startswith(FOURTHWALL_STORE):
+        # Ensure link points to product, not homepage
+        if not link or link.rstrip("/") == FOURTHWALL_STORE.rstrip("/"):
             link = f"{FOURTHWALL_STORE}/"
 
         price_str = ""
