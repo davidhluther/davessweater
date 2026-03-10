@@ -1154,7 +1154,7 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
   <span class="header-tagline">Boone's most mostly reliable weather tracker and resource</span>
   <nav>
     <button data-tab="weather">Weather</button>
-    <button data-tab="rightwrong">Right Ray / Wrong Ray</button>
+    <button data-tab="rightwrong">Right/Wrong Ray</button>
     <button data-tab="videos">Videos</button>
     <button data-tab="blog">Blog</button>
     <button data-tab="shop">Swag Shop</button>
