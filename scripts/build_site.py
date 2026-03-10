@@ -9,10 +9,12 @@ import os
 import re
 import shutil
 import sys
+import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 # ── paths ──────────────────────────────────────────────────────────────────────
 
@@ -207,9 +209,11 @@ def verdict_html(verdict_str, score):
     return f'<span class="verdict-faces">{face_row}</span>'
 
 
-def now_est():
-    est = timezone(timedelta(hours=-5))
-    return datetime.now(est).strftime("%B %d, %Y at %I:%M %p EST")
+def now_eastern():
+    eastern = ZoneInfo("America/New_York")
+    now = datetime.now(eastern)
+    label = now.strftime("%Z")  # "EST" or "EDT" automatically
+    return now.strftime(f"%B %d, %Y at %I:%M %p {label}")
 
 # ──────────────────────────────────────────────────────────────────────────────
 # section builders
@@ -517,27 +521,61 @@ def build_blog_section(items):
 # Fourthwall Swag Shop
 # ──────────────────────────────────────────────────────────────────────────────
 
+def _fw_get(path, params=None):
+    """Make a GET request to the Fourthwall Storefront API."""
+    qs = f"storefront_token={FOURTHWALL_TOKEN}"
+    if params:
+        qs += "&" + "&".join(f"{k}={v}" for k, v in params.items())
+    url = f"{FOURTHWALL_API}/{path}?{qs}"
+    req = urllib.request.Request(url, headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        return json.loads(resp.read())
+
+
 def fetch_fourthwall_products():
     """Fetch products from Fourthwall Storefront API. Returns list of dicts."""
     if not FOURTHWALL_TOKEN:
         print("  [shop] FOURTHWALL_TOKEN not set, skipping product fetch")
         return []
 
-    url = f"{FOURTHWALL_API}/collections/all/products?storefront_token={FOURTHWALL_TOKEN}&currency=USD"
     try:
-        req = urllib.request.Request(url, headers={"Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            data = json.loads(resp.read())
-        results = data.get("results", data.get("products", []))
-        print(f"  [shop] fetched {len(results)} products from Fourthwall")
-        return results
+        # First, discover available collections
+        collections_data = _fw_get("collections")
+        collections = collections_data.get("results", collections_data.get("collections", []))
+        if not collections:
+            print(f"  [shop] no collections found (keys: {list(collections_data.keys())})")
+            return []
+        slugs = [c.get("slug", c.get("handle", "")) for c in collections]
+        print(f"  [shop] found {len(collections)} collection(s): {slugs}")
+
+        # Fetch products from each collection
+        all_products = []
+        seen_ids = set()
+        for slug in slugs:
+            if not slug:
+                continue
+            data = _fw_get(f"collections/{slug}/products", {"currency": "USD"})
+            results = data.get("results", data.get("products", []))
+            for p in results:
+                pid = p.get("id", p.get("slug", ""))
+                if pid not in seen_ids:
+                    seen_ids.add(pid)
+                    all_products.append(p)
+            print(f"  [shop] collection '{slug}': {len(results)} products")
+
+        print(f"  [shop] fetched {len(all_products)} total products from Fourthwall")
+        return all_products
+    except urllib.error.HTTPError as e:
+        body = e.read().decode(errors="replace")[:300]
+        print(f"  [shop] Fourthwall API HTTP {e.code}: {body}", file=sys.stderr)
+        return []
     except Exception as e:
         print(f"  [shop] Fourthwall API error: {e}", file=sys.stderr)
         return []
 
 
 def build_shop_section(products):
-    """Build the Swag Shop tab with product cards or a fallback link."""
+    """Build the Swag Shop tab with product cards and a client-side JS fallback."""
     shop_link = f"""<a href="{FOURTHWALL_STORE}/"
        target="_blank" rel="noopener"
        style="display:inline-block;padding:.75rem 2rem;background:var(--orange);color:#fff;
@@ -545,35 +583,21 @@ def build_shop_section(products):
       Visit the Swag Shop &rarr;
     </a>"""
 
-    if not products:
-        return f"""
-<section class="card tab-panel" id="shop">
-  <h2 style="margin:0 0 .5rem;">Swag Shop</h2>
-  <p style="margin:0 0 1rem;color:var(--muted);">Official Dave's Sweater merch &mdash; powered by Fourthwall.</p>
-  {shop_link}
-</section>"""
-
     cards = ""
     for p in products:
         name = p.get("name", p.get("title", ""))
         slug = p.get("slug", p.get("handle", ""))
         product_url = f"{FOURTHWALL_STORE}/products/{slug}" if slug else f"{FOURTHWALL_STORE}/"
 
-        # Get first image
         images = p.get("images", [])
-        if images:
-            img = images[0].get("url", images[0].get("src", ""))
-        else:
-            img = ""
+        img = images[0].get("url", images[0].get("src", "")) if images else ""
 
-        # Get price from variants
         variants = p.get("variants", [])
         price_str = ""
         if variants:
             price_obj = variants[0].get("unitPrice", variants[0].get("price", {}))
             if isinstance(price_obj, dict):
                 amount = price_obj.get("value", price_obj.get("amount", ""))
-                currency = price_obj.get("currency", "USD")
                 if amount:
                     try:
                         price_str = f"${float(amount) / 100:.2f}" if float(amount) > 100 else f"${float(amount):.2f}"
@@ -596,15 +620,70 @@ def build_shop_section(products):
       </div>
     </a>"""
 
+    # Client-side JS fallback: if no products were rendered at build time,
+    # fetch them from the Fourthwall API directly in the browser.
+    # Storefront tokens are public/client-safe by design.
+    token_val = FOURTHWALL_TOKEN if FOURTHWALL_TOKEN else ""
+    js_fallback = ""
+    if not products and token_val:
+        js_fallback = f"""
+<script>
+(function() {{
+  var grid = document.getElementById('shop-grid');
+  if (grid && grid.children.length > 0) return;
+  var API = '{FOURTHWALL_API}';
+  var TOKEN = '{token_val}';
+  var STORE = '{FOURTHWALL_STORE}';
+  fetch(API + '/collections?storefront_token=' + TOKEN)
+    .then(function(r) {{ return r.json(); }})
+    .then(function(d) {{
+      var cols = d.results || d.collections || [];
+      if (!cols.length) return;
+      var slug = cols[0].slug || cols[0].handle || '';
+      if (!slug) return;
+      return fetch(API + '/collections/' + slug + '/products?storefront_token=' + TOKEN + '&currency=USD');
+    }})
+    .then(function(r) {{ if (r) return r.json(); }})
+    .then(function(d) {{
+      if (!d) return;
+      var products = d.results || d.products || [];
+      if (!products.length) return;
+      var html = '';
+      products.forEach(function(p) {{
+        var name = p.name || p.title || '';
+        var pslug = p.slug || p.handle || '';
+        var url = pslug ? STORE + '/products/' + pslug : STORE + '/';
+        var imgs = p.images || [];
+        var img = imgs.length ? (imgs[0].url || imgs[0].src || '') : '';
+        var variants = p.variants || [];
+        var price = '';
+        if (variants.length) {{
+          var po = variants[0].unitPrice || variants[0].price || {{}};
+          if (po && po.value != null) {{
+            var v = parseFloat(po.value);
+            price = '$' + (v > 100 ? (v/100) : v).toFixed(2);
+          }}
+        }}
+        var imgHtml = img ? '<img src="' + img + '" alt="' + name + '" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;">' : '';
+        var priceHtml = price ? '<span style="font-weight:700;color:var(--orange);">' + price + '</span>' : '';
+        html += '<a href="' + url + '" target="_blank" rel="noopener" style="display:block;text-decoration:none;color:inherit;background:var(--card);border-radius:10px;overflow:hidden;border:1px solid #e5e7eb;transition:box-shadow .2s;">' + imgHtml + '<div style="padding:.75rem;"><div style="font-weight:600;font-size:.95rem;margin-bottom:.25rem;">' + name + '</div>' + priceHtml + '</div></a>';
+      }});
+      if (grid && html) grid.innerHTML = html;
+    }})
+    .catch(function(e) {{ console.log('[shop] client-side fetch error:', e); }});
+}})();
+</script>"""
+
     return f"""
 <section class="card tab-panel" id="shop">
   <h2 style="margin:0 0 .5rem;">Swag Shop</h2>
   <p style="margin:0 0 1rem;color:var(--muted);">Official Dave's Sweater merch &mdash; powered by Fourthwall.</p>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem;">
+  <div id="shop-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem;">
     {cards}
   </div>
   {shop_link}
-</section>"""
+</section>
+{js_fallback}"""
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -1207,7 +1286,7 @@ document.querySelectorAll('.blog-expand').forEach(function(btn) {
 # ──────────────────────────────────────────────────────────────────────────────
 
 def build_page(comp, scores, video_items, blog_items, forecast=None, shop_products=None):
-    updated = now_est()
+    updated = now_eastern()
 
     weather_sections = (
         build_sweater_section(comp) +
