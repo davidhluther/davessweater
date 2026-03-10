@@ -31,6 +31,12 @@ SUBSTACK_RSS = "https://davessweater.substack.com/feed"
 YOUTUBE_UC   = "UCLQdHEMoKkrNc3PgWs3SksA"
 YOUTUBE_RSS  = f"https://www.youtube.com/feeds/videos.xml?channel_id={YOUTUBE_UC}"
 
+# ── Fourthwall Storefront API ──────────────────────────────────────────────────
+
+FOURTHWALL_API   = "https://storefront-api.fourthwall.com/v1"
+FOURTHWALL_TOKEN = os.environ.get("FOURTHWALL_TOKEN", "")
+FOURTHWALL_STORE = "https://daves-sweater-shop.fourthwall.com"
+
 # ── branding ───────────────────────────────────────────────────────────────────
 
 COLOR_TEAL   = "#3C5468"
@@ -506,6 +512,100 @@ def build_blog_section(items):
   <div class="blog-list">{posts}</div>
 </section>
 """
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Fourthwall Swag Shop
+# ──────────────────────────────────────────────────────────────────────────────
+
+def fetch_fourthwall_products():
+    """Fetch products from Fourthwall Storefront API. Returns list of dicts."""
+    if not FOURTHWALL_TOKEN:
+        print("  [shop] FOURTHWALL_TOKEN not set, skipping product fetch")
+        return []
+
+    url = f"{FOURTHWALL_API}/collections/all/products?storefront_token={FOURTHWALL_TOKEN}&currency=USD"
+    try:
+        req = urllib.request.Request(url, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read())
+        results = data.get("results", data.get("products", []))
+        print(f"  [shop] fetched {len(results)} products from Fourthwall")
+        return results
+    except Exception as e:
+        print(f"  [shop] Fourthwall API error: {e}", file=sys.stderr)
+        return []
+
+
+def build_shop_section(products):
+    """Build the Swag Shop tab with product cards or a fallback link."""
+    shop_link = f"""<a href="{FOURTHWALL_STORE}/"
+       target="_blank" rel="noopener"
+       style="display:inline-block;padding:.75rem 2rem;background:var(--orange);color:#fff;
+              border-radius:8px;font-weight:700;font-size:1.1rem;text-decoration:none;margin-top:.5rem;">
+      Visit the Swag Shop &rarr;
+    </a>"""
+
+    if not products:
+        return f"""
+<section class="card tab-panel" id="shop">
+  <h2 style="margin:0 0 .5rem;">Swag Shop</h2>
+  <p style="margin:0 0 1rem;color:var(--muted);">Official Dave's Sweater merch &mdash; powered by Fourthwall.</p>
+  {shop_link}
+</section>"""
+
+    cards = ""
+    for p in products:
+        name = p.get("name", p.get("title", ""))
+        slug = p.get("slug", p.get("handle", ""))
+        product_url = f"{FOURTHWALL_STORE}/products/{slug}" if slug else f"{FOURTHWALL_STORE}/"
+
+        # Get first image
+        images = p.get("images", [])
+        if images:
+            img = images[0].get("url", images[0].get("src", ""))
+        else:
+            img = ""
+
+        # Get price from variants
+        variants = p.get("variants", [])
+        price_str = ""
+        if variants:
+            price_obj = variants[0].get("unitPrice", variants[0].get("price", {}))
+            if isinstance(price_obj, dict):
+                amount = price_obj.get("value", price_obj.get("amount", ""))
+                currency = price_obj.get("currency", "USD")
+                if amount:
+                    try:
+                        price_str = f"${float(amount) / 100:.2f}" if float(amount) > 100 else f"${float(amount):.2f}"
+                    except (ValueError, TypeError):
+                        price_str = f"${amount}"
+            elif isinstance(price_obj, (int, float)):
+                price_str = f"${price_obj:.2f}"
+
+        img_html = f'<img src="{img}" alt="{name}" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;">' if img else ""
+        price_html = f'<span style="font-weight:700;color:var(--orange);">{price_str}</span>' if price_str else ""
+
+        cards += f"""
+    <a href="{product_url}" target="_blank" rel="noopener"
+       style="display:block;text-decoration:none;color:inherit;background:var(--card);
+              border-radius:10px;overflow:hidden;border:1px solid #e5e7eb;transition:box-shadow .2s;">
+      {img_html}
+      <div style="padding:.75rem;">
+        <div style="font-weight:600;font-size:.95rem;margin-bottom:.25rem;">{name}</div>
+        {price_html}
+      </div>
+    </a>"""
+
+    return f"""
+<section class="card tab-panel" id="shop">
+  <h2 style="margin:0 0 .5rem;">Swag Shop</h2>
+  <p style="margin:0 0 1rem;color:var(--muted);">Official Dave's Sweater merch &mdash; powered by Fourthwall.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem;">
+    {cards}
+  </div>
+  {shop_link}
+</section>"""
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # logo SVG (inline fallback if file not found)
@@ -1106,7 +1206,7 @@ document.querySelectorAll('.blog-expand').forEach(function(btn) {
 # page assembly
 # ──────────────────────────────────────────────────────────────────────────────
 
-def build_page(comp, scores, video_items, blog_items, forecast=None):
+def build_page(comp, scores, video_items, blog_items, forecast=None, shop_products=None):
     updated = now_est()
 
     weather_sections = (
@@ -1121,6 +1221,7 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
 
     videos_section = build_videos_section(video_items)
     blog_section   = build_blog_section(blog_items)
+    shop_section   = build_shop_section(shop_products or [])
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -1181,16 +1282,7 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
   {blog_section}
 
   <!-- swag shop tab -->
-  <section class="card tab-panel" id="shop">
-    <h2 style="margin:0 0 .5rem;">Swag Shop</h2>
-    <p style="margin:0 0 1rem;color:var(--muted);">Official Dave's Sweater merch &mdash; powered by Fourthwall.</p>
-    <a href="https://daves-sweater-shop.fourthwall.com/"
-       target="_blank" rel="noopener"
-       style="display:inline-block;padding:.75rem 2rem;background:var(--accent,#c0560e);color:#fff;
-              border-radius:8px;font-weight:700;font-size:1.1rem;text-decoration:none;margin-top:.5rem;">
-      Visit the Swag Shop &rarr;
-    </a>
-  </section>
+  {shop_section}
 
 </main>
 
@@ -1256,12 +1348,15 @@ def main():
     print("  fetching YouTube RSS…")
     video_items = fetch_rss(YOUTUBE_RSS)
 
+    print("  fetching Fourthwall products…")
+    shop_products = fetch_fourthwall_products()
+
     # copy assets
     print("  copying assets…")
     copy_assets()
 
     # build HTML
-    html = build_page(comp, scores, video_items, blog_items, forecast)
+    html = build_page(comp, scores, video_items, blog_items, forecast, shop_products)
     out  = DOCS / "index.html"
     out.write_text(html, encoding="utf-8")
 
