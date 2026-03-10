@@ -979,7 +979,7 @@ footer a:hover {{ text-decoration: underline; }}
 
 JS = """
 (function() {
-  const TABS = ['weather', 'rightwrong', 'videos', 'blog'];
+  const TABS = ['weather', 'rightwrong', 'videos', 'blog', 'shop'];
 
   function activate(tab) {
     // nav buttons
@@ -1157,6 +1157,7 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
     <button data-tab="rightwrong">Right Ray / Wrong Ray</button>
     <button data-tab="videos">Videos</button>
     <button data-tab="blog">Blog</button>
+    <button data-tab="shop">Swag Shop</button>
   </nav>
 </header>
 
@@ -1178,6 +1179,16 @@ def build_page(comp, scores, video_items, blog_items, forecast=None):
 
   <!-- blog tab -->
   {blog_section}
+
+  <!-- swag shop tab -->
+  <section class="card tab-panel" id="shop">
+    <h2 style="margin:0 0 .5rem;">Swag Shop</h2>
+    <p style="margin:0 0 1rem;color:var(--muted);">Official Dave's Sweater merch &mdash; powered by Fourthwall.</p>
+    <iframe src="https://daves-sweater-shop.fourthwall.com/"
+            style="width:100%;height:80vh;border:1px solid #e5e7eb;border-radius:10px;"
+            loading="lazy"
+            title="Dave's Sweater Swag Shop"></iframe>
+  </section>
 
 </main>
 
