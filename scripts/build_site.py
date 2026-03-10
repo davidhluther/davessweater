@@ -14,6 +14,7 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 # ── paths ──────────────────────────────────────────────────────────────────────
 
@@ -208,9 +209,11 @@ def verdict_html(verdict_str, score):
     return f'<span class="verdict-faces">{face_row}</span>'
 
 
-def now_est():
-    est = timezone(timedelta(hours=-5))
-    return datetime.now(est).strftime("%B %d, %Y at %I:%M %p EST")
+def now_eastern():
+    eastern = ZoneInfo("America/New_York")
+    now = datetime.now(eastern)
+    label = now.strftime("%Z")  # "EST" or "EDT" automatically
+    return now.strftime(f"%B %d, %Y at %I:%M %p {label}")
 
 # ──────────────────────────────────────────────────────────────────────────────
 # section builders
@@ -1242,7 +1245,7 @@ document.querySelectorAll('.blog-expand').forEach(function(btn) {
 # ──────────────────────────────────────────────────────────────────────────────
 
 def build_page(comp, scores, video_items, blog_items, forecast=None, shop_products=None):
-    updated = now_est()
+    updated = now_eastern()
 
     weather_sections = (
         build_sweater_section(comp) +
