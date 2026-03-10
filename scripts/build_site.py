@@ -539,36 +539,41 @@ def fetch_fourthwall_products():
         return []
 
     try:
-        # First, discover available collections
-        collections_data = _fw_get("collections")
-        collections = collections_data.get("results", collections_data.get("collections", []))
-        if not collections:
-            print(f"  [shop] no collections found (keys: {list(collections_data.keys())})")
-            return []
-        slugs = [c.get("slug", c.get("handle", "")) for c in collections]
-        print(f"  [shop] found {len(collections)} collection(s): {slugs}")
-
-        # Fetch products from each collection
         all_products = []
         seen_ids = set()
+
+        # Try discovering collections via the API
+        slugs = []
+        try:
+            collections_data = _fw_get("collections")
+            collections = collections_data.get("results", collections_data.get("collections", []))
+            slugs = [c.get("slug", c.get("handle", "")) for c in collections]
+            print(f"  [shop] found {len(collections)} collection(s): {slugs}")
+        except Exception as e:
+            print(f"  [shop] collections endpoint failed: {e}")
+
+        # Always include "all" if not already discovered
+        if "all" not in slugs:
+            slugs.append("all")
+
+        # Fetch products from each collection
         for slug in slugs:
             if not slug:
                 continue
-            data = _fw_get(f"collections/{slug}/products", {"currency": "USD"})
-            results = data.get("results", data.get("products", []))
-            for p in results:
-                pid = p.get("id", p.get("slug", ""))
-                if pid not in seen_ids:
-                    seen_ids.add(pid)
-                    all_products.append(p)
-            print(f"  [shop] collection '{slug}': {len(results)} products")
+            try:
+                data = _fw_get(f"collections/{slug}/products", {"currency": "USD"})
+                results = data.get("results", data.get("products", []))
+                for p in results:
+                    pid = p.get("id", p.get("slug", ""))
+                    if pid not in seen_ids:
+                        seen_ids.add(pid)
+                        all_products.append(p)
+                print(f"  [shop] collection '{slug}': {len(results)} products")
+            except Exception as e:
+                print(f"  [shop] collection '{slug}' failed: {e}")
 
         print(f"  [shop] fetched {len(all_products)} total products from Fourthwall")
         return all_products
-    except urllib.error.HTTPError as e:
-        body = e.read().decode(errors="replace")[:300]
-        print(f"  [shop] Fourthwall API HTTP {e.code}: {body}", file=sys.stderr)
-        return []
     except Exception as e:
         print(f"  [shop] Fourthwall API error: {e}", file=sys.stderr)
         return []
@@ -634,41 +639,51 @@ def build_shop_section(products):
   var API = '{FOURTHWALL_API}';
   var TOKEN = '{token_val}';
   var STORE = '{FOURTHWALL_STORE}';
-  fetch(API + '/collections?storefront_token=' + TOKEN)
+  function renderProducts(products) {{
+    var html = '';
+    products.forEach(function(p) {{
+      var name = p.name || p.title || '';
+      var pslug = p.slug || p.handle || '';
+      var url = pslug ? STORE + '/products/' + pslug : STORE + '/';
+      var imgs = p.images || [];
+      var img = imgs.length ? (imgs[0].url || imgs[0].src || '') : '';
+      var variants = p.variants || [];
+      var price = '';
+      if (variants.length) {{
+        var po = variants[0].unitPrice || variants[0].price || {{}};
+        if (po && po.value != null) {{
+          var v = parseFloat(po.value);
+          price = '$' + (v > 100 ? (v/100) : v).toFixed(2);
+        }}
+      }}
+      var imgHtml = img ? '<img src="' + img + '" alt="' + name + '" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;">' : '';
+      var priceHtml = price ? '<span style="font-weight:700;color:var(--orange);">' + price + '</span>' : '';
+      html += '<a href="' + url + '" target="_blank" rel="noopener" style="display:block;text-decoration:none;color:inherit;background:var(--card);border-radius:10px;overflow:hidden;border:1px solid #e5e7eb;transition:box-shadow .2s;">' + imgHtml + '<div style="padding:.75rem;"><div style="font-weight:600;font-size:.95rem;margin-bottom:.25rem;">' + name + '</div>' + priceHtml + '</div></a>';
+    }});
+    if (grid && html) grid.innerHTML = html;
+  }}
+  // Try "all" collection directly first (where products live)
+  fetch(API + '/collections/all/products?storefront_token=' + TOKEN + '&currency=USD')
     .then(function(r) {{ return r.json(); }})
     .then(function(d) {{
-      var cols = d.results || d.collections || [];
-      if (!cols.length) return;
-      var slug = cols[0].slug || cols[0].handle || '';
-      if (!slug) return;
-      return fetch(API + '/collections/' + slug + '/products?storefront_token=' + TOKEN + '&currency=USD');
-    }})
-    .then(function(r) {{ if (r) return r.json(); }})
-    .then(function(d) {{
-      if (!d) return;
       var products = d.results || d.products || [];
-      if (!products.length) return;
-      var html = '';
-      products.forEach(function(p) {{
-        var name = p.name || p.title || '';
-        var pslug = p.slug || p.handle || '';
-        var url = pslug ? STORE + '/products/' + pslug : STORE + '/';
-        var imgs = p.images || [];
-        var img = imgs.length ? (imgs[0].url || imgs[0].src || '') : '';
-        var variants = p.variants || [];
-        var price = '';
-        if (variants.length) {{
-          var po = variants[0].unitPrice || variants[0].price || {{}};
-          if (po && po.value != null) {{
-            var v = parseFloat(po.value);
-            price = '$' + (v > 100 ? (v/100) : v).toFixed(2);
-          }}
-        }}
-        var imgHtml = img ? '<img src="' + img + '" alt="' + name + '" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;">' : '';
-        var priceHtml = price ? '<span style="font-weight:700;color:var(--orange);">' + price + '</span>' : '';
-        html += '<a href="' + url + '" target="_blank" rel="noopener" style="display:block;text-decoration:none;color:inherit;background:var(--card);border-radius:10px;overflow:hidden;border:1px solid #e5e7eb;transition:box-shadow .2s;">' + imgHtml + '<div style="padding:.75rem;"><div style="font-weight:600;font-size:.95rem;margin-bottom:.25rem;">' + name + '</div>' + priceHtml + '</div></a>';
-      }});
-      if (grid && html) grid.innerHTML = html;
+      if (products.length) {{ renderProducts(products); return; }}
+      // Fallback: discover collections
+      return fetch(API + '/collections?storefront_token=' + TOKEN)
+        .then(function(r) {{ return r.json(); }})
+        .then(function(d) {{
+          var cols = d.results || d.collections || [];
+          if (!cols.length) return;
+          var slug = cols[0].slug || cols[0].handle || '';
+          if (!slug) return;
+          return fetch(API + '/collections/' + slug + '/products?storefront_token=' + TOKEN + '&currency=USD');
+        }})
+        .then(function(r) {{ if (r) return r.json(); }})
+        .then(function(d) {{
+          if (!d) return;
+          var products = d.results || d.products || [];
+          if (products.length) renderProducts(products);
+        }});
     }})
     .catch(function(e) {{ console.log('[shop] client-side fetch error:', e); }});
 }})();
