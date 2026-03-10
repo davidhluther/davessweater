@@ -13,6 +13,7 @@ import json
 import re
 import sys
 from datetime import datetime, timezone, timedelta
+from zoneinfo import ZoneInfo
 from pathlib import Path
 
 try:
@@ -25,7 +26,7 @@ except ImportError:
 
 URL       = "https://raysweather.com/Forecast/Boone"
 ROOT      = Path(__file__).resolve().parent.parent
-EST       = timezone(timedelta(hours=-5))
+EST       = ZoneInfo("America/New_York")
 TODAY     = datetime.now(EST).strftime("%Y-%m-%d")
 OUT_DIR   = ROOT / "data" / "predictions" / TODAY
 OUT_JSON  = OUT_DIR / "rays_boone.json"

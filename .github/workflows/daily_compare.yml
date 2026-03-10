@@ -2,7 +2,7 @@ name: "📊 Daily Compare & Build"
 
 on:
   schedule:
-    - cron: '0 13 * * *'  # 8:00 AM EST = 13:00 UTC
+    - cron: '0 13 * * *'  # 9:00 AM EDT / 8:00 AM EST
   workflow_run:
     workflows: ["📱 iPhone Screenshot Upload", "📸 Daily Capture"]
     types: [completed]
@@ -22,6 +22,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Ensure latest main
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
 
       - uses: actions/setup-python@v5
         with:
