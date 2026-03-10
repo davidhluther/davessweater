@@ -572,14 +572,31 @@ def fetch_fourthwall_products():
         return []
 
     ns = {"g": "http://base.google.com/ns/1.0"}
-    products = []
+
+    # Group variants by item_group_id — keep only the first variant per product
+    seen_groups = {}
     for item in root.iter("item"):
+        group_id = item.findtext("g:item_group_id", "", ns)
+        product_id = item.findtext("g:id", "", ns)
+        key = group_id or product_id  # fall back to id if no group
+
+        if key in seen_groups:
+            continue  # skip variant duplicates
+
         title = item.findtext("title", "")
         link = item.findtext("link", "")
-        desc = item.findtext("description", "")
         img = item.findtext("g:image_link", "", ns)
         price_raw = item.findtext("g:price", "", ns)  # e.g. "25.10 USD"
-        product_id = item.findtext("g:id", "", ns)
+
+        # Strip variant info from title (e.g. "Get Mogged Mug - Black" → "Get Mogged Mug")
+        # Fourthwall appends " - Variant" to variant titles
+        if group_id and " - " in title:
+            title = title.rsplit(" - ", 1)[0]
+
+        # Fix link: ensure it points to the product page, not the homepage
+        # Merchant feed links should already be correct, but verify
+        if link and not link.startswith(FOURTHWALL_STORE):
+            link = f"{FOURTHWALL_STORE}/"
 
         price_str = ""
         if price_raw:
@@ -589,16 +606,16 @@ def fetch_fourthwall_products():
             except (ValueError, TypeError):
                 price_str = f"${price_num}" if price_num else ""
 
-        products.append({
+        seen_groups[key] = {
             "name": title,
             "link": link,
-            "description": desc,
             "image": img,
             "price": price_str,
             "id": product_id,
-        })
+        }
 
-    print(f"  [shop] parsed {len(products)} products from merchant feed")
+    products = list(seen_groups.values())
+    print(f"  [shop] parsed {len(products)} unique products from merchant feed")
     return products
 
 
