@@ -521,71 +521,89 @@ def build_blog_section(items):
 # Fourthwall Swag Shop
 # ──────────────────────────────────────────────────────────────────────────────
 
-def _fw_get(path, params=None):
-    """Make a GET request to the Fourthwall Storefront API."""
-    qs = f"storefront_token={FOURTHWALL_TOKEN}"
-    if params:
-        qs += "&" + "&".join(f"{k}={v}" for k, v in params.items())
-    url = f"{FOURTHWALL_API}/{path}?{qs}"
-    req = urllib.request.Request(url, headers={"Content-Type": "application/json"})
-    try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            return json.loads(resp.read())
-    except urllib.error.HTTPError as e:
-        print(f"  [shop] HTTP {e.code} from {FOURTHWALL_API}/{path} "
-              f"(token: {FOURTHWALL_TOKEN[:8]}…)", file=sys.stderr)
-        raise
+MERCHANT_FEED_URL = f"{FOURTHWALL_STORE}/.well-known/merchant-center/rss.xml"
 
 
 def fetch_fourthwall_products():
-    """Fetch products from Fourthwall Storefront API. Returns list of dicts."""
-    if not FOURTHWALL_TOKEN:
-        print("  [shop] FOURTHWALL_TOKEN not set, skipping product fetch")
-        return []
+    """Fetch products from Fourthwall Merchant Center RSS feed."""
+    print(f"  [shop] Fetching Merchant Center feed: {MERCHANT_FEED_URL}")
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                       "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "application/rss+xml, application/xml, text/xml, */*",
+    }
+    raw = None
 
+    # Try curl first (better with Cloudflare)
     try:
-        all_products = []
-        seen_ids = set()
-
-        # Try discovering collections via the API
-        slugs = []
-        try:
-            collections_data = _fw_get("collections")
-            collections = collections_data.get("results", collections_data.get("collections", []))
-            slugs = [c.get("slug", c.get("handle", "")) for c in collections]
-            print(f"  [shop] found {len(collections)} collection(s): {slugs}")
-        except Exception as e:
-            print(f"  [shop] collections endpoint failed: {e}")
-
-        # Always include "all" if not already discovered
-        if "all" not in slugs:
-            slugs.append("all")
-
-        # Fetch products from each collection
-        for slug in slugs:
-            if not slug:
-                continue
-            try:
-                data = _fw_get(f"collections/{slug}/products", {"currency": "USD"})
-                results = data.get("results", data.get("products", []))
-                for p in results:
-                    pid = p.get("id", p.get("slug", ""))
-                    if pid not in seen_ids:
-                        seen_ids.add(pid)
-                        all_products.append(p)
-                print(f"  [shop] collection '{slug}': {len(results)} products")
-            except Exception as e:
-                print(f"  [shop] collection '{slug}' failed: {e}")
-
-        print(f"  [shop] fetched {len(all_products)} total products from Fourthwall")
-        return all_products
+        import subprocess
+        result = subprocess.run(
+            ["curl", "-sL", "--max-time", "15",
+             "-H", f"User-Agent: {headers['User-Agent']}",
+             "-H", f"Accept: {headers['Accept']}",
+             MERCHANT_FEED_URL],
+            capture_output=True, timeout=20,
+        )
+        if result.returncode == 0 and result.stdout:
+            raw = result.stdout
+            print(f"  [shop] fetched {len(raw)} bytes via curl")
     except Exception as e:
-        print(f"  [shop] Fourthwall API error: {e}", file=sys.stderr)
+        print(f"  [shop] curl failed: {e}", file=sys.stderr)
+
+    # Fallback to urllib
+    if raw is None:
+        try:
+            req = urllib.request.Request(MERCHANT_FEED_URL, headers=headers)
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                raw = resp.read()
+            print(f"  [shop] fetched {len(raw)} bytes via urllib")
+        except Exception as e:
+            print(f"  [shop] urllib failed: {e}", file=sys.stderr)
+
+    if raw is None:
+        print("  [shop] could not fetch merchant feed", file=sys.stderr)
         return []
+
+    # Parse the Google Merchant Center RSS/XML feed
+    try:
+        root = ET.fromstring(raw)
+    except ET.ParseError as e:
+        print(f"  [shop] XML parse error: {e}", file=sys.stderr)
+        return []
+
+    ns = {"g": "http://base.google.com/ns/1.0"}
+    products = []
+    for item in root.iter("item"):
+        title = item.findtext("title", "")
+        link = item.findtext("link", "")
+        desc = item.findtext("description", "")
+        img = item.findtext("g:image_link", "", ns)
+        price_raw = item.findtext("g:price", "", ns)  # e.g. "25.10 USD"
+        product_id = item.findtext("g:id", "", ns)
+
+        price_str = ""
+        if price_raw:
+            price_num = price_raw.split()[0] if price_raw else ""
+            try:
+                price_str = f"${float(price_num):.2f}"
+            except (ValueError, TypeError):
+                price_str = f"${price_num}" if price_num else ""
+
+        products.append({
+            "name": title,
+            "link": link,
+            "description": desc,
+            "image": img,
+            "price": price_str,
+            "id": product_id,
+        })
+
+    print(f"  [shop] parsed {len(products)} products from merchant feed")
+    return products
 
 
 def build_shop_section(products):
-    """Build the Swag Shop tab with product cards and a client-side JS fallback."""
+    """Build the Swag Shop tab with product cards."""
     shop_link = f"""<a href="{FOURTHWALL_STORE}/"
        target="_blank" rel="noopener"
        style="display:inline-block;padding:.75rem 2rem;background:var(--orange);color:#fff;
@@ -595,26 +613,10 @@ def build_shop_section(products):
 
     cards = ""
     for p in products:
-        name = p.get("name", p.get("title", ""))
-        slug = p.get("slug", p.get("handle", ""))
-        product_url = f"{FOURTHWALL_STORE}/products/{slug}" if slug else f"{FOURTHWALL_STORE}/"
-
-        images = p.get("images", [])
-        img = images[0].get("url", images[0].get("src", "")) if images else ""
-
-        variants = p.get("variants", [])
-        price_str = ""
-        if variants:
-            price_obj = variants[0].get("unitPrice", variants[0].get("price", {}))
-            if isinstance(price_obj, dict):
-                amount = price_obj.get("value", price_obj.get("amount", ""))
-                if amount:
-                    try:
-                        price_str = f"${float(amount) / 100:.2f}" if float(amount) > 100 else f"${float(amount):.2f}"
-                    except (ValueError, TypeError):
-                        price_str = f"${amount}"
-            elif isinstance(price_obj, (int, float)):
-                price_str = f"${price_obj:.2f}"
+        name = p.get("name", "")
+        product_url = p.get("link", f"{FOURTHWALL_STORE}/")
+        img = p.get("image", "")
+        price_str = p.get("price", "")
 
         img_html = f'<img src="{img}" alt="{name}" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;">' if img else ""
         price_html = f'<span style="font-weight:700;color:var(--orange);">{price_str}</span>' if price_str else ""
@@ -630,70 +632,6 @@ def build_shop_section(products):
       </div>
     </a>"""
 
-    # Client-side JS fallback: if no products were rendered at build time,
-    # fetch them from the Fourthwall API directly in the browser.
-    # Storefront tokens are public/client-safe by design.
-    token_val = FOURTHWALL_TOKEN if FOURTHWALL_TOKEN else ""
-    js_fallback = ""
-    if not products and token_val:
-        js_fallback = f"""
-<script>
-(function() {{
-  var grid = document.getElementById('shop-grid');
-  if (grid && grid.children.length > 0) return;
-  var API = '{FOURTHWALL_API}';
-  var TOKEN = '{token_val}';
-  var STORE = '{FOURTHWALL_STORE}';
-  function renderProducts(products) {{
-    var html = '';
-    products.forEach(function(p) {{
-      var name = p.name || p.title || '';
-      var pslug = p.slug || p.handle || '';
-      var url = pslug ? STORE + '/products/' + pslug : STORE + '/';
-      var imgs = p.images || [];
-      var img = imgs.length ? (imgs[0].url || imgs[0].src || '') : '';
-      var variants = p.variants || [];
-      var price = '';
-      if (variants.length) {{
-        var po = variants[0].unitPrice || variants[0].price || {{}};
-        if (po && po.value != null) {{
-          var v = parseFloat(po.value);
-          price = '$' + (v > 100 ? (v/100) : v).toFixed(2);
-        }}
-      }}
-      var imgHtml = img ? '<img src="' + img + '" alt="' + name + '" loading="lazy" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;">' : '';
-      var priceHtml = price ? '<span style="font-weight:700;color:var(--orange);">' + price + '</span>' : '';
-      html += '<a href="' + url + '" target="_blank" rel="noopener" style="display:block;text-decoration:none;color:inherit;background:var(--card);border-radius:10px;overflow:hidden;border:1px solid #e5e7eb;transition:box-shadow .2s;">' + imgHtml + '<div style="padding:.75rem;"><div style="font-weight:600;font-size:.95rem;margin-bottom:.25rem;">' + name + '</div>' + priceHtml + '</div></a>';
-    }});
-    if (grid && html) grid.innerHTML = html;
-  }}
-  // Try "all" collection directly first (where products live)
-  fetch(API + '/collections/all/products?storefront_token=' + TOKEN + '&currency=USD')
-    .then(function(r) {{ return r.json(); }})
-    .then(function(d) {{
-      var products = d.results || d.products || [];
-      if (products.length) {{ renderProducts(products); return; }}
-      // Fallback: discover collections
-      return fetch(API + '/collections?storefront_token=' + TOKEN)
-        .then(function(r) {{ return r.json(); }})
-        .then(function(d) {{
-          var cols = d.results || d.collections || [];
-          if (!cols.length) return;
-          var slug = cols[0].slug || cols[0].handle || '';
-          if (!slug) return;
-          return fetch(API + '/collections/' + slug + '/products?storefront_token=' + TOKEN + '&currency=USD');
-        }})
-        .then(function(r) {{ if (r) return r.json(); }})
-        .then(function(d) {{
-          if (!d) return;
-          var products = d.results || d.products || [];
-          if (products.length) renderProducts(products);
-        }});
-    }})
-    .catch(function(e) {{ console.log('[shop] client-side fetch error:', e); }});
-}})();
-</script>"""
-
     return f"""
 <section class="card tab-panel" id="shop">
   <h2 style="margin:0 0 .5rem;">Swag Shop</h2>
@@ -702,8 +640,7 @@ def build_shop_section(products):
     {cards}
   </div>
   {shop_link}
-</section>
-{js_fallback}"""
+</section>"""
 
 
 # ──────────────────────────────────────────────────────────────────────────────
