@@ -518,30 +518,50 @@ def build_blog_section(items):
 # Fourthwall Swag Shop
 # ──────────────────────────────────────────────────────────────────────────────
 
+def _fw_get(path, params=None):
+    """Make a GET request to the Fourthwall Storefront API."""
+    qs = f"storefront_token={FOURTHWALL_TOKEN}"
+    if params:
+        qs += "&" + "&".join(f"{k}={v}" for k, v in params.items())
+    url = f"{FOURTHWALL_API}/{path}?{qs}"
+    req = urllib.request.Request(url, headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        return json.loads(resp.read())
+
+
 def fetch_fourthwall_products():
     """Fetch products from Fourthwall Storefront API. Returns list of dicts."""
     if not FOURTHWALL_TOKEN:
         print("  [shop] FOURTHWALL_TOKEN not set, skipping product fetch")
         return []
 
-    print(f"  [shop] token present ({len(FOURTHWALL_TOKEN)} chars, starts with {FOURTHWALL_TOKEN[:8]}…)")
-    url = f"{FOURTHWALL_API}/collections/all/products?storefront_token={FOURTHWALL_TOKEN}&currency=USD"
     try:
-        req = urllib.request.Request(url, headers={"Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            status = resp.status
-            body = resp.read()
-            print(f"  [shop] API response: HTTP {status}, {len(body)} bytes")
-            data = json.loads(body)
-        results = data.get("results", data.get("products", []))
-        if not results:
-            print(f"  [shop] no products found. Response keys: {list(data.keys())}")
-            # Print truncated response for debugging
-            preview = json.dumps(data, indent=2)[:500]
-            print(f"  [shop] response preview: {preview}")
-        else:
-            print(f"  [shop] fetched {len(results)} products from Fourthwall")
-        return results
+        # First, discover available collections
+        collections_data = _fw_get("collections")
+        collections = collections_data.get("results", collections_data.get("collections", []))
+        if not collections:
+            print(f"  [shop] no collections found (keys: {list(collections_data.keys())})")
+            return []
+        slugs = [c.get("slug", c.get("handle", "")) for c in collections]
+        print(f"  [shop] found {len(collections)} collection(s): {slugs}")
+
+        # Fetch products from each collection
+        all_products = []
+        seen_ids = set()
+        for slug in slugs:
+            if not slug:
+                continue
+            data = _fw_get(f"collections/{slug}/products", {"currency": "USD"})
+            results = data.get("results", data.get("products", []))
+            for p in results:
+                pid = p.get("id", p.get("slug", ""))
+                if pid not in seen_ids:
+                    seen_ids.add(pid)
+                    all_products.append(p)
+            print(f"  [shop] collection '{slug}': {len(results)} products")
+
+        print(f"  [shop] fetched {len(all_products)} total products from Fourthwall")
+        return all_products
     except urllib.error.HTTPError as e:
         body = e.read().decode(errors="replace")[:300]
         print(f"  [shop] Fourthwall API HTTP {e.code}: {body}", file=sys.stderr)
