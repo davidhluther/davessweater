@@ -1,0 +1,185 @@
+{
+  "date": "2026-03-12",
+  "generated_at": "2026-03-13T07:33:52.631458-04:00",
+  "actuals": {
+    "date": "2026-03-12",
+    "fetched_at": "2026-03-13T07:33:52.567749-04:00",
+    "location": "Boone",
+    "high_f": 56.0,
+    "low_f": 22.1,
+    "precip_in": 1.276,
+    "wind_mph": 26.0,
+    "gust_mph": 66.2,
+    "weather_code": 75,
+    "conditions": "Heavy snow",
+    "category": "snow"
+  },
+  "sweater_weather": {
+    "answer": "MAYBE",
+    "detail": "You could go either way. Bring it and decide later.",
+    "layers": "0-1 (light layer, keep one in the car)",
+    "emoji": "\ud83e\udd14",
+    "sweater_count": 2
+  },
+  "sources": {
+    "openmeteo": {
+      "prediction": {
+        "date": "2026-03-12",
+        "high_f": 58.1,
+        "low_f": 30.9,
+        "precip_in": 0.606,
+        "precip_prob": 99,
+        "weather_code": 75,
+        "conditions": "Heavy snow",
+        "category": "snow",
+        "wind_mph": 28.7
+      },
+      "score": {
+        "score": 69.3,
+        "grade": {
+          "verdict": "meh",
+          "ray_count": 3
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 58.1,
+            "actual": 56.0,
+            "error_f": 2.1,
+            "points": 29.7,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 30.9,
+            "actual": 22.1,
+            "error_f": 8.8,
+            "points": 9.6,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0.606,
+            "actual_in": 1.276,
+            "binary_correct": true,
+            "error_in": 0.67,
+            "points": 10,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 28.7,
+            "actual_mph": 26.0,
+            "error_mph": 2.7,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    },
+    "raysweather": {
+      "prediction": {
+        "today_high_f": 47.0,
+        "tonight_low_f": 26.0,
+        "category": "unknown",
+        "precip_in": 0.0,
+        "daytime_desc": "Morning rain ending as snow, especially at higher elevations near the NC/TN line; Clearing during the afternoon; Temperatures fall through the day; Windy and colder; NW wind 15-25 mph gusting to 45",
+        "wind_mph": 20.0
+      },
+      "score": {
+        "score": 47.3,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 47.0,
+            "actual": 56.0,
+            "error_f": 9.0,
+            "points": 9.0,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 26.0,
+            "actual": 22.1,
+            "error_f": 3.9,
+            "points": 24.3,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 1.276,
+            "binary_correct": false,
+            "error_in": 1.276,
+            "points": 0,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 20.0,
+            "actual_mph": 26.0,
+            "error_mph": 6.0,
+            "points": 14.0,
+            "max": 20
+          }
+        }
+      }
+    },
+    "apple_weather": {
+      "prediction": {
+        "today_high_f": 58.1,
+        "tonight_low_f": 30.9,
+        "day_low_f": 30.9,
+        "wind_mph": 28.7,
+        "precip_in": 0.606,
+        "conditions": "Heavy snow",
+        "category": "snow",
+        "source": "Open-Meteo (iPhone fallback)"
+      },
+      "score": {
+        "score": 69.3,
+        "grade": {
+          "verdict": "meh",
+          "ray_count": 3
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 58.1,
+            "actual": 56.0,
+            "error_f": 2.1,
+            "points": 29.7,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 30.9,
+            "actual": 22.1,
+            "error_f": 8.8,
+            "points": 9.6,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0.606,
+            "actual_in": 1.276,
+            "binary_correct": true,
+            "error_in": 0.67,
+            "points": 10,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 28.7,
+            "actual_mph": 26.0,
+            "error_mph": 2.7,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    }
+  },
+  "rays_current": {
+    "temp_f": 44.4,
+    "feels_like_f": null,
+    "wind": null,
+    "wind_dir": null,
+    "wind_mph": null,
+    "gust_mph": null,
+    "humidity_pct": null,
+    "rainfall_in": null
+  }
+}
