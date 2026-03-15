@@ -1,0 +1,185 @@
+{
+  "date": "2026-03-14",
+  "generated_at": "2026-03-15T07:29:10.307637-04:00",
+  "actuals": {
+    "date": "2026-03-14",
+    "fetched_at": "2026-03-15T07:29:10.243308-04:00",
+    "location": "Boone",
+    "high_f": 62.7,
+    "low_f": 37.6,
+    "precip_in": 0.0,
+    "wind_mph": 12.1,
+    "gust_mph": 32.0,
+    "weather_code": 3,
+    "conditions": "Overcast",
+    "category": "cloudy"
+  },
+  "sweater_weather": {
+    "answer": "MAYBE",
+    "detail": "You could go either way. Bring it and decide later.",
+    "layers": "0-1 (light layer, keep one in the car)",
+    "emoji": "\ud83e\udd14",
+    "sweater_count": 2
+  },
+  "sources": {
+    "openmeteo": {
+      "prediction": {
+        "date": "2026-03-14",
+        "high_f": 63.6,
+        "low_f": 38.5,
+        "precip_in": 0.0,
+        "precip_prob": 1,
+        "weather_code": 3,
+        "conditions": "Overcast",
+        "category": "cloudy",
+        "wind_mph": 14.4
+      },
+      "score": {
+        "score": 100,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 5
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 63.6,
+            "actual": 62.7,
+            "error_f": 0.9,
+            "points": 30,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 38.5,
+            "actual": 37.6,
+            "error_f": 0.9,
+            "points": 30,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0,
+            "binary_correct": true,
+            "error_in": 0,
+            "points": 20,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 14.4,
+            "actual_mph": 12.1,
+            "error_mph": 2.3,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    },
+    "raysweather": {
+      "prediction": {
+        "today_high_f": 63.0,
+        "tonight_low_f": 41.0,
+        "category": "unknown",
+        "precip_in": 0.0,
+        "daytime_desc": "Some high cloudiness; Noticeably warmer; NW wind 5-15 mph, becoming South in the afternoon",
+        "wind_mph": 10.0
+      },
+      "score": {
+        "score": 95.8,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 5
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 63.0,
+            "actual": 62.7,
+            "error_f": 0.3,
+            "points": 30,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 41.0,
+            "actual": 37.6,
+            "error_f": 3.4,
+            "points": 25.8,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0,
+            "binary_correct": true,
+            "error_in": 0,
+            "points": 20,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 10.0,
+            "actual_mph": 12.1,
+            "error_mph": 2.1,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    },
+    "apple_weather": {
+      "prediction": {
+        "today_high_f": 63.6,
+        "tonight_low_f": 38.5,
+        "day_low_f": 38.5,
+        "wind_mph": 14.4,
+        "precip_in": 0.0,
+        "conditions": "Overcast",
+        "category": "cloudy",
+        "source": "Open-Meteo (iPhone fallback)"
+      },
+      "score": {
+        "score": 100,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 5
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 63.6,
+            "actual": 62.7,
+            "error_f": 0.9,
+            "points": 30,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 38.5,
+            "actual": 37.6,
+            "error_f": 0.9,
+            "points": 30,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0,
+            "binary_correct": true,
+            "error_in": 0,
+            "points": 20,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 14.4,
+            "actual_mph": 12.1,
+            "error_mph": 2.3,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    }
+  },
+  "rays_current": {
+    "temp_f": 46.1,
+    "feels_like_f": null,
+    "wind": null,
+    "wind_dir": null,
+    "wind_mph": null,
+    "gust_mph": null,
+    "humidity_pct": null,
+    "rainfall_in": null
+  }
+}
