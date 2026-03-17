@@ -42,7 +42,7 @@ OPENMETEO_URL = (
     f"latitude={BOONE_LAT}&longitude={BOONE_LON}"
     f"&current=temperature_2m,relative_humidity_2m,apparent_temperature,"
     f"weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m"
-    f"&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,"
+    f"&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,snowfall_sum,"
     f"weather_code,wind_speed_10m_max"
     f"&temperature_unit=fahrenheit&wind_speed_unit=mph"
     f"&precipitation_unit=inch&timezone=America/New_York"
@@ -181,20 +181,29 @@ def parse_openmeteo(raw: dict) -> dict:
         dates   = daily_raw.get("time", [])
         highs   = daily_raw.get("temperature_2m_max", [])
         lows    = daily_raw.get("temperature_2m_min", [])
-        precips = daily_raw.get("precipitation_sum", [])
-        codes   = daily_raw.get("weather_code", [])
-        winds   = daily_raw.get("wind_speed_10m_max", [])
+        precips  = daily_raw.get("precipitation_sum", [])
+        snowfall = daily_raw.get("snowfall_sum", [])
+        codes    = daily_raw.get("weather_code", [])
+        winds    = daily_raw.get("wind_speed_10m_max", [])
+
+        def _total_precip(i):
+            rain = precips[i] if i < len(precips) else 0
+            snow_cm = snowfall[i] if i < len(snowfall) else 0
+            snow_in = (snow_cm or 0) / 2.54
+            return round((rain or 0) + snow_in, 3), round(snow_in, 3)
 
         # ── today's forecast (for scoring) ────────────────────────────────
         if dates:
             today_code = codes[0] if codes else None
             today_desc = WMO_CODES.get(today_code, "Unknown")
+            total_p, snow_p = _total_precip(0)
             result["forecast"] = {
                 "today_high_f":  highs[0] if highs else None,
                 "tonight_low_f": lows[0] if lows else None,
                 "day_low_f":     lows[0] if lows else None,
                 "wind_mph":      winds[0] if winds else None,
-                "precip_in":     precips[0] if precips else None,
+                "precip_in":     total_p,
+                "snow_in":       snow_p,
                 "conditions":    today_desc,
                 "category":      weather_category(today_code),
             }
@@ -202,12 +211,14 @@ def parse_openmeteo(raw: dict) -> dict:
         # ── multi-day forecast (for screenshot) ───────────────────────────
         for i in range(len(dates)):
             code = codes[i] if i < len(codes) else None
+            total_p, snow_p = _total_precip(i)
             result["daily"].append({
                 "date":       dates[i],
                 "high_f":     highs[i] if i < len(highs) else None,
                 "low_f":      lows[i] if i < len(lows) else None,
                 "wind_mph":   winds[i] if i < len(winds) else None,
-                "precip_in":  precips[i] if i < len(precips) else None,
+                "precip_in":  total_p,
+                "snow_in":    snow_p,
                 "conditions": WMO_CODES.get(code, "Unknown"),
                 "category":   weather_category(code),
             })

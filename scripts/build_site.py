@@ -278,7 +278,11 @@ def build_rightwrong_section(comp):
         # Build detail lines — always show all four stats
         detail_parts = [f'<span style="white-space:nowrap">Hi: {pred_high_s} / Lo: {pred_low_s}</span>']
         detail_parts.append(f"Wind: {round(pred_wind, 1)} mph" if pred_wind is not None else f"Wind: {shrug}")
-        detail_parts.append(f'Rain: {pred_precip}"' if pred_precip is not None else f"Rain: {shrug}")
+        pred_snow = pred.get("snow_in")
+        if pred_snow and pred_snow > 0.01:
+            detail_parts.append(f'Snow: {pred_snow}" / Rain: {round(pred_precip - pred_snow, 2)}"' if pred_precip is not None else f'Snow: {pred_snow}"')
+        else:
+            detail_parts.append(f'Rain: {pred_precip}"' if pred_precip is not None else f"Rain: {shrug}")
 
         rows += f"""
 <tr>
@@ -295,7 +299,10 @@ def build_rightwrong_section(comp):
     actual_parts = [f'<span style="white-space:nowrap">Hi: {act_high}&deg; / Lo: {act_low}&deg;</span>']
     if act_wind is not None:
         actual_parts.append(f"Wind: {round(act_wind, 1)} mph")
-    if act_precip is not None:
+    act_snow = actual.get("snow_in")
+    if act_snow and act_snow > 0.01:
+        actual_parts.append(f'Snow: {act_snow}" / Rain: {round(act_precip - act_snow, 2)}"' if act_precip is not None else f'Snow: {act_snow}"')
+    elif act_precip is not None:
         actual_parts.append(f'Rain: {act_precip}"')
     if act_cond:
         actual_parts.append(act_cond)
