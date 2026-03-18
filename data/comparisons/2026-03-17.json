@@ -1,0 +1,136 @@
+{
+  "date": "2026-03-17",
+  "generated_at": "2026-03-18T11:03:14.048426-04:00",
+  "actuals": {
+    "date": "2026-03-17",
+    "fetched_at": "2026-03-18T11:03:13.980333-04:00",
+    "location": "Boone",
+    "high_f": 24.8,
+    "low_f": 13.5,
+    "precip_in": 0.089,
+    "snow_in": 0.065,
+    "wind_mph": 21.6,
+    "gust_mph": 60.2,
+    "weather_code": 71,
+    "conditions": "Slight snow",
+    "category": "snow"
+  },
+  "sweater_weather": {
+    "answer": "ABSOLUTELY",
+    "detail": "That's not sweater weather, that's SWEATER EMERGENCY.",
+    "layers": "3+ (sweater, fleece, AND a coat)",
+    "emoji": "\ud83e\udd76\ud83e\udde5",
+    "sweater_count": 5
+  },
+  "sources": {
+    "openmeteo": {
+      "prediction": {
+        "date": "2026-03-17",
+        "high_f": 22.8,
+        "low_f": 13.1,
+        "precip_in": 0.028,
+        "precip_prob": 11,
+        "weather_code": 71,
+        "conditions": "Slight snow",
+        "category": "snow",
+        "wind_mph": 28.4
+      },
+      "score": {
+        "score": 91.2,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 5
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 22.8,
+            "actual": 24.8,
+            "error_f": 2.0,
+            "points": 30,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 13.1,
+            "actual": 13.5,
+            "error_f": 0.4,
+            "points": 30,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0.028,
+            "actual_in": 0.089,
+            "binary_correct": true,
+            "error_in": 0.061,
+            "points": 18.8,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 28.4,
+            "actual_mph": 21.6,
+            "error_mph": 6.8,
+            "points": 12.4,
+            "max": 20
+          }
+        }
+      }
+    },
+    "raysweather": {
+      "prediction": {
+        "today_high_f": 28.0,
+        "tonight_low_f": 17.0,
+        "category": "unknown",
+        "precip_in": 0.0,
+        "daytime_desc": "Snow showers and flurries becoming more scattered; Mostly to partly cloudy; Shockingly cold for St. Patrick's Day; NW wind 10-20 mph gusting to 30",
+        "wind_mph": 15.0
+      },
+      "score": {
+        "score": 72.9,
+        "grade": {
+          "verdict": "meh",
+          "ray_count": 3
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 28.0,
+            "actual": 24.8,
+            "error_f": 3.2,
+            "points": 26.4,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 17.0,
+            "actual": 13.5,
+            "error_f": 3.5,
+            "points": 25.5,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0.089,
+            "binary_correct": false,
+            "error_in": 0.089,
+            "points": 8.2,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 15.0,
+            "actual_mph": 21.6,
+            "error_mph": 6.6,
+            "points": 12.8,
+            "max": 20
+          }
+        }
+      }
+    }
+  },
+  "rays_current": {
+    "temp_f": 17.2,
+    "feels_like_f": null,
+    "wind": null,
+    "wind_dir": null,
+    "wind_mph": null,
+    "gust_mph": null,
+    "humidity_pct": null,
+    "rainfall_in": null
+  }
+}
