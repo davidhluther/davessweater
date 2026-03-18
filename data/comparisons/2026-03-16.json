@@ -1,13 +1,14 @@
 {
   "date": "2026-03-16",
-  "generated_at": "2026-03-17T08:42:41.448985-04:00",
+  "generated_at": "2026-03-17T20:15:03.187920-04:00",
   "actuals": {
     "date": "2026-03-16",
-    "fetched_at": "2026-03-17T08:42:41.386491-04:00",
+    "fetched_at": "2026-03-17T20:15:03.124945-04:00",
     "location": "Boone",
     "high_f": 53.2,
     "low_f": 20.5,
-    "precip_in": 0.976,
+    "precip_in": 1.432,
+    "snow_in": 0.456,
     "wind_mph": 26.2,
     "gust_mph": 63.8,
     "weather_code": 75,
@@ -35,10 +36,10 @@
         "wind_mph": 29.3
       },
       "score": {
-        "score": 89.6,
+        "score": 97.3,
         "grade": {
           "verdict": "right",
-          "ray_count": 4
+          "ray_count": 5
         },
         "breakdown": {
           "high_temp": {
@@ -57,10 +58,10 @@
           },
           "precipitation": {
             "predicted_in": 1.397,
-            "actual_in": 0.976,
+            "actual_in": 1.432,
             "binary_correct": true,
-            "error_in": 0.421,
-            "points": 11.6,
+            "error_in": 0.035,
+            "points": 19.3,
             "max": 20
           },
           "wind": {
@@ -105,9 +106,9 @@
           },
           "precipitation": {
             "predicted_in": 0,
-            "actual_in": 0.976,
+            "actual_in": 1.432,
             "binary_correct": false,
-            "error_in": 0.976,
+            "error_in": 1.432,
             "points": 0,
             "max": 20
           },
@@ -116,56 +117,6 @@
             "actual_mph": 26.2,
             "error_mph": 11.2,
             "points": 3.6,
-            "max": 20
-          }
-        }
-      }
-    },
-    "apple_weather": {
-      "prediction": {
-        "today_high_f": 55.3,
-        "tonight_low_f": 18.0,
-        "day_low_f": 18.0,
-        "wind_mph": 29.3,
-        "precip_in": 1.397,
-        "conditions": "Heavy snow",
-        "category": "snow",
-        "source": "Open-Meteo (iPhone fallback)"
-      },
-      "score": {
-        "score": 89.6,
-        "grade": {
-          "verdict": "right",
-          "ray_count": 4
-        },
-        "breakdown": {
-          "high_temp": {
-            "predicted": 55.3,
-            "actual": 53.2,
-            "error_f": 2.1,
-            "points": 29.7,
-            "max": 30
-          },
-          "low_temp": {
-            "predicted": 18.0,
-            "actual": 20.5,
-            "error_f": 2.5,
-            "points": 28.5,
-            "max": 30
-          },
-          "precipitation": {
-            "predicted_in": 1.397,
-            "actual_in": 0.976,
-            "binary_correct": true,
-            "error_in": 0.421,
-            "points": 11.6,
-            "max": 20
-          },
-          "wind": {
-            "predicted_mph": 29.3,
-            "actual_mph": 26.2,
-            "error_mph": 3.1,
-            "points": 19.8,
             "max": 20
           }
         }
