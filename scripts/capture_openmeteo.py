@@ -27,7 +27,7 @@ LON = -81.6746
 FORECAST_URL = (
     f"https://api.open-meteo.com/v1/forecast?"
     f"latitude={LAT}&longitude={LON}"
-    f"&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,"
+    f"&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,snowfall_sum,"
     f"precipitation_probability_max,weather_code,wind_speed_10m_max"
     f"&current=temperature_2m,relative_humidity_2m,apparent_temperature,"
     f"weather_code,wind_speed_10m"
@@ -40,8 +40,8 @@ ARCHIVE_URL_TEMPLATE = (
     f"https://archive-api.open-meteo.com/v1/archive?"
     f"latitude={LAT}&longitude={LON}"
     f"&start_date={{date}}&end_date={{date}}"
-    f"&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code,"
-    f"wind_speed_10m_max,wind_gusts_10m_max"
+    f"&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,snowfall_sum,"
+    f"weather_code,wind_speed_10m_max,wind_gusts_10m_max"
     f"&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch"
     f"&timezone=America/New_York"
 )
@@ -130,17 +130,21 @@ def capture_forecast():
     highs = daily_raw.get("temperature_2m_max", [])
     lows = daily_raw.get("temperature_2m_min", [])
     precip = daily_raw.get("precipitation_sum", [])
+    snowfall = daily_raw.get("snowfall_sum", [])
     precip_prob = daily_raw.get("precipitation_probability_max", [])
     codes = daily_raw.get("weather_code", [])
     wind = daily_raw.get("wind_speed_10m_max", [])
 
     for i in range(len(dates)):
         code = codes[i] if i < len(codes) else 0
+        rain_in = precip[i] if i < len(precip) else 0
+        snow_in = (snowfall[i] or 0) / 2.54 if i < len(snowfall) else 0  # cm → inches
         forecast["daily"].append({
             "date": dates[i],
             "high_f": highs[i] if i < len(highs) else None,
             "low_f": lows[i] if i < len(lows) else None,
-            "precip_in": precip[i] if i < len(precip) else None,
+            "precip_in": round((rain_in or 0) + snow_in, 3),
+            "snow_in": round(snow_in, 3),
             "precip_prob": precip_prob[i] if i < len(precip_prob) else None,
             "weather_code": code,
             "conditions": WMO_CODES.get(code, "Unknown"),
@@ -192,13 +196,17 @@ def fetch_actuals(target_date=None):
         return None
 
     code = daily.get("weather_code", [0])[0]
+    rain_in = daily.get("precipitation_sum", [0])[0] or 0
+    snow_cm = daily.get("snowfall_sum", [0])[0] or 0
+    snow_in = snow_cm / 2.54  # cm → inches
     actuals = {
         "date": target_date,
         "fetched_at": datetime.now(EST).isoformat(),
         "location": "Boone",
         "high_f": daily.get("temperature_2m_max", [None])[0],
         "low_f": daily.get("temperature_2m_min", [None])[0],
-        "precip_in": daily.get("precipitation_sum", [None])[0],
+        "precip_in": round(rain_in + snow_in, 3),
+        "snow_in": round(snow_in, 3),
         "wind_mph": daily.get("wind_speed_10m_max", [None])[0],
         "gust_mph": daily.get("wind_gusts_10m_max", [None])[0],
         "weather_code": code,
