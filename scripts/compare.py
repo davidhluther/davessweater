@@ -393,15 +393,20 @@ def run_daily_comparison(target_date=None):
     else:
         print(f"  No Ray's Weather prediction found for {target_date}")
 
-    # Score Apple Weather prediction (iPhone Shortcut only — skip Open-Meteo fallback
-    # since it duplicates the Open-Meteo source)
+    # Score Apple Weather prediction — prefer real iPhone Shortcut data,
+    # fall back to the Open-Meteo-based iphone_forecast.json
     apple_path = pred_dir / "iphone_forecast_apple.json"
     if apple_path.exists():
         apple_data = _parse_apple_forecast(apple_path)
         apple_source = "iPhone Shortcut"
     else:
-        apple_data = None
-        apple_source = None
+        apple_path = pred_dir / "iphone_forecast.json"
+        if apple_path.exists():
+            apple_data = _parse_apple_forecast(apple_path)
+            apple_source = "Open-Meteo"
+        else:
+            apple_data = None
+            apple_source = None
 
     if apple_data:
         # The Shortcut uploads a flat dict: today_high_f, tonight_low_f, wind_mph, conditions
