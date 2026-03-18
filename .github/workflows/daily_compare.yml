@@ -2,7 +2,7 @@ name: "📊 Daily Compare & Build"
 
 on:
   schedule:
-    - cron: '0 12 * * *'  # 8:00 AM EDT / 7:00 AM EST
+    - cron: '30 14 * * *'  # 10:30 AM EDT / 9:30 AM EST
   workflow_run:
     workflows: ["📱 iPhone Screenshot Upload", "📸 Daily Capture"]
     types: [completed]
