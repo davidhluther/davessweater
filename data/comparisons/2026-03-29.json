@@ -1,0 +1,137 @@
+{
+  "date": "2026-03-29",
+  "generated_at": "2026-03-30T11:03:05.710751-04:00",
+  "actuals": {
+    "date": "2026-03-29",
+    "fetched_at": "2026-03-30T11:03:05.651586-04:00",
+    "location": "Boone",
+    "high_f": 50.5,
+    "low_f": 30.9,
+    "precip_in": 0.0,
+    "snow_in": 0.0,
+    "wind_mph": 11.9,
+    "gust_mph": 30.0,
+    "weather_code": 3,
+    "conditions": "Overcast",
+    "category": "cloudy"
+  },
+  "sweater_weather": {
+    "answer": "YES",
+    "detail": "Still sweater territory. Don't let anyone tell you otherwise.",
+    "layers": "1-2 (light to medium sweater)",
+    "emoji": "\ud83e\uddf6\ud83d\udc4d",
+    "sweater_count": 3
+  },
+  "sources": {
+    "openmeteo": {
+      "prediction": {
+        "date": "2026-03-29",
+        "high_f": 52.8,
+        "low_f": 31.2,
+        "precip_in": 0.0,
+        "snow_in": 0.0,
+        "precip_prob": 1,
+        "weather_code": 3,
+        "conditions": "Overcast",
+        "category": "cloudy",
+        "wind_mph": 11.6
+      },
+      "score": {
+        "score": 99.1,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 5
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 52.8,
+            "actual": 50.5,
+            "error_f": 2.3,
+            "points": 29.1,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 31.2,
+            "actual": 30.9,
+            "error_f": 0.3,
+            "points": 30,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0,
+            "binary_correct": true,
+            "error_in": 0,
+            "points": 20,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 11.6,
+            "actual_mph": 11.9,
+            "error_mph": 0.3,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    },
+    "raysweather": {
+      "prediction": {
+        "today_high_f": 56.0,
+        "tonight_low_f": 38.0,
+        "category": "unknown",
+        "precip_in": 0.0,
+        "daytime_desc": "Mostly sunny with high clouds this afternoon; Milder after a cold start to the day; Light wind becoming South 5-15 mph",
+        "wind_mph": 10.0
+      },
+      "score": {
+        "score": 74.2,
+        "grade": {
+          "verdict": "meh",
+          "ray_count": 3
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 56.0,
+            "actual": 50.5,
+            "error_f": 5.5,
+            "points": 19.5,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 38.0,
+            "actual": 30.9,
+            "error_f": 7.1,
+            "points": 14.7,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0,
+            "binary_correct": true,
+            "error_in": 0,
+            "points": 20,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 10.0,
+            "actual_mph": 11.9,
+            "error_mph": 1.9,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    }
+  },
+  "rays_current": {
+    "temp_f": 43.3,
+    "feels_like_f": null,
+    "wind": null,
+    "wind_dir": null,
+    "wind_mph": null,
+    "gust_mph": null,
+    "humidity_pct": null,
+    "rainfall_in": null
+  }
+}
