@@ -501,14 +501,21 @@ def main():
     OUT_JSON.write_text(json.dumps(data, indent=2))
     print(f"✅ Saved → {OUT_JSON}")
 
-    # Take screenshot if we have data
+    # Take screenshot if we have data — but never overwrite an existing
+    # iphone_screenshot.png. The real Apple Weather screenshot is uploaded
+    # manually (or via the iOS Shortcut) to the same path earlier in the
+    # day, and the synthesized Playwright fallback should only fill in for
+    # days when no real screenshot has been uploaded yet.
     if not data.get("error"):
-        try:
-            ok = asyncio.run(take_screenshot(data, OUT_PNG))
-            if ok:
-                print(f"📸 Screenshot → {OUT_PNG}")
-        except Exception as e:
-            print(f"  WARNING: Screenshot failed: {e}", file=sys.stderr)
+        if OUT_PNG.exists():
+            print(f"  Skipping screenshot — {OUT_PNG.name} already exists (real upload preserved)")
+        else:
+            try:
+                ok = asyncio.run(take_screenshot(data, OUT_PNG))
+                if ok:
+                    print(f"📸 Screenshot → {OUT_PNG}")
+            except Exception as e:
+                print(f"  WARNING: Screenshot failed: {e}", file=sys.stderr)
 
     if data.get("error"):
         print(f"⚠️  Completed with error: {data['error']}")

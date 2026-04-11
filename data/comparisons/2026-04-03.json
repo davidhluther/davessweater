@@ -1,6 +1,6 @@
 {
   "date": "2026-04-03",
-  "generated_at": "2026-04-04T10:59:25.727657-04:00",
+  "generated_at": "2026-04-11T10:33:08.169823-04:00",
   "actuals": {
     "date": "2026-04-03",
     "fetched_at": "2026-04-04T10:59:25.667888-04:00",
@@ -115,6 +115,57 @@
           "wind": {
             "error": "missing data",
             "points": 0,
+            "max": 20
+          }
+        }
+      }
+    },
+    "apple_weather": {
+      "prediction": {
+        "today_high_f": 69.5,
+        "tonight_low_f": 51.0,
+        "day_low_f": 51.0,
+        "wind_mph": 9.6,
+        "precip_in": 0.0,
+        "snow_in": 0.0,
+        "conditions": "Overcast",
+        "category": "cloudy",
+        "source": "Open-Meteo (iPhone fallback)"
+      },
+      "score": {
+        "score": 89.5,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 4
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 69.5,
+            "actual": 68.4,
+            "error_f": 1.1,
+            "points": 30,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 51.0,
+            "actual": 50.6,
+            "error_f": 0.4,
+            "points": 30,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0.024,
+            "binary_correct": false,
+            "error_in": 0.024,
+            "points": 9.5,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 9.6,
+            "actual_mph": 10.5,
+            "error_mph": 0.9,
+            "points": 20,
             "max": 20
           }
         }
