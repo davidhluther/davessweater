@@ -1,0 +1,137 @@
+{
+  "date": "2026-04-13",
+  "generated_at": "2026-04-14T11:13:09.459612-04:00",
+  "actuals": {
+    "date": "2026-04-13",
+    "fetched_at": "2026-04-14T11:13:09.401613-04:00",
+    "location": "Boone",
+    "high_f": 71.7,
+    "low_f": 52.1,
+    "precip_in": 0.0,
+    "snow_in": 0.0,
+    "wind_mph": 9.9,
+    "gust_mph": 24.6,
+    "weather_code": 3,
+    "conditions": "Overcast",
+    "category": "cloudy"
+  },
+  "sweater_weather": {
+    "answer": "NO",
+    "detail": "No sweater needed unless you're in aggressive AC.",
+    "layers": "0 (the sweater rests today)",
+    "emoji": "\u2600\ufe0f\u274c",
+    "sweater_count": 1
+  },
+  "sources": {
+    "openmeteo": {
+      "prediction": {
+        "date": "2026-04-13",
+        "high_f": 73.2,
+        "low_f": 57.0,
+        "precip_in": 0.0,
+        "snow_in": 0.0,
+        "precip_prob": 7,
+        "weather_code": 3,
+        "conditions": "Overcast",
+        "category": "cloudy",
+        "wind_mph": 14.3
+      },
+      "score": {
+        "score": 88.5,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 4
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 73.2,
+            "actual": 71.7,
+            "error_f": 1.5,
+            "points": 30,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 57.0,
+            "actual": 52.1,
+            "error_f": 4.9,
+            "points": 21.3,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0,
+            "binary_correct": true,
+            "error_in": 0,
+            "points": 20,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 14.3,
+            "actual_mph": 9.9,
+            "error_mph": 4.4,
+            "points": 17.2,
+            "max": 20
+          }
+        }
+      }
+    },
+    "raysweather": {
+      "prediction": {
+        "today_high_f": 75.0,
+        "tonight_low_f": 54.0,
+        "category": "unknown",
+        "precip_in": 0.0,
+        "daytime_desc": "High cloudiness; Warm; Warm; SW wind 5-15 mph",
+        "wind_mph": 10.0
+      },
+      "score": {
+        "score": 96.1,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 5
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 75.0,
+            "actual": 71.7,
+            "error_f": 3.3,
+            "points": 26.1,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 54.0,
+            "actual": 52.1,
+            "error_f": 1.9,
+            "points": 30,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0,
+            "binary_correct": true,
+            "error_in": 0,
+            "points": 20,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 10.0,
+            "actual_mph": 9.9,
+            "error_mph": 0.1,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    }
+  },
+  "rays_current": {
+    "temp_f": 68.5,
+    "feels_like_f": null,
+    "wind": null,
+    "wind_dir": null,
+    "wind_mph": null,
+    "gust_mph": null,
+    "humidity_pct": null,
+    "rainfall_in": null
+  }
+}
