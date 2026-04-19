@@ -1,0 +1,137 @@
+{
+  "date": "2026-04-18",
+  "generated_at": "2026-04-19T10:39:50.190408-04:00",
+  "actuals": {
+    "date": "2026-04-18",
+    "fetched_at": "2026-04-19T10:39:50.130610-04:00",
+    "location": "Boone",
+    "high_f": 73.8,
+    "low_f": 54.0,
+    "precip_in": 0.028,
+    "snow_in": 0.0,
+    "wind_mph": 10.3,
+    "gust_mph": 25.9,
+    "weather_code": 53,
+    "conditions": "Moderate drizzle",
+    "category": "drizzle"
+  },
+  "sweater_weather": {
+    "answer": "NO",
+    "detail": "No sweater needed unless you're in aggressive AC.",
+    "layers": "0 (the sweater rests today)",
+    "emoji": "\u2600\ufe0f\u274c",
+    "sweater_count": 1
+  },
+  "sources": {
+    "openmeteo": {
+      "prediction": {
+        "date": "2026-04-18",
+        "high_f": 79.2,
+        "low_f": 51.2,
+        "precip_in": 0.0,
+        "snow_in": 0.0,
+        "precip_prob": 18,
+        "weather_code": 3,
+        "conditions": "Overcast",
+        "category": "cloudy",
+        "wind_mph": 11.9
+      },
+      "score": {
+        "score": 76.8,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 4
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 79.2,
+            "actual": 73.8,
+            "error_f": 5.4,
+            "points": 19.8,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 51.2,
+            "actual": 54.0,
+            "error_f": 2.8,
+            "points": 27.6,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0.028,
+            "binary_correct": false,
+            "error_in": 0.028,
+            "points": 9.4,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 11.9,
+            "actual_mph": 10.3,
+            "error_mph": 1.6,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    },
+    "raysweather": {
+      "prediction": {
+        "today_high_f": 80.0,
+        "tonight_low_f": 44.0,
+        "category": "unknown",
+        "precip_in": 0.0,
+        "daytime_desc": "Mostly sunny to more afternoon clouds; Warm; Isolated afternoon showers and thundershowers, especially at higher western elevations; Wind becoming SSW 5-15 mph",
+        "wind_mph": 10.0
+      },
+      "score": {
+        "score": 52.8,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 80.0,
+            "actual": 73.8,
+            "error_f": 6.2,
+            "points": 17.4,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 44.0,
+            "actual": 54.0,
+            "error_f": 10.0,
+            "points": 6.0,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0.028,
+            "binary_correct": false,
+            "error_in": 0.028,
+            "points": 9.4,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 10.0,
+            "actual_mph": 10.3,
+            "error_mph": 0.3,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    }
+  },
+  "rays_current": {
+    "temp_f": 73.7,
+    "feels_like_f": null,
+    "wind": null,
+    "wind_dir": null,
+    "wind_mph": null,
+    "gust_mph": null,
+    "humidity_pct": null,
+    "rainfall_in": null
+  }
+}
