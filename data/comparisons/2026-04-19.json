@@ -1,0 +1,137 @@
+{
+  "date": "2026-04-19",
+  "generated_at": "2026-04-20T11:16:23.633921-04:00",
+  "actuals": {
+    "date": "2026-04-19",
+    "fetched_at": "2026-04-20T11:16:23.572292-04:00",
+    "location": "Boone",
+    "high_f": 57.6,
+    "low_f": 36.7,
+    "precip_in": 0.028,
+    "snow_in": 0.0,
+    "wind_mph": 29.3,
+    "gust_mph": 68.5,
+    "weather_code": 51,
+    "conditions": "Light drizzle",
+    "category": "drizzle"
+  },
+  "sweater_weather": {
+    "answer": "MAYBE",
+    "detail": "You could go either way. Bring it and decide later.",
+    "layers": "0-1 (light layer, keep one in the car)",
+    "emoji": "\ud83e\udd14",
+    "sweater_count": 2
+  },
+  "sources": {
+    "openmeteo": {
+      "prediction": {
+        "date": "2026-04-19",
+        "high_f": 60.0,
+        "low_f": 36.7,
+        "precip_in": 0.063,
+        "snow_in": 0.0,
+        "precip_prob": 45,
+        "weather_code": 55,
+        "conditions": "Dense drizzle",
+        "category": "drizzle",
+        "wind_mph": 31.3
+      },
+      "score": {
+        "score": 98.1,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 5
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 60.0,
+            "actual": 57.6,
+            "error_f": 2.4,
+            "points": 28.8,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 36.7,
+            "actual": 36.7,
+            "error_f": 0.0,
+            "points": 30,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0.063,
+            "actual_in": 0.028,
+            "binary_correct": true,
+            "error_in": 0.035,
+            "points": 19.3,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 31.3,
+            "actual_mph": 29.3,
+            "error_mph": 2.0,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    },
+    "raysweather": {
+      "prediction": {
+        "today_high_f": 54.0,
+        "tonight_low_f": 36.0,
+        "category": "unknown",
+        "precip_in": 0.0,
+        "daytime_desc": "Morning clouds, afternoon clearing; Showers exit east by 8 AM; Much chillier; NW wind 15-25 mph, gusts to 50 mph in the AM",
+        "wind_mph": 20.0
+      },
+      "score": {
+        "score": 72.0,
+        "grade": {
+          "verdict": "meh",
+          "ray_count": 3
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 54.0,
+            "actual": 57.6,
+            "error_f": 3.6,
+            "points": 25.2,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 36.0,
+            "actual": 36.7,
+            "error_f": 0.7,
+            "points": 30,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0.028,
+            "binary_correct": false,
+            "error_in": 0.028,
+            "points": 9.4,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 20.0,
+            "actual_mph": 29.3,
+            "error_mph": 9.3,
+            "points": 7.4,
+            "max": 20
+          }
+        }
+      }
+    }
+  },
+  "rays_current": {
+    "temp_f": 39.8,
+    "feels_like_f": null,
+    "wind": null,
+    "wind_dir": null,
+    "wind_mph": null,
+    "gust_mph": null,
+    "humidity_pct": null,
+    "rainfall_in": null
+  }
+}
