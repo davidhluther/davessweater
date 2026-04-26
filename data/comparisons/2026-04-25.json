@@ -1,0 +1,137 @@
+{
+  "date": "2026-04-25",
+  "generated_at": "2026-04-26T10:42:27.367688-04:00",
+  "actuals": {
+    "date": "2026-04-25",
+    "fetched_at": "2026-04-26T10:42:27.251787-04:00",
+    "location": "Boone",
+    "high_f": 64.3,
+    "low_f": 52.1,
+    "precip_in": 0.22,
+    "snow_in": 0.0,
+    "wind_mph": 5.7,
+    "gust_mph": 13.9,
+    "weather_code": 61,
+    "conditions": "Slight rain",
+    "category": "rain"
+  },
+  "sweater_weather": {
+    "answer": "MAYBE",
+    "detail": "You could go either way. Bring it and decide later.",
+    "layers": "0-1 (light layer, keep one in the car)",
+    "emoji": "\ud83e\udd14",
+    "sweater_count": 2
+  },
+  "sources": {
+    "openmeteo": {
+      "prediction": {
+        "date": "2026-04-25",
+        "high_f": 67.1,
+        "low_f": 52.4,
+        "precip_in": 0.768,
+        "snow_in": 0.0,
+        "precip_prob": 57,
+        "weather_code": 63,
+        "conditions": "Moderate rain",
+        "category": "rain",
+        "wind_mph": 10.5
+      },
+      "score": {
+        "score": 84.0,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 4
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 67.1,
+            "actual": 64.3,
+            "error_f": 2.8,
+            "points": 27.6,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 52.4,
+            "actual": 52.1,
+            "error_f": 0.3,
+            "points": 30,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0.768,
+            "actual_in": 0.22,
+            "binary_correct": true,
+            "error_in": 0.548,
+            "points": 10,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 10.5,
+            "actual_mph": 5.7,
+            "error_mph": 4.8,
+            "points": 16.4,
+            "max": 20
+          }
+        }
+      }
+    },
+    "raysweather": {
+      "prediction": {
+        "today_high_f": 70.0,
+        "tonight_low_f": 49.0,
+        "category": "unknown",
+        "precip_in": 0.0,
+        "daytime_desc": "Mostly cloudy; Scattered afternoon showers & maybe a thundershower; Pleasant temperatures; Light wind becoming SW 5-10 mph",
+        "wind_mph": 7.5
+      },
+      "score": {
+        "score": 71.2,
+        "grade": {
+          "verdict": "meh",
+          "ray_count": 3
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 70.0,
+            "actual": 64.3,
+            "error_f": 5.7,
+            "points": 18.9,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 49.0,
+            "actual": 52.1,
+            "error_f": 3.1,
+            "points": 26.7,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0.22,
+            "binary_correct": false,
+            "error_in": 0.22,
+            "points": 5.6,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 7.5,
+            "actual_mph": 5.7,
+            "error_mph": 1.8,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    }
+  },
+  "rays_current": {
+    "temp_f": 65.6,
+    "feels_like_f": null,
+    "wind": null,
+    "wind_dir": null,
+    "wind_mph": null,
+    "gust_mph": null,
+    "humidity_pct": null,
+    "rainfall_in": null
+  }
+}
