@@ -1,0 +1,137 @@
+{
+  "date": "2026-04-27",
+  "generated_at": "2026-04-28T12:07:47.445900-04:00",
+  "actuals": {
+    "date": "2026-04-27",
+    "fetched_at": "2026-04-28T12:07:47.390845-04:00",
+    "location": "Boone",
+    "high_f": 60.4,
+    "low_f": 42.0,
+    "precip_in": 0.0,
+    "snow_in": 0.0,
+    "wind_mph": 9.3,
+    "gust_mph": 23.7,
+    "weather_code": 3,
+    "conditions": "Overcast",
+    "category": "cloudy"
+  },
+  "sweater_weather": {
+    "answer": "MAYBE",
+    "detail": "You could go either way. Bring it and decide later.",
+    "layers": "0-1 (light layer, keep one in the car)",
+    "emoji": "\ud83e\udd14",
+    "sweater_count": 2
+  },
+  "sources": {
+    "openmeteo": {
+      "prediction": {
+        "date": "2026-04-27",
+        "high_f": 62.1,
+        "low_f": 43.1,
+        "precip_in": 0.0,
+        "snow_in": 0.0,
+        "precip_prob": 4,
+        "weather_code": 45,
+        "conditions": "Fog",
+        "category": "fog",
+        "wind_mph": 9.8
+      },
+      "score": {
+        "score": 100,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 5
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 62.1,
+            "actual": 60.4,
+            "error_f": 1.7,
+            "points": 30,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 43.1,
+            "actual": 42.0,
+            "error_f": 1.1,
+            "points": 30,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0,
+            "binary_correct": true,
+            "error_in": 0,
+            "points": 20,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 9.8,
+            "actual_mph": 9.3,
+            "error_mph": 0.5,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    },
+    "raysweather": {
+      "prediction": {
+        "today_high_f": 66.0,
+        "tonight_low_f": 45.0,
+        "category": "unknown",
+        "precip_in": 0.0,
+        "daytime_desc": "Clouds and fog to start; Becoming partly to mostly sunny; A bit cooler; ESE wind 5-10 mph",
+        "wind_mph": 7.5
+      },
+      "score": {
+        "score": 86.2,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 4
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 66.0,
+            "actual": 60.4,
+            "error_f": 5.6,
+            "points": 19.2,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 45.0,
+            "actual": 42.0,
+            "error_f": 3.0,
+            "points": 27.0,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0,
+            "binary_correct": true,
+            "error_in": 0,
+            "points": 20,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 7.5,
+            "actual_mph": 9.3,
+            "error_mph": 1.8,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    }
+  },
+  "rays_current": {
+    "temp_f": 46.2,
+    "feels_like_f": null,
+    "wind": null,
+    "wind_dir": null,
+    "wind_mph": null,
+    "gust_mph": null,
+    "humidity_pct": null,
+    "rainfall_in": null
+  }
+}
