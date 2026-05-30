@@ -1,0 +1,137 @@
+{
+  "date": "2026-05-29",
+  "generated_at": "2026-05-30T11:05:59.166835-04:00",
+  "actuals": {
+    "date": "2026-05-29",
+    "fetched_at": "2026-05-30T11:05:59.117096-04:00",
+    "location": "Boone",
+    "high_f": 70.1,
+    "low_f": 54.3,
+    "precip_in": 0.0,
+    "snow_in": 0.0,
+    "wind_mph": 6.7,
+    "gust_mph": 18.8,
+    "weather_code": 3,
+    "conditions": "Overcast",
+    "category": "cloudy"
+  },
+  "sweater_weather": {
+    "answer": "NO",
+    "detail": "No sweater needed unless you're in aggressive AC.",
+    "layers": "0 (the sweater rests today)",
+    "emoji": "\u2600\ufe0f\u274c",
+    "sweater_count": 1
+  },
+  "sources": {
+    "openmeteo": {
+      "prediction": {
+        "date": "2026-05-29",
+        "high_f": 71.7,
+        "low_f": 52.8,
+        "precip_in": 0.0,
+        "snow_in": 0.0,
+        "precip_prob": 2,
+        "weather_code": 3,
+        "conditions": "Overcast",
+        "category": "cloudy",
+        "wind_mph": 7.9
+      },
+      "score": {
+        "score": 100,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 5
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 71.7,
+            "actual": 70.1,
+            "error_f": 1.6,
+            "points": 30,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 52.8,
+            "actual": 54.3,
+            "error_f": 1.5,
+            "points": 30,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0,
+            "binary_correct": true,
+            "error_in": 0,
+            "points": 20,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 7.9,
+            "actual_mph": 6.7,
+            "error_mph": 1.2,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    },
+    "raysweather": {
+      "prediction": {
+        "today_high_f": 77.0,
+        "tonight_low_f": 58.0,
+        "category": "unknown",
+        "precip_in": 0.0,
+        "daytime_desc": "Considerable sunshine, but scattered clouds late-day; Pleasant; SE wind 5-10 mph , becoming South",
+        "wind_mph": 7.5
+      },
+      "score": {
+        "score": 80.2,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 4
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 77.0,
+            "actual": 70.1,
+            "error_f": 6.9,
+            "points": 15.3,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 58.0,
+            "actual": 54.3,
+            "error_f": 3.7,
+            "points": 24.9,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0,
+            "binary_correct": true,
+            "error_in": 0,
+            "points": 20,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 7.5,
+            "actual_mph": 6.7,
+            "error_mph": 0.8,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    }
+  },
+  "rays_current": {
+    "temp_f": 71.8,
+    "feels_like_f": null,
+    "wind": null,
+    "wind_dir": null,
+    "wind_mph": null,
+    "gust_mph": null,
+    "humidity_pct": null,
+    "rainfall_in": null
+  }
+}
