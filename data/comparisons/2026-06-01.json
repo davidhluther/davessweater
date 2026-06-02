@@ -1,0 +1,128 @@
+{
+  "date": "2026-06-01",
+  "generated_at": "2026-06-02T14:04:43.635633-04:00",
+  "actuals": {
+    "date": "2026-06-01",
+    "fetched_at": "2026-06-02T14:04:43.577878-04:00",
+    "location": "Boone",
+    "high_f": 70.2,
+    "low_f": 54.3,
+    "precip_in": 0.047,
+    "snow_in": 0.0,
+    "wind_mph": 9.4,
+    "gust_mph": 26.4,
+    "weather_code": 51,
+    "conditions": "Light drizzle",
+    "category": "drizzle"
+  },
+  "sweater_weather": {
+    "answer": "NO",
+    "detail": "No sweater needed unless you're in aggressive AC.",
+    "layers": "0 (the sweater rests today)",
+    "emoji": "\u2600\ufe0f\u274c",
+    "sweater_count": 1
+  },
+  "sources": {
+    "openmeteo": {
+      "prediction": {
+        "date": "2026-06-01",
+        "high_f": 71.6,
+        "low_f": 59.3,
+        "precip_in": 0.012,
+        "snow_in": 0.0,
+        "precip_prob": 12,
+        "weather_code": 51,
+        "conditions": "Light drizzle",
+        "category": "drizzle",
+        "wind_mph": 13.2
+      },
+      "score": {
+        "score": 88.7,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 4
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 71.6,
+            "actual": 70.2,
+            "error_f": 1.4,
+            "points": 30,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 59.3,
+            "actual": 54.3,
+            "error_f": 5.0,
+            "points": 21.0,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0.012,
+            "actual_in": 0.047,
+            "binary_correct": true,
+            "error_in": 0.035,
+            "points": 19.3,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 13.2,
+            "actual_mph": 9.4,
+            "error_mph": 3.8,
+            "points": 18.4,
+            "max": 20
+          }
+        }
+      }
+    },
+    "raysweather": {
+      "prediction": {
+        "today_high_f": 63.0,
+        "tonight_low_f": 52.0
+      },
+      "score": {
+        "score": 43.5,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 63.0,
+            "actual": 70.2,
+            "error_f": 7.2,
+            "points": 14.4,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 52.0,
+            "actual": 54.3,
+            "error_f": 2.3,
+            "points": 29.1,
+            "max": 30
+          },
+          "precipitation": {
+            "error": "missing data",
+            "points": 0,
+            "max": 20
+          },
+          "wind": {
+            "error": "missing data",
+            "points": 0,
+            "max": 20
+          }
+        }
+      }
+    }
+  },
+  "rays_current": {
+    "temp_f": 65.5,
+    "feels_like_f": null,
+    "wind": null,
+    "wind_dir": null,
+    "wind_mph": null,
+    "gust_mph": null,
+    "humidity_pct": null,
+    "rainfall_in": null
+  }
+}
