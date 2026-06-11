@@ -344,15 +344,22 @@ def build_phone_forecast(_forecast_data=None):
     """Build Apple Weather screenshot section.
 
     Looks for the real iPhone Weather screenshot (iphone_screenshot.png)
-    uploaded daily via iOS Shortcut.
+    uploaded daily via iOS Shortcut. Prefers real uploads (> 200 KB) over
+    the small synthesized Playwright fallback images.
     """
     screenshot_src = None
+    fallback_src = None
     if PREDS_DIR.exists():
         for d in sorted(PREDS_DIR.iterdir(), reverse=True):
             shot = d / "iphone_screenshot.png"
             if shot.exists():
-                screenshot_src = shot
-                break
+                if shot.stat().st_size > 200_000:
+                    screenshot_src = shot
+                    break
+                elif fallback_src is None:
+                    fallback_src = shot
+    if screenshot_src is None:
+        screenshot_src = fallback_src
 
     if screenshot_src is not None:
         # Copy screenshot to docs for serving

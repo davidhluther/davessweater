@@ -1,6 +1,6 @@
 {
   "date": "2026-06-10",
-  "generated_at": "2026-06-11T13:50:15.094389-04:00",
+  "generated_at": "2026-06-11T16:56:05.637935-04:00",
   "actuals": {
     "date": "2026-06-10",
     "fetched_at": "2026-06-11T13:50:15.030933-04:00",
@@ -117,6 +117,57 @@
             "predicted_mph": 10.0,
             "actual_mph": 9.1,
             "error_mph": 0.9,
+            "points": 20,
+            "max": 20
+          }
+        }
+      }
+    },
+    "apple_weather": {
+      "prediction": {
+        "today_high_f": 79.7,
+        "tonight_low_f": 62.5,
+        "day_low_f": 62.5,
+        "wind_mph": 11.4,
+        "precip_in": 0.0,
+        "snow_in": 0.0,
+        "conditions": "Overcast",
+        "category": "cloudy",
+        "source": "Open-Meteo (iPhone fallback)"
+      },
+      "score": {
+        "score": 84.2,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 4
+        },
+        "breakdown": {
+          "high_temp": {
+            "predicted": 79.7,
+            "actual": 76.4,
+            "error_f": 3.3,
+            "points": 26.1,
+            "max": 30
+          },
+          "low_temp": {
+            "predicted": 62.5,
+            "actual": 62.1,
+            "error_f": 0.4,
+            "points": 30,
+            "max": 30
+          },
+          "precipitation": {
+            "predicted_in": 0,
+            "actual_in": 0.094,
+            "binary_correct": false,
+            "error_in": 0.094,
+            "points": 8.1,
+            "max": 20
+          },
+          "wind": {
+            "predicted_mph": 11.4,
+            "actual_mph": 9.1,
+            "error_mph": 2.3,
             "points": 20,
             "max": 20
           }
