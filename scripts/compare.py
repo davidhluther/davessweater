@@ -239,8 +239,10 @@ def _best_rays_prediction(rays_data, target_date):
                     pred["today_high_f"] = day["high_f"]
                 if pred.get("tonight_low_f") is None and day.get("low_f") is not None:
                     pred["tonight_low_f"] = day["low_f"]
-                # Carry over other fields
-                for k in ("category", "precip_in", "daytime_desc", "wind_mph"):
+                # Carry over other fields (not precip_in — Ray never gives
+                # a numeric amount, so the hardcoded 0.0 would misrepresent
+                # his forecast as predicting no rain)
+                for k in ("category", "daytime_desc", "wind_mph"):
                     if k in day and day[k] is not None and k not in pred:
                         pred[k] = day[k]
                 break

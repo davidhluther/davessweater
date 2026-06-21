@@ -409,7 +409,7 @@ def _parse_daily_forecast(text: str) -> list:
             "daytime_desc": daytime_desc,
             "overnight_desc": overnight_desc,
             "category": "unknown",
-            "precip_in": 0.0,
+            "precip_in": None,
         })
 
     return daily
