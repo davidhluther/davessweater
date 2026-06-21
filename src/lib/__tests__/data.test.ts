@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getLatestComparison, getScores, getBlogPosts, slugFromLink } from "@/lib/data";
+import { getLatestComparison, getScores, getBlogPosts, getBlogPost, slugFromLink } from "@/lib/data";
 
 describe("data readers", () => {
   it("reads the latest comparison with actuals", async () => {
@@ -7,6 +7,7 @@ describe("data readers", () => {
     expect(c).not.toBeNull();
     expect(typeof c!.date).toBe("string");
     expect(c!.actuals).toBeTruthy();
+    expect(c!.actuals.high_f).toBeDefined();
   });
   it("reads scores totals", async () => {
     const s = await getScores();
@@ -17,6 +18,11 @@ describe("data readers", () => {
     const posts = await getBlogPosts();
     expect(Array.isArray(posts)).toBe(true);
     expect(posts.length).toBeGreaterThan(0);
+  });
+  it("finds a blog post by slug", async () => {
+    const post = await getBlogPost("welcome-to-daves-sweater");
+    expect(post).not.toBeNull();
+    expect(post!.title.length).toBeGreaterThan(0);
   });
   it("derives slug from a substack /p/ link", () => {
     expect(slugFromLink("https://x.substack.com/p/welcome-to-daves-sweater", "Welcome"))

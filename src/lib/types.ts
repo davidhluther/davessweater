@@ -44,6 +44,6 @@ export interface Scores {
   totals: Partial<Record<"openmeteo" | "raysweather" | "apple_weather", SourceTotals>>;
 }
 
-export interface BlogPost { title: string; link: string; date: string; summary?: string; content?: string; }
+export interface BlogPost { title: string; link: string; date?: string; summary?: string; content?: string; }
 export interface Video { title: string; link: string; date: string; thumb?: string; }
 export interface Product { name: string; link: string; image?: string; price?: string; id?: string; }
