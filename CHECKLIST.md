@@ -23,6 +23,7 @@ in the same change that completes a task. Do not rely on chat memory; this file 
 
 ## Active: Next.js migration (M1)
 Branch `m1-nextjs-migration`. Spec: `planning/specs/2026-06-21-m1-nextjs-port-design.md`.
+Plan: `planning/plans/2026-06-21-m1-nextjs-port.md` (14 tasks, TDD, cutover gated last).
 Parity port + real subfolder pages, native blog, embedded shop. Data pipeline + scoring untouched.
 Cut Vercel over to `next build` and trim the daily workflow to commit `data/` only at the very end.
 - [ ] **M1 — Next.js port** (see spec).
