@@ -4,6 +4,14 @@ Weather tracking site for Boone / Deep Gap, NC. Compares forecasts from Ray's We
 
 Live at **davessweater.com** (deployed via Vercel).
 
+## What it is (premise & voice)
+
+Dave's Sweater is a satirical local weather site — the name is a phonetic play on "Ray's Weather" (RaysWeather.com, the real Boone-area service). The bit: answer "Is it sweater weather?" and run a **"Right Ray / Wrong Ray"** tracker that scores forecast accuracy against actual conditions over time, to show with data that free services keep pace with (or beat) the paid one. Not affiliated with Ray's Weather.
+
+Voice: **dry, wry, factual, having fun — sharp but never bitter.** "Boone's #2 weather resource." The throughline: *"He makes big promises and hopes nobody ever checks the numbers. Now somebody is."* The credibility of the whole bit rests on the tracker being real and the methodology being visible and defensible — keep claims framed as tracked data, not assertion.
+
+> **Note for contributors:** There is additional background context (origin story, tone guidance, and copy direction) that is intentionally **kept out of this public repo**. If you're working locally and need it, ask the owner — it lives in a private/local context file, not in version control. Do not commit personal, political, third-party, or network/infrastructure details to this public repository.
+
 ## Architecture
 
 Static site. No frameworks, no dependencies beyond Python stdlib. GitHub Actions capture data daily; Vercel rebuilds from `docs/` on every push to `main`.
@@ -134,7 +142,21 @@ python scripts/compare.py --date 2026-03-01
 python scripts/compare.py --sweater-only
 ```
 
+## Roadmap & task tracking
+
+**`CHECKLIST.md` (repo root) is the durable single source of truth for outstanding work.** The owner works across multiple sessions and tools and does not want to re-derive state each time.
+
+**Standing instruction for every session:** read `CHECKLIST.md` at the start of work, and keep it current — check off completed items, add new ones as they come up, and treat it (not chat memory) as authoritative. When you finish a tracked task, update the checklist in the same change.
+
 ## Future Ideas
 
 - **Head-to-head comparison on homepage**: Show a Ray's Weather vs Dave's Sweater (Open-Meteo) accuracy comparison directly on the site, similar to the Deep Gap scoring analysis done manually on June 14, 2026. (Dave's Sweater scored 92/100 vs Ray's 67/100 that day.)
 - **Fourthwall Storefront API**: Contact Fourthwall support about the 403 error; if fixed, switch back from RSS feed for better product data.
+- **Weather station (ground truth)**: Stand up a real Ecowitt Wittboy WS90 + GW2000 station in Boone, pull readings via the Ecowitt API in a GitHub Action, and wire those observations in as the authoritative "actuals" source. See `CHECKLIST.md` for the full plan.
+
+## Coordinates & data source reference
+
+- Boone, NC: lat **36.2168**, lon **-81.6746**
+- Open-Meteo forecast: `api.open-meteo.com/v1/forecast` with `daily=temperature_2m_max,temperature_2m_min,precipitation_sum,snowfall_sum,weather_code`, `temperature_unit=fahrenheit`, `timezone=America/New_York`
+- Open-Meteo actuals: `archive-api.open-meteo.com/v1/archive` (same params + `start_date`/`end_date`)
+- Apple Weather via iOS Shortcut writes `iphone_forecast_apple.json` shaped `{today_high_f, tonight_low_f, wind_mph, rainfall_in, conditions}` — use the Shortcut's **Precipitation Amount** (numeric inches) for `rainfall_in`, not the text Condition token.
