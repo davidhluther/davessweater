@@ -5,6 +5,10 @@ start of each session and keep it current — check items off, add new ones, and
 in the same change that completes a task. Do not rely on chat memory; this file wins.
 
 ## Decisions made
+- **Migrating presentation to Next.js** (owner's standard stack) and growing DS from a low-effort
+  joke into a substantive, Ray's-Weather-class local weather site; the **Right/Wrong Ray accuracy
+  tracker is the signature differentiator**. Python data pipeline + scoring stay as the data source.
+  See `planning/specs/2026-06-21-m1-nextjs-port-design.md`.
 - Start with ONE full weather station in Boone; expand later.
 - Hardware: Ecowitt Wittboy (WS90) all-in-one array + GW2000 gateway (~$200). Chosen over
   Ambient Weather WS-2902 (pricier, more locked-in). WS90 uses a haptic rain sensor (no
@@ -16,6 +20,14 @@ in the same change that completes a task. Do not rely on chat memory; this file 
   one-station daily/hourly accuracy tracker needs, and it adds a real maintenance tax. Add
   the Pi later only if local resilience or sub-minute multi-station data is genuinely needed;
   it can be added without changing anything upstream.
+
+## Active: Next.js migration (M1)
+Branch `m1-nextjs-migration`. Spec: `planning/specs/2026-06-21-m1-nextjs-port-design.md`.
+Parity port + real subfolder pages, native blog, embedded shop. Data pipeline + scoring untouched.
+Cut Vercel over to `next build` and trim the daily workflow to commit `data/` only at the very end.
+- [ ] **M1 — Next.js port** (see spec).
+- [ ] Then: M2 real forecast (current/hourly), M3 accuracy layer (head-to-head + methodology page),
+      M4 maps/cams, M5 multi-location, M6 station ground-truth.
 
 ## To do — site (pre-station, outstanding)
 - [ ] **Recalibrate the 5-sweater scale for Boone's climate** — flagged wrong: 54°F scored only
