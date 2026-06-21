@@ -404,6 +404,13 @@ def run_daily_comparison(target_date=None):
         if apple_path.exists():
             apple_data = _parse_apple_forecast(apple_path)
             apple_source = "Open-Meteo"
+            # capture_iphone_weather.py writes a nested structure where the
+            # scoreable fields live under data["forecast"]. Unwrap so the
+            # flat Shortcut-style scoring code below can read them.
+            if isinstance(apple_data, dict) and isinstance(apple_data.get("forecast"), dict):
+                forecast_dict = dict(apple_data["forecast"])
+                forecast_dict.setdefault("source", "Open-Meteo (iPhone fallback)")
+                apple_data = forecast_dict
         else:
             apple_data = None
             apple_source = None
