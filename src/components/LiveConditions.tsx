@@ -17,8 +17,8 @@ export default function LiveConditions({
 
   useEffect(() => {
     const url = "https://api.open-meteo.com/v1/forecast?latitude=36.2168&longitude=-81.6746"
-      + "&current=temperature_2m,wind_speed_10m,relative_humidity_2m,apparent_temperature"
-      + "&daily=temperature_2m_max&forecast_days=1&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America/New_York";
+      + "&current=temperature_2m"
+      + "&daily=temperature_2m_max&forecast_days=1&temperature_unit=fahrenheit&timezone=America/New_York";
     fetch(url).then((r) => r.json()).then((d) => {
       const cur = d?.current?.temperature_2m;
       if (cur == null) return;
