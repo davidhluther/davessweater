@@ -8,4 +8,13 @@ describe("sanitizePostHtml", () => {
     expect(out).toContain("<h4>head</h4>");
     expect(out.toLowerCase()).not.toContain("<script");
   });
+  it("strips inline event handlers", () => {
+    const out = sanitizePostHtml('<p onclick="alert(1)">hi</p><img src="x" onerror="alert(1)" alt="">');
+    expect(out).not.toMatch(/on\w+=/i);
+  });
+  it("strips javascript: and data: href schemes", () => {
+    const out = sanitizePostHtml('<a href="javascript:alert(1)">bad</a><a href="data:text/html,x">bad2</a>');
+    expect(out).not.toContain("javascript:");
+    expect(out).not.toContain("data:");
+  });
 });

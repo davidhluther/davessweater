@@ -5,7 +5,7 @@ export function sanitizePostHtml(html: string): string {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "figure", "figcaption", "h1", "h2"]),
     allowedAttributes: {
       ...sanitizeHtml.defaults.allowedAttributes,
-      img: ["src", "alt", "title", "width", "height", "loading"],
+      img: ["src", "srcset", "alt", "title", "width", "height", "loading"],
       a: ["href", "name", "target", "rel"],
     },
     transformTags: {
