@@ -9,7 +9,8 @@ const MERCHANT_FEED =
 
 function tag(block: string, name: string): string {
   const m = block.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)</${name}>`, "i"));
-  return m ? m[1].trim() : "";
+  if (!m) return "";
+  return m[1].replace(/^\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*$/, "$1").trim();
 }
 
 export function parseYouTubeAtom(xml: string, max = 6): Video[] {

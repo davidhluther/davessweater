@@ -24,4 +24,13 @@ describe("feed parsers", () => {
     expect(p).toHaveLength(1);
     expect(p[0]).toMatchObject({ name: "Mug", price: "$25.10", image: "https://img/1.jpg" });
   });
+  it("unwraps CDATA-wrapped product titles", () => {
+    const cdata = `<rss xmlns:g="http://base.google.com/ns/1.0"><channel>
+<item><g:id>9</g:id><g:item_group_id>z</g:item_group_id><g:title><![CDATA[Sweater Weather Magnet]]></g:title>
+<g:link>https://shop/x/magnet</g:link><g:image_link>https://img/9.jpg</g:image_link><g:price>6.32 USD</g:price></item>
+</channel></rss>`;
+    const p = parseMerchantRss(cdata);
+    expect(p[0].name).toBe("Sweater Weather Magnet");
+    expect(p[0].price).toBe("$6.32");
+  });
 });
