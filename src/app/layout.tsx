@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     default: "Dave's Sweater — Boone's most mostly reliable weather tracker and resource",
     template: "%s — Dave's Sweater",
   },
-  description: "Is it sweater weather in Boone, NC? Did Ray get yesterday right? Find out.",
+  description: "The free forecast keeps beating the paid one. We score every Boone forecast against what actually happened — and keep the receipts.",
   icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
   other: {
     "google-site-verification": [
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "Dave's Sweater",
-    description: "Boone's most mostly reliable weather tracker and resource.",
+    title: "Dave's Sweater — Boone's #1 weather (service) tracker",
+    description: "Free forecasts beat Ray's, tracked daily. Boone's most mostly reliable weather resource.",
     url: "https://davessweater.com", type: "website",
   },
 };
