@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -8,6 +8,7 @@ import SiteFooter from "@/components/SiteFooter";
 import UpdateBar from "@/components/UpdateBar";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], weight: ["500", "700"], variable: "--font-space-grotesk" });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://davessweater.com"),
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn("antialiased", inter.variable)}>
+    <html lang="en" className={cn("antialiased", inter.variable, spaceGrotesk.variable)}>
       <body className="flex min-h-screen flex-col">
         <SiteHeader />
         <UpdateBar />

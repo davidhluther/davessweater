@@ -3,17 +3,25 @@
 @import "shadcn/tailwind.css";
 
 :root {
+  --teal-900: #26323d;
+  --teal-800: #2e4150;
+  --teal-700: #33485a;
   --teal: #3c5468;
+  --teal-50: #eef3f6;
   --orange: #f97316;
+  --orange-600: #c2410c;
+  --green: #1d9e75;
+
   --bg: #ffffff;
+  --surface: #f5f7f9;
   --card: #f8f9fc;
-  --text: #1a1a1a;
-  --muted: #6b7280;
+  --text: #26323d;
+  --muted: #5f6b75;
+  --border: #e3e8ec;
   --radius: 0.75rem;
 
   --background: var(--bg);
   --foreground: var(--text);
-  --border: #e5e7eb;
   --ring: var(--orange);
 }
 
@@ -21,12 +29,20 @@
   --color-background: var(--bg);
   --color-foreground: var(--text);
   --color-teal: var(--teal);
+  --color-teal-700: var(--teal-700);
+  --color-teal-800: var(--teal-800);
+  --color-teal-900: var(--teal-900);
+  --color-teal-50: var(--teal-50);
   --color-orange: var(--orange);
+  --color-orange-600: var(--orange-600);
+  --color-green: var(--green);
   --color-card: var(--card);
+  --color-surface: var(--surface);
   --color-muted: var(--muted);
   --color-border: var(--border);
   --color-ring: var(--ring);
   --font-sans: var(--font-inter);
+  --font-display: var(--font-space-grotesk);
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-sm: calc(var(--radius) * 0.6);
