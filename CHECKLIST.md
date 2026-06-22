@@ -47,7 +47,21 @@ current-conditions strip + a few-day mini-outlook. Apply the design system acros
       pages. Stats/trend/head-to-head refresh daily via existing CI → Vercel (no manual step); the
       *real* Apple screenshot still depends on a manual iPhone-Shortcut upload (auto fallback covers
       other days) — true daily automation of it is a separate, post-M2 pipeline task. No
-      pipeline/scoring changes in M2. **Plan next.**
+      pipeline/scoring changes in M2.
+      **BUILT & verified on branch `m2-redesign-spec`** (plan:
+      `planning/plans/2026-06-21-m2-redesign-accuracy-homepage.md`): lib fully unit-tested
+      (heroStats/trend/headToHead/screenshot), homepage assembled + all pages restyled, mobile-first
+      (header menu, tables→cards), `npm test`/lint/`build` green, visually verified mobile + desktop.
+      Final code review fixes applied — incl. **correcting a false "dead last 29×" claim**: `totals.wrong`
+      is the count of days a source was *graded "Wrong" (scored < 60)*, not a per-day ranking, so the
+      homepage now reads "the free services were never once graded Wrong; Ray's earned that grade 29
+      times" and the `/right-wrong-ray` W/L/M legend was corrected to grade bands. **Pending: merge to
+      `main` + confirm Vercel preview.**
+- [ ] **Post-M2 follow-up — automate the *real* Apple Weather screenshot.** Today the hero's prominent
+      screenshot is daily-auto only for the Open-Meteo fallback; the real Apple shot needs a manual
+      iPhone-Shortcut upload (`upload_screenshot.yml`). Automate the Shortcut and add a reliable source
+      marker (sidecar) so `IphoneShot` can drop the file-size heuristic. (Owner may pick this up in a
+      separate session — the Shortcut is the screenshot source.)
 - [ ] Then: M4 radar/maps + Woolcam + photo-of-the-day, M5 multi-location, M6 Ecowitt station ground-truth.
 
 ## To do — site (pre-station, outstanding)
