@@ -2,11 +2,17 @@ import { getLatestComparison, getScores } from "@/lib/data";
 import { scoreboardRows } from "@/lib/scoreboard";
 import RayFaces from "@/components/RayFaces";
 import type { SourceEntry } from "@/lib/types";
+import type { ReactNode } from "react";
 
 export const metadata = { title: "Right Ray / Wrong Ray" };
 
-const SOURCES: Array<{ key: "raysweather" | "openmeteo" | "apple_weather"; label: string; icon: string }> = [
-  { key: "raysweather", label: "Ray's Weather", icon: "🟠" },
+const SOURCES: Array<{ key: "raysweather" | "openmeteo" | "apple_weather"; label: string; icon: ReactNode }> = [
+  {
+    key: "raysweather",
+    label: "Ray's Weather",
+    // eslint-disable-next-line @next/next/no-img-element
+    icon: <img src="/assets/ray_face.svg" alt="" className="inline h-5 w-5 align-middle" />,
+  },
   { key: "openmeteo", label: "Open-Meteo", icon: "🌐" },
   { key: "apple_weather", label: "Apple Weather", icon: "📱" },
 ];
