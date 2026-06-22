@@ -20,8 +20,9 @@ milestone changes data + scoring only.
 
 **In:**
 - Add free forecasters (capture + normalization adapter each): keyless **NWS**, **Met.no**; keyed
-  **OpenWeatherMap**, **WeatherAPI.com**, **Visual Crossing**, **Tomorrow.io**; **AccuWeather**
-  (conditional on a real perpetual free tier).
+  **OpenWeatherMap**, **WeatherAPI.com**, **Visual Crossing**, **Tomorrow.io**,
+  **Google Weather** (Maps Platform — owner has a billing account on file; free ≤ 10k calls/mo);
+  **AccuWeather** (conditional on a real perpetual free tier).
 - Refactor source ingestion into a **source registry + per-source adapter** pattern so the data side is
   genuinely N-source (no bespoke per-source blocks). Existing Open-Meteo / Apple / Ray's become adapters too.
 - **Scoring redesign** in `compare.py` — the coupled fair model (below).
@@ -33,9 +34,6 @@ milestone changes data + scoring only.
 - Secrets/workflow wiring: capture steps read keys from env; GitHub Actions repo secrets; a signup guide.
 
 **Out:**
-- **Google Weather** — real free tier needs a Google Cloud billing account + card-on-file (usage ≈ $0,
-  but a card is required). Excluded per owner's no-card rule; trivially re-addable if the owner accepts a
-  never-charged card.
 - **Pirate Weather** — redundant (NOAA GFS/HRRR reformatted; already covered by NWS + Open-Meteo's GFS).
 - **Apple WeatherKit** ($99/yr) — Apple is still captured via the iPhone Shortcut.
 - All **presentation** (M3): charts, the coverage-matrix UI, scoreboard, sparklines, motion.
@@ -54,6 +52,7 @@ milestone changes data + scoring only.
 | **WeatherAPI.com** | API key | ✅ | hi / lo / wind / precip / snow / chance | `forecast.json` daily block |
 | **Visual Crossing** | API key | ✅ | hi / lo / wind / precip / snow | 1000 records/day; strong history too |
 | **Tomorrow.io** | API key | ⚠️ confirm | hi / lo / wind / precip | drop if signup requires a card |
+| **Google Weather** | API key (Maps Platform) | ✅ (card on file; free ≤10k/mo) | hi / lo / wind / precip | Google Cloud project + billing enabled; 10-day daily forecast |
 | **AccuWeather** | API key | ⚠️ conditional | hi / lo / wind / precip | include only if a real free tier exists (not a 14-day trial) |
 
 ## Architecture
@@ -124,6 +123,7 @@ Keyed adapters read `os.environ[...]`; keys live in **GitHub Actions repo secret
 | WeatherAPI.com | weatherapi.com/signup.aspx → free | `WEATHERAPI_KEY` |
 | Visual Crossing | visualcrossing.com/weather-api → Sign Up Free (no card) | `VISUALCROSSING_KEY` |
 | Tomorrow.io | tomorrow.io/weather-api → start free (bail if it asks for a card) | `TOMORROW_API_KEY` |
+| Google Weather | Cloud Console → project w/ billing → enable "Weather API" (Maps Platform) → Credentials → create API key (restrict to Weather API) | `GOOGLE_WEATHER_API_KEY` |
 | AccuWeather | developer.accuweather.com → register → create App (only if real free tier) | `ACCUWEATHER_API_KEY` |
 
 Met.no needs no key — its required User-Agent is set to the public site domain
