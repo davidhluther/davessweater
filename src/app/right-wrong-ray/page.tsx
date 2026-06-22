@@ -1,7 +1,7 @@
 import { getLatestComparison, getScores } from "@/lib/data";
 import { scoreboardRows } from "@/lib/scoreboard";
 import RayFaces from "@/components/RayFaces";
-import type { SourceEntry } from "@/lib/types";
+import type { SourceEntry, Actuals } from "@/lib/types";
 import type { ReactNode } from "react";
 
 export const metadata = { title: "Right Ray / Wrong Ray" };
@@ -28,6 +28,19 @@ function predLines(e: SourceEntry): string[] {
   ];
 }
 
+function actualLines(a: Actuals): string[] {
+  const lines = [`Hi: ${a.high_f ?? "N/A"}° / Lo: ${a.low_f ?? "N/A"}°`];
+  if (a.wind_mph != null) lines.push(`Wind: ${Math.round(a.wind_mph * 10) / 10} mph`);
+  if (a.snow_in != null && a.snow_in > 0.01) {
+    const rain = a.precip_in != null ? Math.round((a.precip_in - a.snow_in) * 100) / 100 : null;
+    lines.push(rain != null ? `Snow: ${a.snow_in}" / Rain: ${rain}"` : `Snow: ${a.snow_in}"`);
+  } else if (a.precip_in != null) {
+    lines.push(`Rain: ${a.precip_in}"`);
+  }
+  if (a.conditions) lines.push(a.conditions);
+  return lines;
+}
+
 export default async function Page() {
   const [comp, scores] = await Promise.all([getLatestComparison(), getScores()]);
   const rows = scoreboardRows(scores);
@@ -49,7 +62,7 @@ export default async function Page() {
               <tbody>
                 <tr className="border-t border-border font-semibold">
                   <td className="py-2">Actual{comp.date ? ` (${comp.date})` : ""}</td>
-                  <td>Hi: {a?.high_f}° / Lo: {a?.low_f}°{a?.conditions ? <><br />{a.conditions}</> : null}</td>
+                  <td>{a ? actualLines(a).map((l, i) => <div key={i}>{l}</div>) : "—"}</td>
                   <td colSpan={2}>—</td>
                 </tr>
                 {SOURCES.map(({ key, label, icon }) => {
