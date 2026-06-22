@@ -29,3 +29,36 @@ describe("heroStats", () => {
     expect(heroStats(null).pointGap).toBe(0);
   });
 });
+
+import { trendSeries, trendChartGeometry } from "@/lib/homeStats";
+
+describe("trendSeries", () => {
+  it("maps entries to free(openmeteo) vs rays, null for missing", () => {
+    const s = { entries: [
+      { date: "2026-06-19", openmeteo: 96.3, raysweather: 63.2 },
+      { date: "2026-06-18", raysweather: 50 },
+      { date: "2026-06-17", openmeteo: 83.7 },
+    ], totals: {} };
+    expect(trendSeries(s)).toEqual([
+      { date: "2026-06-17", free: 83.7, rays: null },
+      { date: "2026-06-18", free: null, rays: 50 },
+      { date: "2026-06-19", free: 96.3, rays: 63.2 },
+    ]);
+  });
+});
+
+describe("trendChartGeometry", () => {
+  it("produces polyline point strings skipping nulls, scaled into the viewbox", () => {
+    const g = trendChartGeometry(
+      [{ date: "a", free: 100, rays: 40 }, { date: "b", free: 100, rays: 100 }],
+      600, 120, 40, 100,
+    );
+    expect(g.width).toBe(600);
+    expect(g.free).toBe("0,0 600,0");
+    expect(g.rays).toBe("0,120 600,0");
+  });
+  it("omits null points from a series", () => {
+    const g = trendChartGeometry([{ date: "a", free: null, rays: 70 }, { date: "b", free: 70, rays: 70 }], 600, 120, 40, 100);
+    expect(g.free).toBe("600,60");
+  });
+});
