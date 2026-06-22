@@ -1,0 +1,26 @@
+name: "Test API keys (throwaway)"
+
+on:
+  push:
+    branches: [source-expansion]
+    paths:
+      - ".github/workflows/test_keys.yml"
+      - "scripts/test_keys.py"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Test keyed weather-API secrets
+        env:
+          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+          WEATHERAPI_KEY: ${{ secrets.WEATHERAPI_KEY }}
+          VISUALCROSSING_KEY: ${{ secrets.VISUALCROSSING_KEY }}
+          TOMORROW_API_KEY: ${{ secrets.TOMORROW_API_KEY }}
+          GOOGLE_WEATHER_API_KEY: ${{ secrets.GOOGLE_WEATHER_API_KEY }}
+        run: python scripts/test_keys.py
