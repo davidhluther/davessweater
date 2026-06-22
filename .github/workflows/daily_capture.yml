@@ -45,4 +45,5 @@ jobs:
           git config user.email "bot@davessweater.com"
           git add data/predictions/ data/substack_feed.json
           git commit -m "📸 Daily capture $(date +%Y-%m-%d)" || echo "No changes to commit"
-          git push
+          git pull origin main --no-rebase -X ours || true
+          git push origin main || (sleep 5 && git pull origin main --no-rebase -X ours && git push origin main)

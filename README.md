@@ -1,118 +1,73 @@
 # Dave's Sweater 🧣
 
-Boone, NC's #2 weather resource.
+Boone, NC's #2 weather resource. Live at **[davessweater.com](https://davessweater.com)**.
 
-A daily automated system that:
-1. **Checks** if it's sweater weather (the important question)
-2. **Scores** Ray's forecast accuracy ("Right Ray / Wrong Ray")
-3. **Screenshots** Ray's forecast page as evidence
+A satirical local-weather site that answers the important question — *is it sweater weather?* — and
+runs a **"Right Ray / Wrong Ray"** tracker scoring forecast accuracy (Ray's Weather vs. Open-Meteo
+vs. Apple Weather) against verified actuals on a 100-point scale. The bit: show with data that the
+free services keep pace with — or beat — the paid one.
 
-## How It Works
+## Architecture
+
+Two layers:
+
+- **Data pipeline** (Python, stdlib) — daily GitHub Actions capture forecasts + actuals and score
+  them into `data/*.json`.
+- **Web app** (Next.js 16, App Router) — reads the committed `data/*.json` at build time and renders
+  the site. Vercel runs `next build` on every push to `main`.
 
 ```
-7:00 AM  →  Capture Ray's forecast (screenshot + data) & Open-Meteo prediction
-8:00 AM  →  Fetch yesterday's actual weather, score predictions, rebuild site
+scripts/                # Python data pipeline (Playwright only for capture_rays)
+  capture_openmeteo.py  #   Open-Meteo forecast + historical actuals
+  capture_rays.py       #   Ray's Weather screenshot + scrape
+  capture_iphone_weather.py  # Open-Meteo fallback for the Apple Weather slot
+  compare.py            #   scoring engine + sweater-weather logic
+  export_scores_csv.py  #   scores.json → CSV
+  fetch_substack.py     #   Substack RSS → cached JSON (blog)
+  prepare_public.mjs    #   prebuild: latest data/predictions screenshots → public/screenshots
+data/                   # committed JSON the site reads (predictions, actuals, comparisons, scores)
+src/                    # Next.js app — lib/ (data, feeds, sweater, scoreboard, html), components/, app/ (routes)
+public/                 # served assets (logo, icons); screenshots/ generated at build
+.github/workflows/      # daily_capture, daily_compare, upload_screenshot
 ```
 
-Everything runs on GitHub Actions for free. The site deploys via GitHub Pages.
-
-## Setup
-
-### 1. Create the repo
-```bash
-git init davessweater
-cd davessweater
-# Copy all files from this project
-git add .
-git commit -m "🧣 Initial commit"
-```
-
-### 2. Create a GitHub repo and push
-```bash
-gh repo create davessweater --public --push
-```
-
-### 3. Enable GitHub Pages
-- Go to repo Settings → Pages
-- Source: "Deploy from a branch"
-- Branch: `main`, folder: `/site`
-- Save
-
-### 4. Enable GitHub Actions
-- Go to repo Settings → Actions → General
-- Under "Workflow permissions": select "Read and write permissions"
-- Save
-
-### 5. Test manually
-```bash
-# Trigger the capture workflow
-gh workflow run "📸 Daily Capture"
-
-# Wait a few minutes, then trigger the comparison
-gh workflow run "📊 Daily Compare & Build"
-```
-
-### 6. (Optional) Custom domain
-Add a `CNAME` file to `site/` with `davessweater.com` and configure DNS.
-
-## Local Development
+## Develop
 
 ```bash
-# Install dependencies
-pip install playwright
-playwright install chromium
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # prebuild (screenshots) + next build
+npm test         # vitest
+npm run lint
 
-# Capture today's forecast
-python scripts/capture_rays.py
+# Data pipeline (Python stdlib; Playwright only for capture_rays)
 python scripts/capture_openmeteo.py --forecast
-
-# Fetch actuals for a specific date
 python scripts/capture_openmeteo.py --actuals --date 2026-03-01
-
-# Run comparison
 python scripts/compare.py --date 2026-03-01
-
-# Quick sweater check
 python scripts/compare.py --sweater-only
-
-# Build the site
-python scripts/build_site.py
-# Open site/index.html in a browser
 ```
 
-## Project Structure
+## Daily pipeline
 
-```
-davessweater/
-├── scripts/
-│   ├── capture_rays.py        # Screenshot + scrape RaysWeather.com
-│   ├── capture_openmeteo.py   # Fetch Open-Meteo forecast & actuals
-│   ├── compare.py             # Scoring engine + sweater weather logic
-│   └── build_site.py          # Generate the (very simple) HTML site
-├── data/
-│   ├── predictions/           # Daily forecast captures
-│   │   └── 2026-03-01/
-│   │       ├── rays_forecast.png
-│   │       ├── rays_boone.json
-│   │       └── openmeteo_forecast.json
-│   ├── actuals/               # Verified weather after the fact
-│   │   └── 2026-03-01.json
-│   ├── comparisons/           # Daily Right Ray/Wrong Ray reports
-│   │   └── 2026-03-01.json
-│   └── scores.json            # Running season scoreboard
-├── site/
-│   └── index.html             # THE website. That's it. One page.
-├── .github/workflows/
-│   ├── daily_capture.yml      # 7 AM: capture predictions
-│   └── daily_compare.yml      # 8 AM: compare, score, rebuild site
-├── requirements.txt
-└── README.md
-```
+GitHub Actions run the data pipeline and commit `data/` to `main`; each push triggers a Vercel
+`next build`:
+
+- **Daily Capture** (`daily_capture.yml`, 10:00 AM EDT) — Ray's screenshot + scrape, Open-Meteo
+  forecast, iPhone fallback → commits `data/`.
+- **Daily Compare** (`daily_compare.yml`, 10:30 AM EDT) — fetches yesterday's actuals, scores
+  predictions, exports CSV → commits `data/`.
+- **iPhone Screenshot Upload** (`upload_screenshot.yml`) — accepts an Apple Weather screenshot via
+  the GitHub API (iOS Shortcut) → commits `data/predictions/`.
+
+## Deployment
+
+Hosted on **Vercel** (`vercel.json`: `framework: nextjs`, `buildCommand: npm run build`,
+`outputDirectory: .next`). Every push to `main` deploys. Domain DNS via Squarespace.
 
 ## Cost
 
-$12/year for the domain. Everything else is free.
+~$12/year for the domain. Hosting + Actions are free-tier.
 
 ---
 
-*Dave's Sweater is not affiliated with Ray's Weather. Ray's great. Use his site for actual weather.*
+*Dave's Sweater is not affiliated with Ray's Weather. Ray's great — use his site for actual weather.*

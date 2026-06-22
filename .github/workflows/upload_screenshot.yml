@@ -44,6 +44,9 @@ jobs:
         run: |
           # Use provided date or default to today (EST)
           DATE="${CAPTURE_DATE:-$(TZ=America/New_York date +%Y-%m-%d)}"
+          if [[ ! "$DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+            echo "ERROR: invalid date '$DATE' (expected YYYY-MM-DD)"; exit 1
+          fi
           DIR="data/predictions/${DATE}"
           mkdir -p "$DIR"
 
