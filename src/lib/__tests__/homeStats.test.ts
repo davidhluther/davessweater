@@ -62,3 +62,25 @@ describe("trendChartGeometry", () => {
     expect(g.free).toBe("600,60");
   });
 });
+
+import { headToHead } from "@/lib/homeStats";
+
+describe("headToHead", () => {
+  it("pulls Dave's (openmeteo) vs Ray's scores and actual lines", () => {
+    const comp = {
+      date: "2026-06-20",
+      actuals: { high_f: 84, low_f: 61, wind_mph: 6.2, precip_in: 0 },
+      sweater_weather: {},
+      sources: {
+        openmeteo: { prediction: {}, score: { score: 100, grade: { verdict: "Right", ray_count: 5 }, breakdown: {} } },
+        raysweather: { prediction: {}, score: { score: 51.6, grade: { verdict: "Wrong", ray_count: 2 }, breakdown: {} } },
+      },
+    };
+    const h = headToHead(comp as never);
+    expect(h).toMatchObject({ date: "2026-06-20", dave: 100, rays: 51.6 });
+    expect(h?.actualLines[0]).toBe("Hi: 84° / Lo: 61°");
+  });
+  it("returns null for null comparison", () => {
+    expect(headToHead(null)).toBeNull();
+  });
+});
