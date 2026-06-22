@@ -113,8 +113,18 @@ the home so existing equity is preserved.
 
 **Phase B — cutover (single PR, after preview verified):**
 - `vercel.json`: set `framework: "nextjs"` and remove the `python` `buildCommand`/`outputDirectory`
-  overrides (or point them at the Next build). **Verify Vercel project dashboard settings don't
-  override** (Output Directory may be pinned to `docs`); set framework explicitly.
+  overrides (or point them at the Next build).
+- **CONFIRMED (2026-06-21) — the Vercel `davessweater` project (under the `davidhluther` Hobby account)
+  has stale dashboard overrides that MUST be changed for the cutover**, because `vercel.json` only
+  overrides the fields it names and these are project-wide (production + previews):
+  - Framework Preset = **Other** → change to **Next.js**
+  - Build Command override **ON** = `pip install playwright && python scripts/build_site.py` → turn **OFF**
+  - Output Directory override **ON** = `docs` → turn **OFF** (a Next build cannot output to `docs`)
+  - Install Command / Development Command overrides are OFF (fine).
+  Safe sequencing: a *failed* build never replaces the live deployment, so set the dashboard to
+  Next.js + overrides OFF, then merge the Next app to `main` (or redeploy) — production keeps serving
+  the last good build until the new Next build succeeds. Vercel Git integration already auto-deploys
+  `main` → Production and every branch → Preview.
 - `daily_compare.yml`: remove the `build_site.py` step; stop committing `docs/`; commit only `data/`.
   Move the Ray's screenshot copy from `docs/screenshots/` → `public/screenshots/` (or read from `data/`).
 - Retire `build_site.py` (keep in history; optionally a `legacy/` note) once parity is confirmed.
