@@ -22,7 +22,7 @@ milestone changes data + scoring only.
 - Add free forecasters (capture + normalization adapter each): keyless **NWS**, **Met.no**; keyed
   **OpenWeatherMap**, **WeatherAPI.com**, **Visual Crossing**, **Tomorrow.io**,
   **Google Weather** (Maps Platform — owner has a billing account on file; free ≤ 10k calls/mo);
-  **AccuWeather** (conditional on a real perpetual free tier).
+  **AccuWeather** (free Core Weather API / "Limited Trial", 50 calls/day — confirmed).
 - Refactor source ingestion into a **source registry + per-source adapter** pattern so the data side is
   genuinely N-source (no bespoke per-source blocks). Existing Open-Meteo / Apple / Ray's become adapters too.
 - **Scoring redesign** in `compare.py` — the coupled fair model (below).
@@ -53,7 +53,7 @@ milestone changes data + scoring only.
 | **Visual Crossing** | API key | ✅ | hi / lo / wind / precip / snow | 1000 records/day; strong history too |
 | **Tomorrow.io** | API key | ⚠️ confirm | hi / lo / wind / precip | drop if signup requires a card |
 | **Google Weather** | API key (Maps Platform) | ✅ (card on file; free ≤10k/mo) | hi / lo / wind / precip | Google Cloud project + billing enabled; 10-day daily forecast |
-| **AccuWeather** | API key | ⚠️ conditional | hi / lo / wind / precip | include only if a real free tier exists (not a 14-day trial) |
+| **AccuWeather** | API key | ✅ ("Limited Trial", 50/day) | hi / lo / wind / precip type + amount | Daily Forecast (5-day) + one-time Boone location-key lookup |
 
 ## Architecture
 
@@ -124,7 +124,7 @@ Keyed adapters read `os.environ[...]`; keys live in **GitHub Actions repo secret
 | Visual Crossing | visualcrossing.com/weather-api → Sign Up Free (no card) | `VISUALCROSSING_KEY` |
 | Tomorrow.io | tomorrow.io/weather-api → start free (bail if it asks for a card) | `TOMORROW_API_KEY` |
 | Google Weather | Cloud Console → project w/ billing → enable "Weather API" (Maps Platform) → Credentials → create API key (restrict to Weather API) | `GOOGLE_WEATHER_API_KEY` |
-| AccuWeather | developer.accuweather.com → register → create App (only if real free tier) | `ACCUWEATHER_API_KEY` |
+| AccuWeather | developer.accuweather.com → MY APPS → Add a new App → Products: **Limited Trial** for **Core Weather** → open app → **Keys** tab → copy | `ACCUWEATHER_API_KEY` |
 
 Met.no needs no key — its required User-Agent is set to the public site domain
 (`DavesSweater/1.0 (+https://davessweater.com)`). Captures skip any source whose key is absent.
