@@ -5,6 +5,10 @@ start of each session and keep it current — check items off, add new ones, and
 in the same change that completes a task. Do not rely on chat memory; this file wins.
 
 ## Decisions made
+- **Migrating presentation to Next.js** (owner's standard stack) and growing DS from a low-effort
+  joke into a substantive, Ray's-Weather-class local weather site; the **Right/Wrong Ray accuracy
+  tracker is the signature differentiator**. Python data pipeline + scoring stay as the data source.
+  See `planning/specs/2026-06-21-m1-nextjs-port-design.md`.
 - Start with ONE full weather station in Boone; expand later.
 - Hardware: Ecowitt Wittboy (WS90) all-in-one array + GW2000 gateway (~$200). Chosen over
   Ambient Weather WS-2902 (pricier, more locked-in). WS90 uses a haptic rain sensor (no
@@ -17,15 +21,33 @@ in the same change that completes a task. Do not rely on chat memory; this file 
   the Pi later only if local resilience or sub-minute multi-station data is genuinely needed;
   it can be added without changing anything upstream.
 
+## Done: Next.js migration (M1)
+Migrated presentation to Next.js 16 (App Router); Python data pipeline + scoring unchanged.
+Spec/plan: `planning/specs/2026-06-21-m1-nextjs-port-design.md`, `planning/plans/2026-06-21-m1-nextjs-port.md`.
+- [x] **M1 — Next.js port** — parity + real subfolder routes, native blog (sanitized), embedded
+      Fourthwall shop modal, sitemap/robots, GA + both GSC tags, Ray's-style white logo.
+- [x] **Cutover** — Vercel builds with `next build` (`vercel.json` framework=nextjs, outputDirectory=.next);
+      daily Actions commit `data/` only; `build_site.py`, `docs/`, `rebuild_on_screenshot.yml` retired.
+
+## Active: M2 — modern redesign + accuracy homepage
+Original, dynamic design (own brand; share only the teal/orange palette + the genre — **NOT a Ray's
+clone**, for legal safety). Homepage leads with the joke *backed by data* — free services
+(Open-Meteo/Apple) beat Ray's — from `scores.json`. Keep the iPhone screenshot; add a small live
+current-conditions strip + a few-day mini-outlook. Apply the design system across all pages.
+(The head-to-head was pulled forward from the old M3.)
+- [ ] M2 — design system + accuracy homepage (spec next).
+- [ ] Then: M4 radar/maps + Woolcam + photo-of-the-day, M5 multi-location, M6 Ecowitt station ground-truth.
+
 ## To do — site (pre-station, outstanding)
 - [ ] **Recalibrate the 5-sweater scale for Boone's climate** — flagged wrong: 54°F scored only
       1/5 sweaters, too low. Boone's elevation/wind/humidity make 54°F feel colder than the
       same temp in a lower town; the scale should reflect local context.
 - [ ] Head-to-head accuracy comparison (Ray's vs Dave's Sweater/Open-Meteo) on the homepage,
       like the manual Deep Gap analysis (DS 92/100 vs Ray's 67/100 on 2026-06-14).
-- [ ] Logo: Dave's face in Ray's logo style (needs photo upload).
+- [x] Logo: Ray's-style white wordmark + white circle behind Dave's face (AI-recolored → `public/assets/logo-white.png`).
 - [ ] Copy / sweater-terminology polish.
 - [ ] Make scoring methodology visible/defensible on the site (claims = tracked data, not assertion).
+- [ ] Update `README.md` — still describes the old GitHub-Pages / `build_site.py` setup; rewrite for Next.js + Vercel.
 - [ ] Fourthwall: contact support about the Storefront API 403; if fixed, switch back from the
       Merchant Center RSS feed for richer product data.
 

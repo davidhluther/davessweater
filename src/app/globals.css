@@ -1,0 +1,42 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+:root {
+  --teal: #3c5468;
+  --orange: #f97316;
+  --bg: #ffffff;
+  --card: #f8f9fc;
+  --text: #1a1a1a;
+  --muted: #6b7280;
+  --radius: 0.75rem;
+
+  --background: var(--bg);
+  --foreground: var(--text);
+  --border: #e5e7eb;
+  --ring: var(--orange);
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-teal: var(--teal);
+  --color-orange: var(--orange);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-inter);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-sm: calc(var(--radius) * 0.6);
+}
+
+@layer base {
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-inter), system-ui, sans-serif;
+    line-height: 1.6;
+  }
+}

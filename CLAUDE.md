@@ -14,17 +14,17 @@ Voice: **dry, wry, factual, having fun — sharp but never bitter.** "Boone's #2
 
 ## Architecture
 
-Static site. No frameworks, no dependencies beyond Python stdlib. GitHub Actions capture data daily; Vercel rebuilds from `docs/` on every push to `main`.
+Two layers: a Python **data pipeline** (stdlib) captures forecasts + actuals and scores them into `data/*.json` via daily GitHub Actions; a **Next.js 16 app** (`src/`, App Router) reads that committed JSON at build time and renders the site. Vercel runs `next build` on every push to `main`.
 
 ```
 scripts/
-  build_site.py        # Generates docs/index.html (1433 lines, the whole site)
   compare.py           # Scoring engine — 100-point scale, sweater weather logic
   capture_openmeteo.py # Fetches Open-Meteo forecast + historical actuals
   capture_rays.py      # Screenshots + scrapes RaysWeather.com (Playwright)
   capture_iphone_weather.py  # Open-Meteo fallback for Apple Weather slot
   fetch_substack.py    # Pulls Substack RSS for blog tab
   export_scores_csv.py # Dumps scores.json → CSV
+  prepare_public.mjs   # prebuild (Node): latest data/predictions screenshots → public/screenshots
 
 data/
   predictions/{date}/  # Daily forecast captures (JSON + screenshots)
@@ -38,28 +38,21 @@ data/
   scores.json          # Running season scoreboard
   substack_feed.json   # Cached Substack posts
 
-docs/                  # Build output (Vercel serves this)
-  index.html           # The entire site — one file
+src/                   # Next.js app: lib/ (data, feeds, sweater, scoreboard, html, types),
+                       #   components/ (SiteHeader, LiveConditions client island, ShopGrid, …),
+                       #   app/ (/ , /right-wrong-ray , /blog[/slug] , /videos , /shop , sitemap, robots)
+public/                # served assets (logo-white.png, ray_face.svg, favicon); screenshots/ at build
+# Build output is .next/ (produced by Vercel) — no committed HTML.
 ```
 
 ## Daily Pipeline
 
-Two GitHub Actions workflows, triggered by cron:
+GitHub Actions run the **data** pipeline and commit `data/` to `main`; each push triggers Vercel to rebuild with `next build`. The Actions no longer build HTML.
 
-1. **Daily Capture** (`daily_capture.yml`) — `cron: '0 14 * * *'` (10:00 AM EDT / 9:00 AM EST)
-   - Captures Ray's Weather screenshot + scraped data
-   - Fetches Open-Meteo forecast
-   - Fetches iPhone Weather fallback
-   - Commits to `main`
+1. **Daily Capture** (`daily_capture.yml`) — `cron: '0 14 * * *'` (10:00 AM EDT) — Ray's screenshot + scrape, Open-Meteo forecast, iPhone fallback; commits `data/`.
+2. **Daily Compare** (`daily_compare.yml`) — `cron: '30 14 * * *'`; also on Daily Capture / iPhone-upload completion — fetches yesterday's actuals, runs `compare.py`, exports CSV; commits `data/`.
 
-2. **Daily Compare & Build** (`daily_compare.yml`) — `cron: '30 14 * * *'` (10:30 AM EDT)
-   - Also triggered when Daily Capture or iPhone Screenshot Upload completes
-   - Fetches yesterday's actuals from Open-Meteo archive
-   - Runs `compare.py` to score predictions
-   - Rebuilds site with `build_site.py`
-   - Commits to `main` → Vercel auto-deploys
-
-There's also an `upload_screenshot.yml` that accepts iPhone forecast screenshots via API, and `rebuild_on_screenshot.yml` that triggers a rebuild when one arrives.
+`upload_screenshot.yml` accepts iPhone forecast screenshots via the GitHub API → commits `data/predictions/`. The old `rebuild_on_screenshot.yml` + `build_site.py` were retired at the Next.js cutover; Vercel rebuilds on every `data/` commit.
 
 ## Scoring System
 
@@ -105,11 +98,10 @@ Uses Fourthwall for merch. The Storefront API has a persistent 403 issue (unreso
 
 ## Deployment
 
-- **Hosting**: Vercel (migrated from GitHub Pages)
-- **Config**: `vercel.json` — runs `python scripts/build_site.py`, serves `docs/`
-- **Domain**: davessweater.com + www.davessweater.com (DNS via Squarespace)
-- **Build**: Python stdlib only — no `pip install` needed for site build
-- **Capture workflows**: Need `playwright` (for Ray's Weather screenshots)
+- **Hosting**: Vercel — `next build` on every push to `main` (Git integration). `vercel.json`: `framework: nextjs`, `outputDirectory: .next`. Domain davessweater.com (+ www); DNS via Squarespace.
+- **Build**: Node/Next (`npm`). `prebuild` (`scripts/prepare_public.mjs`) copies the latest `data/predictions` screenshots → `public/screenshots/`.
+- **Data pipeline**: Python stdlib; `capture_rays.py` needs Playwright. Runs only in GitHub Actions.
+- **Stale config (inert)**: the Vercel project dashboard still has GitHub-Pages-era *overrides* (build cmd / output dir = `docs`); `vercel.json` overrides them. GitHub Pages is also still configured but vestigial (DNS → Vercel) — disable when convenient.
 
 ## Key Implementation Details
 
@@ -119,15 +111,15 @@ Uses Fourthwall for merch. The Storefront API has a persistent 403 issue (unreso
 - Snow + rain are combined into `precip_in` for scoring
 - Timezone: All EST/EDT via `zoneinfo.ZoneInfo("America/New_York")`
 - GitHub Actions cron is UTC-only; EST = UTC-5, EDT = UTC-4
-- Site has tabs: Forecast, Scoreboard, Blog, Videos, Swag Shop
+- Site routes: `/` (Weather), `/right-wrong-ray` (comparison + scoreboard), `/videos`, `/blog` (+ `/blog/[slug]`), `/shop`
+- Both GSC verification tags + GA live in `src/app/layout.tsx` metadata
 - GSC verification meta tag: `Pxd8jrNaWOdwazTvIA9xHgCib5f8yC3n6IfAZQ1s8M0`
 
 ## Development
 
 ```bash
-# Build the site locally
-python scripts/build_site.py
-# Open docs/index.html
+# Run the site (Next.js)
+npm install && npm run dev   # http://localhost:3000  (build: npm run build · test: npm test)
 
 # Capture today's forecast
 python scripts/capture_openmeteo.py --forecast

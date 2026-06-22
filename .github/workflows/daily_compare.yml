@@ -58,24 +58,12 @@ jobs:
       - name: Export scores CSV
         run: python scripts/export_scores_csv.py
 
-      - name: Build site
-        run: python scripts/build_site.py
-        env:
-          FOURTHWALL_TOKEN: ${{ secrets.FOURTHWALL_TOKEN }}
-
-      - name: Copy screenshots to docs directory
-        run: |
-          LATEST=$(ls -d data/predictions/*/ 2>/dev/null | sort | tail -1)
-          if [ -n "$LATEST" ]; then
-            mkdir -p docs/screenshots
-            cp -r "$LATEST"/*.png docs/screenshots/ 2>/dev/null || true
-          fi
-
+      # Site is built by Vercel (next build) on push; the bot only commits data/.
       - name: Commit results
         run: |
           git config user.name "DavesSweaterBot"
           git config user.email "bot@davessweater.com"
-          git add data/ docs/
+          git add data/
           git commit -m "📊 Daily comparison $(date +%Y-%m-%d)" || echo "No changes to commit"
           git pull origin main --no-rebase -X ours || true
           git push origin main || (sleep 5 && git pull origin main --no-rebase -X ours && git push origin main)
