@@ -21,8 +21,7 @@ milestone changes data + scoring only.
 **In:**
 - Add free forecasters (capture + normalization adapter each): keyless **NWS**, **Met.no**; keyed
   **OpenWeatherMap**, **WeatherAPI.com**, **Visual Crossing**, **Tomorrow.io**,
-  **Google Weather** (Maps Platform — owner has a billing account on file; free ≤ 10k calls/mo);
-  **AccuWeather** (free Core Weather API / "Limited Trial", 50 calls/day — confirmed).
+  **Google Weather** (Maps Platform — owner has a billing account on file; free ≤ 10k calls/mo).
 - Refactor source ingestion into a **source registry + per-source adapter** pattern so the data side is
   genuinely N-source (no bespoke per-source blocks). Existing Open-Meteo / Apple / Ray's become adapters too.
 - **Scoring redesign** in `compare.py` — the coupled fair model (below).
@@ -34,6 +33,9 @@ milestone changes data + scoring only.
 - Secrets/workflow wiring: capture steps read keys from env; GitHub Actions repo secrets; a signup guide.
 
 **Out:**
+- **AccuWeather** — retired its perpetual free tier; access is now a **14-day trial → paid** (~$2/mo+),
+  so it can't power a standing daily source. *Its paywall is itself an availability data point worth
+  surfacing* — the only "expert" brand in the roster that gates free access.
 - **Pirate Weather** — redundant (NOAA GFS/HRRR reformatted; already covered by NWS + Open-Meteo's GFS).
 - **Apple WeatherKit** ($99/yr) — Apple is still captured via the iPhone Shortcut.
 - All **presentation** (M3): charts, the coverage-matrix UI, scoreboard, sparklines, motion.
@@ -53,7 +55,6 @@ milestone changes data + scoring only.
 | **Visual Crossing** | API key | ✅ | hi / lo / wind / precip / snow | 1000 records/day; strong history too |
 | **Tomorrow.io** | API key | ⚠️ confirm | hi / lo / wind / precip | drop if signup requires a card |
 | **Google Weather** | API key (Maps Platform) | ✅ (card on file; free ≤10k/mo) | hi / lo / wind / precip | Google Cloud project + billing enabled; 10-day daily forecast |
-| **AccuWeather** | API key | ✅ ("Limited Trial", 50/day) | hi / lo / wind / precip type + amount | Daily Forecast (5-day) + one-time Boone location-key lookup |
 
 ## Architecture
 
@@ -124,7 +125,6 @@ Keyed adapters read `os.environ[...]`; keys live in **GitHub Actions repo secret
 | Visual Crossing | visualcrossing.com/weather-api → Sign Up Free (no card) | `VISUALCROSSING_KEY` |
 | Tomorrow.io | tomorrow.io/weather-api → start free (bail if it asks for a card) | `TOMORROW_API_KEY` |
 | Google Weather | Cloud Console → project w/ billing → enable "Weather API" (Maps Platform) → Credentials → create API key (restrict to Weather API) | `GOOGLE_WEATHER_API_KEY` |
-| AccuWeather | developer.accuweather.com → MY APPS → Add a new App → Products: **Limited Trial** for **Core Weather** → open app → **Keys** tab → copy | `ACCUWEATHER_API_KEY` |
 
 Met.no needs no key — its required User-Agent is set to the public site domain
 (`DavesSweater/1.0 (+https://davessweater.com)`). Captures skip any source whose key is absent.
@@ -143,7 +143,7 @@ Met.no needs no key — its required User-Agent is set to the public site domain
 ## Acceptance criteria
 
 1. Keyless **NWS** + **Met.no** captured daily and scored with no secrets.
-2. Keyed adapters (OWM, WeatherAPI, Visual Crossing, Tomorrow.io, AccuWeather-if-free) implemented;
+2. Keyed adapters (OWM, WeatherAPI, Visual Crossing, Tomorrow.io, Google Weather) implemented;
    each activates when its secret is set and **skips cleanly when absent**.
 3. **Registry/adapter refactor**: adding a source = add an adapter + register it (no bespoke `compare.py` edits).
 4. Scoring implements the coupled model: fixed 100-pt denominator; precip type (10) + amount (10);
