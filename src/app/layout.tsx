@@ -5,7 +5,6 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import UpdateBar from "@/components/UpdateBar";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], weight: ["500", "700"], variable: "--font-space-grotesk" });
@@ -36,7 +35,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={cn("antialiased", inter.variable, spaceGrotesk.variable)}>
       <body className="flex min-h-screen flex-col">
         <SiteHeader />
-        <UpdateBar />
         <main className="flex-1">{children}</main>
         <SiteFooter />
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-7XL0TZ4GSS" strategy="afterInteractive" />
