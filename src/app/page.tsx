@@ -25,7 +25,8 @@ export default async function HomePage() {
         {stats.rays && stats.bestFree && (
           <p className="mt-4 text-sm text-white/80">
             Over {stats.trackedDays} days the free forecast averaged {stats.bestFree.avg.toFixed(1)} —
-            beating Ray&apos;s by {stats.pointGap.toFixed(1)} points, while Ray&apos;s finished dead last {stats.deadLastDays} times.
+            beating Ray&apos;s by {stats.pointGap.toFixed(1)} points. The free services were never once
+            graded &ldquo;Wrong.&rdquo; Ray&apos;s earned that grade {stats.raysWrongDays} times.
           </p>
         )}
         <p className="mt-4 border-l-2 border-orange pl-3 text-sm italic text-white/70">

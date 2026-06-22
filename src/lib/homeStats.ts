@@ -16,7 +16,7 @@ export interface SourceStat {
 export interface HeroStats {
   trackedDays: number; sources: SourceStat[];
   rays: SourceStat | null; bestFree: SourceStat | null;
-  pointGap: number; deadLastDays: number;
+  pointGap: number; raysWrongDays: number;
 }
 
 function toStat(key: SrcKey, t: SourceTotals): SourceStat {
@@ -36,7 +36,8 @@ export function heroStats(scores: Scores | null): HeroStats {
   const bestFree = frees.length ? frees.reduce((a, b) => (b.avg > a.avg ? b : a)) : null;
   const trackedDays = Math.max(0, ...sources.map((s) => s.days));
   const pointGap = bestFree && rays ? round1(bestFree.avg - rays.avg) : 0;
-  return { trackedDays, sources, rays, bestFree, pointGap, deadLastDays: rays?.wrong ?? 0 };
+  // raysWrongDays = days Ray's scored under 60 (graded "Wrong"), from totals.wrong
+  return { trackedDays, sources, rays, bestFree, pointGap, raysWrongDays: rays?.wrong ?? 0 };
 }
 
 // ---------------------------------------------------------------------------
@@ -78,7 +79,7 @@ export function trendChartGeometry(
 
 export interface HeadToHead { date: string; dave: number | null; rays: number | null; actualLines: string[]; }
 
-function actualLines(a: Actuals | undefined): string[] {
+export function actualLines(a: Actuals | undefined): string[] {
   if (!a) return [];
   const lines = [`Hi: ${a.high_f ?? "N/A"}° / Lo: ${a.low_f ?? "N/A"}°`];
   if (a.wind_mph != null) lines.push(`Wind: ${Math.round(a.wind_mph * 10) / 10} mph`);

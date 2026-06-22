@@ -6,7 +6,7 @@ export default function TrendChart({ points }: { points: TrendPoint[] }) {
   return (
     <div>
       <svg viewBox={`0 0 ${g.width} ${g.height}`} className="w-full" role="img"
-        aria-label="The free forecast scores consistently near 90 across the season while Ray's scores lower and more erratically.">
+        aria-label="Daily forecast accuracy scores across the tracked season — the free forecasts versus Ray's Weather.">
         {g.rays && <polyline points={g.rays} fill="none" className="stroke-orange" strokeWidth="3" strokeDasharray="2 4" />}
         {g.free && <polyline points={g.free} fill="none" className="stroke-green" strokeWidth="3" />}
       </svg>

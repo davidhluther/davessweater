@@ -1,8 +1,9 @@
 import { getLatestComparison, getScores } from "@/lib/data";
 import { scoreboardRows } from "@/lib/scoreboard";
+import { actualLines } from "@/lib/homeStats";
 import RayFaces from "@/components/RayFaces";
 import SectionBand from "@/components/SectionBand";
-import type { SourceEntry, Actuals } from "@/lib/types";
+import type { SourceEntry } from "@/lib/types";
 import type { ReactNode } from "react";
 
 export const metadata = { title: "Right Ray / Wrong Ray" };
@@ -29,18 +30,6 @@ function predLines(e: SourceEntry): string[] {
   ];
 }
 
-function actualLines(a: Actuals): string[] {
-  const lines = [`Hi: ${a.high_f ?? "N/A"}° / Lo: ${a.low_f ?? "N/A"}°`];
-  if (a.wind_mph != null) lines.push(`Wind: ${Math.round(a.wind_mph * 10) / 10} mph`);
-  if (a.snow_in != null && a.snow_in > 0.01) {
-    const rain = a.precip_in != null ? Math.round((a.precip_in - a.snow_in) * 100) / 100 : null;
-    lines.push(rain != null ? `Snow: ${a.snow_in}" / Rain: ${rain}"` : `Snow: ${a.snow_in}"`);
-  } else if (a.precip_in != null) {
-    lines.push(`Rain: ${a.precip_in}"`);
-  }
-  if (a.conditions) lines.push(a.conditions);
-  return lines;
-}
 
 export default async function Page() {
   const [comp, scores] = await Promise.all([getLatestComparison(), getScores()]);
@@ -158,7 +147,7 @@ export default async function Page() {
             ))}
           </ul>
 
-          <p className="mt-3 text-xs text-muted">W = best forecast that day · L = worst · M = somewhere in the middle</p>
+          <p className="mt-3 text-xs text-muted">W = graded Right (75+) · L = graded Wrong (under 60) · M = Meh (60&ndash;74)</p>
         </SectionBand>
       )}
     </>

@@ -17,10 +17,10 @@ describe("heroStats", () => {
     expect(h.sources[0]).toMatchObject({ label: "Open-Meteo", isFree: true, record: "105–0–2" });
     expect(h.sources[0].avg).toBeCloseTo(91.6, 1);
   });
-  it("derives tracked days, dead-last count, and the free-vs-Ray's point gap", () => {
+  it("derives tracked days, graded-Wrong count, and the free-vs-Ray's point gap", () => {
     const h = heroStats(scores);
     expect(h.trackedDays).toBe(107);
-    expect(h.deadLastDays).toBe(29);
+    expect(h.raysWrongDays).toBe(29);
     expect(h.bestFree?.key).toBe("apple_weather");
     expect(h.pointGap).toBeCloseTo(21.2, 1);
   });
