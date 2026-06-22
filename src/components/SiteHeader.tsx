@@ -17,7 +17,7 @@ export default function SiteHeader() {
     <header className="sticky top-0 z-50 flex min-h-[5.5rem] flex-wrap items-center gap-4 border-b-4 border-orange bg-teal px-6 py-2">
       <Link href="/" className="flex shrink-0 items-center gap-3">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/assets/logo.svg" alt="Dave's Sweater" className="h-12 w-auto" />
+        <img src="/assets/logo.svg" alt="Dave's Sweater" className="h-12 w-auto rounded-md bg-white px-2 py-1" />
       </Link>
       <span className="hidden whitespace-nowrap text-[0.95rem] italic text-white/75 md:inline">
         Boone&apos;s most mostly reliable weather tracker and resource
