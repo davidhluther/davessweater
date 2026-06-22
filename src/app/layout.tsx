@@ -37,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="flex min-h-screen flex-col">
         <SiteHeader />
         <UpdateBar />
-        <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6">{children}</main>
+        <main className="flex-1">{children}</main>
         <SiteFooter />
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-7XL0TZ4GSS" strategy="afterInteractive" />
         <Script id="ga" strategy="afterInteractive">{`
