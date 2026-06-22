@@ -35,7 +35,19 @@ clone**, for legal safety). Homepage leads with the joke *backed by data* — fr
 (Open-Meteo/Apple) beat Ray's — from `scores.json`. Keep the iPhone screenshot; add a small live
 current-conditions strip + a few-day mini-outlook. Apply the design system across all pages.
 (The head-to-head was pulled forward from the old M3.)
-- [ ] M2 — design system + accuracy homepage (spec next).
+- [ ] M2 — design system + accuracy homepage. **Spec approved:**
+      `planning/specs/2026-06-21-m2-redesign-accuracy-homepage-design.md`. Locked direction:
+      Style-A data-journalism on the bold "C" dark-teal/orange palette; dark hero + dark
+      feature-bands on a light body; **mobile-first** (likeliest traffic); homepage = conversion
+      **front door** leading with the data (free Open-Meteo/Apple beat paid Ray's); the daily
+      iPhone screenshot **co-anchors the hero** ("the only weather service you need is already in
+      your pocket"), labeled honestly real-Apple-vs-Open-Meteo-fallback; brand mark "Boone's #1
+      weather ~~service~~ tracker" (eyebrow), "most mostly reliable" tagline by the logo; sharp,
+      pointed voice (don't soften); Space Grotesk display + Inter; design system applied across all
+      pages. Stats/trend/head-to-head refresh daily via existing CI → Vercel (no manual step); the
+      *real* Apple screenshot still depends on a manual iPhone-Shortcut upload (auto fallback covers
+      other days) — true daily automation of it is a separate, post-M2 pipeline task. No
+      pipeline/scoring changes in M2. **Plan next.**
 - [ ] Then: M4 radar/maps + Woolcam + photo-of-the-day, M5 multi-location, M6 Ecowitt station ground-truth.
 
 ## To do — site (pre-station, outstanding)
@@ -44,6 +56,7 @@ current-conditions strip + a few-day mini-outlook. Apply the design system acros
       same temp in a lower town; the scale should reflect local context.
 - [ ] Head-to-head accuracy comparison (Ray's vs Dave's Sweater/Open-Meteo) on the homepage,
       like the manual Deep Gap analysis (DS 92/100 vs Ray's 67/100 on 2026-06-14).
+      → folded into M2 spec (homepage §4, "Yesterday's head-to-head").
 - [x] Logo: Ray's-style white wordmark + white circle behind Dave's face (AI-recolored → `public/assets/logo-white.png`).
 - [ ] Copy / sweater-terminology polish.
 - [ ] Make scoring methodology visible/defensible on the site (claims = tracked data, not assertion).
