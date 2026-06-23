@@ -1,6 +1,6 @@
 {
   "date": "2026-05-18",
-  "generated_at": "2026-06-11T16:55:17.402490-04:00",
+  "generated_at": "2026-06-22T20:54:19.334652-04:00",
   "actuals": {
     "date": "2026-05-18",
     "fetched_at": "2026-05-19T13:25:28.770397-04:00",
@@ -37,40 +37,43 @@
         "wind_mph": 11.7
       },
       "score": {
-        "score": 95.0,
+        "score": 85.2,
         "grade": {
           "verdict": "right",
-          "ray_count": 5
+          "ray_count": 4
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip_type": true,
+          "precip_amount": true
         },
         "breakdown": {
           "high_temp": {
-            "predicted": 79.8,
-            "actual": 76.2,
-            "error_f": 3.6,
             "points": 25.2,
-            "max": 30
+            "max": 30,
+            "scored": true
           },
           "low_temp": {
-            "predicted": 59.6,
-            "actual": 58.9,
-            "error_f": 0.7,
-            "points": 30,
-            "max": 30
-          },
-          "precipitation": {
-            "predicted_in": 0,
-            "actual_in": 0.008,
-            "binary_correct": true,
-            "error_in": 0.008,
-            "points": 19.8,
-            "max": 20
+            "points": 30.0,
+            "max": 30,
+            "scored": true
           },
           "wind": {
-            "predicted_mph": 11.7,
-            "actual_mph": 11.6,
-            "error_mph": 0.1,
-            "points": 20,
-            "max": 20
+            "points": 20.0,
+            "max": 20,
+            "scored": true
+          },
+          "precip_type": {
+            "points": 0.0,
+            "max": 10,
+            "scored": true
+          },
+          "precip_amount": {
+            "points": 10.0,
+            "max": 10,
+            "scored": true
           }
         }
       }
@@ -80,45 +83,47 @@
         "today_high_f": 84.0,
         "tonight_low_f": 60.0,
         "category": "unknown",
-        "precip_in": 0.0,
         "daytime_desc": "Mostly sunny; Summer temperatures; Light wind becoming South 5-15 mph",
         "wind_mph": 10.0
       },
       "score": {
-        "score": 82.4,
+        "score": 62.6,
         "grade": {
-          "verdict": "right",
-          "ray_count": 4
+          "verdict": "meh",
+          "ray_count": 3
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip_type": true,
+          "precip_amount": false
         },
         "breakdown": {
           "high_temp": {
-            "predicted": 84.0,
-            "actual": 76.2,
-            "error_f": 7.8,
             "points": 12.6,
-            "max": 30
+            "max": 30,
+            "scored": true
           },
           "low_temp": {
-            "predicted": 60.0,
-            "actual": 58.9,
-            "error_f": 1.1,
-            "points": 30,
-            "max": 30
-          },
-          "precipitation": {
-            "predicted_in": 0,
-            "actual_in": 0.008,
-            "binary_correct": true,
-            "error_in": 0.008,
-            "points": 19.8,
-            "max": 20
+            "points": 30.0,
+            "max": 30,
+            "scored": true
           },
           "wind": {
-            "predicted_mph": 10.0,
-            "actual_mph": 11.6,
-            "error_mph": 1.6,
-            "points": 20,
-            "max": 20
+            "points": 20.0,
+            "max": 20,
+            "scored": true
+          },
+          "precip_type": {
+            "points": 0.0,
+            "max": 10,
+            "scored": true
+          },
+          "precip_amount": {
+            "points": null,
+            "max": 10,
+            "scored": false
           }
         }
       }
@@ -136,40 +141,43 @@
         "source": "Open-Meteo (iPhone fallback)"
       },
       "score": {
-        "score": 95.0,
+        "score": 85.2,
         "grade": {
           "verdict": "right",
-          "ray_count": 5
+          "ray_count": 4
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip_type": true,
+          "precip_amount": true
         },
         "breakdown": {
           "high_temp": {
-            "predicted": 79.8,
-            "actual": 76.2,
-            "error_f": 3.6,
             "points": 25.2,
-            "max": 30
+            "max": 30,
+            "scored": true
           },
           "low_temp": {
-            "predicted": 59.6,
-            "actual": 58.9,
-            "error_f": 0.7,
-            "points": 30,
-            "max": 30
-          },
-          "precipitation": {
-            "predicted_in": 0,
-            "actual_in": 0.008,
-            "binary_correct": true,
-            "error_in": 0.008,
-            "points": 19.8,
-            "max": 20
+            "points": 30.0,
+            "max": 30,
+            "scored": true
           },
           "wind": {
-            "predicted_mph": 11.7,
-            "actual_mph": 11.6,
-            "error_mph": 0.1,
-            "points": 20,
-            "max": 20
+            "points": 20.0,
+            "max": 20,
+            "scored": true
+          },
+          "precip_type": {
+            "points": 0.0,
+            "max": 10,
+            "scored": true
+          },
+          "precip_amount": {
+            "points": 10.0,
+            "max": 10,
+            "scored": true
           }
         }
       }
