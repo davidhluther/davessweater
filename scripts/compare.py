@@ -15,6 +15,9 @@ from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
 from pathlib import Path
 
+from scoring import score_prediction
+from sources import SOURCES, derive_type
+
 EST = ZoneInfo("America/New_York")
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
@@ -115,107 +118,6 @@ def _get_low(entry):
     return entry.get("tonight_low_f", entry.get("today_low_f", entry.get("low_f")))
 
 
-def score_prediction(predicted, actual):
-    """
-    Score a prediction against actuals. Returns 0-100.
-
-    Scoring (fixed 100-point scale, missing predictions score 0):
-    - High temp: up to 30 pts (within 2°F = full, scaled down from there)
-    - Low temp: up to 30 pts (same scale)
-    - Wind speed: up to 20 pts (within 3 mph = full, scaled down from there)
-    - Precipitation: up to 20 pts (10 binary + 10 amount accuracy)
-    """
-    score = 0
-    breakdown = {}
-
-    pred_high = _get_high(predicted)
-    pred_low = _get_low(predicted)
-    actual_high = _get_high(actual)
-    actual_low = _get_low(actual)
-
-    # High temp (30 pts — within 2°F = full, lose 3 pts per degree beyond that)
-    if pred_high is not None and actual_high is not None:
-        high_err = abs(pred_high - actual_high)
-        high_pts = max(0, 30 - max(0, high_err - 2) * 3)
-        score += high_pts
-        breakdown["high_temp"] = {
-            "predicted": pred_high,
-            "actual": actual_high,
-            "error_f": round(high_err, 1),
-            "points": round(high_pts, 1),
-            "max": 30,
-        }
-    else:
-        breakdown["high_temp"] = {"error": "missing data", "points": 0, "max": 30}
-
-    # Low temp (30 pts — within 2°F = full, lose 3 pts per degree beyond that)
-    if pred_low is not None and actual_low is not None:
-        low_err = abs(pred_low - actual_low)
-        low_pts = max(0, 30 - max(0, low_err - 2) * 3)
-        score += low_pts
-        breakdown["low_temp"] = {
-            "predicted": pred_low,
-            "actual": actual_low,
-            "error_f": round(low_err, 1),
-            "points": round(low_pts, 1),
-            "max": 30,
-        }
-    else:
-        breakdown["low_temp"] = {"error": "missing data", "points": 0, "max": 30}
-
-    # Precipitation (20 pts: 10 binary call + 10 amount accuracy)
-    pred_precip_in = predicted.get("precip_in")
-    actual_precip_in = actual.get("precip_in") or 0
-    if pred_precip_in is not None:
-        pred_precip_val = pred_precip_in or 0
-        pred_precip = pred_precip_val > 0.01
-        actual_precip = actual_precip_in > 0.01
-
-        # Binary: did it rain or not? (10 pts)
-        binary_pts = 10 if pred_precip == actual_precip else 0
-
-        # Amount accuracy (10 pts) — lose 2 pts per 0.1" difference
-        precip_err = abs(pred_precip_val - actual_precip_in)
-        amount_pts = max(0, 10 - precip_err * 20)
-
-        precip_pts = binary_pts + amount_pts
-        score += precip_pts
-        breakdown["precipitation"] = {
-            "predicted_in": round(pred_precip_val, 3),
-            "actual_in": round(actual_precip_in, 3),
-            "binary_correct": pred_precip == actual_precip,
-            "error_in": round(precip_err, 3),
-            "points": round(precip_pts, 1),
-            "max": 20,
-        }
-    else:
-        breakdown["precipitation"] = {"error": "missing data", "points": 0, "max": 20}
-
-    # Wind speed (20 pts — within 3 mph = full, lose 2 pts per mph beyond that)
-    pred_wind = predicted.get("wind_mph")
-    actual_wind = actual.get("wind_mph")
-    if pred_wind is not None and actual_wind is not None:
-        wind_err = abs(pred_wind - actual_wind)
-        wind_pts = max(0, 20 - max(0, wind_err - 3) * 2)
-        score += wind_pts
-        breakdown["wind"] = {
-            "predicted_mph": round(pred_wind, 1),
-            "actual_mph": round(actual_wind, 1),
-            "error_mph": round(wind_err, 1),
-            "points": round(wind_pts, 1),
-            "max": 20,
-        }
-    else:
-        breakdown["wind"] = {"error": "missing data", "points": 0, "max": 20}
-
-    total = round(score, 1)
-    return {
-        "score": total,
-        "grade": _score_grade(total),
-        "breakdown": breakdown,
-    }
-
-
 def _best_rays_prediction(rays_data, target_date):
     """
     Build the best prediction dict from Ray's data by merging forecast + daily.
@@ -295,18 +197,61 @@ def _categories_close(a, b):
     return pair in close_pairs
 
 
-def _score_grade(score):
-    """Convert score to a grade with ray_count for face icons."""
-    if score >= 90:
-        return {"verdict": "right", "ray_count": 5}
-    elif score >= 75:
-        return {"verdict": "right", "ray_count": 4}
-    elif score >= 60:
-        return {"verdict": "meh", "ray_count": 3}
-    elif score >= 40:
-        return {"verdict": "wrong", "ray_count": 2}
+def _normalize_actual(actual):
+    """Actuals -> contract. Derive liquid rain from old-schema precip_in when needed."""
+    rain = actual.get("rain_in")
+    snow = actual.get("snow_in") or 0
+    if rain is None:
+        rain = max(0.0, (actual.get("precip_in") or 0) - snow)
+    return {
+        "high_f": actual.get("high_f"), "low_f": actual.get("low_f"),
+        "wind_mph": actual.get("wind_mph"),
+        "rain_in": round(rain, 3), "snow_in": round(snow, 3),
+    }
+
+
+_CAT_TO_TYPE = {"rain": "rain", "drizzle": "rain", "storm": "rain", "snow": "snow",
+                "clear": "none", "cloudy": "none", "fog": "none"}
+
+
+def _to_contract(pred):
+    """Any source's raw prediction dict -> the scoring contract.
+    Already-normalized new sources keep their explicit fields_provided.
+    Old-schema (precip_in) and text sources (Ray's/Apple) are backfilled."""
+    high, low, wind = _get_high(pred), _get_low(pred), pred.get("wind_mph")
+    snow = pred.get("snow_in")
+    rain = pred.get("rain_in")
+    if rain is None and pred.get("precip_in") is not None:
+        rain = max(0.0, pred["precip_in"] - (snow or 0))
+    ptype = pred.get("precip_type")
+    if ptype is None:
+        cat = pred.get("category")
+        if cat in _CAT_TO_TYPE:
+            ptype = _CAT_TO_TYPE[cat]
+        elif pred.get("daytime_desc"):
+            d = pred["daytime_desc"].lower()
+            if any(w in d for w in ("snow", "flurr", "sleet", "wintry")):
+                ptype = "snow"
+            elif any(w in d for w in ("rain", "shower", "storm", "thunder", "drizzle")):
+                ptype = "rain"
+            else:
+                ptype = "none"
+        elif rain is not None or snow is not None:
+            ptype = derive_type(rain, snow)
+    if pred.get("fields_provided"):
+        fp = list(pred["fields_provided"])
     else:
-        return {"verdict": "wrong", "ray_count": 1}
+        fp = []
+        if high is not None: fp.append("high")
+        if low is not None: fp.append("low")
+        if wind is not None: fp.append("wind")
+        if ptype is not None: fp.append("precip_type")
+        if rain is not None: fp.append("rain_amount")
+        if snow is not None: fp.append("snow_amount")
+    return {"high_f": high, "low_f": low, "wind_mph": wind, "precip_type": ptype,
+            "rain_in": (round(rain, 3) if rain is not None else None),
+            "snow_in": (round(snow, 3) if snow is not None else None),
+            "fields_provided": fp}
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -334,6 +279,7 @@ def run_daily_comparison(target_date=None):
         return None
     with open(actuals_path) as f:
         actuals = json.load(f)
+    norm_actual = _normalize_actual(actuals)
     print(f"  Actuals: High {actuals['high_f']}°F / Low {actuals['low_f']}°F — {actuals['conditions']}")
 
     # Load Open-Meteo prediction for that date
@@ -357,7 +303,7 @@ def run_daily_comparison(target_date=None):
         # Find the prediction for the target date
         for day in om_data.get("daily", []):
             if day["date"] == target_date:
-                result = score_prediction(day, actuals)
+                result = score_prediction(_to_contract(day), norm_actual)
                 comparison["sources"]["openmeteo"] = {
                     "prediction": day,
                     "score": result,
@@ -380,7 +326,7 @@ def run_daily_comparison(target_date=None):
         rays_pred = _best_rays_prediction(rays_data, target_date)
 
         if rays_pred and (_get_high(rays_pred) is not None or _get_low(rays_pred) is not None):
-            result = score_prediction(rays_pred, actuals)
+            result = score_prediction(_to_contract(rays_pred), norm_actual)
             comparison["sources"]["raysweather"] = {
                 "prediction": rays_pred,
                 "score": result,
@@ -433,7 +379,7 @@ def run_daily_comparison(target_date=None):
             elif cat != "unknown":
                 apple_data["precip_in"] = 0.0
         if _get_high(apple_data) is not None or _get_low(apple_data) is not None:
-            result = score_prediction(apple_data, actuals)
+            result = score_prediction(_to_contract(apple_data), norm_actual)
             comparison["sources"]["apple_weather"] = {
                 "prediction": apple_data,
                 "score": result,
@@ -443,6 +389,26 @@ def run_daily_comparison(target_date=None):
             print(f"  Apple Weather: No temperature data to score")
     else:
         print(f"  No Apple Weather prediction found for {target_date}")
+
+    # New free forecasters (NWS, Met.no, OWM, WeatherAPI, Visual Crossing, Tomorrow.io, Google)
+    existing = set(comparison["sources"].keys())
+    for s in SOURCES:
+        key = s["key"]
+        if key in existing:
+            continue
+        fpath = pred_dir / f"{key}_forecast.json"
+        if not fpath.exists():
+            continue
+        try:
+            data = json.load(open(fpath))
+        except (json.JSONDecodeError, OSError):
+            continue
+        for day in data.get("daily", []):
+            if day.get("date") == target_date:
+                result = score_prediction(_to_contract(day), norm_actual)
+                comparison["sources"][key] = {"prediction": day, "score": result}
+                print(f"  {s['label']}: {result['score']}/100")
+                break
 
     # Sweater weather verdict
     sw = comparison["sweater_weather"]
@@ -504,6 +470,26 @@ def _update_running_scores(date, comparison):
             totals[source]["days"] += 1
 
     scores["totals"] = totals
+
+    coverage = {}
+    cov_fields = ["high_temp", "low_temp", "wind", "precip_type", "precip_amount"]
+    for comp_file in sorted(comp_dir.glob("*.json")):
+        try:
+            with open(comp_file) as f:
+                comp = json.load(f)
+        except (json.JSONDecodeError, OSError):
+            continue
+        for source, data in comp.get("sources", {}).items():
+            if "score" not in data:
+                continue
+            cov = data["score"].get("coverage", {})
+            if source not in coverage:
+                coverage[source] = {fld: {"provided": 0, "days": 0} for fld in cov_fields}
+            for fld in cov_fields:
+                coverage[source][fld]["days"] += 1
+                if cov.get(fld):
+                    coverage[source][fld]["provided"] += 1
+    scores["coverage"] = coverage
 
     with open(scores_path, "w") as f:
         json.dump(scores, f, indent=2)

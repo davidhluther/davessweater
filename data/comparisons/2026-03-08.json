@@ -1,6 +1,6 @@
 {
   "date": "2026-03-08",
-  "generated_at": "2026-03-09T22:42:17.944401-05:00",
+  "generated_at": "2026-06-23T12:16:39.326434-04:00",
   "actuals": {
     "date": "2026-03-08",
     "fetched_at": "2026-03-09T22:42:17.893021-05:00",
@@ -35,40 +35,43 @@
         "wind_mph": 21.7
       },
       "score": {
-        "score": 84.0,
+        "score": 84.2,
         "grade": {
           "verdict": "right",
           "ray_count": 4
         },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip_type": true,
+          "precip_amount": true
+        },
         "breakdown": {
           "high_temp": {
-            "predicted": 56.7,
-            "actual": 58.8,
-            "error_f": 2.1,
             "points": 29.7,
-            "max": 30
+            "max": 30,
+            "scored": true
           },
           "low_temp": {
-            "predicted": 51.8,
-            "actual": 49.3,
-            "error_f": 2.5,
             "points": 28.5,
-            "max": 30
-          },
-          "precipitation": {
-            "predicted_in": 0.087,
-            "actual_in": 0.075,
-            "binary_correct": true,
-            "error_in": 0.012,
-            "points": 19.8,
-            "max": 20
+            "max": 30,
+            "scored": true
           },
           "wind": {
-            "predicted_mph": 21.7,
-            "actual_mph": 11.7,
-            "error_mph": 10.0,
             "points": 6.0,
-            "max": 20
+            "max": 20,
+            "scored": true
+          },
+          "precip_type": {
+            "points": 10.0,
+            "max": 10,
+            "scored": true
+          },
+          "precip_amount": {
+            "points": 10.0,
+            "max": 10,
+            "scored": true
           }
         }
       }
@@ -78,45 +81,47 @@
         "today_high_f": 63.0,
         "tonight_low_f": 45.0,
         "category": "unknown",
-        "precip_in": 0.0,
         "daytime_desc": "Mostly cloudy; A few mostly afternoon showers; Maybe a thundershower; WNW wind 5-10 mph",
         "wind_mph": 7.5
       },
       "score": {
-        "score": 72.6,
+        "score": 74.1,
         "grade": {
           "verdict": "meh",
           "ray_count": 3
         },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip_type": true,
+          "precip_amount": false
+        },
         "breakdown": {
           "high_temp": {
-            "predicted": 63.0,
-            "actual": 58.8,
-            "error_f": 4.2,
             "points": 23.4,
-            "max": 30
+            "max": 30,
+            "scored": true
           },
           "low_temp": {
-            "predicted": 45.0,
-            "actual": 49.3,
-            "error_f": 4.3,
             "points": 23.1,
-            "max": 30
-          },
-          "precipitation": {
-            "predicted_in": 0,
-            "actual_in": 0.075,
-            "binary_correct": false,
-            "error_in": 0.075,
-            "points": 8.5,
-            "max": 20
+            "max": 30,
+            "scored": true
           },
           "wind": {
-            "predicted_mph": 7.5,
-            "actual_mph": 11.7,
-            "error_mph": 4.2,
             "points": 17.6,
-            "max": 20
+            "max": 20,
+            "scored": true
+          },
+          "precip_type": {
+            "points": 10.0,
+            "max": 10,
+            "scored": true
+          },
+          "precip_amount": {
+            "points": null,
+            "max": 10,
+            "scored": false
           }
         }
       }

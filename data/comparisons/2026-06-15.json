@@ -1,6 +1,6 @@
 {
   "date": "2026-06-15",
-  "generated_at": "2026-06-21T10:52:40.849724-04:00",
+  "generated_at": "2026-06-23T12:16:45.008506-04:00",
   "actuals": {
     "date": "2026-06-15",
     "fetched_at": "2026-06-16T14:42:14.885183-04:00",
@@ -37,40 +37,43 @@
         "wind_mph": 16.3
       },
       "score": {
-        "score": 88.5,
+        "score": 98.8,
         "grade": {
           "verdict": "right",
-          "ray_count": 4
+          "ray_count": 5
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip_type": true,
+          "precip_amount": true
         },
         "breakdown": {
           "high_temp": {
-            "predicted": 68.5,
-            "actual": 66.1,
-            "error_f": 2.4,
             "points": 28.8,
-            "max": 30
+            "max": 30,
+            "scored": true
           },
           "low_temp": {
-            "predicted": 55.2,
-            "actual": 54.5,
-            "error_f": 0.7,
-            "points": 30,
-            "max": 30
-          },
-          "precipitation": {
-            "predicted_in": 0.024,
-            "actual_in": 0.008,
-            "binary_correct": false,
-            "error_in": 0.016,
-            "points": 9.7,
-            "max": 20
+            "points": 30.0,
+            "max": 30,
+            "scored": true
           },
           "wind": {
-            "predicted_mph": 16.3,
-            "actual_mph": 14.6,
-            "error_mph": 1.7,
-            "points": 20,
-            "max": 20
+            "points": 20.0,
+            "max": 20,
+            "scored": true
+          },
+          "precip_type": {
+            "points": 10.0,
+            "max": 10,
+            "scored": true
+          },
+          "precip_amount": {
+            "points": 10.0,
+            "max": 10,
+            "scored": true
           }
         }
       }
@@ -86,30 +89,38 @@
           "verdict": "wrong",
           "ray_count": 1
         },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": false,
+          "precip_type": false,
+          "precip_amount": false
+        },
         "breakdown": {
           "high_temp": {
-            "predicted": 73.0,
-            "actual": 66.1,
-            "error_f": 6.9,
             "points": 15.3,
-            "max": 30
+            "max": 30,
+            "scored": true
           },
           "low_temp": {
-            "predicted": 50.0,
-            "actual": 54.5,
-            "error_f": 4.5,
             "points": 22.5,
-            "max": 30
-          },
-          "precipitation": {
-            "error": "missing data",
-            "points": 0,
-            "max": 20
+            "max": 30,
+            "scored": true
           },
           "wind": {
-            "error": "missing data",
-            "points": 0,
-            "max": 20
+            "points": null,
+            "max": 20,
+            "scored": false
+          },
+          "precip_type": {
+            "points": null,
+            "max": 10,
+            "scored": false
+          },
+          "precip_amount": {
+            "points": null,
+            "max": 10,
+            "scored": false
           }
         }
       }
@@ -127,40 +138,43 @@
         "source": "Open-Meteo (iPhone fallback)"
       },
       "score": {
-        "score": 88.5,
+        "score": 98.8,
         "grade": {
           "verdict": "right",
-          "ray_count": 4
+          "ray_count": 5
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip_type": true,
+          "precip_amount": true
         },
         "breakdown": {
           "high_temp": {
-            "predicted": 68.5,
-            "actual": 66.1,
-            "error_f": 2.4,
             "points": 28.8,
-            "max": 30
+            "max": 30,
+            "scored": true
           },
           "low_temp": {
-            "predicted": 55.2,
-            "actual": 54.5,
-            "error_f": 0.7,
-            "points": 30,
-            "max": 30
-          },
-          "precipitation": {
-            "predicted_in": 0.024,
-            "actual_in": 0.008,
-            "binary_correct": false,
-            "error_in": 0.016,
-            "points": 9.7,
-            "max": 20
+            "points": 30.0,
+            "max": 30,
+            "scored": true
           },
           "wind": {
-            "predicted_mph": 16.3,
-            "actual_mph": 14.6,
-            "error_mph": 1.7,
-            "points": 20,
-            "max": 20
+            "points": 20.0,
+            "max": 20,
+            "scored": true
+          },
+          "precip_type": {
+            "points": 10.0,
+            "max": 10,
+            "scored": true
+          },
+          "precip_amount": {
+            "points": 10.0,
+            "max": 10,
+            "scored": true
           }
         }
       }
