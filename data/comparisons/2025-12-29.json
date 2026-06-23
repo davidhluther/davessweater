@@ -1,0 +1,108 @@
+{
+  "date": "2025-12-29",
+  "generated_at": "2026-06-23T12:43:58.270876-04:00",
+  "actuals": {
+    "date": "2025-12-29",
+    "location": "Boone",
+    "high_f": 47.4,
+    "low_f": 18.1,
+    "wind_mph": 29.9,
+    "gust_mph": 71.4,
+    "rain_in": 0.039,
+    "snow_in": 0.011,
+    "precip_type": "rain",
+    "precip_in": 0.05,
+    "weather_code": 71,
+    "conditions": "Slight snow",
+    "category": "snow"
+  },
+  "sweater_weather": {
+    "answer": "YES",
+    "detail": "Still sweater territory. Don't let anyone tell you otherwise.",
+    "layers": "1-2 (light to medium sweater)",
+    "emoji": "\ud83e\uddf6\ud83d\udc4d",
+    "sweater_count": 3
+  },
+  "sources": {
+    "openmeteo": {
+      "prediction": {
+        "date": "2025-12-29",
+        "high_f": 52.4,
+        "low_f": 21.3,
+        "wind_mph": 31.6,
+        "precip_type": "rain",
+        "rain_in": 0.075,
+        "snow_in": 0.0,
+        "precip_in": 0.075,
+        "precip_prob": 44,
+        "weather_code": 55,
+        "conditions": "Dense drizzle",
+        "category": "drizzle",
+        "fields_provided": [
+          "high",
+          "low",
+          "wind",
+          "precip_type",
+          "rain_amount",
+          "snow_amount"
+        ]
+      },
+      "score": {
+        "score": 87.4,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 4
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip_type": true,
+          "precip_amount": true
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 21.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 52.4,
+            "actual": 47.4,
+            "error": 5.0
+          },
+          "low_temp": {
+            "points": 26.4,
+            "max": 30,
+            "scored": true,
+            "predicted": 21.3,
+            "actual": 18.1,
+            "error": 3.2
+          },
+          "wind": {
+            "points": 20.0,
+            "max": 20,
+            "scored": true,
+            "predicted": 31.6,
+            "actual": 29.9,
+            "error": 1.7
+          },
+          "precip_type": {
+            "points": 10.0,
+            "max": 10,
+            "scored": true,
+            "predicted": "rain",
+            "actual": "rain"
+          },
+          "precip_amount": {
+            "points": 10.0,
+            "max": 10,
+            "scored": true,
+            "predicted": 0.075,
+            "actual": 0.039,
+            "error": 0.036,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "date": "2026-02-20",
+  "generated_at": "2026-06-23T12:44:03.060512-04:00",
+  "actuals": {
+    "date": "2026-02-20",
+    "location": "Boone",
+    "high_f": 60.3,
+    "low_f": 44.7,
+    "wind_mph": 17.9,
+    "gust_mph": 48.3,
+    "rain_in": 0.059,
+    "snow_in": 0.0,
+    "precip_type": "rain",
+    "precip_in": 0.059,
+    "weather_code": 55,
+    "conditions": "Dense drizzle",
+    "category": "drizzle"
+  },
+  "sweater_weather": {
+    "answer": "MAYBE",
+    "detail": "You could go either way. Bring it and decide later.",
+    "layers": "0-1 (light layer, keep one in the car)",
+    "emoji": "\ud83e\udd14",
+    "sweater_count": 2
+  },
+  "sources": {
+    "openmeteo": {
+      "prediction": {
+        "date": "2026-02-20",
+        "high_f": 61.7,
+        "low_f": 49.6,
+        "wind_mph": 24.2,
+        "precip_type": "rain",
+        "rain_in": 0.228,
+        "snow_in": 0.0,
+        "precip_in": 0.228,
+        "precip_prob": 56,
+        "weather_code": 63,
+        "conditions": "Moderate rain",
+        "category": "rain",
+        "fields_provided": [
+          "high",
+          "low",
+          "wind",
+          "precip_type",
+          "rain_amount",
+          "snow_amount"
+        ]
+      },
+      "score": {
+        "score": 83.3,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 4
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip_type": true,
+          "precip_amount": true
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 30.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 61.7,
+            "actual": 60.3,
+            "error": 1.4
+          },
+          "low_temp": {
+            "points": 21.3,
+            "max": 30,
+            "scored": true,
+            "predicted": 49.6,
+            "actual": 44.7,
+            "error": 4.9
+          },
+          "wind": {
+            "points": 13.4,
+            "max": 20,
+            "scored": true,
+            "predicted": 24.2,
+            "actual": 17.9,
+            "error": 6.3
+          },
+          "precip_type": {
+            "points": 10.0,
+            "max": 10,
+            "scored": true,
+            "predicted": "rain",
+            "actual": "rain"
+          },
+          "precip_amount": {
+            "points": 8.6,
+            "max": 10,
+            "scored": true,
+            "predicted": 0.228,
+            "actual": 0.059,
+            "error": 0.169,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}
