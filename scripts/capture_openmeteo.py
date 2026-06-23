@@ -137,19 +137,23 @@ def capture_forecast():
 
     for i in range(len(dates)):
         code = codes[i] if i < len(codes) else 0
-        rain_in = precip[i] if i < len(precip) else 0
-        snow_in = (snowfall[i] or 0) / 2.54 if i < len(snowfall) else 0  # cm → inches
+        rain_in = round(precip[i] or 0, 3) if i < len(precip) else 0.0
+        snow_in = round((snowfall[i] or 0) / 2.54, 3) if i < len(snowfall) else 0.0
+        ptype = "mixed" if rain_in > 0.005 and snow_in > 0.05 else ("snow" if snow_in > 0.05 else ("rain" if rain_in > 0.005 else "none"))
         forecast["daily"].append({
             "date": dates[i],
             "high_f": highs[i] if i < len(highs) else None,
             "low_f": lows[i] if i < len(lows) else None,
-            "precip_in": round((rain_in or 0) + snow_in, 3),
-            "snow_in": round(snow_in, 3),
+            "wind_mph": wind[i] if i < len(wind) else None,
+            "precip_type": ptype,
+            "rain_in": rain_in,
+            "snow_in": snow_in,
+            "precip_in": round(rain_in + snow_in, 3),
             "precip_prob": precip_prob[i] if i < len(precip_prob) else None,
             "weather_code": code,
             "conditions": WMO_CODES.get(code, "Unknown"),
             "category": weather_category(code),
-            "wind_mph": wind[i] if i < len(wind) else None,
+            "fields_provided": ["high", "low", "wind", "precip_type", "rain_amount", "snow_amount"],
         })
 
     # Save
@@ -196,19 +200,21 @@ def fetch_actuals(target_date=None):
         return None
 
     code = daily.get("weather_code", [0])[0]
-    rain_in = daily.get("precipitation_sum", [0])[0] or 0
-    snow_cm = daily.get("snowfall_sum", [0])[0] or 0
-    snow_in = snow_cm / 2.54  # cm → inches
+    rain_in = round(daily.get("precipitation_sum", [0])[0] or 0, 3)
+    snow_in = round((daily.get("snowfall_sum", [0])[0] or 0) / 2.54, 3)
+    ptype = "mixed" if rain_in > 0.005 and snow_in > 0.05 else ("snow" if snow_in > 0.05 else ("rain" if rain_in > 0.005 else "none"))
     actuals = {
         "date": target_date,
         "fetched_at": datetime.now(EST).isoformat(),
         "location": "Boone",
         "high_f": daily.get("temperature_2m_max", [None])[0],
         "low_f": daily.get("temperature_2m_min", [None])[0],
-        "precip_in": round(rain_in + snow_in, 3),
-        "snow_in": round(snow_in, 3),
         "wind_mph": daily.get("wind_speed_10m_max", [None])[0],
         "gust_mph": daily.get("wind_gusts_10m_max", [None])[0],
+        "precip_type": ptype,
+        "rain_in": rain_in,
+        "snow_in": snow_in,
+        "precip_in": round(rain_in + snow_in, 3),
         "weather_code": code,
         "conditions": WMO_CODES.get(code, "Unknown"),
         "category": weather_category(code),
