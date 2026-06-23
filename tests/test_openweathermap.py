@@ -145,11 +145,16 @@ def test_day2_wind_mph(days):
 
 # ---- fields_provided ----
 
-def test_fields_provided_complete(days):
+def test_fields_provided_no_snow_amount(days):
+    """OWM snow.3h is liquid-equivalent, not depth — snow_amount must NOT be claimed."""
     for day in days:
-        assert set(day["fields_provided"]) == {
-            "high", "low", "wind", "precip_type", "rain_amount", "snow_amount"
-        }
+        assert "snow_amount" not in day["fields_provided"]
+
+
+def test_fields_provided_has_expected_fields(days):
+    expected = {"high", "low", "wind", "precip_type", "rain_amount"}
+    for day in days:
+        assert set(day["fields_provided"]) == expected
 
 
 # ---- Mixed precip day (inline) ----

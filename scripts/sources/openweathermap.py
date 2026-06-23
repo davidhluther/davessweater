@@ -71,6 +71,9 @@ def normalize_list(lst):
 
         precip_type = derive_type(rain_in, snow_in)
 
+        # NOTE: OWM snow.3h is liquid-equivalent volume (mm), not snow depth.
+        # It cannot be claimed as a scoreable snow depth ("snow_amount"), but we
+        # keep snow_in for derive_type() so precip_type is still correct.
         result.append({
             "date": date,
             "high_f": high_f,
@@ -79,7 +82,7 @@ def normalize_list(lst):
             "precip_type": precip_type,
             "rain_in": rain_in,
             "snow_in": snow_in,
-            "fields_provided": ["high", "low", "wind", "precip_type", "rain_amount", "snow_amount"],
+            "fields_provided": ["high", "low", "wind", "precip_type", "rain_amount"],
         })
 
     return result

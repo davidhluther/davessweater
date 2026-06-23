@@ -49,12 +49,26 @@ SAMPLE_FORECAST_DAYS = [
             },
         },
     },
+    # Day 4: RAIN_AND_SNOW enum -> should map to precip_type "mixed"
+    {
+        "displayDate": {"year": 2026, "month": 6, "day": 25},
+        "maxTemperature": {"degrees": 35.0},
+        "minTemperature": {"degrees": 28.0},
+        "daytimeForecast": {
+            "wind": {"speed": {"value": 10.0}},
+            "precipitation": {
+                "qpf": {"quantity": 0.05},
+                "snowQpf": {"quantity": 0.1},
+                "probability": {"type": "RAIN_AND_SNOW"},
+            },
+        },
+    },
 ]
 
 
-def test_normalize_returns_three_days():
+def test_normalize_returns_four_days():
     result = normalize_days(SAMPLE_FORECAST_DAYS)
-    assert len(result) == 3
+    assert len(result) == 4
 
 
 def test_day_one_date():
@@ -98,12 +112,26 @@ def test_day_three_precip_type_none():
     assert result[2]["precip_type"] == "none"
 
 
-def test_fields_provided_complete():
-    """All six fields must be listed for every day (Google supplies them all)."""
+def test_fields_provided_no_snow_amount():
+    """Google's snowQpf is liquid-water-equivalent, not depth — snow_amount must NOT be claimed."""
     result = normalize_days(SAMPLE_FORECAST_DAYS)
-    expected = {"high", "low", "wind", "precip_type", "rain_amount", "snow_amount"}
+    for day in result:
+        assert "snow_amount" not in day["fields_provided"]
+
+
+def test_fields_provided_has_rain_amount():
+    """rain_amount (qpf liquid inches) IS scoreable and must be claimed."""
+    result = normalize_days(SAMPLE_FORECAST_DAYS)
+    expected = {"high", "low", "wind", "precip_type", "rain_amount"}
     for day in result:
         assert set(day["fields_provided"]) == expected
+
+
+def test_rain_and_snow_enum_maps_to_mixed():
+    """RAIN_AND_SNOW probability type must map to precip_type 'mixed'."""
+    result = normalize_days(SAMPLE_FORECAST_DAYS)
+    # Day index 3 has probability.type == "RAIN_AND_SNOW"
+    assert result[3]["precip_type"] == "mixed"
 
 
 def test_day_two_date_zero_padded():

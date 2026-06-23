@@ -52,19 +52,28 @@ def normalize_days(forecast_days):
         snow_in = round(float(snow_raw), 3) if snow_raw is not None else 0.0
 
         # Precip type: use probability.type if the provider sets one, else derive.
+        # Confirmed Google Weather PrecipitationType enum values:
+        #   PRECIPITATION_TYPE_UNSPECIFIED, NONE, SNOW, RAIN, LIGHT_RAIN,
+        #   HEAVY_RAIN, RAIN_AND_SNOW, SLEET, FREEZING_RAIN
+        # NOTE: there is NO "MIXED" enum value — mixed precip is "RAIN_AND_SNOW".
         prob = precip.get("probability") or {}
         prob_type = (prob.get("type") or "").upper()
         if prob_type == "SNOW":
             precip_type = "snow"
-        elif prob_type == "RAIN":
+        elif prob_type in ("RAIN", "LIGHT_RAIN", "HEAVY_RAIN", "SLEET", "FREEZING_RAIN"):
             precip_type = "rain"
-        elif prob_type == "MIXED":
+        elif prob_type == "RAIN_AND_SNOW":
             precip_type = "mixed"
         elif prob_type == "NONE":
             precip_type = "none"
         else:
+            # PRECIPITATION_TYPE_UNSPECIFIED or any unrecognised value — derive from amounts.
             precip_type = derive_type(rain_in, snow_in)
 
+        # NOTE: snowQpf.quantity is snow LIQUID-WATER-EQUIVALENT (not depth).
+        # It cannot be claimed as a scoreable snow depth, so "snow_amount" is
+        # NOT listed in fields_provided.  snow_in is still computed above for
+        # use as a fallback in derive_type().
         results.append({
             "date": date_str,
             "high_f": high_f,
@@ -73,9 +82,7 @@ def normalize_days(forecast_days):
             "precip_type": precip_type,
             "rain_in": rain_in,
             "snow_in": snow_in,
-            "fields_provided": [
-                "high", "low", "wind", "precip_type", "rain_amount", "snow_amount"
-            ],
+            "fields_provided": ["high", "low", "wind", "precip_type", "rain_amount"],
         })
 
     return results
