@@ -10,6 +10,25 @@ const scores = {
   },
 };
 
+// Scores fixture with entries for tracking-period tests
+const scoresWithEntries = {
+  totals: {
+    openmeteo: { right: 465, wrong: 1, meh: 8, total_score: 43378.4, days: 474 },
+    apple_weather: { right: 100, wrong: 0, meh: 4, total_score: 9500.0, days: 104 },
+    raysweather: { right: 46, wrong: 29, meh: 32, total_score: 7556.6, days: 107 },
+  },
+  entries: [
+    // Tracking day 1: raysweather present, free sources both score well
+    { date: "2025-03-01", openmeteo: 91.6, apple_weather: 100, raysweather: 63.2 },
+    // Tracking day 2: raysweather present, apple_weather scores below 60 (wrong in tracking)
+    { date: "2025-03-02", openmeteo: 80.0, apple_weather: 55.0, raysweather: 50.0 },
+    // Tracking day 3: raysweather present, raysweather scores below 60 (wrong)
+    { date: "2025-03-03", openmeteo: 95.0, apple_weather: 90.0, raysweather: 40.0 },
+    // Non-tracking day: raysweather absent (backfilled Open-Meteo only)
+    { date: "2025-02-01", openmeteo: 88.0 },
+  ],
+};
+
 describe("heroStats", () => {
   it("returns labeled per-source stats ordered free-first, then Ray's", () => {
     const h = heroStats(scores);
@@ -33,14 +52,13 @@ describe("heroStats", () => {
 import { trendSeries, trendChartGeometry } from "@/lib/homeStats";
 
 describe("trendSeries", () => {
-  it("maps entries to free(openmeteo) vs rays, null for missing", () => {
+  it("scopes to the head-to-head window (rays-present dates), free null when openmeteo missing", () => {
     const s = { entries: [
       { date: "2026-06-19", openmeteo: 96.3, raysweather: 63.2 },
-      { date: "2026-06-18", raysweather: 50 },
-      { date: "2026-06-17", openmeteo: 83.7 },
+      { date: "2026-06-18", raysweather: 50 },          // rays present, no openmeteo → free null
+      { date: "2026-06-17", openmeteo: 83.7 },          // rays absent → dropped (outside tracking window)
     ], totals: {} };
     expect(trendSeries(s)).toEqual([
-      { date: "2026-06-17", free: 83.7, rays: null },
       { date: "2026-06-18", free: null, rays: 50 },
       { date: "2026-06-19", free: 96.3, rays: 63.2 },
     ]);
@@ -60,6 +78,62 @@ describe("trendChartGeometry", () => {
   it("omits null points from a series", () => {
     const g = trendChartGeometry([{ date: "a", free: null, rays: 70 }, { date: "b", free: 70, rays: 70 }], 600, 120, 40, 100);
     expect(g.free).toBe("600,60");
+  });
+});
+
+describe("heroStats — tracking-period stats", () => {
+  it("counts only entries where raysweather is a number", () => {
+    const h = heroStats(scoresWithEntries);
+    expect(h.trackingDays).toBe(3); // 3 entries have raysweather; 1 non-tracking entry excluded
+  });
+
+  it("trackingFreeNeverWrong is false when a free source scored wrong in tracking period", () => {
+    const h = heroStats(scoresWithEntries);
+    // apple_weather scored 55.0 on 2025-03-02, which is <60 → wrong
+    expect(h.trackingFreeNeverWrong).toBe(false);
+  });
+
+  it("trackingFreeNeverWrong is true when no free source has a wrong in tracking period", () => {
+    const allGoodEntries = {
+      totals: scoresWithEntries.totals,
+      entries: [
+        { date: "2025-03-01", openmeteo: 91.6, apple_weather: 100, raysweather: 63.2 },
+        { date: "2025-03-02", openmeteo: 80.0, apple_weather: 75.0, raysweather: 50.0 },
+      ],
+    };
+    const h = heroStats(allGoodEntries);
+    expect(h.trackingFreeNeverWrong).toBe(true);
+  });
+
+  it("openmeteoFull reflects the full totals (474-day record)", () => {
+    const h = heroStats(scoresWithEntries);
+    expect(h.openmeteoFull).not.toBeNull();
+    expect(h.openmeteoFull?.days).toBe(474);
+    expect(h.openmeteoFull?.wrong).toBe(1);
+    expect(h.openmeteoFull?.record).toBe("465–1–8");
+  });
+
+  it("trackingSources are in order: openmeteo, apple_weather, raysweather", () => {
+    const h = heroStats(scoresWithEntries);
+    expect(h.trackingSources.map((s) => s.key)).toEqual(["openmeteo", "apple_weather", "raysweather"]);
+  });
+
+  it("trackingRaysWrong counts Ray's wrong grades in the tracking period", () => {
+    const h = heroStats(scoresWithEntries);
+    // raysweather: 63.2 (meh), 50.0 (wrong), 40.0 (wrong) → 2 wrong
+    expect(h.trackingRaysWrong).toBe(2);
+  });
+
+  it("handles null/empty scores without throwing for new tracking fields", () => {
+    const h = heroStats(null);
+    expect(h.trackingDays).toBe(0);
+    expect(h.trackingSources).toEqual([]);
+    expect(h.trackingRays).toBeNull();
+    expect(h.trackingBestFree).toBeNull();
+    expect(h.trackingPointGap).toBe(0);
+    expect(h.trackingFreeNeverWrong).toBe(true);
+    expect(h.trackingRaysWrong).toBe(0);
+    expect(h.openmeteoFull).toBeNull();
   });
 });
 
