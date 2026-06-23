@@ -22,11 +22,19 @@ export default async function HomePage() {
         <div className="mb-1 text-xs font-bold uppercase tracking-wider text-orange">It&apos;s not a fluke</div>
         <h2 className="mb-4 font-display text-xl font-bold sm:text-2xl">The gap holds, day after day.</h2>
         <TrendChart points={trend} />
-        {stats.rays && stats.bestFree && (
+        {stats.trackingRays && stats.trackingBestFree && (
           <p className="mt-4 text-sm text-white/80">
-            Over {stats.trackedDays} days the free forecast averaged {stats.bestFree.avg.toFixed(1)} —
-            beating Ray&apos;s by {stats.pointGap.toFixed(1)} points. The free services were never once
-            graded &ldquo;Wrong.&rdquo; Ray&apos;s earned that grade {stats.raysWrongDays} times.
+            Over {stats.trackingDays} days of Dave&apos;s Sweater, the free forecast averaged {stats.trackingBestFree.avg.toFixed(1)} —
+            beating Ray&apos;s by {stats.trackingPointGap.toFixed(1)} points.{" "}
+            {stats.trackingFreeNeverWrong && <>The free services were never once graded &ldquo;Wrong.&rdquo; </>}
+            Ray&apos;s earned that grade {stats.trackingRaysWrong} times.
+          </p>
+        )}
+        {stats.openmeteoFull && (
+          <p className="mt-3 text-sm text-white/70">
+            Dave&apos;s Sweater&apos;s forecast is <strong className="text-white">Open-Meteo</strong> — a free, open-source weather
+            API anyone can pull. Across {stats.openmeteoFull.days} days of its archived forecasts it has averaged {stats.openmeteoFull.avg.toFixed(1)},
+            graded &ldquo;Wrong&rdquo; {stats.openmeteoFull.wrong === 0 ? "not once" : stats.openmeteoFull.wrong === 1 ? "exactly once" : `${stats.openmeteoFull.wrong} times`}.
           </p>
         )}
         <p className="mt-4 border-l-2 border-orange pl-3 text-sm italic text-white/70">

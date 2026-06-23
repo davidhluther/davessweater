@@ -17,6 +17,12 @@ export interface HeroStats {
   trackedDays: number; sources: SourceStat[];
   rays: SourceStat | null; bestFree: SourceStat | null;
   pointGap: number; raysWrongDays: number;
+  // Tracking-period stats (entries where raysweather is present)
+  trackingDays: number; trackingSources: SourceStat[];
+  trackingRays: SourceStat | null; trackingBestFree: SourceStat | null;
+  trackingPointGap: number; trackingFreeNeverWrong: boolean; trackingRaysWrong: number;
+  // Open-Meteo full-record (474-day) stat
+  openmeteoFull: SourceStat | null;
 }
 
 function toStat(key: SrcKey, t: SourceTotals): SourceStat {
@@ -25,6 +31,24 @@ function toStat(key: SrcKey, t: SourceTotals): SourceStat {
     avg: t.days > 0 ? round1(t.total_score / t.days) : 0,
     right: t.right, wrong: t.wrong, meh: t.meh, days: t.days,
     record: `${t.right}–${t.wrong}–${t.meh}`,
+  };
+}
+
+function grade(score: number): "right" | "meh" | "wrong" {
+  if (score >= 75) return "right";
+  if (score >= 60) return "meh";
+  return "wrong";
+}
+
+function buildTrackingStat(key: SrcKey, scores: number[]): SourceStat {
+  const right = scores.filter((s) => grade(s) === "right").length;
+  const meh = scores.filter((s) => grade(s) === "meh").length;
+  const wrong = scores.filter((s) => grade(s) === "wrong").length;
+  const avg = scores.length > 0 ? round1(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+  return {
+    key, label: LABELS[key], isFree: IS_FREE[key],
+    avg, right, wrong, meh, days: scores.length,
+    record: `${right}–${wrong}–${meh}`,
   };
 }
 
@@ -37,7 +61,44 @@ export function heroStats(scores: Scores | null): HeroStats {
   const trackedDays = Math.max(0, ...sources.map((s) => s.days));
   const pointGap = bestFree && rays ? round1(bestFree.avg - rays.avg) : 0;
   // raysWrongDays = days Ray's scored under 60 (graded "Wrong"), from totals.wrong
-  return { trackedDays, sources, rays, bestFree, pointGap, raysWrongDays: rays?.wrong ?? 0 };
+
+  // Tracking-period: entries where raysweather is a number
+  const entries = scores?.entries ?? [];
+  const trackingEntries = entries.filter((e) => typeof e.raysweather === "number");
+  const trackingDays = trackingEntries.length;
+
+  const TRACKING_ORDER: SrcKey[] = ["openmeteo", "apple_weather", "raysweather"];
+  const trackingScoreMap: Record<SrcKey, number[]> = { openmeteo: [], apple_weather: [], raysweather: [] };
+  for (const e of trackingEntries) {
+    for (const k of TRACKING_ORDER) {
+      if (typeof (e as Record<string, unknown>)[k] === "number") {
+        trackingScoreMap[k].push((e as Record<string, unknown>)[k] as number);
+      }
+    }
+  }
+  const trackingSources = TRACKING_ORDER
+    .filter((k) => trackingScoreMap[k].length > 0)
+    .map((k) => buildTrackingStat(k, trackingScoreMap[k]));
+  const trackingRays = trackingSources.find((s) => !s.isFree) ?? null;
+  const trackingFrees = trackingSources.filter((s) => s.isFree);
+  const trackingBestFree = trackingFrees.length
+    ? trackingFrees.reduce((a, b) => (b.avg > a.avg ? b : a))
+    : null;
+  const trackingPointGap = trackingBestFree && trackingRays
+    ? round1(trackingBestFree.avg - trackingRays.avg)
+    : 0;
+  const trackingFreeNeverWrong = trackingFrees.every((s) => s.wrong === 0);
+  const trackingRaysWrong = trackingRays?.wrong ?? 0;
+
+  // Open-Meteo full record (from totals — includes backfilled 474-day record)
+  const openmeteoFull = totals.openmeteo ? toStat("openmeteo", totals.openmeteo as SourceTotals) : null;
+
+  return {
+    trackedDays, sources, rays, bestFree, pointGap, raysWrongDays: rays?.wrong ?? 0,
+    trackingDays, trackingSources, trackingRays, trackingBestFree,
+    trackingPointGap, trackingFreeNeverWrong, trackingRaysWrong,
+    openmeteoFull,
+  };
 }
 
 // ---------------------------------------------------------------------------
