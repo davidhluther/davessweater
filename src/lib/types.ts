@@ -18,10 +18,18 @@ export interface Prediction {
   today_high_f?: number; tonight_low_f?: number; daytime_desc?: string; rainfall_in?: number;
 }
 
+export type CoverageField = "high_temp" | "low_temp" | "wind" | "precip_type" | "precip_amount";
+
+export interface CoverageStat { provided: number; days: number; }
+
 export interface ScoreBreakdownField {
-  predicted?: number; actual?: number; error_f?: number; error_mph?: number;
-  predicted_in?: number; actual_in?: number; binary_correct?: boolean; error_in?: number;
-  points: number; max: number;
+  points: number | null;
+  max: number;
+  scored?: boolean;
+  predicted?: number | string | null;
+  actual?: number | string | null;
+  error?: number | null;
+  unit?: string;
 }
 export interface Score {
   score: number;
@@ -42,6 +50,7 @@ export interface SourceTotals { right: number; wrong: number; meh: number; total
 export interface Scores {
   entries: Array<Record<string, unknown>>;
   totals: Partial<Record<"openmeteo" | "raysweather" | "apple_weather", SourceTotals>>;
+  coverage?: Partial<Record<"openmeteo" | "raysweather" | "apple_weather", Partial<Record<CoverageField, CoverageStat>>>>;
 }
 
 export interface BlogPost { title: string; link: string; date?: string; summary?: string; content?: string; }
