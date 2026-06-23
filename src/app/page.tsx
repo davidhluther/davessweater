@@ -1,8 +1,9 @@
-import { getScores, getLatestComparison } from "@/lib/data";
+import { getScores, getLatestComparison, getComparisonWindow } from "@/lib/data";
 import { heroStats, trendSeries, headToHead } from "@/lib/homeStats";
+import { buildTooltipMap } from "@/lib/trendTooltip";
 import Hero from "@/components/Hero";
 import SectionBand from "@/components/SectionBand";
-import TrendChart from "@/components/TrendChart";
+import TrendChartInteractive from "@/components/TrendChartInteractive";
 import HeadToHeadCard from "@/components/HeadToHeadCard";
 import LiveConditions from "@/components/LiveConditions";
 
@@ -10,6 +11,7 @@ export default async function HomePage() {
   const [scores, comp] = await Promise.all([getScores(), getLatestComparison()]);
   const stats = heroStats(scores);
   const trend = trendSeries(scores);
+  const tooltip = buildTooltipMap(await getComparisonWindow(trend.map((p) => p.date)));
   const h2h = headToHead(comp);
   const sw = comp?.sweater_weather ?? {};
   const temp = comp?.actuals?.high_f != null ? `${comp.actuals.high_f}°F` : "—";
@@ -21,7 +23,7 @@ export default async function HomePage() {
       <SectionBand tone="dark">
         <div className="mb-1 text-xs font-bold uppercase tracking-wider text-orange">It&apos;s not a fluke</div>
         <h2 className="mb-4 font-display text-xl font-bold sm:text-2xl">The gap holds, day after day.</h2>
-        <TrendChart points={trend} />
+        <TrendChartInteractive points={trend} tooltip={tooltip} />
         {stats.trackingRays && stats.trackingBestFree && (
           <p className="mt-4 text-sm text-white/80">
             Over {stats.trackingDays} days of Dave&apos;s Sweater, the free forecast averaged {stats.trackingBestFree.avg.toFixed(1)} —
