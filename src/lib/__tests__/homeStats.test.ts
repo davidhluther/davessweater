@@ -52,14 +52,13 @@ describe("heroStats", () => {
 import { trendSeries, trendChartGeometry } from "@/lib/homeStats";
 
 describe("trendSeries", () => {
-  it("maps entries to free(openmeteo) vs rays, null for missing", () => {
+  it("scopes to the head-to-head window (rays-present dates), free null when openmeteo missing", () => {
     const s = { entries: [
       { date: "2026-06-19", openmeteo: 96.3, raysweather: 63.2 },
-      { date: "2026-06-18", raysweather: 50 },
-      { date: "2026-06-17", openmeteo: 83.7 },
+      { date: "2026-06-18", raysweather: 50 },          // rays present, no openmeteo → free null
+      { date: "2026-06-17", openmeteo: 83.7 },          // rays absent → dropped (outside tracking window)
     ], totals: {} };
     expect(trendSeries(s)).toEqual([
-      { date: "2026-06-17", free: 83.7, rays: null },
       { date: "2026-06-18", free: null, rays: 50 },
       { date: "2026-06-19", free: 96.3, rays: 63.2 },
     ]);

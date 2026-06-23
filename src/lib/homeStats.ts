@@ -109,11 +109,15 @@ export interface TrendPoint { date: string; free: number | null; rays: number | 
 
 const num = (v: unknown): number | null => (typeof v === "number" && isFinite(v) ? v : null);
 
+// Scoped to the head-to-head tracking window — dates where Ray's has a score — so the chart
+// reads as a true free-vs-Ray's comparison. (Open-Meteo's backfilled record runs ~474 days,
+// far past Ray's 109; plotting all of it would strand Ray's line in the recent third and read
+// like his data "cuts off." His full archived record is contextualized in the hero copy.)
 export function trendSeries(scores: Scores | null): TrendPoint[] {
   const entries = scores?.entries ?? [];
   return entries
     .map((e) => ({ date: String(e.date ?? ""), free: num(e.openmeteo), rays: num(e.raysweather) }))
-    .filter((p) => p.date)
+    .filter((p) => p.date && p.rays !== null)
     .sort((a, b) => a.date.localeCompare(b.date));
 }
 
