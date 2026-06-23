@@ -13,6 +13,18 @@ def test_perfect_committed_forecast_scores_100():
              fields_provided=["high","low","wind","precip_type","rain_amount"])
     assert score_prediction(pred, ACT)["score"] == 100.0
 
+def test_breakdown_carries_predicted_actual_error_deltas():
+    pred = P(high_f=85, low_f=62, wind_mph=7, precip_type="rain", rain_in=0.10,
+             fields_provided=["high","low","wind","precip_type","rain_amount"])
+    bd = score_prediction(pred, ACT)["breakdown"]
+    assert bd["high_temp"]["predicted"] == 85 and bd["high_temp"]["actual"] == 84 and bd["high_temp"]["error"] == 1.0
+    assert bd["precip_type"]["predicted"] == "rain" and bd["precip_type"]["actual"] == "rain"
+    assert bd["precip_amount"]["predicted"] == 0.10 and bd["precip_amount"]["actual"] == 0.12 and bd["precip_amount"]["error"] == 0.02
+    # a forfeited category still reports predicted=None
+    pred2 = P(high_f=84, low_f=61, precip_type="rain", rain_in=0.12,
+              fields_provided=["high","low","precip_type","rain_amount"])
+    assert score_prediction(pred2, ACT)["breakdown"]["wind"]["predicted"] is None
+
 def test_vague_precip_forfeits_amount_not_zeroed():
     pred = P(high_f=80, low_f=58, wind_mph=5, precip_type="rain",
              fields_provided=["high","low","wind","precip_type"])

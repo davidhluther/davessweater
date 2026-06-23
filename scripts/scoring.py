@@ -76,6 +76,32 @@ def _score_grade(score):
     return {"verdict": "wrong", "ray_count": 1}
 
 
+def _delta(p, a):
+    return round(abs(p - a), 3) if (p is not None and a is not None) else None
+
+
+def _bd(points, maxpts, predicted, actual):
+    """Breakdown entry carrying the predicted/actual differential."""
+    return {"points": points, "max": maxpts, "scored": points is not None,
+            "predicted": predicted, "actual": actual, "error": _delta(predicted, actual)}
+
+
+def _amount_bd(pred, actual, actual_type, points):
+    """Precip-amount breakdown — predicted vs actual in the unit that fell."""
+    fp = pred.get("fields_provided", [])
+    if actual_type == "snow":
+        predicted = pred.get("snow_in") if "snow_amount" in fp else None
+        observed, unit = round(actual.get("snow_in") or 0, 3), "in_snow_depth"
+    elif actual_type in ("rain", "mixed"):
+        predicted = pred.get("rain_in") if "rain_amount" in fp else None
+        observed, unit = round(actual.get("rain_in") or 0, 3), "in_liquid"
+    else:  # none fell
+        predicted = pred.get("rain_in") if "rain_amount" in fp else None
+        observed, unit = 0.0, "in_liquid"
+    return {"points": points, "max": 10, "scored": points is not None,
+            "predicted": predicted, "actual": observed, "error": _delta(predicted, observed), "unit": unit}
+
+
 def score_prediction(pred, actual):
     fp = pred.get("fields_provided", [])
     actual_type = precip_type(actual.get("rain_in"), actual.get("snow_in"))
@@ -86,12 +112,18 @@ def score_prediction(pred, actual):
     ptype = _type_points(pred.get("precip_type"), actual_type) if "precip_type" in fp else None
     pamt = _amount_points(pred, actual, actual_type)
 
-    cats = {"high_temp": (high, 30), "low_temp": (low, 30), "wind": (wind, 20),
-            "precip_type": (ptype, 10), "precip_amount": (pamt, 10)}
-    total = round(sum((pts or 0) for pts, _ in cats.values()), 1)
+    total = round(sum((p or 0) for p in (high, low, wind, ptype, pamt)), 1)
+    breakdown = {
+        "high_temp": _bd(high, 30, pred.get("high_f") if "high" in fp else None, actual.get("high_f")),
+        "low_temp": _bd(low, 30, pred.get("low_f") if "low" in fp else None, actual.get("low_f")),
+        "wind": _bd(wind, 20, pred.get("wind_mph") if "wind" in fp else None, actual.get("wind_mph")),
+        "precip_type": {"points": ptype, "max": 10, "scored": ptype is not None,
+                        "predicted": pred.get("precip_type") if "precip_type" in fp else None, "actual": actual_type},
+        "precip_amount": _amount_bd(pred, actual, actual_type, pamt),
+    }
     return {
         "score": total,
         "grade": _score_grade(total),
-        "coverage": {k: (pts is not None) for k, (pts, _) in cats.items()},
-        "breakdown": {k: {"points": pts, "max": mx, "scored": pts is not None} for k, (pts, mx) in cats.items()},
+        "coverage": {k: v["points"] is not None for k, v in breakdown.items()},
+        "breakdown": breakdown,
     }
