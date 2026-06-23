@@ -39,6 +39,16 @@ jobs:
         run: python scripts/capture_iphone_weather.py
         continue-on-error: true
 
+      - name: Capture free forecasters (NWS, Met.no, OWM, WeatherAPI, Visual Crossing, Tomorrow.io, Google)
+        run: python scripts/capture_sources.py
+        continue-on-error: true
+        env:
+          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+          WEATHERAPI_KEY: ${{ secrets.WEATHERAPI_KEY }}
+          VISUALCROSSING_KEY: ${{ secrets.VISUALCROSSING_KEY }}
+          TOMORROW_API_KEY: ${{ secrets.TOMORROW_API_KEY }}
+          GOOGLE_WEATHER_API_KEY: ${{ secrets.GOOGLE_WEATHER_API_KEY }}
+
       - name: Commit captures
         run: |
           git config user.name "DavesSweaterBot"
