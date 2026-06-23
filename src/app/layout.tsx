@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   other: {
     "google-site-verification": [
       "WvhDdIhrlNBhsVYElbFc39q-Ib8J2UZZJKoy8pzn-KQ",
-      "Pxd8jrNaWOdwazTvIA9xHgCib5f8yC3n6IfAZQ1s8M0",
+      "Ajmlc52hA5hJQr-7WY7T9YU4Vlej8vkx1_GHmYHCAJo",
     ],
   },
   openGraph: {

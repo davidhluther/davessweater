@@ -113,7 +113,7 @@ Uses Fourthwall for merch. The Storefront API has a persistent 403 issue (unreso
 - GitHub Actions cron is UTC-only; EST = UTC-5, EDT = UTC-4
 - Site routes: `/` (Weather), `/right-wrong-ray` (comparison + scoreboard), `/videos`, `/blog` (+ `/blog/[slug]`), `/shop`
 - Both GSC verification tags + GA live in `src/app/layout.tsx` metadata
-- GSC verification meta tag: `Pxd8jrNaWOdwazTvIA9xHgCib5f8yC3n6IfAZQ1s8M0`
+- GSC verification meta tag: `Ajmlc52hA5hJQr-7WY7T9YU4Vlej8vkx1_GHmYHCAJo`
 
 ## Development
 
