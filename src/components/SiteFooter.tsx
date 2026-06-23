@@ -7,7 +7,7 @@ export default function SiteFooter() {
         <span>Dave&apos;s Sweater · Boone, NC · <span className="italic">Boone&apos;s most mostly reliable weather tracker and resource</span></span>
         <span className="sm:ml-auto">
           <Link href="/right-wrong-ray" className="text-white/85 underline-offset-2 hover:underline">How we score it</Link>
-          <span className="mx-2">·</span>Not affiliated with Ray&apos;s Weather
+          <span className="mx-2">·</span>Not affiliated with, endorsed by, or on speaking terms with Ray&apos;s Weather
         </span>
       </div>
     </footer>
