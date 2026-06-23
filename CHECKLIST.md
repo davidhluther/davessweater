@@ -29,39 +29,76 @@ Spec/plan: `planning/specs/2026-06-21-m1-nextjs-port-design.md`, `planning/plans
 - [x] **Cutover** — Vercel builds with `next build` (`vercel.json` framework=nextjs, outputDirectory=.next);
       daily Actions commit `data/` only; `build_site.py`, `docs/`, `rebuild_on_screenshot.yml` retired.
 
-## Active: M2 — modern redesign + accuracy homepage
-Original, dynamic design (own brand; share only the teal/orange palette + the genre — **NOT a Ray's
-clone**, for legal safety). Homepage leads with the joke *backed by data* — free services
-(Open-Meteo/Apple) beat Ray's — from `scores.json`. Keep the iPhone screenshot; add a small live
-current-conditions strip + a few-day mini-outlook. Apply the design system across all pages.
-(The head-to-head was pulled forward from the old M3.)
-- [ ] M2 — design system + accuracy homepage. **Spec approved:**
-      `planning/specs/2026-06-21-m2-redesign-accuracy-homepage-design.md`. Locked direction:
-      Style-A data-journalism on the bold "C" dark-teal/orange palette; dark hero + dark
-      feature-bands on a light body; **mobile-first** (likeliest traffic); homepage = conversion
-      **front door** leading with the data (free Open-Meteo/Apple beat paid Ray's); the daily
-      iPhone screenshot **co-anchors the hero** ("the only weather service you need is already in
-      your pocket"), labeled honestly real-Apple-vs-Open-Meteo-fallback; brand mark "Boone's #1
-      weather ~~service~~ tracker" (eyebrow), "most mostly reliable" tagline by the logo; sharp,
-      pointed voice (don't soften); Space Grotesk display + Inter; design system applied across all
-      pages. Stats/trend/head-to-head refresh daily via existing CI → Vercel (no manual step); the
-      *real* Apple screenshot still depends on a manual iPhone-Shortcut upload (auto fallback covers
-      other days) — true daily automation of it is a separate, post-M2 pipeline task. No
-      pipeline/scoring changes in M2.
-      **BUILT & verified on branch `m2-redesign-spec`** (plan:
-      `planning/plans/2026-06-21-m2-redesign-accuracy-homepage.md`): lib fully unit-tested
-      (heroStats/trend/headToHead/screenshot), homepage assembled + all pages restyled, mobile-first
-      (header menu, tables→cards), `npm test`/lint/`build` green, visually verified mobile + desktop.
-      Final code review fixes applied — incl. **correcting a false "dead last 29×" claim**: `totals.wrong`
-      is the count of days a source was *graded "Wrong" (scored < 60)*, not a per-day ranking, so the
-      homepage now reads "the free services were never once graded Wrong; Ray's earned that grade 29
-      times" and the `/right-wrong-ray` W/L/M legend was corrected to grade bands. **Pending: merge to
-      `main` + confirm Vercel preview.**
-- [ ] **Post-M2 follow-up — automate the *real* Apple Weather screenshot.** Today the hero's prominent
-      screenshot is daily-auto only for the Open-Meteo fallback; the real Apple shot needs a manual
-      iPhone-Shortcut upload (`upload_screenshot.yml`). Automate the Shortcut and add a reliable source
-      marker (sidecar) so `IphoneShot` can drop the file-size heuristic. (Owner may pick this up in a
-      separate session — the Shortcut is the screenshot source.)
+## Done: M2 — modern redesign + accuracy homepage
+Original, dynamic design (own brand; shares only the teal/orange palette + the genre — **NOT a Ray's
+clone**, for legal safety). Homepage leads with the joke *backed by data* — free Open-Meteo/Apple beat
+paid Ray's — from `scores.json`. Mobile-first; daily iPhone screenshot co-anchors the hero (labeled
+honestly real-Apple-vs-Open-Meteo-fallback); design system applied across all pages. Spec/plan:
+`planning/specs/2026-06-21-m2-redesign-accuracy-homepage-design.md`,
+`planning/plans/2026-06-21-m2-redesign-accuracy-homepage.md`.
+- [x] **M2 — design system + accuracy homepage** — Style-A data-journalism on the dark-teal/orange
+      palette; dark hero + dark feature-bands on a light body; mobile-first (header menu, tables→cards);
+      brand mark "Boone's #1 weather ~~service~~ tracker"; Space Grotesk display + Inter. Lib fully
+      unit-tested; `npm test`/lint/`build` green; verified mobile + desktop. **Final review corrected the
+      false "dead last 29×" claim** — `totals.wrong` is the count of days *graded "Wrong" (< 60)*, not a
+      per-day ranking; copy now reads "the free services were never once graded Wrong; Ray's earned that
+      grade N times" and the W/L/M legend uses grade bands. **Merged to `main` + Vercel confirmed; live.**
+
+## Done: Source Expansion (sibling pipeline milestone)
+Grew the roster from 3 forecasters toward a broad set of free, automatable services behind a
+source-registry/adapter pattern, and reworked scoring into the coupled, snow-aware, transparent model
+(`scripts/scoring.py`, pytest-tested). Pipeline/scoring only — backward-compatible (`score`/`grade`/
+`totals` + `precip_in` preserved). Spec/plan: `planning/specs/2026-06-22-source-expansion-design.md`,
+`planning/plans/2026-06-22-source-expansion.md`.
+- [x] **Source Expansion** — N-source adapters + coupled snow-aware scoring + per-source coverage index.
+      **M3 visualizes this data.** ⚠️ Confirm the expanded roster + split rain/snow coverage actually
+      reached `data/` on whatever branch M3 builds on before wiring N-source viz (the `feat/openmeteo-backfill`
+      branch still carried only the 3 original sources + a single `precip_amount` field).
+
+## Open-Meteo backfill (PR #62 — OPEN, not yet merged)
+- [ ] **Open-Meteo historical backfill** — `scripts/backfill_openmeteo.py` pulls Open-Meteo's Historical
+      Forecast API (legit archived past forecasts) + actuals; Open-Meteo now has a **474-day record
+      (avg 91.6, 465–1–8, graded "Wrong" exactly once)**, full chronological re-score, pytest green. Homepage
+      derives a **tracking-period** head-to-head (~109 rays-present days) + a separate 474-day explainer line;
+      "never once graded Wrong" is now data-driven (`trackingFreeNeverWrong`); `trendSeries` scoped to the
+      rays-present window so the chart is a true free-vs-Ray's comparison. **[PR #62](https://github.com/davidhluther/davessweater/pull/62)
+      is OPEN as of this handoff — owner deciding merge-now vs bundle-with-M3; reconcile this line on merge.**
+
+## Active: M3 — dynamic data-viz
+Turn the now-richer accuracy data (multi-source season + per-source coverage index + the 474-day
+Open-Meteo record) into **interactive data-viz**. Visual excellence is part of the satirical proof —
+craft must be **defensible and accurate** (grade bands ≠ rankings; honest screenshot label; verify grade
+thresholds against `scripts/scoring.py`, not `CLAUDE.md`). Locked: direction **"B + visx"**; **heat map
+DECLINED**; **ambitious / iterative**. Inherits the M2 visual identity. `src/`-only — no pipeline/scoring/
+workflow changes; stats stay build-time-derived. **Full handoff:
+`planning/handoffs/2026-06-23-m3-data-viz-handoff.md`** — start a new session there via
+superpowers:brainstorming → writing-plans → subagent-driven-development; spec to live at
+`planning/specs/2026-06-23-m3-data-viz-design.md`.
+- [ ] **Interactive trend chart (visx)** — replace static inline-SVG `src/components/TrendChart.tsx` with a
+      `'use client'` visx chart (hover tooltips, axes, gridlines, multi-source). Preserve the rays-scoped
+      window; SSR-safe responsive sizing (`@visx/responsive` + fixed wrapper height); no CLS; server→client
+      prop boundary (no fs reads in client code).
+- [ ] **Sortable tables + inline sparklines** — extract the two scoreboard tables in
+      `src/app/right-wrong-ray/page.tsx` into a `'use client'` sortable component; per-source sparklines from
+      `scores.json.entries`; mobile-safe (table→stacked-card below `md`).
+- [ ] **Coverage matrix** — new display (none exists today) backing `scores.json.coverage` (source × field);
+      show Ray's `precip_amount` 0/N gap loudly. Add `coverage` to the `Scores` type in `src/lib/types.ts` first.
+- [ ] **Tasteful motion** — animated transitions need a separate dep (`@visx/react-spring`); framer-motion is
+      NOT installed — decide explicitly.
+- [ ] **Add `@visx/*` deps** — `@visx/responsive scale shape axis grid tooltip group event` (first new runtime
+      dep since the Next.js port; keep mobile-light). Every chart is `'use client'`.
+- [ ] **Widen the source-key type** (M3-blocking for N-source viz, gated on the expanded data landing) —
+      `src/lib/types.ts` + `SrcKey`/`ORDER`/`LABELS`/`IS_FREE` in `src/lib/homeStats.ts` (currently only
+      openmeteo/raysweather/apple_weather); surface all sources once the expanded `data/` ships.
+
+## Post-M2 / parallel follow-ups
+- [ ] **Automate the *real* Apple Weather screenshot** — today the hero shot is daily-auto only for the
+      Open-Meteo fallback; the real Apple shot needs a manual iPhone-Shortcut upload (`upload_screenshot.yml`).
+      Automate the Shortcut + add a reliable source sidecar so `IphoneShot` can drop the
+      `REAL_APPLE_MIN_BYTES=500000` heuristic in `src/lib/screenshot.ts`. Owner-owned; out of M3 scope.
+- [ ] **OWM/Google snow-depth fix for winter** — OWM/Google snow is a liquid-equiv/depth proxy; the snow-aware
+      scoring path is unproven on winter data (season re-scored on mostly summer data). Revisit before M3
+      surfaces snow coverage/columns against real winter data.
 - [ ] Then: M4 radar/maps + Woolcam + photo-of-the-day, M5 multi-location, M6 Ecowitt station ground-truth.
 
 ## To do — site (pre-station, outstanding)
