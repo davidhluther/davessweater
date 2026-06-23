@@ -18,10 +18,7 @@ export const metadata: Metadata = {
   description: "The free forecast keeps beating the paid one. We score every Boone forecast against what actually happened — and keep the receipts.",
   icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
   other: {
-    "google-site-verification": [
-      "WvhDdIhrlNBhsVYElbFc39q-Ib8J2UZZJKoy8pzn-KQ",
-      "Ajmlc52hA5hJQr-7WY7T9YU4Vlej8vkx1_GHmYHCAJo",
-    ],
+    "google-site-verification": "Ajmlc52hA5hJQr-7WY7T9YU4Vlej8vkx1_GHmYHCAJo",
   },
   openGraph: {
     title: "Dave's Sweater — Boone's #1 weather (service) tracker",
