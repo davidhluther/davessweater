@@ -1,8 +1,11 @@
 import { getLatestComparison, getScores } from "@/lib/data";
 import { scoreboardRows } from "@/lib/scoreboard";
+import { sparkSeries } from "@/lib/sparkline";
 import { actualLines } from "@/lib/homeStats";
 import RayFaces from "@/components/RayFaces";
 import SectionBand from "@/components/SectionBand";
+import SortableScoreTable, { type ScoreRow } from "@/components/SortableScoreTable";
+import CoverageMatrix from "@/components/CoverageMatrix";
 import type { SourceEntry } from "@/lib/types";
 import type { ReactNode } from "react";
 
@@ -31,9 +34,25 @@ function predLines(e: SourceEntry): string[] {
 }
 
 
+const META: Record<string, { isFree: boolean }> = {
+  "Open-Meteo": { isFree: true },
+  "Ray's Weather": { isFree: false },
+};
+
 export default async function Page() {
   const [comp, scores] = await Promise.all([getLatestComparison(), getScores()]);
-  const rows = scoreboardRows(scores);
+  const spark = sparkSeries(scores, ["openmeteo", "raysweather"]);
+  const rows: ScoreRow[] = scoreboardRows(scores)
+    .filter((r) => r.label === "Open-Meteo" || r.label === "Ray's Weather")
+    .map((r) => ({
+      key: r.label,
+      label: r.label,
+      isFree: META[r.label]?.isFree ?? true,
+      record: r.record,
+      avg: r.avg,
+      days: r.days,
+      spark: r.label === "Open-Meteo" ? spark.openmeteo : spark.raysweather,
+    }));
   const a = comp?.actuals;
   return (
     <>
@@ -111,45 +130,16 @@ export default async function Page() {
         <SectionBand tone="light">
           <h2 className="font-display mb-4 text-2xl font-bold">Season Scoreboard</h2>
 
-          {/* Desktop table — hidden on mobile */}
-          <table className="hidden w-full text-sm sm:table">
-            <thead>
-              <tr className="text-left text-muted">
-                <th className="py-2">Source</th>
-                <th>Record</th>
-                <th>Avg Score</th>
-                <th>Days</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => (
-                <tr key={r.label} className="border-t border-border">
-                  <td className="py-2 font-semibold">{r.label}</td>
-                  <td>{r.record}</td>
-                  <td>{r.avg.toFixed(1)}/100</td>
-                  <td>{r.days}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {/* Mobile cards — hidden on sm+ */}
-          <ul className="space-y-2 sm:hidden">
-            {rows.map((r) => (
-              <li key={r.label} className="rounded-xl border border-border bg-background p-3">
-                <div className="font-display font-bold text-teal">{r.label}</div>
-                <div className="mt-1 grid grid-cols-3 gap-2 text-xs text-muted">
-                  <span>Record<br /><span className="text-foreground">{r.record}</span></span>
-                  <span>Avg<br /><span className="text-foreground">{r.avg.toFixed(1)}/100</span></span>
-                  <span>Days<br /><span className="text-foreground">{r.days}</span></span>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <SortableScoreTable rows={rows} />
 
           <p className="mt-3 text-xs text-muted">W = graded Right (75+) · L = graded Wrong (under 60) · M = Meh (60&ndash;74)</p>
         </SectionBand>
       )}
+
+      <SectionBand tone="surface">
+        <h2 className="font-display mb-4 text-2xl font-bold">What Each Service Reports</h2>
+        <CoverageMatrix scores={scores} />
+      </SectionBand>
     </>
   );
 }
