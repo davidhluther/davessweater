@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import UpdateBar from "@/components/UpdateBar";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], weight: ["500", "700"], variable: "--font-space-grotesk" });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://davessweater.com"),
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     default: "Dave's Sweater — Boone's most mostly reliable weather tracker and resource",
     template: "%s — Dave's Sweater",
   },
-  description: "Is it sweater weather in Boone, NC? Did Ray get yesterday right? Find out.",
+  description: "The free forecast keeps beating the paid one. We score every Boone forecast against what actually happened — and keep the receipts.",
   icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
   other: {
     "google-site-verification": [
@@ -24,19 +24,18 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "Dave's Sweater",
-    description: "Boone's most mostly reliable weather tracker and resource.",
+    title: "Dave's Sweater — Boone's #1 weather (service) tracker",
+    description: "Free forecasts beat Ray's, tracked daily. Boone's most mostly reliable weather resource.",
     url: "https://davessweater.com", type: "website",
   },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn("antialiased", inter.variable)}>
+    <html lang="en" className={cn("antialiased", inter.variable, spaceGrotesk.variable)}>
       <body className="flex min-h-screen flex-col">
         <SiteHeader />
-        <UpdateBar />
-        <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6">{children}</main>
+        <main className="flex-1">{children}</main>
         <SiteFooter />
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-7XL0TZ4GSS" strategy="afterInteractive" />
         <Script id="ga" strategy="afterInteractive">{`

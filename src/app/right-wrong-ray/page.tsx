@@ -1,7 +1,9 @@
 import { getLatestComparison, getScores } from "@/lib/data";
 import { scoreboardRows } from "@/lib/scoreboard";
+import { actualLines } from "@/lib/homeStats";
 import RayFaces from "@/components/RayFaces";
-import type { SourceEntry, Actuals } from "@/lib/types";
+import SectionBand from "@/components/SectionBand";
+import type { SourceEntry } from "@/lib/types";
 import type { ReactNode } from "react";
 
 export const metadata = { title: "Right Ray / Wrong Ray" };
@@ -28,18 +30,6 @@ function predLines(e: SourceEntry): string[] {
   ];
 }
 
-function actualLines(a: Actuals): string[] {
-  const lines = [`Hi: ${a.high_f ?? "N/A"}° / Lo: ${a.low_f ?? "N/A"}°`];
-  if (a.wind_mph != null) lines.push(`Wind: ${Math.round(a.wind_mph * 10) / 10} mph`);
-  if (a.snow_in != null && a.snow_in > 0.01) {
-    const rain = a.precip_in != null ? Math.round((a.precip_in - a.snow_in) * 100) / 100 : null;
-    lines.push(rain != null ? `Snow: ${a.snow_in}" / Rain: ${rain}"` : `Snow: ${a.snow_in}"`);
-  } else if (a.precip_in != null) {
-    lines.push(`Rain: ${a.precip_in}"`);
-  }
-  if (a.conditions) lines.push(a.conditions);
-  return lines;
-}
 
 export default async function Page() {
   const [comp, scores] = await Promise.all([getLatestComparison(), getScores()]);
@@ -47,18 +37,24 @@ export default async function Page() {
   const a = comp?.actuals;
   return (
     <>
-      <section className="mb-6 rounded-[var(--radius)] bg-card p-6">
-        <h2 className="text-2xl font-bold">Right Ray / Wrong Ray</h2>
+      <SectionBand tone="surface">
+        <h2 className="font-display text-2xl font-bold">Right Ray / Wrong Ray</h2>
         <p className="mb-4 mt-1 text-sm text-muted">
           When you trust us to tell you how many rays of sunshine, golfballs, or snowmen you can expect,
           we need to be held to account. Here&apos;s the scoreboard comparing each forecast to the actual weather.
         </p>
         {comp ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead><tr className="text-left text-muted">
-                <th className="py-2">Source</th><th>Predicted</th><th>Score</th><th>Verdict</th>
-              </tr></thead>
+          <>
+            {/* Desktop table — hidden on mobile */}
+            <table className="hidden w-full text-sm sm:table">
+              <thead>
+                <tr className="text-left text-muted">
+                  <th className="py-2">Source</th>
+                  <th>Predicted</th>
+                  <th>Score</th>
+                  <th>Verdict</th>
+                </tr>
+              </thead>
               <tbody>
                 <tr className="border-t border-border font-semibold">
                   <td className="py-2">Actual{comp.date ? ` (${comp.date})` : ""}</td>
@@ -79,34 +75,80 @@ export default async function Page() {
                 })}
               </tbody>
             </table>
-          </div>
+
+            {/* Mobile cards — hidden on sm+ */}
+            <div className="space-y-2 sm:hidden">
+              {a && (
+                <div className="rounded-xl border border-border bg-background p-3">
+                  <div className="font-display font-bold text-teal">Actual{comp.date ? ` (${comp.date})` : ""}</div>
+                  <div className="mt-1 text-sm text-foreground">{actualLines(a).map((l, i) => <div key={i}>{l}</div>)}</div>
+                </div>
+              )}
+              {SOURCES.map(({ key, label, icon }) => {
+                const e = comp.sources?.[key];
+                if (!e || !e.score) return null;
+                return (
+                  <div key={key} className="rounded-xl border border-border bg-background p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="font-display font-bold">{icon} {label}</span>
+                      <span className="text-sm font-bold">{e.score.score.toFixed(1)}/100</span>
+                    </div>
+                    <div className="mt-1 text-sm text-muted">{predLines(e).map((l, i) => <div key={i}>{l}</div>)}</div>
+                    <div className="mt-1"><RayFaces score={e.score.score} /></div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         ) : <p className="text-muted">No comparison yet.</p>}
         <p className="mt-4 text-xs italic text-muted">
           Each source is scored out of 100 across four fields: high temp (30), low temp (30), wind (20),
           precipitation (20), based on closeness to actual recorded conditions.
         </p>
-      </section>
+      </SectionBand>
 
       {rows.length > 0 && (
-        <section className="mb-6 rounded-[var(--radius)] bg-card p-6">
-          <h2 className="mb-4 text-2xl font-bold">Season Scoreboard</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead><tr className="text-left text-muted">
-                <th className="py-2">Source</th><th>Record</th><th>Avg Score</th><th>Days</th>
-              </tr></thead>
-              <tbody>
-                {rows.map((r) => (
-                  <tr key={r.label} className="border-t border-border">
-                    <td className="py-2 font-semibold">{r.label}</td>
-                    <td>{r.record}</td><td>{r.avg.toFixed(1)}/100</td><td>{r.days}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="mt-3 text-xs text-muted">W = best forecast that day · L = worst · M = somewhere in the middle</p>
-        </section>
+        <SectionBand tone="light">
+          <h2 className="font-display mb-4 text-2xl font-bold">Season Scoreboard</h2>
+
+          {/* Desktop table — hidden on mobile */}
+          <table className="hidden w-full text-sm sm:table">
+            <thead>
+              <tr className="text-left text-muted">
+                <th className="py-2">Source</th>
+                <th>Record</th>
+                <th>Avg Score</th>
+                <th>Days</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => (
+                <tr key={r.label} className="border-t border-border">
+                  <td className="py-2 font-semibold">{r.label}</td>
+                  <td>{r.record}</td>
+                  <td>{r.avg.toFixed(1)}/100</td>
+                  <td>{r.days}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Mobile cards — hidden on sm+ */}
+          <ul className="space-y-2 sm:hidden">
+            {rows.map((r) => (
+              <li key={r.label} className="rounded-xl border border-border bg-background p-3">
+                <div className="font-display font-bold text-teal">{r.label}</div>
+                <div className="mt-1 grid grid-cols-3 gap-2 text-xs text-muted">
+                  <span>Record<br /><span className="text-foreground">{r.record}</span></span>
+                  <span>Avg<br /><span className="text-foreground">{r.avg.toFixed(1)}/100</span></span>
+                  <span>Days<br /><span className="text-foreground">{r.days}</span></span>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-3 text-xs text-muted">W = graded Right (75+) · L = graded Wrong (under 60) · M = Meh (60&ndash;74)</p>
+        </SectionBand>
       )}
     </>
   );
