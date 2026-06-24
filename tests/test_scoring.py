@@ -71,3 +71,33 @@ def test_grade_band_labels_unchanged():
     pred = P(high_f=84, low_f=61, wind_mph=6, precip_type="rain", rain_in=0.12,
              fields_provided=["high","low","wind","precip_type","rain_amount"])
     assert score_prediction(pred, ACT)["grade"]["verdict"] == "right"
+
+
+def W(**kw):
+    base = {"high_f":84,"low_f":61,"wind_mph":None,"precip_type":None,"rain_in":None,"snow_in":None,
+            "fields_provided":["high","low","wind"]}
+    base.update(kw); return base
+
+ACTW = {"high_f":84,"low_f":61,"wind_mph":8.0,"rain_in":0.0,"snow_in":0.0}
+
+def test_point_wind_unchanged():
+    # a point forecast (wind_mph only) scores exactly as the old band
+    assert score_prediction(W(wind_mph=8.0), ACTW)["breakdown"]["wind"]["points"] == 20.0
+    assert score_prediction(W(wind_mph=13.0), ACTW)["breakdown"]["wind"]["points"] == 16.0  # |13-8|=5 -> 20-(5-3)*2
+
+def test_interval_wind_width_penalty():
+    # wide range pays a vagueness tax even when the midpoint is accurate
+    r = score_prediction(W(wind_lo=5, wind_hi=15), ACTW)  # mid 10, width 10 -> eff |10-8|+5=7 -> 20-(7-3)*2
+    assert r["breakdown"]["wind"]["points"] == 12.0
+
+def test_tight_interval_keeps_credit():
+    r = score_prediction(W(wind_lo=5, wind_hi=10), ACTW)  # mid 7.5, width 5 -> eff |7.5-8|+2.5=3.0 -> 20
+    assert r["breakdown"]["wind"]["points"] == 20.0
+
+def test_qualitative_wind_as_nws_interval():
+    # "light" maps to (1,7); mid 4, width 6 -> eff |4-8|+3=7 -> 12
+    assert score_prediction(W(wind_lo=1, wind_hi=7), ACTW)["breakdown"]["wind"]["points"] == 12.0
+
+def test_wind_forfeit_when_absent():
+    p = W(); p["fields_provided"] = ["high","low"]  # no wind provided
+    assert score_prediction(p, ACTW)["breakdown"]["wind"]["points"] is None

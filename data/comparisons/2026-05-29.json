@@ -1,6 +1,6 @@
 {
   "date": "2026-05-29",
-  "generated_at": "2026-06-23T12:44:12.154613-04:00",
+  "generated_at": "2026-06-24T12:44:55.359460-04:00",
   "actuals": {
     "date": "2026-05-29",
     "fetched_at": "2026-05-30T11:45:45.492916-04:00",
@@ -99,13 +99,16 @@
         "tonight_low_f": 58.0,
         "category": "unknown",
         "daytime_desc": "Considerable sunshine, but scattered clouds late-day; Pleasant; SE wind 5-10 mph , becoming South",
-        "wind_mph": 7.5
+        "wind_mph": 7.5,
+        "wind_lo": 5,
+        "wind_hi": 10,
+        "precip_type": "rain"
       },
       "score": {
-        "score": 70.2,
+        "score": 59.6,
         "grade": {
-          "verdict": "meh",
-          "ray_count": 3
+          "verdict": "wrong",
+          "ray_count": 2
         },
         "coverage": {
           "high_temp": true,
@@ -132,18 +135,18 @@
             "error": 3.7
           },
           "wind": {
-            "points": 20.0,
+            "points": 19.4,
             "max": 20,
             "scored": true,
-            "predicted": 7.5,
+            "predicted": "5-10",
             "actual": 6.7,
             "error": 0.8
           },
           "precip_type": {
-            "points": 10.0,
+            "points": 0.0,
             "max": 10,
             "scored": true,
-            "predicted": "none",
+            "predicted": "rain",
             "actual": "none"
           },
           "precip_amount": {

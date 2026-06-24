@@ -1,6 +1,6 @@
 {
   "date": "2026-03-17",
-  "generated_at": "2026-06-23T12:44:05.207284-04:00",
+  "generated_at": "2026-06-24T12:44:53.287923-04:00",
   "actuals": {
     "date": "2026-03-17",
     "fetched_at": "2026-03-18T11:48:06.030872-04:00",
@@ -98,13 +98,16 @@
         "tonight_low_f": 17.0,
         "category": "unknown",
         "daytime_desc": "Snow showers and flurries becoming more scattered; Mostly to partly cloudy; Shockingly cold for St. Patrick's Day; NW wind 10-20 mph gusting to 30",
-        "wind_mph": 15.0
+        "wind_mph": 15.0,
+        "wind_lo": 10,
+        "wind_hi": 20,
+        "precip_type": "snow"
       },
       "score": {
-        "score": 68.7,
+        "score": 58.7,
         "grade": {
-          "verdict": "meh",
-          "ray_count": 3
+          "verdict": "wrong",
+          "ray_count": 2
         },
         "coverage": {
           "high_temp": true,
@@ -131,10 +134,10 @@
             "error": 3.5
           },
           "wind": {
-            "points": 12.8,
+            "points": 2.8,
             "max": 20,
             "scored": true,
-            "predicted": 15.0,
+            "predicted": "10-20",
             "actual": 21.6,
             "error": 6.6
           },

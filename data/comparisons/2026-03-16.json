@@ -1,6 +1,6 @@
 {
   "date": "2026-03-16",
-  "generated_at": "2026-06-23T12:44:05.130573-04:00",
+  "generated_at": "2026-06-24T12:44:53.252894-04:00",
   "actuals": {
     "date": "2026-03-16",
     "fetched_at": "2026-03-17T20:15:03.124945-04:00",
@@ -98,10 +98,13 @@
         "tonight_low_f": 20.0,
         "category": "unknown",
         "daytime_desc": "Cloudy with AM fog; Mild AM; Rain and t-showers; Falling afternoon temperatures; Precip changes to sleet and then snow west to east in the afternoon; South wind 10-20 mph & gusty becoming NW 15-25 mid-afternoon with gusts to 50 mph",
-        "wind_mph": 15.0
+        "wind_mph": 15.0,
+        "wind_lo": 10,
+        "wind_hi": 20,
+        "precip_type": "mixed"
       },
       "score": {
-        "score": 53.2,
+        "score": 55.6,
         "grade": {
           "verdict": "wrong",
           "ray_count": 2
@@ -131,18 +134,18 @@
             "error": 0.5
           },
           "wind": {
-            "points": 3.6,
+            "points": 0.0,
             "max": 20,
             "scored": true,
-            "predicted": 15.0,
+            "predicted": "10-20",
             "actual": 26.2,
             "error": 11.2
           },
           "precip_type": {
-            "points": 4.0,
+            "points": 10.0,
             "max": 10,
             "scored": true,
-            "predicted": "snow",
+            "predicted": "mixed",
             "actual": "mixed"
           },
           "precip_amount": {

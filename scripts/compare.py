@@ -133,21 +133,30 @@ def _best_rays_prediction(rays_data, target_date):
         pred["today_high_f"] = forecast.get("today_high_f")
         pred["tonight_low_f"] = forecast.get("tonight_low_f")
 
-    # Try to fill gaps from daily array
-    if rays_data.get("daily"):
-        for day in rays_data["daily"]:
-            if day.get("date") == target_date:
-                if pred.get("today_high_f") is None and day.get("high_f") is not None:
-                    pred["today_high_f"] = day["high_f"]
-                if pred.get("tonight_low_f") is None and day.get("low_f") is not None:
-                    pred["tonight_low_f"] = day["low_f"]
-                # Carry over other fields (not precip_in — Ray never gives
-                # a numeric amount, so the hardcoded 0.0 would misrepresent
-                # his forecast as predicting no rain)
-                for k in ("category", "daytime_desc", "wind_mph"):
-                    if k in day and day[k] is not None and k not in pred:
-                        pred[k] = day[k]
-                break
+    # Pick the daily entry for this date. Prefer an exact date match; if a
+    # capture hiccup leaves daily[] mis-anchored (no entry on target_date),
+    # fall back to daily[0] (post-fix, this is the capture day) or the nearest
+    # future entry — so a date glitch never strips Ray's wind/precip fields.
+    daily = rays_data.get("daily") or []
+    match = None
+    if daily:
+        match = next((d for d in daily if d.get("date") == target_date), None)
+        if match is None:
+            future = [d for d in daily if d.get("date") and d["date"] >= target_date]
+            match = min(future, key=lambda d: d["date"]) if future else daily[0]
+
+    if match:
+        if pred.get("today_high_f") is None and match.get("high_f") is not None:
+            pred["today_high_f"] = match["high_f"]
+        if pred.get("tonight_low_f") is None and match.get("low_f") is not None:
+            pred["tonight_low_f"] = match["low_f"]
+        # Carry over other fields — including the wind interval (wind_lo/wind_hi)
+        # and recovered precip_type. NOT precip_in: Ray never gives a numeric
+        # amount, so a hardcoded 0.0 would misrepresent his forecast as
+        # predicting no rain (amount stays forfeited).
+        for k in ("category", "daytime_desc", "wind_mph", "wind_lo", "wind_hi", "precip_type"):
+            if k in match and match[k] is not None and k not in pred:
+                pred[k] = match[k]
 
     return pred if pred else None
 
@@ -219,6 +228,8 @@ def _to_contract(pred):
     Already-normalized new sources keep their explicit fields_provided.
     Old-schema (precip_in) and text sources (Ray's/Apple) are backfilled."""
     high, low, wind = _get_high(pred), _get_low(pred), pred.get("wind_mph")
+    wind_lo, wind_hi = pred.get("wind_lo"), pred.get("wind_hi")
+    has_wind = wind is not None or (wind_lo is not None and wind_hi is not None)
     snow = pred.get("snow_in")
     rain = pred.get("rain_in")
     if rain is None and pred.get("precip_in") is not None:
@@ -244,11 +255,12 @@ def _to_contract(pred):
         fp = []
         if high is not None: fp.append("high")
         if low is not None: fp.append("low")
-        if wind is not None: fp.append("wind")
+        if has_wind: fp.append("wind")
         if ptype is not None: fp.append("precip_type")
         if rain is not None: fp.append("rain_amount")
         if snow is not None: fp.append("snow_amount")
-    return {"high_f": high, "low_f": low, "wind_mph": wind, "precip_type": ptype,
+    return {"high_f": high, "low_f": low, "wind_mph": wind,
+            "wind_lo": wind_lo, "wind_hi": wind_hi, "precip_type": ptype,
             "rain_in": (round(rain, 3) if rain is not None else None),
             "snow_in": (round(snow, 3) if snow is not None else None),
             "fields_provided": fp}
@@ -313,8 +325,11 @@ def run_daily_comparison(target_date=None):
     else:
         print(f"  No Open-Meteo prediction found for {target_date}")
 
-    # Score Ray's prediction (from extracted data — may be sparse)
-    rays_path = pred_dir / "rays_boone.json"
+    # Score Ray's prediction (from extracted data — may be sparse).
+    # Prefer the backfill-rebuilt sibling (anchored dates + recovered wind
+    # interval / precip_type) when present; fall back to the original capture.
+    rays_rebuilt = pred_dir / "rays_boone.rebuilt.json"
+    rays_path = rays_rebuilt if rays_rebuilt.exists() else pred_dir / "rays_boone.json"
     if rays_path.exists():
         with open(rays_path) as f:
             rays_data = json.load(f)
@@ -431,57 +446,32 @@ def run_daily_comparison(target_date=None):
 
 
 def _update_running_scores(date, comparison):
-    """Append today's scores and recalculate totals from all comparison files."""
+    """Rebuild running scores (entries + totals + coverage) from ALL comparison
+    files — the single source of truth — so a re-score can never leave stale per-day
+    rows. (Was append-only, which silently froze existing entries after a re-score and
+    let the public per-day numbers drift out of sync with the totals.) The current
+    date's comparison file is already on disk when this runs, so it is included."""
     scores_path = DATA_DIR / "scores.json"
-    if scores_path.exists():
-        with open(scores_path) as f:
-            scores = json.load(f)
-    else:
-        scores = {"entries": [], "totals": {}}
-
-    # Skip if this date is already in the entries
-    if any(e.get("date") == date for e in scores["entries"]):
-        print(f"  Scores already recorded for {date}, skipping")
-    else:
-        entry = {"date": date}
-        for source, data in comparison.get("sources", {}).items():
-            if "score" in data:
-                entry[source] = data["score"]["score"]
-        entry["sweater_weather"] = comparison["sweater_weather"]["answer"]
-        scores["entries"].append(entry)
-
-    # Recalculate totals from all comparison files (source of truth)
-    totals = {}
     comp_dir = DATA_DIR / "comparisons"
+    cov_fields = ["high_temp", "low_temp", "wind", "precip_type", "precip_amount"]
+
+    entries, totals, coverage = [], {}, {}
     for comp_file in sorted(comp_dir.glob("*.json")):
         try:
             with open(comp_file) as f:
                 comp = json.load(f)
         except (json.JSONDecodeError, OSError):
             continue
+        entry = {"date": comp.get("date") or comp_file.stem}
         for source, data in comp.get("sources", {}).items():
             if "score" not in data:
                 continue
+            entry[source] = data["score"]["score"]
             if source not in totals:
                 totals[source] = {"right": 0, "wrong": 0, "meh": 0, "total_score": 0, "days": 0}
-            verdict = data["score"]["grade"]["verdict"]
-            totals[source][verdict] += 1
+            totals[source][data["score"]["grade"]["verdict"]] += 1
             totals[source]["total_score"] += data["score"]["score"]
             totals[source]["days"] += 1
-
-    scores["totals"] = totals
-
-    coverage = {}
-    cov_fields = ["high_temp", "low_temp", "wind", "precip_type", "precip_amount"]
-    for comp_file in sorted(comp_dir.glob("*.json")):
-        try:
-            with open(comp_file) as f:
-                comp = json.load(f)
-        except (json.JSONDecodeError, OSError):
-            continue
-        for source, data in comp.get("sources", {}).items():
-            if "score" not in data:
-                continue
             cov = data["score"].get("coverage", {})
             if source not in coverage:
                 coverage[source] = {fld: {"provided": 0, "days": 0} for fld in cov_fields}
@@ -489,11 +479,15 @@ def _update_running_scores(date, comparison):
                 coverage[source][fld]["days"] += 1
                 if cov.get(fld):
                     coverage[source][fld]["provided"] += 1
-    scores["coverage"] = coverage
+        sw = comp.get("sweater_weather")
+        if isinstance(sw, dict) and "answer" in sw:
+            entry["sweater_weather"] = sw["answer"]
+        entries.append(entry)
 
+    scores = {"entries": entries, "totals": totals, "coverage": coverage}
     with open(scores_path, "w") as f:
         json.dump(scores, f, indent=2)
-    print(f"  Updated running scores: {scores_path}")
+    print(f"  Updated running scores: {scores_path} ({len(entries)} entries)")
 
 
 if __name__ == "__main__":
