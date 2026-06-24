@@ -1,6 +1,6 @@
 {
   "date": "2026-06-05",
-  "generated_at": "2026-06-23T12:44:12.808350-04:00",
+  "generated_at": "2026-06-24T12:44:55.565895-04:00",
   "actuals": {
     "date": "2026-06-05",
     "fetched_at": "2026-06-06T11:50:12.737030-04:00",
@@ -98,18 +98,22 @@
         "today_high_f": 81.0,
         "tonight_low_f": 54.0,
         "category": "unknown",
-        "daytime_desc": "Plenty of sunshine; More warming; Light SSW wind"
+        "daytime_desc": "Plenty of sunshine; More warming; Light SSW wind",
+        "wind_mph": 4.0,
+        "wind_lo": 1,
+        "wind_hi": 7,
+        "precip_type": "none"
       },
       "score": {
-        "score": 55.9,
+        "score": 73.1,
         "grade": {
-          "verdict": "wrong",
-          "ray_count": 2
+          "verdict": "meh",
+          "ray_count": 3
         },
         "coverage": {
           "high_temp": true,
           "low_temp": true,
-          "wind": false,
+          "wind": true,
           "precip_type": true,
           "precip_amount": false
         },
@@ -131,12 +135,12 @@
             "error": 0.3
           },
           "wind": {
-            "points": null,
+            "points": 17.2,
             "max": 20,
-            "scored": false,
-            "predicted": null,
+            "scored": true,
+            "predicted": "1-7",
             "actual": 5.4,
-            "error": null
+            "error": 1.4
           },
           "precip_type": {
             "points": 10.0,

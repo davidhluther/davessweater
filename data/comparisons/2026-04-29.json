@@ -1,6 +1,6 @@
 {
   "date": "2026-04-29",
-  "generated_at": "2026-06-23T12:44:09.400263-04:00",
+  "generated_at": "2026-06-24T12:44:54.529498-04:00",
   "actuals": {
     "date": "2026-04-29",
     "fetched_at": "2026-04-30T12:00:46.649258-04:00",
@@ -99,13 +99,16 @@
         "tonight_low_f": 46.0,
         "category": "unknown",
         "daytime_desc": "Cloudy with patchy fog; Scattered morning showers & thundershowers, developing again in the late afternoon; Some afternoon breaks in the clouds develop; South wind 5-15 mph, becoming West 10-20 mph & gusty in the afternoon",
-        "wind_mph": 10.0
+        "wind_mph": 12.5,
+        "wind_lo": 5,
+        "wind_hi": 20,
+        "precip_type": "rain"
       },
       "score": {
-        "score": 68.2,
+        "score": 58.2,
         "grade": {
-          "verdict": "meh",
-          "ray_count": 3
+          "verdict": "wrong",
+          "ray_count": 2
         },
         "coverage": {
           "high_temp": true,
@@ -132,12 +135,12 @@
             "error": 8.2
           },
           "wind": {
-            "points": 16.8,
+            "points": 6.8,
             "max": 20,
             "scored": true,
-            "predicted": 10.0,
+            "predicted": "5-20",
             "actual": 14.6,
-            "error": 4.6
+            "error": 2.1
           },
           "precip_type": {
             "points": 10.0,

@@ -1,6 +1,6 @@
 {
   "date": "2026-05-15",
-  "generated_at": "2026-06-23T12:44:11.020323-04:00",
+  "generated_at": "2026-06-24T12:44:54.999688-04:00",
   "actuals": {
     "date": "2026-05-15",
     "fetched_at": "2026-05-16T11:34:01.557836-04:00",
@@ -98,10 +98,14 @@
         "today_high_f": 70.0,
         "tonight_low_f": 48.0,
         "category": "unknown",
-        "daytime_desc": "Becoming sunny,, then some afternoon cloudiness; Moderating temperatures; Light NW wind becoming SW"
+        "daytime_desc": "Becoming sunny,, then some afternoon cloudiness; Moderating temperatures; Light NW wind becoming SW",
+        "wind_mph": 4.0,
+        "wind_lo": 1,
+        "wind_hi": 7,
+        "precip_type": "none"
       },
       "score": {
-        "score": 31.9,
+        "score": 37.7,
         "grade": {
           "verdict": "wrong",
           "ray_count": 1
@@ -109,7 +113,7 @@
         "coverage": {
           "high_temp": true,
           "low_temp": true,
-          "wind": false,
+          "wind": true,
           "precip_type": true,
           "precip_amount": false
         },
@@ -131,12 +135,12 @@
             "error": 12.3
           },
           "wind": {
-            "points": null,
+            "points": 5.8,
             "max": 20,
-            "scored": false,
-            "predicted": null,
+            "scored": true,
+            "predicted": "1-7",
             "actual": 11.1,
-            "error": null
+            "error": 7.1
           },
           "precip_type": {
             "points": 10.0,

@@ -1,6 +1,6 @@
 {
   "date": "2026-03-23",
-  "generated_at": "2026-06-23T12:44:05.708039-04:00",
+  "generated_at": "2026-06-24T12:44:53.482875-04:00",
   "actuals": {
     "date": "2026-03-23",
     "fetched_at": "2026-03-24T11:42:10.973887-04:00",
@@ -99,13 +99,16 @@
         "tonight_low_f": 31.0,
         "category": "unknown",
         "daytime_desc": "Morning clouds, becoming partly cloudy in the afternoon; Daytime highs occur around sunrise; An AM shower or two, mostly west; NW wind 10-20 mph, gusty",
-        "wind_mph": 15.0
+        "wind_mph": 15.0,
+        "wind_lo": 10,
+        "wind_hi": 20,
+        "precip_type": "rain"
       },
       "score": {
-        "score": 67.9,
+        "score": 57.9,
         "grade": {
-          "verdict": "meh",
-          "ray_count": 3
+          "verdict": "wrong",
+          "ray_count": 2
         },
         "coverage": {
           "high_temp": true,
@@ -132,10 +135,10 @@
             "error": 5.8
           },
           "wind": {
-            "points": 14.4,
+            "points": 4.4,
             "max": 20,
             "scored": true,
-            "predicted": 15.0,
+            "predicted": "10-20",
             "actual": 20.8,
             "error": 5.8
           },

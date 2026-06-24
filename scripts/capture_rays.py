@@ -16,11 +16,17 @@ from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
 from pathlib import Path
 
+# Playwright is only needed for live scraping (scrape()). The text-parsing
+# helpers below are pure stdlib so they can be imported in a stdlib-only runtime
+# (e.g. the historical backfill that re-parses saved raw_text). Import lazily so
+# a missing Playwright never blocks importing the parsers.
 try:
     from playwright.async_api import async_playwright, TimeoutError as PWTimeout
-except ImportError:
-    print("ERROR: playwright not installed. Run: pip install playwright && playwright install chromium")
-    sys.exit(1)
+    _PLAYWRIGHT_IMPORT_ERROR = None
+except ImportError as _e:  # pragma: no cover - exercised only without Playwright
+    async_playwright = None
+    PWTimeout = Exception
+    _PLAYWRIGHT_IMPORT_ERROR = _e
 
 # ── config ─────────────────────────────────────────────────────────────────────
 
@@ -69,6 +75,11 @@ def parse_number(raw: str) -> float | None:
 # ── main scrape ───────────────────────────────────────────────────────────────
 
 async def scrape() -> dict:
+    if async_playwright is None:
+        raise RuntimeError(
+            "playwright not installed. Run: pip install playwright && "
+            f"playwright install chromium ({_PLAYWRIGHT_IMPORT_ERROR})"
+        )
     captured_at = datetime.now(EST).isoformat()
     result = {
         "date":         TODAY,
@@ -117,8 +128,13 @@ async def scrape() -> dict:
             # Parse forecast Hi/Lo from the forecast strip
             result["forecast"] = _parse_forecast_from_text(forecast_text)
 
-            # Parse the daily forecast entries
-            result["daily"] = _parse_daily_forecast(forecast_text)
+            # Parse the daily forecast entries (anchored to the capture date)
+            result["daily"] = _parse_daily_forecast(forecast_text, capture_date=TODAY)
+
+            # Off-by-one canary: daily[0] should be the capture day, so its high
+            # should match the headline "today's" high. Log if it diverges —
+            # don't crash; the capture is still saved for audit.
+            _check_day0_canary(result["daily"], result["forecast"])
 
             # Extract narrative
             result["narrative"] = _extract_narrative(forecast_text)
@@ -319,100 +335,372 @@ def _parse_wind_from_desc(desc: str) -> float | None:
     return None
 
 
-def _parse_daily_forecast(text: str) -> list:
+# NWS qualitative-wind → speed interval (mph). Mirrors scoring's locked mapping.
+_WIND_QUALITATIVE = {
+    "calm":   (0, 1),
+    "light":  (1, 7),
+    "breezy": (12, 20),
+    "windy":  (18, 30),
+    "gusty":  (18, 30),
+}
+
+# Strip gust clauses so a "gusting to 40" tail never widens the sustained-wind
+# interval. Matches "gust(s)/gusting to/up to/of N" and the trailing number.
+_GUST_CLAUSE_RE = re.compile(
+    r"gust(?:s|ing)?\s+(?:to|up\s+to|of|near|around)?\s*\d+",
+    re.I,
+)
+# Numeric ranges like "5-10", "5–10" (en dash), or "5 - 10".
+_WIND_RANGE_RE = re.compile(r"(\d+)\s*[-–]\s*(\d+)\s*mph", re.I)
+# Single approximate value: "around/about/near 5 mph".
+_WIND_AROUND_RE = re.compile(r"(?:around|about|near(?:ly)?)\s+(\d+)\s*mph", re.I)
+# Any remaining "N mph" single value.
+_WIND_SINGLE_RE = re.compile(r"(\d+)\s*mph", re.I)
+
+# A qualitative descriptor counts as a WIND descriptor only when it sits next to
+# the word "wind" (either order, within a couple of words). This keeps "light"
+# from "light shower"/"light rain" out of the wind interval. The descriptor and
+# "wind" must be on the same side of a clause break — we scan each clause.
+_QUAL_WORDS_RE = re.compile(
+    r"\b(calm|light|breezy|windy|gusty)\b", re.I
+)
+
+
+def _qualitative_wind_interval(text: str):
+    """
+    Map NWS qualitative wind descriptors to an interval, but ONLY for words that
+    actually qualify the wind (adjacent to a "wind" token in the same clause).
+
+    Returns ``(lo, hi)`` (the union of every qualifying descriptor) or ``None``.
+    Used solely as the no-number fallback inside :func:`_parse_wind_interval`.
+    """
+    endpoints = []
+    # Split on clause boundaries so "light shower; calm wind" only contributes
+    # the "calm" (which is adjacent to "wind"), not the "light".
+    for clause in re.split(r"[;,.]", text):
+        if "wind" not in clause.lower():
+            # A bare "Nearly calm" / "Breezy." with no "wind" token still reads
+            # as a wind descriptor when the WHOLE clause is essentially just the
+            # descriptor (no precip noun to steal it). Only allow this when the
+            # clause has no precip/sky noun that the word could be modifying.
+            if not _clause_is_bare_wind_descriptor(clause):
+                continue
+        low = clause.lower()
+        for m in _QUAL_WORDS_RE.finditer(low):
+            word = m.group(1)
+            qlo, qhi = _WIND_QUALITATIVE[word]
+            endpoints.append(qlo)
+            endpoints.append(qhi)
+    if not endpoints:
+        return None
+    return (min(endpoints), max(endpoints))
+
+
+# Nouns a qualitative word might be modifying that are NOT wind (so a clause
+# containing one is not a "bare wind descriptor").
+_NON_WIND_NOUN_RE = re.compile(
+    r"\b(shower|rain|snow|drizzle|storm|thunder|fog|cloud|sun|sky|precip|flurr|mist|frost)",
+    re.I,
+)
+
+
+def _clause_is_bare_wind_descriptor(clause: str) -> bool:
+    """
+    True when a clause with no "wind" token is still unambiguously a wind
+    descriptor — i.e. it contains a qualitative wind word and no competing
+    non-wind noun (so "Nearly calm" / "Breezy" reads as wind, but "light shower"
+    does not).
+    """
+    if not _QUAL_WORDS_RE.search(clause):
+        return False
+    return not _NON_WIND_NOUN_RE.search(clause)
+
+
+def _parse_wind_interval(desc: str):
+    """
+    Parse a wind-speed interval ``(lo, hi)`` from a forecast description, or
+    ``None`` when the text carries no wind information.
+
+    Numbers win over words (the plan's locked rule): if the text names ANY
+    sustained-wind number — a range ("5-10 mph"), an approximate single
+    ("around 5 mph"), or a bare "N mph" — the interval is the min/max of those
+    numbers ONLY. Qualitative descriptors are consulted *only as a fallback*,
+    when no number is present at all.
+
+    This matters because Ray routinely pairs a number with a qualitative word
+    that describes a *different* part of the day or a gust, e.g.
+      "SW wind 5-15 mph & gusty"          -> (5, 15)   (not (5, 30))
+      "Light South wind becoming 5-15 mph" -> (5, 15)   (not (1, 15))
+      "NW wind 10-20 mph, gusty at times"  -> (10, 20)
+    Treating "gusty"/"windy" (NWS 18-30) or "light" (NWS 1-7) as an extra
+    endpoint in those cases would blow the sustained interval out by ~25 mph and
+    unfairly tax the wind score. Gusts are definitionally excluded from the
+    sustained-wind interval, and a "light shower" elsewhere in the sentence must
+    never be misread as "light WIND".
+
+    Only when the text carries no number do the NWS qualitative descriptors
+    apply (calm→(0,1), light→(1,7), breezy→(12,20), windy/gusty→(18,30)), and
+    even then only when the descriptor co-occurs with the word "wind".
+
+    Gust clauses ("gusting to 40") are stripped first so a peak-gust number
+    never widens the sustained-wind interval.
+    """
+    if not desc:
+        return None
+
+    # Drop gust clauses before collecting any numbers.
+    cleaned = _GUST_CLAUSE_RE.sub(" ", desc)
+
+    endpoints = []
+
+    # Numeric ranges first; remove them so their endpoints aren't re-counted as
+    # bare singles below.
+    def _take_range(m):
+        endpoints.append(int(m.group(1)))
+        endpoints.append(int(m.group(2)))
+        return " "
+    remainder = _WIND_RANGE_RE.sub(_take_range, cleaned)
+
+    # Approximate singles ("around 5 mph"), then strip so the bare-single sweep
+    # doesn't double-count them.
+    def _take_around(m):
+        endpoints.append(int(m.group(1)))
+        return " "
+    remainder = _WIND_AROUND_RE.sub(_take_around, remainder)
+
+    # Remaining bare "N mph" singles.
+    for m in _WIND_SINGLE_RE.finditer(remainder):
+        endpoints.append(int(m.group(1)))
+
+    # Numbers win: if any sustained-wind number was named, the interval is the
+    # min/max of those numbers alone. Qualitative words ("gusty", "light", …)
+    # are NOT unioned in — gusts are excluded by definition, and a stray "light"
+    # often belongs to "light shower"/"light rain", not the wind.
+    if endpoints:
+        return (min(endpoints), max(endpoints))
+
+    # No number anywhere → fall back to the NWS qualitative map, but only for a
+    # descriptor that actually qualifies the WIND (adjacent to a "wind" token).
+    # This keeps "Lingering light shower …" from injecting a (1, 7) wind range.
+    qual = _qualitative_wind_interval(cleaned)
+    return qual
+
+
+def _parse_precip_type(desc: str):
+    """
+    Recover Ray's precipitation *type* from a forecast description.
+
+    Returns ``"snow"``, ``"rain"``, ``"mixed"`` (both kinds named), ``"none"``
+    (an explicitly dry/clear sky), or ``None`` when the text says nothing about
+    precipitation either way. Amount is never inferred — Ray publishes no number.
+    """
+    if not desc:
+        return None
+    low = desc.lower()
+
+    has_snow = bool(re.search(r"\b(?:snow|flurr|wintry|sleet|ice|icy|freezing)", low))
+    # Unambiguous liquid-precip words. "shower"/"thunder"/"storm" are deliberately
+    # excluded here because they attach to snow too ("snow showers", "snowstorm")
+    # and would otherwise mislabel pure snow as a mix.
+    has_rain_word = bool(re.search(r"\b(?:rain|drizzle)", low))
+    has_wet_word = has_rain_word or bool(re.search(r"\b(?:shower|thunder|storm)", low))
+
+    if has_snow and has_rain_word:
+        return "mixed"
+    if has_snow:
+        return "snow"
+    if has_wet_word:
+        return "rain"
+
+    if re.search(r"\b(?:clear|sunny|sun|dry|cloud|cloudy|fair|partly|mostly)\b", low):
+        return "none"
+    return None
+
+
+def _parse_daily_forecast(text: str, capture_date: str | None = None) -> list:
     """
     Parse multi-day forecast from Ray's text.
-    Ray's actual format in raw_text:
-      Hi: 72
-      Saturday
-      Partly to mostly cloudy; SSW wind 5-15 mph, breezy at times
+
+    Ray's actual strip layout (verified against real captures) places each
+    ``Hi:``/``Lo:`` line *before* the header it belongs to, and the description
+    *after* that header::
+
+      Hi: 71
+      Tuesday                         <- daytime header
+      Lingering light shower ...      <- daytime description
       Lo: 53
-      Saturday night
-      Mostly cloudy; SW wind 5-15 mph, breezy
-      Hi: 65
-      Sunday
+      Tuesday night                   <- night header
+      Becoming mainly clear ...       <- overnight description
+      Hi: 78
+      Wednesday
       ...
-    Description lines sit between day-name and next Hi:/Lo: line (no prefix).
+
+    So the ``Hi:`` sitting *above* a weekday header is THAT day's high (not the
+    block below it), and the ``Lo:`` above a "<Day> night"/"<Day> overnight"
+    header is that day's low. Reading the strip top-to-bottom, we bind each
+    pending ``Hi:``/``Lo:`` to the next header we meet and fold the daytime and
+    overnight halves of a calendar day into a single entry. This is what fixes
+    the off-by-one: the old code chunked from each weekday header to the next
+    and grabbed the ``Hi:`` *following* the header, which actually belongs to
+    the day after.
+
+    The capture day is always ``daily[0]``. When Ray is captured mid-morning he
+    has no bare weekday header for the capture day — only "<Day> overnight" — so
+    daily[0] has no daytime ``high_f`` from the strip (it is left ``None`` and
+    recovered from the headline forecast by the caller); the ``Lo:`` above the
+    "overnight" header is still bound to the capture day. ``day_name`` is always
+    recomputed from the assigned date so it agrees with ``date``.
+
+    Dates are anchored to ``capture_date`` (a ``YYYY-MM-DD`` string): daily[0]
+    is the capture day and each subsequent day is +1 in encounter order. When
+    ``capture_date`` is omitted it defaults to today in EST (live-capture path).
     """
     days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-    night_names = {f"{d} night" for d in days_of_week}
+    day_set = set(days_of_week)
+    # Night headers: "<Day> night" and "<Day> overnight" (Ray uses both forms,
+    # the latter for the capture day's already-in-progress evening).
+    night_re = re.compile(
+        r"^(" + "|".join(days_of_week) + r")\s+(?:night|overnight)$", re.I
+    )
+    # Noise lines that appear inside the strip for non-subscribers.
+    skip_prefixes = ("daytime", "overnight", "extended", "subscribe", "station")
+
     lines = [l.strip() for l in text.splitlines() if l.strip()]
 
-    # Find day-name boundaries (exclude "Saturday night" etc.)
-    day_indices = []
-    for i, line in enumerate(lines):
-        if line in days_of_week:
-            day_indices.append((i, line))
+    if capture_date:
+        anchor_dt = datetime.strptime(capture_date, "%Y-%m-%d")
+    else:
+        anchor_dt = datetime.now(EST)
 
+    # Walk the strip in reading order, accumulating one entry per calendar day in
+    # encounter order. Each Hi/Lo value is "pending" until the header it precedes
+    # tells us which day (and whether daytime or overnight) it belongs to.
+    entries = []          # ordered list of per-day dicts
+    by_base_name = {}     # base weekday name -> entry (to fold night into day)
+    pending_hi = None
+    pending_lo = None
+
+    def _entry_for(base_name):
+        """Return the (possibly new) entry for a base weekday name."""
+        entry = by_base_name.get(base_name)
+        if entry is None:
+            entry = {
+                "day_name": base_name,
+                "high_f": None,
+                "low_f": None,
+                "daytime_desc": "",
+                "overnight_desc": "",
+            }
+            by_base_name[base_name] = entry
+            entries.append(entry)
+        return entry
+
+    current = None        # entry currently receiving description lines
+    in_night = False      # whether description lines belong to the overnight half
+
+    for line in lines:
+        m_hi = re.match(r"^Hi:?\s+([\d.]+)", line, re.I)
+        m_lo = re.match(r"^Lo:?\s+([\d.]+)", line, re.I)
+        m_night = night_re.match(line)
+
+        if m_hi:
+            pending_hi = float(m_hi.group(1))
+            continue
+        if m_lo:
+            pending_lo = float(m_lo.group(1))
+            continue
+        if m_night:
+            base = m_night.group(1).capitalize()
+            current = _entry_for(base)
+            in_night = True
+            if pending_lo is not None and current["low_f"] is None:
+                current["low_f"] = pending_lo
+            pending_lo = None
+            pending_hi = None  # a stray Hi before a night header is not a daytime high
+            continue
+        if line in day_set:
+            current = _entry_for(line)
+            in_night = False
+            if pending_hi is not None and current["high_f"] is None:
+                current["high_f"] = pending_hi
+            pending_hi = None
+            continue
+        if line.lower().startswith(skip_prefixes):
+            continue
+        # Plain description line — attach to the current day's daytime/overnight.
+        if current is None:
+            continue
+        key = "overnight_desc" if in_night else "daytime_desc"
+        current[key] = (current[key] + "; " + line) if current[key] else line
+
+    # Finalize: anchor dates in encounter order, recompute day_name from the date
+    # (so the label always agrees with the assigned calendar day), derive wind.
     daily = []
-    today_dt = datetime.now(EST)
+    for idx, entry in enumerate(entries):
+        forecast_date = anchor_dt + timedelta(days=idx)
 
-    for idx, (start_i, day_name) in enumerate(day_indices):
-        end_i = day_indices[idx + 1][0] if idx + 1 < len(day_indices) else min(start_i + 20, len(lines))
-        chunk = lines[start_i:end_i]
+        # Wind interval: prefer the daytime narrative, fall back to the overnight
+        # half when the daytime line carries no wind cue.
+        wind_iv = _parse_wind_interval(entry["daytime_desc"])
+        if wind_iv is None:
+            wind_iv = _parse_wind_interval(entry["overnight_desc"])
+        if wind_iv is not None:
+            wind_lo, wind_hi = wind_iv
+            # Keep wind_mph = interval midpoint for backward compatibility with
+            # the point-scoring path and existing consumers.
+            wind_mph = round((wind_lo + wind_hi) / 2, 1)
+        else:
+            wind_lo = wind_hi = None
+            # Legacy fallback retains prior behaviour if the interval parser
+            # found nothing the old midpoint parser could still recover.
+            wind_mph = _parse_wind_from_desc(entry["daytime_desc"])
+            if wind_mph is None:
+                wind_mph = _parse_wind_from_desc(entry["overnight_desc"])
 
-        high_f = None
-        low_f = None
-        daytime_desc = ""
-        overnight_desc = ""
-
-        # Walk through the chunk and assign description lines based on position
-        in_night = False
-        for line in chunk:
-            m_hi = re.match(r"^Hi:?\s+([\d.]+)", line, re.I)
-            m_lo = re.match(r"^Lo:?\s+([\d.]+)", line, re.I)
-            if m_hi:
-                high_f = float(m_hi.group(1))
-            elif m_lo:
-                low_f = float(m_lo.group(1))
-            elif line.lower() in {n.lower() for n in night_names}:
-                in_night = True
-            elif line in days_of_week:
-                continue  # skip the day-name header itself
-            elif line.lower().startswith("daytime:"):
-                daytime_desc = line.split(":", 1)[-1].strip()
-            elif line.lower().startswith("overnight:"):
-                overnight_desc = line.split(":", 1)[-1].strip()
-                in_night = True
-            elif line.lower().startswith(("daytime", "overnight", "extended", "subscribe", "station")):
-                continue
-            else:
-                # Plain description line — assign to daytime or overnight
-                if in_night:
-                    if overnight_desc:
-                        overnight_desc += "; " + line
-                    else:
-                        overnight_desc = line
-                else:
-                    if daytime_desc:
-                        daytime_desc += "; " + line
-                    else:
-                        daytime_desc = line
-
-        # Extract wind from descriptions (use daytime wind as primary)
-        wind_mph = _parse_wind_from_desc(daytime_desc)
-        if wind_mph is None:
-            wind_mph = _parse_wind_from_desc(overnight_desc)
-
-        # Calculate date from day name
-        days_ahead = (days_of_week.index(day_name) - today_dt.weekday()) % 7
-        if days_ahead == 0 and len(daily) > 0:
-            days_ahead = 7  # avoid duplicate today
-        forecast_date = (today_dt + timedelta(days=days_ahead)).strftime("%Y-%m-%d")
+        # Precip type: prefer the daytime narrative, fall back to overnight.
+        precip_type = _parse_precip_type(entry["daytime_desc"])
+        if precip_type is None:
+            precip_type = _parse_precip_type(entry["overnight_desc"])
 
         daily.append({
-            "date": forecast_date,
-            "day_name": day_name,
-            "high_f": high_f,
-            "low_f": low_f,
+            "date": forecast_date.strftime("%Y-%m-%d"),
+            "day_name": forecast_date.strftime("%A"),
+            "high_f": entry["high_f"],
+            "low_f": entry["low_f"],
             "wind_mph": wind_mph,
-            "daytime_desc": daytime_desc,
-            "overnight_desc": overnight_desc,
+            "wind_lo": wind_lo,
+            "wind_hi": wind_hi,
+            "precip_type": precip_type,
+            "daytime_desc": entry["daytime_desc"],
+            "overnight_desc": entry["overnight_desc"],
             "category": "unknown",
             "precip_in": None,
         })
 
     return daily
+
+
+def _check_day0_canary(daily: list, forecast: dict) -> bool:
+    """
+    Off-by-one canary. With dates anchored to the capture date, daily[0] is the
+    capture day, so its high should match the headline "today's" high. If they
+    diverge the day labels may be shifted — log a warning (never crash) and
+    return False so callers (e.g. backfill) can decide to skip that day.
+    Returns True when the canary passes or is indeterminate (missing values).
+    """
+    if not daily:
+        return True
+    day0_high = daily[0].get("high_f")
+    today_high = forecast.get("today_high_f")
+    if day0_high is None or today_high is None:
+        return True  # not enough info to judge; don't flag
+    if day0_high != today_high:
+        print(
+            f"  WARNING: day-0 canary — daily[0].high_f={day0_high} != "
+            f"forecast.today_high_f={today_high} (possible day-label shift)"
+        )
+        return False
+    return True
 
 
 def _extract_narrative(text: str) -> str:

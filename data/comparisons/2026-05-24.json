@@ -1,6 +1,6 @@
 {
   "date": "2026-05-24",
-  "generated_at": "2026-06-23T12:44:11.750391-04:00",
+  "generated_at": "2026-06-24T12:44:55.215771-04:00",
   "actuals": {
     "date": "2026-05-24",
     "fetched_at": "2026-05-25T12:37:41.158280-04:00",
@@ -98,7 +98,11 @@
         "today_high_f": 68.0,
         "tonight_low_f": 59.0,
         "category": "unknown",
-        "daytime_desc": "Generally cloudy; Morning fog and drizzle; A passing shower remains possible through the afternoon; Light South wind, but breezy at higher elevations"
+        "daytime_desc": "Generally cloudy; Morning fog and drizzle; A passing shower remains possible through the afternoon; Light South wind, but breezy at higher elevations",
+        "wind_mph": 10.5,
+        "wind_lo": 1,
+        "wind_hi": 20,
+        "precip_type": "rain"
       },
       "score": {
         "score": 53.5,
@@ -109,7 +113,7 @@
         "coverage": {
           "high_temp": true,
           "low_temp": true,
-          "wind": false,
+          "wind": true,
           "precip_type": true,
           "precip_amount": false
         },
@@ -131,12 +135,12 @@
             "error": 4.4
           },
           "wind": {
-            "points": null,
+            "points": 0.0,
             "max": 20,
-            "scored": false,
-            "predicted": null,
+            "scored": true,
+            "predicted": "1-20",
             "actual": 6.6,
-            "error": null
+            "error": 3.9
           },
           "precip_type": {
             "points": 10.0,

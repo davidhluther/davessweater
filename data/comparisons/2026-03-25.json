@@ -1,6 +1,6 @@
 {
   "date": "2026-03-25",
-  "generated_at": "2026-06-23T12:44:05.885043-04:00",
+  "generated_at": "2026-06-24T12:44:53.537339-04:00",
   "actuals": {
     "date": "2026-03-25",
     "fetched_at": "2026-03-26T11:51:01.028930-04:00",
@@ -98,18 +98,22 @@
         "today_high_f": 60.0,
         "tonight_low_f": 43.0,
         "category": "unknown",
-        "daytime_desc": "Partly to mostly cloudy; Milder afternoon; Light South wind becoming 5-10 mph"
+        "daytime_desc": "Partly to mostly cloudy; Milder afternoon; Light South wind becoming 5-10 mph",
+        "wind_mph": 7.5,
+        "wind_lo": 5,
+        "wind_hi": 10,
+        "precip_type": "none"
       },
       "score": {
-        "score": 33.4,
+        "score": 51.0,
         "grade": {
           "verdict": "wrong",
-          "ray_count": 1
+          "ray_count": 2
         },
         "coverage": {
           "high_temp": true,
           "low_temp": true,
-          "wind": false,
+          "wind": true,
           "precip_type": true,
           "precip_amount": false
         },
@@ -131,12 +135,12 @@
             "error": 10.2
           },
           "wind": {
-            "points": null,
+            "points": 17.6,
             "max": 20,
-            "scored": false,
-            "predicted": null,
+            "scored": true,
+            "predicted": "5-10",
             "actual": 9.2,
-            "error": null
+            "error": 1.7
           },
           "precip_type": {
             "points": 10.0,

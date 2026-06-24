@@ -1,6 +1,6 @@
 {
   "date": "2026-05-08",
-  "generated_at": "2026-06-23T12:44:10.329809-04:00",
+  "generated_at": "2026-06-24T12:44:54.772411-04:00",
   "actuals": {
     "date": "2026-05-08",
     "fetched_at": "2026-05-09T11:29:36.188314-04:00",
@@ -98,18 +98,22 @@
         "today_high_f": 64.0,
         "tonight_low_f": 44.0,
         "category": "unknown",
-        "daytime_desc": "Generally sunny, but a few clouds late-day; Cool afternoon after a chilly start; ; Light wind becoming South 5-15 mph"
+        "daytime_desc": "Generally sunny, but a few clouds late-day; Cool afternoon after a chilly start; ; Light wind becoming South 5-15 mph",
+        "wind_mph": 10.0,
+        "wind_lo": 5,
+        "wind_hi": 15,
+        "precip_type": "none"
       },
       "score": {
-        "score": 51.7,
+        "score": 61.9,
         "grade": {
-          "verdict": "wrong",
-          "ray_count": 2
+          "verdict": "meh",
+          "ray_count": 3
         },
         "coverage": {
           "high_temp": true,
           "low_temp": true,
-          "wind": false,
+          "wind": true,
           "precip_type": true,
           "precip_amount": false
         },
@@ -131,12 +135,12 @@
             "error": 5.2
           },
           "wind": {
-            "points": null,
+            "points": 10.2,
             "max": 20,
-            "scored": false,
-            "predicted": null,
+            "scored": true,
+            "predicted": "5-15",
             "actual": 12.9,
-            "error": null
+            "error": 2.9
           },
           "precip_type": {
             "points": 10.0,

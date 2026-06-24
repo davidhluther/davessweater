@@ -1,6 +1,6 @@
 {
   "date": "2026-05-11",
-  "generated_at": "2026-06-23T12:44:10.590837-04:00",
+  "generated_at": "2026-06-24T12:44:54.854650-04:00",
   "actuals": {
     "date": "2026-05-11",
     "fetched_at": "2026-05-12T12:37:44.794750-04:00",
@@ -98,18 +98,22 @@
         "today_high_f": 61.0,
         "tonight_low_f": 39.0,
         "category": "unknown",
-        "daytime_desc": "Cloudy into early afternoon, but mostly sunny by sunset; Few lingering light showers; Light NNW wind, except 5-15 mph late morning and early afternoon"
+        "daytime_desc": "Cloudy into early afternoon, but mostly sunny by sunset; Few lingering light showers; Light NNW wind, except 5-15 mph late morning and early afternoon",
+        "wind_mph": 10.0,
+        "wind_lo": 5,
+        "wind_hi": 15,
+        "precip_type": "rain"
       },
       "score": {
-        "score": 55.6,
+        "score": 70.4,
         "grade": {
-          "verdict": "wrong",
-          "ray_count": 2
+          "verdict": "meh",
+          "ray_count": 3
         },
         "coverage": {
           "high_temp": true,
           "low_temp": true,
-          "wind": false,
+          "wind": true,
           "precip_type": true,
           "precip_amount": false
         },
@@ -131,12 +135,12 @@
             "error": 6.8
           },
           "wind": {
-            "points": null,
+            "points": 14.8,
             "max": 20,
-            "scored": false,
-            "predicted": null,
+            "scored": true,
+            "predicted": "5-15",
             "actual": 10.6,
-            "error": null
+            "error": 0.6
           },
           "precip_type": {
             "points": 10.0,

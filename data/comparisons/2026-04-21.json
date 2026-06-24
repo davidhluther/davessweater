@@ -1,6 +1,6 @@
 {
   "date": "2026-04-21",
-  "generated_at": "2026-06-23T12:44:08.596562-04:00",
+  "generated_at": "2026-06-24T12:44:54.312472-04:00",
   "actuals": {
     "date": "2026-04-21",
     "fetched_at": "2026-04-22T11:50:43.498760-04:00",
@@ -98,18 +98,22 @@
         "today_high_f": 66.0,
         "tonight_low_f": 44.0,
         "category": "unknown",
-        "daytime_desc": "Early valley frost; Mostly sunny; Closer to average temperatures by afternoon; Light south wind"
+        "daytime_desc": "Early valley frost; Mostly sunny; Closer to average temperatures by afternoon; Light south wind",
+        "wind_mph": 4.0,
+        "wind_lo": 1,
+        "wind_hi": 7,
+        "precip_type": "none"
       },
       "score": {
-        "score": 38.2,
+        "score": 49.4,
         "grade": {
           "verdict": "wrong",
-          "ray_count": 1
+          "ray_count": 2
         },
         "coverage": {
           "high_temp": true,
           "low_temp": true,
-          "wind": false,
+          "wind": true,
           "precip_type": true,
           "precip_amount": false
         },
@@ -131,12 +135,12 @@
             "error": 9.9
           },
           "wind": {
-            "points": null,
+            "points": 11.2,
             "max": 20,
-            "scored": false,
-            "predicted": null,
+            "scored": true,
+            "predicted": "1-7",
             "actual": 8.4,
-            "error": null
+            "error": 4.4
           },
           "precip_type": {
             "points": 10.0,

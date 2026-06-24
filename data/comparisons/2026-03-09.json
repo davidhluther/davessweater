@@ -1,6 +1,6 @@
 {
   "date": "2026-03-09",
-  "generated_at": "2026-06-23T12:44:04.443337-04:00",
+  "generated_at": "2026-06-24T12:44:53.046337-04:00",
   "actuals": {
     "date": "2026-03-09",
     "fetched_at": "2026-03-10T08:34:33.017800-04:00",
@@ -96,18 +96,22 @@
         "today_high_f": 69.0,
         "tonight_low_f": 48.0,
         "category": "unknown",
-        "daytime_desc": "Areas of morning fog, then bright sunshine; Warmer again; Light WNW wind"
+        "daytime_desc": "Areas of morning fog, then bright sunshine; Warmer again; Light WNW wind",
+        "wind_mph": 4.0,
+        "wind_lo": 1,
+        "wind_hi": 7,
+        "precip_type": "none"
       },
       "score": {
-        "score": 52.0,
+        "score": 63.8,
         "grade": {
-          "verdict": "wrong",
-          "ray_count": 2
+          "verdict": "meh",
+          "ray_count": 3
         },
         "coverage": {
           "high_temp": true,
           "low_temp": true,
-          "wind": false,
+          "wind": true,
           "precip_type": true,
           "precip_amount": false
         },
@@ -129,12 +133,12 @@
             "error": 6.0
           },
           "wind": {
-            "points": null,
+            "points": 11.8,
             "max": 20,
-            "scored": false,
-            "predicted": null,
+            "scored": true,
+            "predicted": "1-7",
             "actual": 8.1,
-            "error": null
+            "error": 4.1
           },
           "precip_type": {
             "points": 10.0,

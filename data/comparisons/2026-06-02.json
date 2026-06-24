@@ -1,6 +1,6 @@
 {
   "date": "2026-06-02",
-  "generated_at": "2026-06-23T12:44:12.542174-04:00",
+  "generated_at": "2026-06-24T12:44:55.471610-04:00",
   "actuals": {
     "date": "2026-06-02",
     "fetched_at": "2026-06-03T14:35:03.872319-04:00",
@@ -96,7 +96,12 @@
     "raysweather": {
       "prediction": {
         "today_high_f": 71.0,
-        "tonight_low_f": 46.0
+        "tonight_low_f": 46.0,
+        "category": "unknown",
+        "daytime_desc": "",
+        "wind_mph": 10.5,
+        "wind_lo": 1,
+        "wind_hi": 20
       },
       "score": {
         "score": 26.1,
@@ -107,7 +112,7 @@
         "coverage": {
           "high_temp": true,
           "low_temp": true,
-          "wind": false,
+          "wind": true,
           "precip_type": false,
           "precip_amount": false
         },
@@ -129,12 +134,12 @@
             "error": 4.2
           },
           "wind": {
-            "points": null,
+            "points": 0.0,
             "max": 20,
-            "scored": false,
-            "predicted": null,
+            "scored": true,
+            "predicted": "1-20",
             "actual": 6.7,
-            "error": null
+            "error": 3.8
           },
           "precip_type": {
             "points": null,

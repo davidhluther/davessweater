@@ -1,6 +1,6 @@
 {
   "date": "2026-04-03",
-  "generated_at": "2026-06-23T12:44:06.663902-04:00",
+  "generated_at": "2026-06-24T12:44:53.788856-04:00",
   "actuals": {
     "date": "2026-04-03",
     "fetched_at": "2026-04-04T10:59:25.667888-04:00",
@@ -98,18 +98,22 @@
         "today_high_f": 73.0,
         "tonight_low_f": 54.0,
         "category": "unknown",
-        "daytime_desc": "Mostly sunny; Isolated afternoon showers; Pleasant temperatures; Calm wind becoming South 5-10 mph"
+        "daytime_desc": "Mostly sunny; Isolated afternoon showers; Pleasant temperatures; Calm wind becoming South 5-10 mph",
+        "wind_mph": 7.5,
+        "wind_lo": 5,
+        "wind_hi": 10,
+        "precip_type": "rain"
       },
       "score": {
-        "score": 58.0,
+        "score": 73.0,
         "grade": {
-          "verdict": "wrong",
-          "ray_count": 2
+          "verdict": "meh",
+          "ray_count": 3
         },
         "coverage": {
           "high_temp": true,
           "low_temp": true,
-          "wind": false,
+          "wind": true,
           "precip_type": true,
           "precip_amount": false
         },
@@ -131,12 +135,12 @@
             "error": 3.4
           },
           "wind": {
-            "points": null,
+            "points": 15.0,
             "max": 20,
-            "scored": false,
-            "predicted": null,
+            "scored": true,
+            "predicted": "5-10",
             "actual": 10.5,
-            "error": null
+            "error": 3.0
           },
           "precip_type": {
             "points": 10.0,
