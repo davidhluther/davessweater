@@ -133,21 +133,30 @@ def _best_rays_prediction(rays_data, target_date):
         pred["today_high_f"] = forecast.get("today_high_f")
         pred["tonight_low_f"] = forecast.get("tonight_low_f")
 
-    # Try to fill gaps from daily array
-    if rays_data.get("daily"):
-        for day in rays_data["daily"]:
-            if day.get("date") == target_date:
-                if pred.get("today_high_f") is None and day.get("high_f") is not None:
-                    pred["today_high_f"] = day["high_f"]
-                if pred.get("tonight_low_f") is None and day.get("low_f") is not None:
-                    pred["tonight_low_f"] = day["low_f"]
-                # Carry over other fields (not precip_in — Ray never gives
-                # a numeric amount, so the hardcoded 0.0 would misrepresent
-                # his forecast as predicting no rain)
-                for k in ("category", "daytime_desc", "wind_mph"):
-                    if k in day and day[k] is not None and k not in pred:
-                        pred[k] = day[k]
-                break
+    # Pick the daily entry for this date. Prefer an exact date match; if a
+    # capture hiccup leaves daily[] mis-anchored (no entry on target_date),
+    # fall back to daily[0] (post-fix, this is the capture day) or the nearest
+    # future entry — so a date glitch never strips Ray's wind/precip fields.
+    daily = rays_data.get("daily") or []
+    match = None
+    if daily:
+        match = next((d for d in daily if d.get("date") == target_date), None)
+        if match is None:
+            future = [d for d in daily if d.get("date") and d["date"] >= target_date]
+            match = min(future, key=lambda d: d["date"]) if future else daily[0]
+
+    if match:
+        if pred.get("today_high_f") is None and match.get("high_f") is not None:
+            pred["today_high_f"] = match["high_f"]
+        if pred.get("tonight_low_f") is None and match.get("low_f") is not None:
+            pred["tonight_low_f"] = match["low_f"]
+        # Carry over other fields — including the wind interval (wind_lo/wind_hi)
+        # and recovered precip_type. NOT precip_in: Ray never gives a numeric
+        # amount, so a hardcoded 0.0 would misrepresent his forecast as
+        # predicting no rain (amount stays forfeited).
+        for k in ("category", "daytime_desc", "wind_mph", "wind_lo", "wind_hi", "precip_type"):
+            if k in match and match[k] is not None and k not in pred:
+                pred[k] = match[k]
 
     return pred if pred else None
 
@@ -219,6 +228,8 @@ def _to_contract(pred):
     Already-normalized new sources keep their explicit fields_provided.
     Old-schema (precip_in) and text sources (Ray's/Apple) are backfilled."""
     high, low, wind = _get_high(pred), _get_low(pred), pred.get("wind_mph")
+    wind_lo, wind_hi = pred.get("wind_lo"), pred.get("wind_hi")
+    has_wind = wind is not None or (wind_lo is not None and wind_hi is not None)
     snow = pred.get("snow_in")
     rain = pred.get("rain_in")
     if rain is None and pred.get("precip_in") is not None:
@@ -244,11 +255,12 @@ def _to_contract(pred):
         fp = []
         if high is not None: fp.append("high")
         if low is not None: fp.append("low")
-        if wind is not None: fp.append("wind")
+        if has_wind: fp.append("wind")
         if ptype is not None: fp.append("precip_type")
         if rain is not None: fp.append("rain_amount")
         if snow is not None: fp.append("snow_amount")
-    return {"high_f": high, "low_f": low, "wind_mph": wind, "precip_type": ptype,
+    return {"high_f": high, "low_f": low, "wind_mph": wind,
+            "wind_lo": wind_lo, "wind_hi": wind_hi, "precip_type": ptype,
             "rain_in": (round(rain, 3) if rain is not None else None),
             "snow_in": (round(snow, 3) if snow is not None else None),
             "fields_provided": fp}
