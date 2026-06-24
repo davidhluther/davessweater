@@ -55,14 +55,23 @@ source-registry/adapter pattern, and reworked scoring into the coupled, snow-awa
       reached `data/` on whatever branch M3 builds on before wiring N-source viz (the `feat/openmeteo-backfill`
       branch still carried only the 3 original sources + a single `precip_amount` field).
 
-## Open-Meteo backfill (PR #62 — OPEN, not yet merged)
-- [ ] **Open-Meteo historical backfill** — `scripts/backfill_openmeteo.py` pulls Open-Meteo's Historical
-      Forecast API (legit archived past forecasts) + actuals; Open-Meteo now has a **474-day record
-      (avg 91.6, 465–1–8, graded "Wrong" exactly once)**, full chronological re-score, pytest green. Homepage
-      derives a **tracking-period** head-to-head (~109 rays-present days) + a separate 474-day explainer line;
-      "never once graded Wrong" is now data-driven (`trackingFreeNeverWrong`); `trendSeries` scoped to the
-      rays-present window so the chart is a true free-vs-Ray's comparison. **[PR #62](https://github.com/davidhluther/davessweater/pull/62)
-      is OPEN as of this handoff — owner deciding merge-now vs bundle-with-M3; reconcile this line on merge.**
+## Done: Open-Meteo backfill (PR #62 — merged)
+- [x] **Open-Meteo historical backfill** — `scripts/backfill_openmeteo.py`; Open-Meteo has a **474-day record**;
+      homepage derives a tracking-period head-to-head + a 474-day explainer; `trendSeries` scoped to the
+      rays-present window. Merged to `main` + live.
+
+## Done: Fair Ray scoring — capture fix + interval wind scoring (PR #67 — merged)
+Fixed 3 capture/scoring bugs unfairly mis-scoring Ray + a latent append-only `entries[]` drift. Wind is now
+scored as an **interval** with a 0.5× width vagueness tax (point forecasts unchanged → Open-Meteo provably
+untouched); qualitative wind mapped via the NWS scale; precip amount honestly forfeited. Whole Ray era
+backfilled from saved `raw_text` (originals preserved) + re-scored; guarded by `tests/test_scores_consistency.py`.
+Plan: `planning/plans/2026-06-24-rays-capture-interval-scoring.md`.
+- [x] **Ray fair scoring** — Ray ≈ 65.2 (≈flat — capture-deflation + vagueness-reward cancelled; now every
+      point earned), Open-Meteo 91.65 unchanged, free wins by ~26.5, Ray's "Right" days 35→25. **Merged + live.**
+- [ ] **Methodology transparency (before promotion)** — document the interval scoring + NWS qualitative-wind
+      mapping + width penalty on `/right-wrong-ray` (+ refresh the stale `CLAUDE.md` scoring table).
+- [ ] **Capture-quality monitoring** — alert when a source's coverage drops (this regression went unnoticed
+      for weeks). Part of the promotion audit.
 
 ## M3 — dynamic data-viz (v1 built + verified; PR pending)
 Turn the now-richer accuracy data (multi-source season + per-source coverage index + the 474-day
