@@ -3,6 +3,7 @@ No I/O. Inputs are normalized prediction/actual dicts (see plan contract)."""
 
 TEMP_TOL, TEMP_SLOPE = 2.0, 3.0
 WIND_TOL, WIND_SLOPE = 3.0, 2.0
+WIND_WIDTH_K = 0.5  # vagueness tax: half the forecast-range width is added to the error
 RAIN_TOL, RAIN_SLOPE = 0.1, 20.0
 SNOW_MIN_TOL, SNOW_PCT, SNOW_SLOPE = 1.0, 0.20, 2.0
 
@@ -24,6 +25,25 @@ def _band(pred, actual, maxpts, tol, slope):
         return 0.0
     err = abs(pred - actual)
     return round(max(0.0, maxpts - max(0.0, err - tol) * slope), 1)
+
+
+def _wind_interval(pred):
+    lo, hi = pred.get("wind_lo"), pred.get("wind_hi")
+    if lo is not None and hi is not None:
+        return (min(lo, hi), max(lo, hi))
+    w = pred.get("wind_mph")
+    return (w, w) if w is not None else None
+
+
+def _wind_points(pred, actual):
+    if "wind" not in pred.get("fields_provided", []):
+        return None
+    iv = _wind_interval(pred); aw = actual.get("wind_mph")
+    if iv is None or aw is None:
+        return None
+    lo, hi = iv
+    eff = abs((lo + hi) / 2.0 - aw) + WIND_WIDTH_K * (hi - lo)
+    return round(max(0.0, 20 - max(0.0, eff - WIND_TOL) * WIND_SLOPE), 1)
 
 
 def _snow_tol(actual_snow):
@@ -108,15 +128,25 @@ def score_prediction(pred, actual):
 
     high = _band(pred.get("high_f"), actual.get("high_f"), 30, TEMP_TOL, TEMP_SLOPE) if "high" in fp else None
     low = _band(pred.get("low_f"), actual.get("low_f"), 30, TEMP_TOL, TEMP_SLOPE) if "low" in fp else None
-    wind = _band(pred.get("wind_mph"), actual.get("wind_mph"), 20, WIND_TOL, WIND_SLOPE) if "wind" in fp else None
+    wind = _wind_points(pred, actual)
     ptype = _type_points(pred.get("precip_type"), actual_type) if "precip_type" in fp else None
     pamt = _amount_points(pred, actual, actual_type)
+
+    iv = _wind_interval(pred) if "wind" in fp else None
+    if iv is None:
+        wind_predicted, wind_mid = None, None
+    else:
+        lo, hi = iv
+        wind_mid = (lo + hi) / 2.0
+        wind_predicted = f"{lo}-{hi}" if lo != hi else wind_mid
 
     total = round(sum((p or 0) for p in (high, low, wind, ptype, pamt)), 1)
     breakdown = {
         "high_temp": _bd(high, 30, pred.get("high_f") if "high" in fp else None, actual.get("high_f")),
         "low_temp": _bd(low, 30, pred.get("low_f") if "low" in fp else None, actual.get("low_f")),
-        "wind": _bd(wind, 20, pred.get("wind_mph") if "wind" in fp else None, actual.get("wind_mph")),
+        "wind": {"points": wind, "max": 20, "scored": wind is not None,
+                 "predicted": wind_predicted, "actual": actual.get("wind_mph"),
+                 "error": _delta(wind_mid, actual.get("wind_mph"))},
         "precip_type": {"points": ptype, "max": 10, "scored": ptype is not None,
                         "predicted": pred.get("precip_type") if "precip_type" in fp else None, "actual": actual_type},
         "precip_amount": _amount_bd(pred, actual, actual_type, pamt),
