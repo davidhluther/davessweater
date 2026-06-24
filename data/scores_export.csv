@@ -1,325 +1,699 @@
 date,source,actual_high_f,actual_low_f,actual_wind_mph,actual_precip_in,actual_conditions,predicted_high_f,predicted_low_f,predicted_wind_mph,predicted_precip_in,predicted_conditions,score_total,verdict,ray_count,pts_high_temp,pts_low_temp,pts_wind,pts_precipitation,err_high_f,err_low_f,err_wind_mph,err_precip_in,sweater_answer,sweater_layers
+2025-03-03,openmeteo,45.6,24.5,7.6,0.0,Mainly clear,52.4,25.7,8.5,0.0,Clear sky,85.6,right,4,15.6,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-03-04,openmeteo,47.0,34.3,15.8,0.016,Light drizzle,50.7,33.7,13.2,0.016,Light drizzle,94.9,right,5,24.9,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-03-05,openmeteo,55.2,33.8,21.3,1.468,Slight snow,57.2,32.9,23.4,1.303,Heavy rain,98.9,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-03-06,openmeteo,31.3,22.4,31.7,0.188,Slight snow,32.4,22.2,41.2,0.016,Light drizzle,81.0,right,4,30.0,30.0,7.0,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2025-03-07,openmeteo,48.8,24.1,17.5,0.012,Light drizzle,46.7,25.2,29.8,0.0,Fog,71.1,meh,3,29.7,30.0,1.4,,,,,,YES,1-2 (light to medium sweater)
+2025-03-08,openmeteo,48.3,34.4,20.5,0.028,Light drizzle,51.3,36.0,23.4,0.016,Light drizzle,97.0,right,5,27.0,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-03-09,openmeteo,52.9,30.3,11.7,0.0,Overcast,53.7,32.4,11.4,0.0,Overcast,99.7,right,5,30.0,29.7,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-03-10,openmeteo,52.9,35.5,9.5,0.0,Overcast,57.4,35.4,10.0,0.0,Overcast,92.5,right,5,22.5,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-03-11,openmeteo,63.2,39.2,16.5,0.0,Clear sky,65.6,38.4,19.6,0.0,Clear sky,98.6,right,5,28.8,30.0,19.8,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-03-12,openmeteo,65.8,44.3,11.9,0.0,Overcast,69.0,47.4,16.9,0.0,Clear sky,89.1,right,4,26.4,26.7,16.0,,,,,,NO,0 (the sweater rests today)
+2025-03-13,openmeteo,64.6,47.2,8.6,0.0,Overcast,67.2,46.1,9.5,0.0,Overcast,98.2,right,5,28.2,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-03-14,openmeteo,60.1,44.5,12.1,0.0,Overcast,63.6,41.8,9.7,0.0,Overcast,93.4,right,5,25.5,27.9,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-03-15,openmeteo,57.4,46.6,15.7,0.098,Moderate drizzle,56.2,49.2,17.1,0.063,Light drizzle,98.2,right,5,30.0,28.2,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-03-16,openmeteo,63.2,46.3,21.8,1.524,Heavy rain,60.9,48.6,21.1,2.441,Heavy rain,88.2,right,4,29.1,29.1,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-03-17,openmeteo,44.3,32.2,24.0,0.024,Light drizzle,45.7,31.4,25.8,0.0,Overcast,90.0,right,5,30.0,30.0,20.0,,,,,,YES,2 (solid sweater + optional layer)
+2025-03-18,openmeteo,62.5,32.8,16.5,0.0,Clear sky,65.3,32.5,25.7,0.0,Clear sky,85.2,right,4,27.6,30.0,7.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-03-19,openmeteo,66.6,44.4,10.7,0.0,Overcast,71.4,43.1,11.7,0.0,Overcast,91.6,right,5,21.6,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-03-20,openmeteo,52.4,30.7,26.5,0.074,Slight snow,55.0,31.2,24.1,0.02,Light drizzle,98.2,right,5,28.2,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-03-21,openmeteo,49.0,24.4,28.2,0.059,Slight snow,50.1,27.0,30.6,0.074,Slight snow,98.2,right,5,30.0,28.2,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-03-22,openmeteo,53.2,32.0,17.8,0.0,Overcast,57.2,36.3,23.2,0.0,Overcast,82.3,right,4,24.0,23.1,15.2,,,,,,YES,1-2 (light to medium sweater)
+2025-03-23,openmeteo,56.7,31.7,13.2,0.0,Overcast,60.0,35.9,20.3,0.0,Overcast,81.3,right,4,26.1,23.4,11.8,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-03-24,openmeteo,54.0,42.6,14.3,0.252,Moderate rain,56.9,43.1,18.6,0.043,Moderate drizzle,92.5,right,5,27.3,30.0,17.4,,,,,,YES,1-2 (light to medium sweater)
+2025-03-25,openmeteo,60.2,36.8,18.1,0.043,Moderate drizzle,60.5,39.3,21.3,0.0,Overcast,88.1,right,4,30.0,28.5,19.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-03-26,openmeteo,47.9,34.1,17.4,0.0,Overcast,50.0,35.0,16.5,0.0,Overcast,99.7,right,5,29.7,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-03-27,openmeteo,57.4,29.0,6.5,0.0,Overcast,59.1,27.8,9.4,0.0,Partly cloudy,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-03-28,openmeteo,66.7,43.8,8.6,0.0,Overcast,69.9,45.5,12.2,0.0,Partly cloudy,95.2,right,5,26.4,30.0,18.8,,,,,,NO,0 (the sweater rests today)
+2025-03-29,openmeteo,64.2,48.3,11.7,0.012,Light drizzle,67.5,53.7,10.1,0.0,Overcast,75.9,right,4,26.1,19.8,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-03-30,openmeteo,64.0,51.5,12.4,0.118,Light drizzle,63.1,53.3,11.9,0.327,Moderate rain,97.8,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-03-31,openmeteo,64.1,49.1,16.9,0.575,Moderate rain,66.5,48.1,24.1,0.181,Slight rain,84.5,right,4,28.8,30.0,11.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-04-01,openmeteo,61.6,35.2,16.9,0.012,Light drizzle,61.5,36.4,25.6,0.016,Light drizzle,88.6,right,4,30.0,30.0,8.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-04-02,openmeteo,56.6,44.6,10.5,0.118,Moderate drizzle,59.1,43.2,8.7,0.744,Moderate rain,88.5,right,4,28.5,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-04-03,openmeteo,70.7,53.8,15.4,0.15,Moderate drizzle,69.0,58.5,17.5,0.043,Moderate drizzle,91.8,right,5,30.0,21.9,20.0,,,,,,NO,0 (the sweater rests today)
+2025-04-04,openmeteo,75.7,56.9,8.8,0.047,Moderate drizzle,75.0,61.0,12.2,0.0,Overcast,82.9,right,4,30.0,23.7,19.2,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-04-05,openmeteo,74.4,57.8,14.0,0.067,Moderate drizzle,77.8,60.9,14.0,0.0,Overcast,82.5,right,4,25.8,26.7,20.0,,,,,,NO,0 (the sweater rests today)
+2025-04-06,openmeteo,65.6,54.6,11.9,0.232,Slight rain,67.6,55.9,19.9,0.071,Moderate drizzle,88.8,right,4,30.0,30.0,10.0,,,,,,NO,0 (the sweater rests today)
+2025-04-07,openmeteo,61.7,41.0,16.3,0.976,Moderate rain,59.1,41.0,19.3,0.559,Moderate rain,91.9,right,5,28.2,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-04-08,openmeteo,42.8,32.2,21.2,0.0,Overcast,46.8,33.9,20.9,0.0,Overcast,94.0,right,5,24.0,30.0,20.0,,,,,,YES,2 (solid sweater + optional layer)
+2025-04-09,openmeteo,48.8,29.0,8.9,0.0,Partly cloudy,55.6,29.9,7.4,0.0,Overcast,85.6,right,4,15.6,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-04-10,openmeteo,48.9,39.0,8.4,0.252,Moderate rain,51.4,37.5,9.4,0.197,Moderate rain,98.5,right,5,28.5,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-04-11,openmeteo,48.6,37.0,13.3,0.316,Slight snow,45.0,36.6,13.1,0.016,Light drizzle,91.9,right,5,25.2,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-04-12,openmeteo,43.5,30.8,15.0,0.0,Overcast,42.3,31.3,19.2,0.0,Overcast,97.6,right,5,30.0,30.0,17.6,,,,,,YES,2 (solid sweater + optional layer)
+2025-04-13,openmeteo,57.9,31.7,13.4,0.0,Overcast,61.4,31.5,16.1,0.0,Overcast,95.5,right,5,25.5,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-04-14,openmeteo,72.2,46.5,15.2,0.0,Overcast,75.5,48.1,18.3,0.0,Overcast,95.9,right,5,26.1,30.0,19.8,,,,,,NO,0 (the sweater rests today)
+2025-04-15,openmeteo,58.7,40.3,25.3,0.02,Light drizzle,65.1,44.7,28.5,0.063,Moderate drizzle,79.2,right,4,16.8,22.8,19.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-04-16,openmeteo,52.0,35.2,22.5,0.0,Overcast,56.9,36.3,29.4,0.0,Mainly clear,83.5,right,4,21.3,30.0,12.2,,,,,,YES,1-2 (light to medium sweater)
+2025-04-17,openmeteo,57.9,38.1,8.4,0.0,Overcast,64.6,35.9,9.0,0.0,Overcast,85.3,right,4,15.9,29.4,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-04-18,openmeteo,65.4,46.8,13.3,0.0,Overcast,71.2,45.6,11.8,0.0,Overcast,88.6,right,4,18.6,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-04-19,openmeteo,74.2,50.7,8.1,0.0,Overcast,79.5,58.2,11.4,0.0,Overcast,73.0,meh,3,20.1,13.5,19.4,,,,,,NO,0 (the sweater rests today)
+2025-04-20,openmeteo,72.9,57.9,9.8,0.0,Overcast,77.8,57.0,9.1,0.0,Overcast,91.3,right,5,21.3,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-04-21,openmeteo,73.1,54.6,10.7,0.0,Overcast,74.2,54.5,11.0,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-04-22,openmeteo,60.4,53.3,7.3,0.248,Moderate drizzle,62.2,53.9,10.9,0.059,Dense drizzle,97.0,right,5,30.0,30.0,18.8,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-04-23,openmeteo,66.8,49.5,8.2,0.004,Light drizzle,69.1,51.3,10.4,0.0,Fog,99.1,right,5,29.1,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-04-24,openmeteo,61.4,52.1,7.8,0.169,Dense drizzle,59.6,52.8,5.5,0.201,Moderate rain,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-04-25,openmeteo,64.2,54.7,10.2,0.134,Dense drizzle,63.8,56.2,10.3,0.114,Slight rain,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-04-26,openmeteo,67.1,51.4,14.3,0.213,Slight rain,69.1,53.8,16.1,0.059,Dense drizzle,97.7,right,5,30.0,28.8,20.0,,,,,,NO,0 (the sweater rests today)
+2025-04-27,openmeteo,64.1,42.1,13.5,0.0,Overcast,69.1,43.6,10.7,0.0,Overcast,91.0,right,5,21.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-04-28,openmeteo,63.6,50.3,9.2,0.0,Overcast,67.4,48.9,8.3,0.0,Overcast,94.6,right,5,24.6,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-04-29,openmeteo,70.3,49.0,9.7,0.031,Light drizzle,76.5,51.0,12.5,0.0,Overcast,77.4,right,4,17.4,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-04-30,openmeteo,74.4,55.8,11.8,0.366,Heavy rain,74.9,59.4,14.1,0.028,Moderate drizzle,90.4,right,5,30.0,25.2,20.0,,,,,,NO,0 (the sweater rests today)
+2025-05-01,openmeteo,69.5,57.7,13.0,0.268,Moderate rain,70.8,57.3,13.9,0.028,Moderate drizzle,97.2,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-05-02,openmeteo,70.5,52.0,9.2,0.138,Moderate rain,70.6,56.3,9.7,0.0,Overcast,82.3,right,4,30.0,23.1,20.0,,,,,,NO,0 (the sweater rests today)
+2025-05-03,openmeteo,63.5,50.6,10.3,0.335,Moderate rain,64.5,49.1,18.0,0.425,Moderate rain,90.6,right,5,30.0,30.0,10.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-05-04,openmeteo,58.2,47.4,9.1,0.248,Slight rain,60.4,45.5,16.5,0.157,Moderate rain,90.6,right,5,29.4,30.0,11.2,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-05-05,openmeteo,56.9,42.9,10.7,0.071,Slight rain,56.3,41.4,10.2,0.24,Moderate rain,98.6,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-05-06,openmeteo,60.9,41.6,11.4,0.0,Overcast,62.7,41.9,11.4,0.0,Mainly clear,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-05-07,openmeteo,62.5,48.1,7.6,0.118,Moderate rain,67.4,45.6,7.6,0.0,Overcast,79.4,right,4,21.3,28.5,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-05-08,openmeteo,69.5,51.5,9.7,0.543,Moderate rain,70.3,52.6,10.1,0.059,Moderate drizzle,92.3,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-05-09,openmeteo,64.2,48.5,12.3,0.02,Moderate drizzle,66.5,48.7,12.9,0.043,Dense drizzle,99.1,right,5,29.1,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-05-10,openmeteo,59.6,42.6,10.8,0.0,Overcast,62.7,43.4,9.4,0.0,Overcast,96.7,right,5,26.7,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-05-11,openmeteo,60.9,49.3,8.7,0.15,Slight rain,59.3,49.8,7.8,0.102,Dense drizzle,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-05-12,openmeteo,59.2,52.5,13.1,1.89,Moderate rain,59.2,53.9,11.8,3.118,Heavy rain,90.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-05-13,openmeteo,62.0,53.3,13.5,0.882,Moderate rain,66.7,54.7,9.0,0.311,Moderate rain,79.5,right,4,21.9,30.0,17.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-05-14,openmeteo,65.5,53.4,4.4,0.949,Moderate rain,67.9,52.6,10.6,0.114,Moderate rain,82.4,right,4,28.8,30.0,13.6,,,,,,NO,0 (the sweater rests today)
+2025-05-15,openmeteo,73.4,54.2,9.1,0.047,Light drizzle,74.7,56.0,9.9,0.0,Thunderstorm,90.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-05-16,openmeteo,70.6,60.4,13.7,0.028,Moderate drizzle,75.8,63.7,15.4,0.0,Overcast,76.5,right,4,20.4,26.1,20.0,,,,,,NO,0 (the sweater rests today)
+2025-05-17,openmeteo,72.4,58.9,17.3,0.335,Moderate rain,72.8,56.5,18.3,0.213,Slight rain,98.4,right,5,30.0,28.8,20.0,,,,,,NO,0 (the sweater rests today)
+2025-05-18,openmeteo,70.3,55.1,17.0,0.0,Overcast,72.6,54.9,19.6,0.0,Overcast,99.1,right,5,29.1,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-05-19,openmeteo,71.3,55.4,9.8,0.106,Slight rain,71.8,55.1,13.3,0.0,Overcast,88.9,right,4,30.0,30.0,19.0,,,,,,NO,0 (the sweater rests today)
+2025-05-20,openmeteo,68.4,57.2,7.8,0.051,Moderate drizzle,70.8,57.0,7.4,0.0,Overcast,88.8,right,4,28.8,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-05-21,openmeteo,70.5,57.3,16.2,0.11,Slight rain,70.3,56.9,18.2,0.256,Moderate rain,99.1,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-05-22,openmeteo,61.6,48.8,19.2,0.0,Overcast,65.3,50.5,19.7,0.0,Partly cloudy,94.9,right,5,24.9,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-05-23,openmeteo,57.5,42.8,16.8,0.0,Overcast,59.1,44.3,23.3,0.0,Overcast,93.0,right,5,30.0,30.0,13.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-05-24,openmeteo,62.5,43.1,9.9,0.0,Overcast,63.3,42.3,11.9,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-05-25,openmeteo,62.4,49.7,6.8,0.016,Light drizzle,68.1,46.8,7.2,0.0,Overcast,76.2,right,4,18.9,27.3,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-05-26,openmeteo,56.5,47.9,7.4,0.673,Moderate rain,57.4,49.2,7.2,0.402,Moderate rain,96.6,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-05-27,openmeteo,51.3,46.6,10.4,0.587,Moderate rain,49.8,46.4,8.5,0.697,Moderate rain,99.8,right,5,30.0,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-05-28,openmeteo,67.5,47.3,5.9,0.197,Dense drizzle,68.1,47.4,10.3,0.0,Fog,85.3,right,4,30.0,30.0,17.2,,,,,,NO,0 (the sweater rests today)
+2025-05-29,openmeteo,67.7,54.9,4.2,0.114,Moderate drizzle,67.6,58.4,9.4,0.61,Heavy rain,83.2,right,4,30.0,25.5,15.6,,,,,,NO,0 (the sweater rests today)
+2025-05-30,openmeteo,66.8,49.7,17.7,0.13,Dense drizzle,62.7,49.6,19.2,0.043,Moderate drizzle,93.7,right,5,23.7,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-05-31,openmeteo,61.9,49.7,22.1,0.051,Light drizzle,64.4,48.5,22.1,0.043,Dense drizzle,98.5,right,5,28.5,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-06-01,openmeteo,62.5,51.8,12.4,0.224,Moderate rain,65.5,51.0,13.0,0.0,Overcast,84.5,right,4,27.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-06-02,openmeteo,68.6,49.4,7.4,0.0,Overcast,69.0,50.1,8.5,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-06-03,openmeteo,71.5,52.5,8.2,0.0,Mainly clear,73.7,51.7,7.8,0.0,Mainly clear,99.4,right,5,29.4,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-06-04,openmeteo,68.6,57.1,8.4,0.031,Light drizzle,71.4,54.9,7.3,0.0,Fog,87.0,right,4,27.6,29.4,20.0,,,,,,NO,0 (the sweater rests today)
+2025-06-05,openmeteo,71.5,59.7,7.3,0.012,Light drizzle,71.3,61.0,7.9,0.0,Overcast,90.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-06-06,openmeteo,75.6,57.7,10.3,0.13,Dense drizzle,76.6,59.0,10.6,0.142,Moderate rain,100.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-06-07,openmeteo,72.6,62.2,12.6,0.102,Moderate drizzle,72.6,60.9,13.8,0.028,Moderate drizzle,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-06-08,openmeteo,75.3,58.9,11.9,0.039,Light drizzle,75.2,61.0,14.1,0.0,Overcast,89.7,right,4,30.0,29.7,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-06-09,openmeteo,74.1,57.8,11.6,0.146,Slight rain,73.5,57.3,8.8,0.0,Overcast,89.1,right,4,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-06-10,openmeteo,71.1,58.4,11.0,0.051,Moderate drizzle,72.9,59.1,11.2,0.0,Overcast,90.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-06-11,openmeteo,74.5,55.6,5.5,0.0,Overcast,76.2,54.2,6.1,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-06-12,openmeteo,74.6,61.4,6.9,0.016,Light drizzle,75.6,56.7,7.5,1.559,Heavy rain,81.9,right,4,30.0,21.9,20.0,,,,,,NO,0 (the sweater rests today)
+2025-06-13,openmeteo,73.0,62.2,6.0,0.398,Moderate rain,75.2,63.1,6.7,0.043,Moderate drizzle,94.3,right,5,29.4,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-06-14,openmeteo,74.9,61.9,7.7,0.169,Slight rain,75.6,62.1,11.0,0.894,Violent rain showers,89.4,right,4,30.0,30.0,19.4,,,,,,NO,0 (the sweater rests today)
+2025-06-15,openmeteo,72.4,60.5,9.8,0.315,Moderate rain,71.7,62.6,11.9,0.098,Slight rain,97.4,right,5,30.0,29.7,20.0,,,,,,NO,0 (the sweater rests today)
+2025-06-16,openmeteo,74.9,62.6,8.0,0.736,Heavy rain,74.3,64.3,12.8,0.441,Violent rain showers,92.5,right,5,30.0,30.0,16.4,,,,,,NO,0 (the sweater rests today)
+2025-06-17,openmeteo,76.3,62.2,7.8,0.315,Moderate rain,77.8,64.9,9.9,0.0,Overcast,83.6,right,4,30.0,27.9,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-06-18,openmeteo,76.5,61.0,9.7,0.283,Moderate rain,74.1,62.4,12.4,0.0,Overcast,85.1,right,4,28.8,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-06-19,openmeteo,75.3,60.6,11.9,0.236,Moderate rain,74.9,64.3,13.0,0.24,Moderate rain,94.9,right,5,30.0,24.9,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-06-20,openmeteo,75.5,57.5,10.2,0.004,Light drizzle,75.9,59.4,10.2,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-06-21,openmeteo,76.0,62.6,5.4,0.035,Light drizzle,77.1,59.3,6.3,0.087,Slight rain showers,96.1,right,5,30.0,26.1,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-06-22,openmeteo,80.2,65.1,6.9,0.031,Light drizzle,80.9,61.8,8.1,0.0,Thunderstorm,86.1,right,4,30.0,26.1,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-06-23,openmeteo,81.9,64.7,7.5,0.012,Light drizzle,82.0,64.5,7.4,0.0,Thunderstorm,90.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-06-24,openmeteo,84.0,66.3,7.9,0.165,Moderate rain,85.2,66.7,7.9,0.043,Thunderstorm,99.6,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-06-25,openmeteo,85.0,65.8,8.5,0.0,Overcast,83.4,65.9,7.6,0.0,Thunderstorm,100.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-06-26,openmeteo,82.1,64.9,7.8,0.11,Moderate rain,78.0,66.2,13.0,0.043,Dense drizzle,89.3,right,4,23.7,30.0,15.6,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-06-27,openmeteo,76.9,65.0,6.1,0.402,Moderate rain,79.2,62.7,7.7,0.0,Overcast,82.2,right,4,29.1,29.1,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-06-28,openmeteo,77.0,64.6,6.8,0.24,Moderate rain,80.5,63.9,10.6,0.157,Moderate rain,93.9,right,5,25.5,30.0,18.4,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-06-29,openmeteo,77.6,63.3,6.7,0.413,Heavy rain,78.0,62.7,8.4,0.0,Overcast,83.7,right,4,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-06-30,openmeteo,77.0,64.2,7.4,0.28,Moderate rain,77.8,63.6,6.1,0.0,Overcast,86.4,right,4,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-01,openmeteo,76.5,63.0,7.8,0.681,Moderate rain,75.2,64.9,10.3,1.051,Moderate rain showers,94.6,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-02,openmeteo,75.7,62.7,9.1,0.075,Dense drizzle,76.2,64.5,9.2,0.0,Overcast,90.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-03,openmeteo,75.5,60.9,6.7,0.0,Partly cloudy,76.4,60.0,8.4,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-04,openmeteo,75.8,60.3,7.6,0.016,Light drizzle,76.4,60.0,7.5,0.0,Overcast,90.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-05,openmeteo,75.3,62.7,7.0,0.028,Light drizzle,76.1,59.1,7.9,0.0,Overcast,85.2,right,4,30.0,25.2,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-06,openmeteo,78.9,58.5,5.4,0.0,Overcast,78.7,56.6,7.4,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-07,openmeteo,80.5,64.2,7.4,0.02,Light drizzle,80.1,62.5,9.9,0.0,Overcast,90.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-08,openmeteo,81.2,65.4,6.3,0.083,Slight rain,79.8,64.9,8.3,0.0,Overcast,90.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-09,openmeteo,78.1,65.8,6.3,1.173,Heavy rain,77.3,64.0,10.6,0.016,Light drizzle,87.4,right,4,30.0,30.0,17.4,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-10,openmeteo,73.4,63.2,7.8,0.154,Moderate rain,77.4,64.5,8.9,0.016,Light drizzle,93.2,right,5,24.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-07-11,openmeteo,77.3,63.0,6.9,0.228,Moderate rain,77.6,63.0,9.2,0.0,Overcast,87.4,right,4,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-12,openmeteo,78.5,64.9,8.3,0.185,Moderate rain,78.8,64.7,12.4,0.0,Overcast,86.1,right,4,30.0,30.0,17.8,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-13,openmeteo,79.4,64.4,8.9,0.063,Dense drizzle,80.1,65.6,11.0,0.0,Partly cloudy,90.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-14,openmeteo,80.0,65.0,6.8,0.134,Moderate rain,80.9,66.1,11.1,0.0,Overcast,86.7,right,4,30.0,30.0,17.4,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-15,openmeteo,79.4,65.0,5.7,0.413,Moderate rain,80.7,63.7,8.2,0.0,Overcast,83.7,right,4,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-16,openmeteo,78.0,63.9,10.0,0.051,Light drizzle,77.8,66.2,9.2,0.0,Overcast,89.1,right,4,30.0,29.1,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-17,openmeteo,77.9,63.4,7.2,0.543,Heavy rain,77.4,66.8,12.6,0.921,Heavy rain,85.4,right,4,30.0,25.8,15.2,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-18,openmeteo,77.8,65.7,7.7,0.697,Heavy rain,79.1,66.3,10.4,0.339,Thunderstorm,94.8,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-19,openmeteo,77.5,67.0,8.9,0.354,Moderate rain,76.8,67.2,11.4,0.0,Overcast,84.9,right,4,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-20,openmeteo,77.4,67.5,13.9,0.0,Overcast,78.8,66.7,16.5,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-21,openmeteo,78.2,66.8,12.1,0.094,Dense drizzle,79.0,67.6,12.7,0.0,Overcast,90.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-22,openmeteo,75.8,65.3,5.1,0.319,Slight rain,75.2,65.8,7.6,0.398,Heavy rain,100.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-23,openmeteo,74.7,64.2,7.7,0.165,Moderate drizzle,74.5,62.5,7.9,0.0,Overcast,88.7,right,4,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-07-24,openmeteo,77.5,60.8,6.6,0.0,Overcast,77.9,57.3,7.9,0.0,Partly cloudy,95.5,right,5,30.0,25.5,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-25,openmeteo,80.3,65.4,4.5,0.059,Dense drizzle,81.3,63.2,6.8,0.0,Overcast,89.4,right,4,30.0,29.4,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-26,openmeteo,81.4,67.0,8.1,0.024,Light drizzle,82.2,67.9,9.3,0.028,Thunderstorm,100.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-27,openmeteo,80.5,67.7,10.5,0.067,Moderate drizzle,80.8,69.7,10.1,0.0,Overcast,90.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-28,openmeteo,80.5,67.2,10.2,0.024,Light drizzle,80.2,67.6,9.5,0.114,Moderate rain showers,100.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-29,openmeteo,80.3,65.9,5.9,0.693,Heavy rain,80.5,65.7,6.6,0.5,Thunderstorm,98.1,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-30,openmeteo,78.7,66.8,4.7,0.13,Slight rain,79.7,66.3,5.6,0.0,Fog,89.4,right,4,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-07-31,openmeteo,77.8,68.1,9.0,0.098,Moderate drizzle,79.2,67.2,9.4,0.0,Overcast,90.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-08-01,openmeteo,77.6,65.5,7.0,0.669,Moderate rain,79.2,66.2,8.9,0.0,Fog,80.0,right,4,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-08-02,openmeteo,65.0,57.9,8.4,0.382,Slight rain,65.7,58.3,7.8,0.146,Slight rain,97.3,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-08-03,openmeteo,62.4,56.7,8.7,0.24,Slight rain,58.9,56.4,8.1,0.016,Light drizzle,93.0,right,5,25.5,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-08-04,openmeteo,64.3,54.2,7.5,0.232,Slight rain,64.1,56.1,6.5,0.031,Light drizzle,98.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-08-05,openmeteo,66.2,57.2,6.8,0.315,Slight rain,61.8,57.0,6.7,0.118,Dense drizzle,90.9,right,5,22.8,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-08-06,openmeteo,68.2,55.0,6.0,0.102,Moderate drizzle,65.2,57.1,7.7,0.016,Light drizzle,96.7,right,5,27.0,29.7,20.0,,,,,,NO,0 (the sweater rests today)
+2025-08-07,openmeteo,69.6,56.9,6.7,0.039,Light drizzle,67.5,58.4,6.2,0.0,Fog,89.7,right,4,29.7,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-08-08,openmeteo,69.7,58.5,7.4,0.075,Light drizzle,67.8,59.5,8.1,0.0,Fog,90.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-08-09,openmeteo,70.5,57.0,6.9,0.028,Light drizzle,70.8,56.1,7.9,0.0,Overcast,90.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-08-10,openmeteo,70.8,56.6,6.3,0.071,Light drizzle,74.8,56.3,6.5,0.0,Fog,84.0,right,4,24.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-08-11,openmeteo,70.8,62.9,7.7,1.138,Heavy rain,69.2,62.9,6.6,0.189,Moderate rain,90.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-08-12,openmeteo,75.4,65.1,7.7,0.803,Moderate rain,75.0,64.3,5.4,0.059,Dense drizzle,90.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-08-13,openmeteo,77.2,64.9,8.8,0.268,Slight rain,74.9,65.9,13.2,0.228,Moderate rain,96.3,right,5,29.1,30.0,17.2,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-08-14,openmeteo,77.0,64.1,6.9,0.071,Moderate drizzle,77.2,65.2,7.4,0.0,Fog,90.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-08-15,openmeteo,77.9,63.9,5.3,0.205,Moderate rain,77.5,64.3,6.6,0.0,Overcast,87.9,right,4,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-08-16,openmeteo,76.7,64.3,4.6,0.15,Moderate drizzle,80.3,63.1,9.9,0.0,Fog,79.6,right,4,25.2,30.0,15.4,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-08-17,openmeteo,78.2,63.2,7.2,0.028,Light drizzle,81.9,61.8,8.7,0.0,Fog,84.9,right,4,24.9,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-08-18,openmeteo,77.9,64.8,7.4,0.039,Light drizzle,79.4,64.3,5.2,0.0,Overcast,90.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-08-19,openmeteo,73.7,63.8,7.4,0.173,Moderate drizzle,75.8,63.9,7.4,0.0,Fog,88.2,right,4,29.7,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-08-20,openmeteo,77.1,63.0,6.3,0.165,Slight rain,78.0,65.4,8.5,0.028,Moderate drizzle,98.1,right,5,30.0,28.8,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-08-21,openmeteo,73.1,63.8,5.8,0.319,Moderate rain,73.9,63.6,6.5,0.268,Moderate rain showers,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-08-22,openmeteo,69.1,62.3,7.2,0.181,Moderate drizzle,70.1,63.2,6.9,1.717,Heavy rain,90.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-08-23,openmeteo,68.4,61.9,7.8,0.118,Light drizzle,69.2,62.7,6.3,0.0,Overcast,89.6,right,4,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-08-24,openmeteo,72.6,58.4,7.8,0.217,Moderate rain,72.4,61.8,8.6,0.071,Slight rain,94.9,right,5,30.0,25.8,20.0,,,,,,NO,0 (the sweater rests today)
+2025-08-25,openmeteo,67.4,56.5,10.4,0.0,Overcast,67.5,54.6,10.4,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-08-26,openmeteo,65.1,51.4,11.6,0.0,Overcast,65.6,50.7,9.7,0.0,Partly cloudy,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-08-27,openmeteo,64.8,49.4,8.1,0.0,Overcast,65.6,46.8,7.8,0.0,Overcast,98.2,right,5,30.0,28.2,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-08-28,openmeteo,68.2,53.3,6.3,0.031,Light drizzle,67.5,50.1,6.3,0.0,Overcast,86.4,right,4,30.0,26.4,20.0,,,,,,NO,0 (the sweater rests today)
+2025-08-29,openmeteo,70.3,53.3,9.5,0.0,Overcast,70.1,51.8,9.1,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-08-30,openmeteo,69.0,56.4,4.4,0.067,Moderate drizzle,72.5,53.1,8.8,0.0,Overcast,78.8,right,4,25.5,26.1,17.2,,,,,,NO,0 (the sweater rests today)
+2025-08-31,openmeteo,64.1,52.9,5.3,0.15,Moderate drizzle,66.0,55.5,6.8,0.0,Fog,87.2,right,4,30.0,28.2,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-09-01,openmeteo,65.5,50.7,7.6,0.0,Overcast,67.1,52.0,7.7,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-02,openmeteo,66.6,52.0,7.9,0.012,Light drizzle,67.2,46.8,7.4,0.0,Overcast,80.4,right,4,30.0,20.4,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-03,openmeteo,68.2,53.4,7.5,0.417,Heavy rain,65.1,52.8,6.9,0.256,Moderate rain,95.5,right,5,26.7,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-04,openmeteo,71.7,52.7,9.1,0.024,Light drizzle,68.7,54.4,15.6,0.071,Moderate drizzle,90.0,right,5,27.0,30.0,13.0,,,,,,NO,0 (the sweater rests today)
+2025-09-05,openmeteo,75.1,57.2,6.5,0.079,Moderate drizzle,75.6,55.0,9.8,0.0,Overcast,88.8,right,4,30.0,29.4,19.4,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2025-09-06,openmeteo,73.7,61.1,8.9,0.15,Moderate rain,71.9,60.7,13.7,0.0,Overcast,85.4,right,4,30.0,30.0,16.4,,,,,,NO,0 (the sweater rests today)
+2025-09-07,openmeteo,64.5,51.2,10.6,0.181,Moderate drizzle,64.8,49.9,11.2,0.0,Fog,88.4,right,4,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-09-08,openmeteo,62.5,45.3,8.1,0.0,Overcast,62.7,44.1,6.7,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-09-09,openmeteo,64.6,45.7,4.7,0.0,Overcast,64.0,41.4,6.7,0.0,Overcast,93.1,right,5,30.0,23.1,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-09-10,openmeteo,67.4,47.2,7.8,0.0,Clear sky,69.5,43.3,8.3,0.0,Overcast,94.0,right,5,29.7,24.3,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-11,openmeteo,70.6,51.1,7.1,0.0,Mainly clear,71.3,49.0,8.4,0.0,Partly cloudy,99.7,right,5,30.0,29.7,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-12,openmeteo,68.6,54.2,6.3,0.039,Moderate drizzle,71.3,50.4,6.6,0.0,Overcast,82.5,right,4,27.9,24.6,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-13,openmeteo,69.7,53.3,6.8,0.02,Light drizzle,71.9,50.8,5.0,0.0,Overcast,87.9,right,4,29.4,28.5,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-14,openmeteo,73.2,55.5,7.9,0.016,Light drizzle,73.1,53.1,7.1,0.0,Overcast,88.8,right,4,30.0,28.8,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-15,openmeteo,69.4,56.8,5.3,0.091,Slight rain,70.0,53.7,9.3,0.693,Heavy rain,84.7,right,4,30.0,26.7,18.0,,,,,,NO,0 (the sweater rests today)
+2025-09-16,openmeteo,67.9,54.3,4.3,0.11,Moderate drizzle,69.0,53.6,4.3,0.0,Overcast,89.8,right,4,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-17,openmeteo,70.7,52.5,9.1,0.0,Overcast,70.8,53.4,9.9,0.0,Partly cloudy,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-18,openmeteo,72.6,55.8,3.4,0.047,Light drizzle,74.7,53.7,7.3,0.0,Overcast,87.6,right,4,29.7,29.7,18.2,,,,,,NO,0 (the sweater rests today)
+2025-09-19,openmeteo,73.7,60.4,2.9,0.024,Light drizzle,76.9,54.9,5.0,0.0,Fog,75.9,right,4,26.4,19.5,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-20,openmeteo,73.9,61.4,6.4,0.012,Light drizzle,75.3,55.5,6.3,0.0,Overcast,78.3,right,4,30.0,18.3,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-21,openmeteo,68.9,56.9,7.8,0.028,Light drizzle,70.7,54.3,8.0,0.0,Overcast,88.2,right,4,30.0,28.2,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-22,openmeteo,70.2,56.8,8.5,0.0,Overcast,72.2,56.0,7.4,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-23,openmeteo,72.2,58.8,4.6,0.358,Moderate rain,72.2,57.2,7.9,0.0,Overcast,84.2,right,4,30.0,30.0,19.4,,,,,,NO,0 (the sweater rests today)
+2025-09-24,openmeteo,73.0,58.1,7.3,0.173,Slight rain,74.2,60.5,6.6,0.043,Moderate drizzle,98.2,right,5,30.0,28.8,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-25,openmeteo,71.7,61.9,8.0,0.717,Heavy rain,72.4,62.0,8.8,1.063,Violent rain showers,95.1,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-26,openmeteo,69.1,59.6,5.9,0.236,Moderate rain,70.8,59.8,5.7,0.697,Heavy rain,92.8,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-27,openmeteo,70.4,58.1,6.9,0.602,Heavy rain,68.6,57.1,8.3,0.382,Heavy rain,97.6,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-28,openmeteo,70.1,54.4,7.5,0.055,Light drizzle,69.1,55.5,8.3,0.0,Fog,90.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-09-29,openmeteo,64.9,55.1,11.3,0.165,Slight rain,64.1,56.7,9.7,0.075,Dense drizzle,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-09-30,openmeteo,67.7,56.2,8.5,0.02,Light drizzle,63.6,57.0,10.6,0.173,Slight rain,92.6,right,5,23.7,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-10-01,openmeteo,70.5,55.7,6.1,0.0,Overcast,68.8,52.8,6.0,0.0,Overcast,97.3,right,5,30.0,27.3,20.0,,,,,,NO,0 (the sweater rests today)
+2025-10-02,openmeteo,61.4,49.7,7.1,0.016,Light drizzle,60.8,47.0,7.0,0.0,Fog,87.9,right,4,30.0,27.9,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-10-03,openmeteo,65.0,43.7,6.3,0.0,Overcast,64.6,44.8,5.0,0.0,Fog,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-10-04,openmeteo,66.2,47.9,5.2,0.0,Overcast,66.1,45.5,6.2,0.0,Overcast,98.8,right,5,30.0,28.8,20.0,,,,,,NO,0 (the sweater rests today)
+2025-10-05,openmeteo,64.1,50.4,9.5,0.016,Light drizzle,63.3,46.9,6.2,0.0,Fog,84.9,right,4,30.0,25.5,19.4,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-10-06,openmeteo,66.8,55.6,7.6,0.024,Light drizzle,65.6,54.2,6.8,0.043,Moderate drizzle,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-10-07,openmeteo,64.4,58.7,10.4,0.15,Moderate drizzle,66.3,59.2,8.2,0.028,Moderate drizzle,99.6,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-10-08,openmeteo,67.5,49.9,11.6,0.063,Moderate drizzle,67.0,50.1,13.4,0.028,Moderate drizzle,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-10-09,openmeteo,58.8,44.2,6.7,0.0,Mainly clear,59.0,42.3,6.3,0.0,Partly cloudy,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-10-10,openmeteo,54.6,38.3,10.2,0.012,Light drizzle,54.3,38.4,6.7,0.0,Overcast,89.0,right,4,30.0,30.0,19.0,,,,,,YES,1-2 (light to medium sweater)
+2025-10-11,openmeteo,60.5,41.0,9.0,0.004,Light drizzle,60.3,43.4,7.5,0.0,Fog,98.8,right,5,30.0,28.8,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-10-12,openmeteo,60.7,47.3,9.7,0.012,Light drizzle,60.9,46.8,8.9,0.0,Overcast,90.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-10-13,openmeteo,66.2,51.3,11.6,0.016,Light drizzle,64.7,50.5,8.1,0.0,Overcast,89.0,right,4,30.0,30.0,19.0,,,,,,NO,0 (the sweater rests today)
+2025-10-14,openmeteo,68.1,50.3,14.8,0.0,Clear sky,69.0,49.2,12.6,0.0,Clear sky,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-10-15,openmeteo,69.8,46.6,11.2,0.0,Mainly clear,69.5,48.8,9.0,0.0,Fog,99.4,right,5,30.0,29.4,20.0,,,,,,NO,0 (the sweater rests today)
+2025-10-16,openmeteo,65.1,47.5,12.1,0.0,Clear sky,64.9,46.5,8.4,0.0,Clear sky,98.6,right,5,30.0,30.0,18.6,,,,,,NO,0 (the sweater rests today)
+2025-10-17,openmeteo,66.5,44.3,6.9,0.0,Overcast,66.2,37.8,8.3,0.0,Overcast,86.5,right,4,30.0,16.5,20.0,,,,,,NO,0 (the sweater rests today)
+2025-10-18,openmeteo,70.8,48.4,8.4,0.0,Overcast,71.1,49.4,11.5,0.0,Overcast,99.8,right,5,30.0,30.0,19.8,,,,,,NO,0 (the sweater rests today)
+2025-10-19,openmeteo,58.6,40.6,21.1,0.256,Dense drizzle,57.5,40.9,24.3,0.386,Moderate rain,99.0,right,5,30.0,30.0,19.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-10-20,openmeteo,55.1,37.3,18.1,0.0,Overcast,54.3,36.9,23.7,0.0,Overcast,94.8,right,5,30.0,30.0,14.8,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-10-21,openmeteo,66.8,43.0,15.6,0.004,Light drizzle,65.2,42.4,16.6,0.016,Light drizzle,90.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-10-22,openmeteo,54.2,41.5,15.2,0.0,Mainly clear,54.2,41.9,18.4,0.0,Clear sky,99.6,right,5,30.0,30.0,19.6,,,,,,YES,1-2 (light to medium sweater)
+2025-10-23,openmeteo,56.3,36.2,15.1,0.0,Mainly clear,56.1,36.5,16.4,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-10-24,openmeteo,52.9,33.7,11.1,0.0,Overcast,53.4,33.4,11.5,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-10-25,openmeteo,48.9,34.4,6.4,0.0,Overcast,54.1,33.1,5.2,0.0,Overcast,90.4,right,5,20.4,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-10-26,openmeteo,52.9,39.8,7.4,0.135,Moderate snow,52.5,39.7,6.9,0.016,Light drizzle,100.0,right,5,30.0,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-10-27,openmeteo,42.0,38.4,10.8,1.256,Moderate rain,41.5,37.9,10.7,0.835,Moderate rain,93.6,right,5,30.0,30.0,20.0,,,,,,YES,2 (solid sweater + optional layer)
+2025-10-28,openmeteo,48.5,38.3,11.4,0.319,Moderate rain,43.9,37.9,12.9,0.201,Moderate rain,91.8,right,5,22.2,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-10-29,openmeteo,41.4,37.2,15.1,1.137,Slight snow,42.0,38.0,12.8,1.224,Moderate rain,100.0,right,5,30.0,30.0,20.0,,,,,,YES,2 (solid sweater + optional layer)
+2025-10-30,openmeteo,48.4,38.6,20.9,0.504,Moderate rain,45.4,38.2,28.3,0.291,Moderate rain,85.9,right,4,27.0,30.0,11.2,,,,,,YES,1-2 (light to medium sweater)
+2025-10-31,openmeteo,43.0,36.4,23.3,0.0,Overcast,43.4,35.6,26.0,0.016,Light drizzle,90.0,right,5,30.0,30.0,20.0,,,,,,YES,2 (solid sweater + optional layer)
+2025-11-01,openmeteo,51.8,32.6,13.3,0.0,Overcast,51.3,33.3,14.4,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-11-02,openmeteo,49.1,39.7,9.4,0.0,Overcast,49.0,38.4,8.8,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-11-03,openmeteo,45.1,35.1,17.2,0.0,Overcast,46.3,36.3,15.8,0.0,Fog,100.0,right,5,30.0,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-11-04,openmeteo,59.6,35.2,15.2,0.0,Overcast,57.4,36.5,10.8,0.0,Fog,96.6,right,5,29.4,30.0,17.2,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-11-05,openmeteo,66.8,42.4,18.1,0.0,Overcast,66.3,41.8,17.5,0.0,Partly cloudy,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2025-11-06,openmeteo,61.1,40.2,18.4,0.0,Partly cloudy,60.6,41.1,19.2,0.0,Clear sky,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-11-07,openmeteo,57.5,40.6,10.9,0.0,Overcast,60.2,38.1,11.6,0.0,Overcast,96.4,right,5,27.9,28.5,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-11-08,openmeteo,60.5,48.0,10.9,0.146,Slight rain,60.3,46.8,12.3,0.169,Moderate rain,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-11-09,openmeteo,58.8,33.7,20.1,0.02,Light drizzle,56.7,32.4,23.8,0.0,Fog,88.3,right,4,29.7,30.0,18.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-11-10,openmeteo,32.1,17.0,23.3,0.207,Slight snow,31.2,17.8,22.9,0.13,Moderate snow,100.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2025-11-11,openmeteo,31.5,16.2,21.8,0.074,Slight snow,33.0,16.4,25.0,0.074,Slight snow,93.6,right,5,30.0,30.0,19.6,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2025-11-12,openmeteo,48.8,28.7,19.3,0.0,Clear sky,50.4,32.3,20.7,0.0,Overcast,95.2,right,5,30.0,25.2,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-11-13,openmeteo,50.0,38.4,19.9,0.0,Overcast,51.6,38.0,25.0,0.0,Overcast,95.8,right,5,30.0,30.0,15.8,,,,,,YES,1-2 (light to medium sweater)
+2025-11-14,openmeteo,61.2,36.6,10.0,0.0,Mainly clear,61.2,36.4,15.0,0.0,Clear sky,96.0,right,5,30.0,30.0,16.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-11-15,openmeteo,59.7,45.8,13.9,0.0,Overcast,61.3,48.7,24.6,0.0,Overcast,81.9,right,4,30.0,27.3,4.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-11-16,openmeteo,56.5,39.5,21.8,0.083,Moderate drizzle,57.5,41.1,24.6,0.22,Moderate rain,99.3,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-11-17,openmeteo,47.2,32.1,17.8,0.0,Clear sky,50.0,33.2,19.1,0.0,Overcast,97.6,right,5,27.6,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-11-18,openmeteo,53.3,35.3,6.6,0.0,Overcast,59.5,36.1,10.2,0.0,Overcast,86.2,right,4,17.4,30.0,18.8,,,,,,YES,1-2 (light to medium sweater)
+2025-11-19,openmeteo,59.4,43.9,9.2,0.335,Moderate rain,57.9,48.0,13.1,0.043,Moderate drizzle,88.1,right,4,30.0,23.7,18.2,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-11-20,openmeteo,62.2,43.4,4.5,0.008,Light drizzle,61.3,46.1,8.4,0.0,Fog,86.1,right,4,30.0,27.9,18.2,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-11-21,openmeteo,59.8,50.5,6.1,0.291,Slight rain,58.3,52.5,14.3,0.205,Slight rain,89.6,right,4,30.0,30.0,9.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-11-22,openmeteo,59.7,48.8,17.0,0.024,Light drizzle,58.9,48.3,17.0,0.339,Heavy rain,95.7,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-11-23,openmeteo,55.9,42.1,11.2,0.0,Overcast,57.3,43.4,16.5,0.0,Overcast,95.4,right,5,30.0,30.0,15.4,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-11-24,openmeteo,52.3,38.9,8.1,0.0,Overcast,54.6,37.5,6.7,0.0,Overcast,99.1,right,5,29.1,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-11-25,openmeteo,50.9,42.9,8.9,0.126,Dense drizzle,53.2,41.9,11.4,0.102,Dense drizzle,99.1,right,5,29.1,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-11-26,openmeteo,57.1,33.0,27.4,0.256,Moderate rain,56.2,35.4,29.8,0.016,Light drizzle,96.0,right,5,30.0,28.8,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-11-27,openmeteo,32.2,24.8,27.9,0.0,Overcast,33.2,25.5,31.0,0.0,Overcast,99.8,right,5,30.0,30.0,19.8,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2025-11-28,openmeteo,28.9,18.2,18.3,0.0,Overcast,30.9,19.4,20.0,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2025-11-29,openmeteo,33.0,20.4,10.8,0.0,Overcast,35.4,19.1,15.7,0.0,Overcast,95.0,right,5,28.8,30.0,16.2,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2025-11-30,openmeteo,42.9,26.3,13.3,0.051,Light drizzle,48.2,30.9,23.3,0.0,Overcast,58.3,wrong,2,20.1,22.2,6.0,,,,,,YES,2 (solid sweater + optional layer)
+2025-12-01,openmeteo,36.5,24.8,14.5,0.0,Overcast,39.2,26.8,20.5,0.0,Overcast,91.9,right,5,27.9,30.0,14.0,,,,,,YES,2 (solid sweater + optional layer)
+2025-12-02,openmeteo,41.8,26.3,16.3,0.551,Moderate rain,42.1,27.3,24.0,0.366,Slight rain,88.9,right,4,30.0,30.0,10.6,,,,,,YES,2 (solid sweater + optional layer)
+2025-12-03,openmeteo,41.2,24.5,13.5,0.0,Overcast,40.1,24.0,18.6,0.0,Fog,95.8,right,5,30.0,30.0,15.8,,,,,,YES,2 (solid sweater + optional layer)
+2025-12-04,openmeteo,44.4,29.4,9.3,0.023,Slight snow,39.9,30.5,14.1,0.0,Overcast,78.9,right,4,22.5,30.0,16.4,,,,,,YES,2 (solid sweater + optional layer)
+2025-12-05,openmeteo,36.8,28.1,8.1,0.426,Moderate snow,36.3,28.5,9.6,0.255,Moderate snow,100.0,right,5,30.0,30.0,20.0,,,,,,YES,2 (solid sweater + optional layer)
+2025-12-06,openmeteo,39.4,29.7,10.4,0.0,Overcast,36.8,31.6,13.8,0.0,Fog,97.4,right,5,28.2,30.0,19.2,,,,,,YES,2 (solid sweater + optional layer)
+2025-12-07,openmeteo,41.6,26.8,5.9,0.0,Overcast,46.5,24.4,7.6,0.0,Partly cloudy,90.1,right,5,21.3,28.8,20.0,,,,,,YES,2 (solid sweater + optional layer)
+2025-12-08,openmeteo,38.5,26.6,5.8,1.599,Heavy snow,35.2,27.0,4.9,1.887,Heavy snow,94.9,right,5,26.1,30.0,20.0,,,,,,YES,2 (solid sweater + optional layer)
+2025-12-09,openmeteo,29.0,21.4,5.5,0.004,Light drizzle,32.4,22.2,4.3,0.0,Fog,95.8,right,5,25.8,30.0,20.0,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2025-12-10,openmeteo,44.8,23.0,18.4,0.285,Moderate snow,46.5,23.9,18.1,0.256,Moderate snow,100.0,right,5,30.0,30.0,20.0,,,,,,YES,2 (solid sweater + optional layer)
+2025-12-11,openmeteo,28.5,21.8,19.7,0.207,Moderate snow,31.5,23.9,23.1,0.112,Slight snow,89.9,right,4,27.0,29.7,19.2,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2025-12-12,openmeteo,31.7,24.5,8.6,0.118,Slight snow,35.5,26.1,19.9,0.057,Slight snow,72.0,meh,3,24.6,30.0,3.4,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2025-12-13,openmeteo,51.5,24.8,9.7,0.0,Overcast,52.3,30.3,13.0,0.0,Fog,88.9,right,4,30.0,19.5,19.4,,,,,,YES,1-2 (light to medium sweater)
+2025-12-14,openmeteo,40.4,3.7,27.0,0.093,Slight snow,42.5,7.7,30.3,0.038,Light freezing drizzle,87.1,right,4,29.7,24.0,19.4,,,,,,YES,2 (solid sweater + optional layer)
+2025-12-15,openmeteo,36.2,3.6,13.0,0.0,Mainly clear,35.4,7.0,8.8,0.0,Clear sky,93.4,right,5,30.0,25.8,17.6,,,,,,YES,2 (solid sweater + optional layer)
+2025-12-16,openmeteo,48.6,26.0,13.3,0.0,Mainly clear,47.5,28.6,27.2,0.0,Fog,78.2,right,4,30.0,28.2,0.0,,,,,,YES,1-2 (light to medium sweater)
+2025-12-17,openmeteo,53.2,31.7,11.5,0.024,Light drizzle,51.2,35.5,21.4,0.0,Overcast,70.8,meh,3,30.0,24.6,6.2,,,,,,YES,1-2 (light to medium sweater)
+2025-12-18,openmeteo,45.2,37.2,10.4,0.437,Moderate rain,46.5,35.9,9.3,0.78,Moderate rain,95.1,right,5,30.0,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-12-19,openmeteo,46.2,27.8,28.2,0.417,Moderate rain,49.2,30.0,32.0,0.736,Heavy rain,90.4,right,5,27.0,29.4,18.4,,,,,,YES,1-2 (light to medium sweater)
+2025-12-20,openmeteo,47.0,26.2,19.2,0.0,Overcast,50.5,29.1,22.6,0.0,Clear sky,92.0,right,5,25.5,27.3,19.2,,,,,,YES,1-2 (light to medium sweater)
+2025-12-21,openmeteo,43.1,31.6,15.4,0.0,Overcast,43.4,32.6,21.7,0.0,Overcast,93.4,right,5,30.0,30.0,13.4,,,,,,YES,2 (solid sweater + optional layer)
+2025-12-22,openmeteo,41.3,28.0,8.0,0.0,Overcast,43.5,24.6,7.0,0.0,Overcast,95.2,right,5,29.4,25.8,20.0,,,,,,YES,2 (solid sweater + optional layer)
+2025-12-23,openmeteo,52.4,34.1,18.5,0.008,Light drizzle,51.0,35.7,27.5,0.028,Moderate drizzle,88.0,right,4,30.0,30.0,8.0,,,,,,YES,1-2 (light to medium sweater)
+2025-12-24,openmeteo,57.9,45.6,18.6,0.051,Light drizzle,57.4,48.4,26.4,0.047,Light drizzle,88.0,right,4,30.0,27.6,10.4,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-12-25,openmeteo,57.9,44.9,12.3,0.098,Moderate drizzle,56.4,48.6,23.1,0.031,Light drizzle,79.3,right,4,30.0,24.9,4.4,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-12-26,openmeteo,53.9,42.6,9.6,0.059,Light drizzle,52.8,44.7,17.7,0.0,Fog,79.5,right,4,30.0,29.7,9.8,,,,,,YES,1-2 (light to medium sweater)
+2025-12-27,openmeteo,59.6,45.9,11.6,0.031,Light drizzle,59.2,46.9,21.1,0.13,Slight rain,87.0,right,4,30.0,30.0,7.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2025-12-28,openmeteo,50.6,40.6,7.3,0.0,Overcast,53.2,41.4,12.6,0.0,Fog,93.6,right,5,28.2,30.0,15.4,,,,,,YES,1-2 (light to medium sweater)
+2025-12-29,openmeteo,47.4,18.1,29.9,0.05,Slight snow,52.4,21.3,31.6,0.075,Dense drizzle,87.4,right,4,21.0,26.4,20.0,,,,,,YES,1-2 (light to medium sweater)
+2025-12-30,openmeteo,23.1,13.0,29.2,0.0,Overcast,22.2,13.8,34.1,0.0,Fog,96.2,right,5,30.0,30.0,16.2,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2025-12-31,openmeteo,35.6,18.0,18.1,0.0,Overcast,33.5,19.4,26.7,0.0,Fog,88.5,right,4,29.7,30.0,8.8,,,,,,YES,2 (solid sweater + optional layer)
+2026-01-01,openmeteo,36.9,28.2,26.9,0.0,Overcast,37.1,29.7,33.9,0.0,Fog,92.0,right,5,30.0,30.0,12.0,,,,,,YES,2 (solid sweater + optional layer)
+2026-01-02,openmeteo,48.8,31.8,13.7,0.0,Overcast,48.1,34.3,23.7,0.0,Overcast,84.5,right,4,30.0,28.5,6.0,,,,,,YES,1-2 (light to medium sweater)
+2026-01-03,openmeteo,43.8,34.5,8.7,0.126,Light drizzle,46.3,36.0,15.7,0.0,Overcast,80.0,right,4,28.5,30.0,12.0,,,,,,YES,2 (solid sweater + optional layer)
+2026-01-04,openmeteo,48.1,32.4,9.6,0.0,Overcast,48.1,33.0,15.9,0.0,Fog,93.4,right,5,30.0,30.0,13.4,,,,,,YES,1-2 (light to medium sweater)
+2026-01-05,openmeteo,50.6,31.7,4.9,0.0,Overcast,55.4,30.6,9.0,0.0,Fog,89.4,right,4,21.6,30.0,17.8,,,,,,YES,1-2 (light to medium sweater)
+2026-01-06,openmeteo,58.1,35.7,12.1,0.0,Overcast,58.7,34.3,16.6,0.0,Overcast,97.0,right,5,30.0,30.0,17.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-01-07,openmeteo,54.6,43.4,16.9,0.004,Light drizzle,56.2,39.9,18.8,0.0,Overcast,95.5,right,5,30.0,25.5,20.0,,,,,,YES,1-2 (light to medium sweater)
+2026-01-08,openmeteo,51.4,39.0,9.7,0.0,Overcast,52.7,35.2,8.2,0.0,Overcast,94.6,right,5,30.0,24.6,20.0,,,,,,YES,1-2 (light to medium sweater)
+2026-01-09,openmeteo,53.4,42.3,8.8,0.323,Moderate rain,56.2,42.6,15.2,0.075,Dense drizzle,87.8,right,4,27.6,30.0,13.2,,,,,,YES,1-2 (light to medium sweater)
+2026-01-10,openmeteo,56.4,49.2,12.4,1.425,Moderate rain,58.1,49.6,14.6,0.74,Moderate rain,90.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-01-11,openmeteo,46.5,18.1,24.0,0.149,Moderate snow,45.6,20.3,22.3,0.174,Moderate snow,99.4,right,5,30.0,29.4,20.0,,,,,,YES,1-2 (light to medium sweater)
+2026-01-12,openmeteo,42.0,17.4,15.3,0.0,Overcast,38.1,16.4,17.6,0.0,Overcast,94.3,right,5,24.3,30.0,20.0,,,,,,YES,2 (solid sweater + optional layer)
+2026-01-13,openmeteo,52.6,30.2,9.2,0.0,Overcast,50.4,30.9,15.2,0.0,Overcast,93.4,right,5,29.4,30.0,14.0,,,,,,YES,1-2 (light to medium sweater)
+2026-01-14,openmeteo,47.0,29.9,17.5,0.276,Moderate snow,47.4,31.1,21.6,0.278,Moderate snow,97.8,right,5,30.0,30.0,17.8,,,,,,YES,1-2 (light to medium sweater)
+2026-01-15,openmeteo,26.9,13.2,25.6,0.156,Moderate snow,29.7,11.7,27.1,0.049,Moderate snow,91.6,right,5,27.6,30.0,20.0,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-01-16,openmeteo,32.3,8.9,16.5,0.0,Overcast,33.3,8.9,15.5,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-01-17,openmeteo,41.6,30.0,9.0,0.057,Slight snow,39.0,30.2,11.0,0.049,Moderate snow,98.2,right,5,28.2,30.0,20.0,,,,,,YES,2 (solid sweater + optional layer)
+2026-01-18,openmeteo,34.4,20.3,14.4,0.237,Moderate snow,34.2,20.6,19.2,0.0,Overcast,86.4,right,4,30.0,30.0,16.4,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-01-19,openmeteo,28.9,17.8,18.1,0.0,Mainly clear,29.0,18.8,24.9,0.0,Clear sky,92.4,right,5,30.0,30.0,12.4,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-01-20,openmeteo,25.7,13.2,15.2,0.0,Clear sky,24.8,14.0,19.0,0.0,Clear sky,98.4,right,5,30.0,30.0,18.4,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-01-21,openmeteo,38.3,18.9,10.5,0.0,Overcast,39.7,18.6,11.6,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,YES,2 (solid sweater + optional layer)
+2026-01-22,openmeteo,41.8,29.7,11.9,0.008,Light drizzle,40.5,33.2,17.6,0.0,Overcast,80.1,right,4,30.0,25.5,14.6,,,,,,YES,2 (solid sweater + optional layer)
+2026-01-23,openmeteo,45.3,24.9,11.2,0.0,Overcast,43.1,30.6,11.9,0.0,Overcast,88.3,right,4,29.4,18.9,20.0,,,,,,YES,1-2 (light to medium sweater)
+2026-01-24,openmeteo,28.0,15.8,10.2,0.309,Moderate snow,31.0,11.3,9.9,0.287,Moderate snow,89.5,right,4,27.0,22.5,20.0,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-01-25,openmeteo,37.9,14.0,10.5,0.602,Moderate rain,35.3,9.6,10.7,0.408,Moderate snow,81.8,right,4,28.2,22.8,20.0,,,,,,YES,2 (solid sweater + optional layer)
+2026-01-26,openmeteo,36.4,5.6,26.9,0.063,Slight snow,33.8,4.2,31.1,0.0,Fog,85.8,right,4,28.2,30.0,17.6,,,,,,YES,2 (solid sweater + optional layer)
+2026-01-27,openmeteo,25.8,1.1,27.0,0.0,Overcast,24.5,1.5,29.9,0.0,Fog,100.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-01-28,openmeteo,23.1,14.0,25.3,0.0,Overcast,24.8,12.6,29.7,0.0,Overcast,97.2,right,5,30.0,30.0,17.2,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-01-29,openmeteo,26.9,6.9,26.3,0.0,Overcast,24.9,8.8,30.4,0.0,Overcast,97.8,right,5,30.0,30.0,17.8,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-01-30,openmeteo,25.8,14.8,6.0,0.089,Slight snow,28.8,16.8,6.7,0.0,Overcast,87.0,right,4,27.0,30.0,20.0,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-01-31,openmeteo,17.5,3.8,19.4,1.552,Moderate snow,19.3,5.1,22.2,0.888,Moderate snow,99.6,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-02-01,openmeteo,12.1,1.5,22.9,0.162,Slight snow,13.2,1.8,25.4,0.0,Fog,90.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-02-02,openmeteo,29.9,7.5,17.3,0.0,Overcast,26.9,7.2,17.4,0.0,Fog,97.0,right,5,27.0,30.0,20.0,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-02-03,openmeteo,39.3,16.9,9.0,0.101,Moderate snow,42.8,21.1,16.8,0.043,Moderate drizzle,73.3,meh,3,25.5,23.4,10.4,,,,,,YES,2 (solid sweater + optional layer)
+2026-02-04,openmeteo,40.4,29.1,4.8,0.067,Light drizzle,41.7,31.2,11.6,0.271,Moderate snow,86.1,right,4,30.0,29.7,12.4,,,,,,YES,2 (solid sweater + optional layer)
+2026-02-05,openmeteo,29.9,20.4,12.0,0.4,Moderate snow,30.9,19.6,18.5,0.049,Moderate snow,87.0,right,4,30.0,30.0,13.0,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-02-06,openmeteo,35.6,17.9,18.5,0.122,Moderate snow,34.0,17.7,30.5,0.537,Heavy snow,79.8,right,4,30.0,30.0,2.0,,,,,,YES,2 (solid sweater + optional layer)
+2026-02-07,openmeteo,24.9,12.9,26.0,0.341,Heavy snow,26.1,17.7,32.0,0.27,Moderate snow,85.6,right,4,30.0,21.6,14.0,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-02-08,openmeteo,31.5,9.1,15.4,0.0,Overcast,29.8,13.7,17.3,0.0,Fog,92.2,right,5,30.0,22.2,20.0,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-02-09,openmeteo,36.8,20.5,6.0,0.0,Overcast,42.0,25.5,6.3,0.0,Fog,81.4,right,4,20.4,21.0,20.0,,,,,,YES,2 (solid sweater + optional layer)
+2026-02-10,openmeteo,61.0,26.4,13.5,0.0,Overcast,59.0,33.0,18.0,0.0,Fog,83.2,right,4,30.0,16.2,17.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-02-11,openmeteo,48.7,31.8,17.2,0.106,Moderate drizzle,50.9,34.6,23.1,0.146,Dense drizzle,91.2,right,5,29.4,27.6,14.2,,,,,,YES,1-2 (light to medium sweater)
+2026-02-12,openmeteo,38.3,23.2,18.4,0.0,Overcast,40.9,27.1,26.0,0.0,Overcast,83.3,right,4,28.2,24.3,10.8,,,,,,YES,2 (solid sweater + optional layer)
+2026-02-13,openmeteo,41.0,25.8,11.7,0.0,Clear sky,42.9,30.0,9.8,0.0,Clear sky,93.4,right,5,30.0,23.4,20.0,,,,,,YES,2 (solid sweater + optional layer)
+2026-02-14,openmeteo,52.3,27.6,4.3,0.0,Overcast,52.8,26.8,8.7,0.0,Overcast,97.2,right,5,30.0,30.0,17.2,,,,,,YES,1-2 (light to medium sweater)
+2026-02-15,openmeteo,41.4,35.8,9.7,0.89,Moderate rain,42.4,37.5,6.6,0.504,Slight rain,94.1,right,5,30.0,30.0,19.8,,,,,,YES,2 (solid sweater + optional layer)
+2026-02-16,openmeteo,57.3,33.9,17.6,0.0,Overcast,58.4,36.2,14.1,0.0,Fog,98.1,right,5,30.0,29.1,19.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-02-17,openmeteo,55.3,35.4,7.5,0.0,Overcast,59.5,36.6,8.0,0.0,Overcast,93.4,right,5,23.4,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-02-18,openmeteo,61.7,37.1,8.0,0.004,Light drizzle,61.9,44.4,14.6,0.0,Overcast,76.9,right,4,30.0,14.1,12.8,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-02-19,openmeteo,60.5,42.8,11.2,0.071,Moderate drizzle,57.9,49.2,10.0,0.102,Slight rain,85.0,right,4,28.2,16.8,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-02-20,openmeteo,60.3,44.7,17.9,0.059,Dense drizzle,61.7,49.6,24.2,0.228,Moderate rain,83.3,right,4,30.0,21.3,13.4,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-02-21,openmeteo,59.0,41.7,13.3,0.156,Slight snow,60.4,43.5,14.5,0.0,Overcast,89.3,right,4,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-02-22,openmeteo,44.2,16.6,30.2,0.49,Moderate snow,45.9,14.9,32.3,0.524,Moderate snow,100.0,right,5,30.0,30.0,20.0,,,,,,YES,2 (solid sweater + optional layer)
+2026-02-23,openmeteo,19.3,13.9,31.9,0.207,Slight snow,20.4,11.3,31.2,0.104,Moderate snow,98.2,right,5,30.0,28.2,20.0,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-02-24,openmeteo,37.3,13.8,23.4,0.004,Light drizzle,37.5,9.9,18.7,0.012,Light drizzle,80.9,right,4,30.0,24.3,16.6,,,,,,YES,2 (solid sweater + optional layer)
+2026-02-25,openmeteo,53.8,28.8,12.6,0.02,Light drizzle,54.3,31.1,15.5,0.016,Light drizzle,99.1,right,5,30.0,29.1,20.0,,,,,,YES,1-2 (light to medium sweater)
+2026-02-26,openmeteo,53.8,35.9,9.7,0.366,Slight rain,49.6,40.0,15.0,0.445,Moderate rain,82.5,right,4,23.4,23.7,15.4,,,,,,YES,1-2 (light to medium sweater)
+2026-02-27,openmeteo,49.4,39.1,6.7,0.106,Moderate drizzle,52.8,38.9,8.5,0.0,Fog,85.7,right,4,25.8,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2026-02-28,openmeteo,60.0,34.8,8.2,0.0,Overcast,61.8,37.4,9.7,0.0,Fog,98.2,right,5,30.0,28.2,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-03-01,openmeteo,62.0,38.9,14.8,0.0,Overcast,64.0,42.9,15.9,0.0,Overcast,94.0,right,5,30.0,24.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-03-02,openmeteo,48.2,32.5,7.1,0.142,Moderate drizzle,45.4,33.9,7.3,0.0,Overcast,86.8,right,4,27.6,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
 2026-03-04,openmeteo,68.8,38.3,9.9,0.004,Light drizzle,67.5,42.3,14.2,0.0,Fog,91.4,right,5,30.0,24.0,17.4,,,,,,NO,0 (the sweater rests today)
-2026-03-04,raysweather,68.8,38.3,9.9,0.004,Light drizzle,,46.0,,,,12.9,wrong,1,,12.9,,,,,,,NO,0 (the sweater rests today)
 2026-03-05,openmeteo,69.1,46.9,9.5,0.004,Light drizzle,69.5,48.3,9.4,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-03-05,raysweather,69.1,46.9,9.5,0.004,Light drizzle,74.0,49.0,,,,51.0,wrong,2,21.3,29.7,,,,,,,NO,0 (the sweater rests today)
+2026-03-05,raysweather,69.1,46.9,9.5,0.004,Light drizzle,74.0,49.0,4.0,,,60.0,meh,3,21.3,29.7,9.0,,,,,,NO,0 (the sweater rests today)
 2026-03-05,apple_weather,69.1,46.9,9.5,0.004,Light drizzle,69,50,2.607,0.0,Partly Cloudy,88.9,right,4,30.0,26.7,12.2,,,,,,NO,0 (the sweater rests today)
 2026-03-06,openmeteo,71.1,48.4,9.3,0.004,Light drizzle,72.0,50.5,9.6,0.039,Moderate drizzle,89.7,right,4,30.0,29.7,20.0,,,,,,NO,0 (the sweater rests today)
-2026-03-06,raysweather,71.1,48.4,9.3,0.004,Light drizzle,73.0,53.0,,,,52.2,wrong,2,30.0,22.2,,,,,,,NO,0 (the sweater rests today)
+2026-03-06,raysweather,71.1,48.4,9.3,0.004,Light drizzle,73.0,53.0,4.0,,"Mostly to partly sunny; Near record warmth; Isolated afternoon showers; Light, variable wind",61.6,meh,3,30.0,22.2,9.4,,,,,,NO,0 (the sweater rests today)
 2026-03-06,apple_weather,71.1,48.4,9.3,0.004,Light drizzle,70,51,10,0.0,Mostly Clear,98.2,right,5,30.0,28.2,20.0,,,,,,NO,0 (the sweater rests today)
 2026-03-07,openmeteo,66.3,51.5,13.2,0.055,Moderate drizzle,71.5,54.0,13.5,0.0,Overcast,78.9,right,4,20.4,28.5,20.0,,,,,,NO,0 (the sweater rests today)
-2026-03-07,raysweather,66.3,51.5,13.2,0.055,Moderate drizzle,72.0,53.0,,,,48.9,wrong,2,18.9,30.0,,,,,,,NO,0 (the sweater rests today)
+2026-03-07,raysweather,66.3,51.5,13.2,0.055,Moderate drizzle,72.0,53.0,10.0,,"Partly to mostly cloudy; Early AM drizzle; Widely scattered afternoon showers; Maybe a rumble of thunder; SSW wind 5-15 mph, breezy at times",68.5,meh,3,18.9,30.0,9.6,,,,,,NO,0 (the sweater rests today)
 2026-03-08,openmeteo,58.8,49.3,11.7,0.075,Light drizzle,56.7,51.8,21.7,0.087,Dense drizzle,84.2,right,4,29.7,28.5,6.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-03-08,raysweather,58.8,49.3,11.7,0.075,Light drizzle,63.0,45.0,7.5,,Mostly cloudy; A few mostly afternoon showers; Maybe a thundershower; WNW wind 5-10 mph,74.1,meh,3,23.4,23.1,17.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-03-08,raysweather,58.8,49.3,11.7,0.075,Light drizzle,63.0,45.0,7.5,,Mostly cloudy; A few mostly afternoon showers; Maybe a thundershower; WNW wind 5-10 mph,69.1,meh,3,23.4,23.1,12.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-03-09,openmeteo,65.0,42.0,8.1,0.0,Overcast,63.2,47.3,14.3,0.0,Overcast,83.7,right,4,30.0,20.1,13.6,,,,,,NO,0 (the sweater rests today)
-2026-03-09,raysweather,65.0,42.0,8.1,0.0,Overcast,69.0,48.0,,,"Areas of morning fog, then bright sunshine; Warmer again; Light WNW wind",52.0,wrong,2,24.0,18.0,,,,,,,NO,0 (the sweater rests today)
+2026-03-09,raysweather,65.0,42.0,8.1,0.0,Overcast,69.0,48.0,4.0,,"Areas of morning fog, then bright sunshine; Warmer again; Light WNW wind",63.8,meh,3,24.0,18.0,11.8,,,,,,NO,0 (the sweater rests today)
 2026-03-09,apple_weather,65.0,42.0,8.1,0.0,Overcast,63.2,47.3,14.3,0.0,Overcast,83.7,right,4,30.0,20.1,13.6,,,,,,NO,0 (the sweater rests today)
 2026-03-10,openmeteo,67.8,50.6,7.8,0.028,Light drizzle,70.3,52.1,15.3,0.0,Overcast,79.5,right,4,28.5,30.0,11.0,,,,,,NO,0 (the sweater rests today)
 2026-03-10,raysweather,67.8,50.6,7.8,0.028,Light drizzle,73.0,55.0,7.5,,Partly to mostly sunny with record high temperatures; An isolated afternoon shower or thundershower; WNW wind 5-10 mph becoming light SW,73.2,meh,3,20.4,22.8,20.0,,,,,,NO,0 (the sweater rests today)
 2026-03-10,apple_weather,67.8,50.6,7.8,0.028,Light drizzle,70.3,52.1,15.3,0.0,Overcast,79.5,right,4,28.5,30.0,11.0,,,,,,NO,0 (the sweater rests today)
 2026-03-11,openmeteo,76.1,55.0,11.9,0.0,Overcast,76.5,56.3,16.4,0.0,Overcast,97.0,right,5,30.0,30.0,17.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
-2026-03-11,raysweather,76.1,55.0,11.9,0.0,Overcast,76.0,39.0,10.0,,Cloudy to start; Becoming partly sunny for the afternoon with record high temperatures for the date; Breezy with SW wind 5-15 mph & gusty,60.0,meh,3,30.0,0.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-03-11,raysweather,76.1,55.0,11.9,0.0,Overcast,76.0,39.0,10.0,,Cloudy to start; Becoming partly sunny for the afternoon with record high temperatures for the date; Breezy with SW wind 5-15 mph & gusty,52.2,wrong,2,30.0,0.0,12.2,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-03-11,apple_weather,76.1,55.0,11.9,0.0,Overcast,76.5,56.3,16.4,0.0,Overcast,97.0,right,5,30.0,30.0,17.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-03-12,openmeteo,56.0,22.1,26.0,1.276,Heavy snow,58.1,30.9,28.7,0.606,Heavy snow,63.3,meh,3,29.7,9.6,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-03-12,raysweather,56.0,22.1,26.0,1.276,Heavy snow,47.0,26.0,20.0,,"Morning rain ending as snow, especially at higher elevations near the NC/TN line; Clearing during the afternoon; Temperatures fall through the day; Windy and colder; NW wind 15-25 mph gusting to 45",51.3,wrong,2,9.0,24.3,14.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-03-12,raysweather,56.0,22.1,26.0,1.276,Heavy snow,47.0,26.0,20.0,,"Morning rain ending as snow, especially at higher elevations near the NC/TN line; Clearing during the afternoon; Temperatures fall through the day; Windy and colder; NW wind 15-25 mph gusting to 45",41.3,wrong,2,9.0,24.3,4.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-03-12,apple_weather,56.0,22.1,26.0,1.276,Heavy snow,58.1,30.9,28.7,0.606,Heavy snow,63.3,meh,3,29.7,9.6,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-03-13,openmeteo,52.9,20.0,12.2,0.0,Partly cloudy,55.7,26.5,16.7,0.0,Clear sky,81.1,right,4,27.6,16.5,17.0,,,,,,YES,1-2 (light to medium sweater)
-2026-03-13,raysweather,52.9,20.0,12.2,0.0,Partly cloudy,54.0,35.0,10.0,,Abundant sunshine; Seasonable temperatures; Wind becoming SW wind 5-15 mph and gusty,60.0,meh,3,30.0,0.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2026-03-13,raysweather,52.9,20.0,12.2,0.0,Partly cloudy,54.0,35.0,10.0,,Abundant sunshine; Seasonable temperatures; Wind becoming SW wind 5-15 mph and gusty,51.6,wrong,2,30.0,0.0,11.6,,,,,,YES,1-2 (light to medium sweater)
 2026-03-13,apple_weather,52.9,20.0,12.2,0.0,Partly cloudy,55.7,26.5,16.7,0.0,Clear sky,81.1,right,4,27.6,16.5,17.0,,,,,,YES,1-2 (light to medium sweater)
 2026-03-14,openmeteo,62.7,37.6,12.1,0.0,Overcast,63.6,38.5,14.4,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-03-14,raysweather,62.7,37.6,12.1,0.0,Overcast,63.0,41.0,10.0,,"Some high cloudiness; Noticeably warmer; NW wind 5-15 mph, becoming South in the afternoon",85.8,right,4,30.0,25.8,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-03-14,raysweather,62.7,37.6,12.1,0.0,Overcast,63.0,41.0,10.0,,"Some high cloudiness; Noticeably warmer; NW wind 5-15 mph, becoming South in the afternoon",77.6,right,4,30.0,25.8,11.8,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-03-14,apple_weather,62.7,37.6,12.1,0.0,Overcast,63.6,38.5,14.4,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-03-15,openmeteo,56.0,41.0,17.9,0.248,Slight rain,57.6,41.9,16.8,0.061,Moderate drizzle,98.3,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-03-15,raysweather,56.0,41.0,17.9,0.248,Slight rain,56.0,54.0,7.5,,Sunshine yielding to cloudiness; A few afternoon light showers; Blue Ridge fog developing late; SE wind 5-10 mph but more gusty up top,45.2,wrong,2,30.0,0.0,5.2,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-03-15,raysweather,56.0,41.0,17.9,0.248,Slight rain,56.0,54.0,7.5,,Sunshine yielding to cloudiness; A few afternoon light showers; Blue Ridge fog developing late; SE wind 5-10 mph but more gusty up top,40.2,wrong,2,30.0,0.0,0.2,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-03-15,apple_weather,56.0,41.0,17.9,0.248,Slight rain,57.6,41.9,16.8,0.061,Moderate drizzle,98.3,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-03-16,openmeteo,53.2,20.5,26.2,1.432,Heavy snow,55.3,18.0,29.3,1.397,Heavy snow,82.0,right,4,29.7,28.5,19.8,,,,,,YES,1-2 (light to medium sweater)
-2026-03-16,raysweather,53.2,20.5,26.2,1.432,Heavy snow,60.0,20.0,15.0,,Cloudy with AM fog; Mild AM; Rain and t-showers; Falling afternoon temperatures; Precip changes to sleet and then snow west to east in the afternoon; South wind 10-20 mph & gusty becoming NW 15-25 mid-afternoon with gusts to 50 mph,53.2,wrong,2,15.6,30.0,3.6,,,,,,YES,1-2 (light to medium sweater)
+2026-03-16,raysweather,53.2,20.5,26.2,1.432,Heavy snow,60.0,20.0,15.0,,Cloudy with AM fog; Mild AM; Rain and t-showers; Falling afternoon temperatures; Precip changes to sleet and then snow west to east in the afternoon; South wind 10-20 mph & gusty becoming NW 15-25 mid-afternoon with gusts to 50 mph,55.6,wrong,2,15.6,30.0,0.0,,,,,,YES,1-2 (light to medium sweater)
 2026-03-16,apple_weather,53.2,20.5,26.2,1.432,Heavy snow,55.3,18.0,29.3,1.397,Heavy snow,82.0,right,4,29.7,28.5,19.8,,,,,,YES,1-2 (light to medium sweater)
 2026-03-17,openmeteo,24.8,13.5,21.6,0.089,Slight snow,22.8,13.1,28.4,0.028,Slight snow,81.4,right,4,30.0,30.0,12.4,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
-2026-03-17,raysweather,24.8,13.5,21.6,0.089,Slight snow,28.0,17.0,15.0,,Snow showers and flurries becoming more scattered; Mostly to partly cloudy; Shockingly cold for St. Patrick's Day; NW wind 10-20 mph gusting to 30,68.7,meh,3,26.4,25.5,12.8,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
+2026-03-17,raysweather,24.8,13.5,21.6,0.089,Slight snow,28.0,17.0,15.0,,Snow showers and flurries becoming more scattered; Mostly to partly cloudy; Shockingly cold for St. Patrick's Day; NW wind 10-20 mph gusting to 30,58.7,wrong,2,26.4,25.5,2.8,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
 2026-03-17,apple_weather,24.8,13.5,21.6,0.089,Slight snow,22.8,13.1,28.4,0.028,Slight snow,81.4,right,4,30.0,30.0,12.4,,,,,,ABSOLUTELY,"3+ (sweater, fleece, AND a coat)"
 2026-03-18,openmeteo,37.1,14.6,9.0,0.0,Overcast,38.7,17.7,9.3,0.0,Overcast,96.7,right,5,30.0,26.7,20.0,,,,,,YES,2 (solid sweater + optional layer)
-2026-03-18,raysweather,37.1,14.6,9.0,0.0,Overcast,38.0,27.0,,,"Partly to mostly cloudy; Still cold for mid-March, but less cold by afternoon; Light SW wind",40.0,wrong,2,30.0,0.0,,,,,,,YES,2 (solid sweater + optional layer)
+2026-03-18,raysweather,37.1,14.6,9.0,0.0,Overcast,38.0,27.0,4.0,,"Partly to mostly cloudy; Still cold for mid-March, but less cold by afternoon; Light SW wind",50.0,wrong,2,30.0,0.0,10.0,,,,,,YES,2 (solid sweater + optional layer)
 2026-03-18,apple_weather,37.1,14.6,9.0,0.0,Overcast,38.7,17.7,9.3,0.0,Overcast,96.7,right,5,30.0,26.7,20.0,,,,,,YES,2 (solid sweater + optional layer)
 2026-03-19,openmeteo,52.2,24.6,8.3,0.0,Overcast,52.6,32.5,14.3,0.0,Fog,76.3,right,4,30.0,12.3,14.0,,,,,,YES,1-2 (light to medium sweater)
-2026-03-19,raysweather,52.2,24.6,8.3,0.0,Overcast,56.0,36.0,,,Mostly to partly cloudy; Closer to seasonal temperatures; Light NW wind,36.4,wrong,1,24.6,1.8,,,,,,,YES,1-2 (light to medium sweater)
+2026-03-19,raysweather,52.2,24.6,8.3,0.0,Overcast,56.0,36.0,4.0,,Mostly to partly cloudy; Closer to seasonal temperatures; Light NW wind,47.8,wrong,2,24.6,1.8,11.4,,,,,,YES,1-2 (light to medium sweater)
 2026-03-19,apple_weather,52.2,24.6,8.3,0.0,Overcast,52.6,32.5,14.3,0.0,Fog,76.3,right,4,30.0,12.3,14.0,,,,,,YES,1-2 (light to medium sweater)
 2026-03-20,openmeteo,63.2,37.0,9.2,0.0,Overcast,62.8,36.7,11.6,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-03-20,raysweather,63.2,37.0,9.2,0.0,Overcast,65.0,49.0,10.0,,Sunshine through some high clouds; A noticeably milder afternoon; SW wind 5-15 mph,60.0,meh,3,30.0,0.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-03-20,raysweather,63.2,37.0,9.2,0.0,Overcast,65.0,49.0,10.0,,Sunshine through some high clouds; A noticeably milder afternoon; SW wind 5-15 mph,44.4,wrong,2,30.0,0.0,14.4,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-03-20,apple_weather,63.2,37.0,9.2,0.0,Overcast,62.8,36.7,11.6,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-03-21,openmeteo,68.0,49.9,12.4,0.079,Moderate drizzle,67.4,51.1,18.8,0.028,Moderate drizzle,93.2,right,5,30.0,30.0,13.2,,,,,,NO,0 (the sweater rests today)
-2026-03-21,raysweather,68.0,49.9,12.4,0.079,Moderate drizzle,67.0,50.0,10.0,,Partly sunny; Late-day stray shower possible; Mild; WNW wind 5-15 mph,90.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-03-21,raysweather,68.0,49.9,12.4,0.079,Moderate drizzle,67.0,50.0,10.0,,Partly sunny; Late-day stray shower possible; Mild; WNW wind 5-15 mph,81.2,right,4,30.0,30.0,11.2,,,,,,NO,0 (the sweater rests today)
 2026-03-21,apple_weather,68.0,49.9,12.4,0.079,Moderate drizzle,67.4,51.1,18.8,0.028,Moderate drizzle,93.2,right,5,30.0,30.0,13.2,,,,,,NO,0 (the sweater rests today)
 2026-03-22,openmeteo,75.2,51.1,9.7,0.0,Overcast,75.9,52.0,12.4,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
-2026-03-22,raysweather,75.2,51.1,9.7,0.0,Overcast,77.0,52.0,7.5,,Turning mostly sunny; Near-record warmth; NW wind 5-10 mph becoming SW,90.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-03-22,raysweather,75.2,51.1,9.7,0.0,Overcast,77.0,52.0,7.5,,Turning mostly sunny; Near-record warmth; NW wind 5-10 mph becoming SW,86.6,right,4,30.0,30.0,16.6,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-03-22,apple_weather,75.2,51.1,9.7,0.0,Overcast,75.9,52.0,12.4,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-03-23,openmeteo,62.3,36.8,20.8,0.035,Light drizzle,63.2,35.3,20.7,0.031,Moderate drizzle,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-03-23,raysweather,62.3,36.8,20.8,0.035,Light drizzle,66.0,31.0,15.0,,"Morning clouds, becoming partly cloudy in the afternoon; Daytime highs occur around sunrise; An AM shower or two, mostly west; NW wind 10-20 mph, gusty",67.9,meh,3,24.9,18.6,14.4,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-03-23,raysweather,62.3,36.8,20.8,0.035,Light drizzle,66.0,31.0,15.0,,"Morning clouds, becoming partly cloudy in the afternoon; Daytime highs occur around sunrise; An AM shower or two, mostly west; NW wind 10-20 mph, gusty",57.9,wrong,2,24.9,18.6,4.4,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-03-23,apple_weather,62.3,36.8,20.8,0.035,Light drizzle,63.2,35.3,20.7,0.031,Moderate drizzle,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-03-24,openmeteo,46.8,30.1,15.5,0.0,Overcast,49.4,32.3,12.7,0.0,Overcast,97.6,right,5,28.2,29.4,20.0,,,,,,YES,1-2 (light to medium sweater)
-2026-03-24,raysweather,46.8,30.1,15.5,0.0,Overcast,52.0,29.0,7.5,,"Early clouds, then clearing; Cool; Light wind becoming SE 5-10 mph",70.4,meh,3,20.4,30.0,10.0,,,,,,YES,1-2 (light to medium sweater)
+2026-03-24,raysweather,46.8,30.1,15.5,0.0,Overcast,52.0,29.0,7.5,,"Early clouds, then clearing; Cool; Light wind becoming SE 5-10 mph",65.4,meh,3,20.4,30.0,5.0,,,,,,YES,1-2 (light to medium sweater)
 2026-03-24,apple_weather,46.8,30.1,15.5,0.0,Overcast,49.4,32.3,12.7,0.0,Overcast,97.6,right,5,28.2,29.4,20.0,,,,,,YES,1-2 (light to medium sweater)
 2026-03-25,openmeteo,54.0,32.8,9.2,0.0,Overcast,58.1,33.4,10.1,0.0,Overcast,93.7,right,5,23.7,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
-2026-03-25,raysweather,54.0,32.8,9.2,0.0,Overcast,60.0,43.0,,,Partly to mostly cloudy; Milder afternoon; Light South wind becoming 5-10 mph,33.4,wrong,1,18.0,5.4,,,,,,,YES,1-2 (light to medium sweater)
+2026-03-25,raysweather,54.0,32.8,9.2,0.0,Overcast,60.0,43.0,7.5,,Partly to mostly cloudy; Milder afternoon; Light South wind becoming 5-10 mph,51.0,wrong,2,18.0,5.4,17.6,,,,,,YES,1-2 (light to medium sweater)
 2026-03-25,apple_weather,54.0,32.8,9.2,0.0,Overcast,58.1,33.4,10.1,0.0,Overcast,93.7,right,5,23.7,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
 2026-03-26,openmeteo,68.5,40.9,10.2,0.055,Moderate drizzle,70.9,46.9,12.7,0.0,Overcast,76.8,right,4,28.8,18.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-03-26,raysweather,68.5,40.9,10.2,0.055,Moderate drizzle,71.0,54.0,10.0,,Intervals of clouds and sunshine with a warmer afternoon; Light west wind becoming SW 5-15 mph,48.5,wrong,2,28.5,0.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-03-26,raysweather,68.5,40.9,10.2,0.055,Moderate drizzle,71.0,54.0,10.0,,Intervals of clouds and sunshine with a warmer afternoon; Light west wind becoming SW 5-15 mph,44.1,wrong,2,28.5,0.0,15.6,,,,,,NO,0 (the sweater rests today)
 2026-03-26,apple_weather,68.5,40.9,10.2,0.055,Moderate drizzle,70.9,46.9,12.7,0.0,Overcast,76.8,right,4,28.8,18.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-03-27,openmeteo,67.5,44.0,21.7,0.083,Moderate drizzle,68.9,43.4,26.5,0.043,Moderate drizzle,96.4,right,5,30.0,30.0,16.4,,,,,,NO,0 (the sweater rests today)
-2026-03-27,raysweather,67.5,44.0,21.7,0.083,Moderate drizzle,69.0,30.0,15.0,,Sunshine yielding to increasing cloudiness; Scattered afternoon showers; Maybe a thundershower; Mild but quite breezy; WNW wind 10-20 mph gusting to 35,52.6,wrong,2,30.0,0.0,12.6,,,,,,NO,0 (the sweater rests today)
+2026-03-27,raysweather,67.5,44.0,21.7,0.083,Moderate drizzle,69.0,30.0,15.0,,Sunshine yielding to increasing cloudiness; Scattered afternoon showers; Maybe a thundershower; Mild but quite breezy; WNW wind 10-20 mph gusting to 35,42.6,wrong,2,30.0,0.0,2.6,,,,,,NO,0 (the sweater rests today)
 2026-03-27,apple_weather,67.5,44.0,21.7,0.083,Moderate drizzle,68.9,43.4,26.5,0.043,Moderate drizzle,96.4,right,5,30.0,30.0,16.4,,,,,,NO,0 (the sweater rests today)
 2026-03-28,openmeteo,48.4,26.0,21.6,0.0,Overcast,51.1,28.5,28.2,0.0,Overcast,89.2,right,4,27.9,28.5,12.8,,,,,,YES,1-2 (light to medium sweater)
-2026-03-28,raysweather,48.4,26.0,21.6,0.0,Overcast,48.0,29.0,15.0,,"Becoming sunny; Chilly; NW wind 10-20 mph, gusty in the morning, becoming 5-15 mph in the afternoon",79.8,right,4,30.0,27.0,12.8,,,,,,YES,1-2 (light to medium sweater)
+2026-03-28,raysweather,48.4,26.0,21.6,0.0,Overcast,48.0,29.0,12.5,,"Becoming sunny; Chilly; NW wind 10-20 mph, gusty in the morning, becoming 5-15 mph in the afternoon",67.0,meh,3,30.0,27.0,0.0,,,,,,YES,1-2 (light to medium sweater)
 2026-03-28,apple_weather,48.4,26.0,21.6,0.0,Overcast,51.1,28.5,28.2,0.0,Overcast,89.2,right,4,27.9,28.5,12.8,,,,,,YES,1-2 (light to medium sweater)
 2026-03-29,openmeteo,50.5,30.9,11.9,0.0,Overcast,52.8,31.2,11.6,0.0,Overcast,99.1,right,5,29.1,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
-2026-03-29,raysweather,50.5,30.9,11.9,0.0,Overcast,56.0,38.0,10.0,,Mostly sunny with high clouds this afternoon; Milder after a cold start to the day; Light wind becoming South 5-15 mph,64.2,meh,3,19.5,14.7,20.0,,,,,,YES,1-2 (light to medium sweater)
+2026-03-29,raysweather,50.5,30.9,11.9,0.0,Overcast,56.0,38.0,10.0,,Mostly sunny with high clouds this afternoon; Milder after a cold start to the day; Light wind becoming South 5-15 mph,56.4,wrong,2,19.5,14.7,12.2,,,,,,YES,1-2 (light to medium sweater)
 2026-03-29,apple_weather,50.5,30.9,11.9,0.0,Overcast,52.8,31.2,11.6,0.0,Overcast,99.1,right,5,29.1,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
 2026-03-30,openmeteo,61.7,39.5,10.2,0.024,Light drizzle,63.8,43.1,11.9,0.0,Overcast,84.9,right,4,29.7,25.2,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-03-30,raysweather,61.7,39.5,10.2,0.024,Light drizzle,65.0,48.0,7.5,,Partly sunny and noticeably milder; SSW wind 5-10 mph,56.6,wrong,2,26.1,10.5,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-03-30,raysweather,61.7,39.5,10.2,0.024,Light drizzle,65.0,48.0,7.5,,Partly sunny and noticeably milder; SSW wind 5-10 mph,52.2,wrong,2,26.1,10.5,15.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-03-30,apple_weather,61.7,39.5,10.2,0.024,Light drizzle,63.8,43.1,11.9,0.0,Overcast,84.9,right,4,29.7,25.2,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-03-31,openmeteo,69.6,46.0,10.4,0.035,Light drizzle,72.5,51.0,13.7,0.0,Overcast,77.7,right,4,27.3,21.0,19.4,,,,,,NO,0 (the sweater rests today)
-2026-03-31,raysweather,69.6,46.0,10.4,0.035,Light drizzle,73.0,53.0,10.0,,"Mostly sunny early,; Partly to mostly cloudy afternoon; Isolated afternoon showers (thunder possible); Warmer; Light SW wind becoming 5-15 mph in the afternoon",70.8,meh,3,25.8,15.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-03-31,raysweather,69.6,46.0,10.4,0.035,Light drizzle,73.0,53.0,10.0,,"Mostly sunny early,; Partly to mostly cloudy afternoon; Isolated afternoon showers (thunder possible); Warmer; Light SW wind becoming 5-15 mph in the afternoon",66.0,meh,3,25.8,15.0,15.2,,,,,,NO,0 (the sweater rests today)
 2026-03-31,apple_weather,69.6,46.0,10.4,0.035,Light drizzle,72.5,51.0,13.7,0.0,Overcast,77.7,right,4,27.3,21.0,19.4,,,,,,NO,0 (the sweater rests today)
 2026-04-01,openmeteo,71.3,50.3,8.4,0.173,Moderate rain,70.9,54.5,12.1,1.043,Heavy rain,82.0,right,4,30.0,23.4,18.6,,,,,,NO,0 (the sweater rests today)
-2026-04-01,raysweather,71.3,50.3,8.4,0.173,Moderate rain,73.0,53.0,10.0,,"Early sunshine to mostly cloudy; Scattered afternoon showers and thunderstorms; Warm; Light SW wind, becoming South 5-15 mph & gusty in storms",87.9,right,4,30.0,27.9,20.0,,,,,,NO,0 (the sweater rests today)
+2026-04-01,raysweather,71.3,50.3,8.4,0.173,Moderate rain,73.0,53.0,10.0,,"Early sunshine to mostly cloudy; Scattered afternoon showers and thunderstorms; Warm; Light SW wind, becoming South 5-15 mph & gusty in storms",80.7,right,4,30.0,27.9,12.8,,,,,,NO,0 (the sweater rests today)
 2026-04-01,apple_weather,71.3,50.3,8.4,0.173,Moderate rain,70.9,54.5,12.1,1.043,Heavy rain,82.0,right,4,30.0,23.4,18.6,,,,,,NO,0 (the sweater rests today)
 2026-04-02,openmeteo,69.5,54.2,12.4,0.043,Moderate drizzle,70.9,52.1,13.4,0.0,Fog,89.7,right,4,30.0,29.7,20.0,,,,,,NO,0 (the sweater rests today)
-2026-04-02,raysweather,69.5,54.2,12.4,0.043,Moderate drizzle,74.0,51.0,,,Early fog possible; Then sunny skies giving way to scattered afternoon clouds; Isolated afternoon showers (thunder possible); Pleasant temperatures; Light wind becoming South 5-15 mph,58.9,wrong,2,22.5,26.4,,,,,,,NO,0 (the sweater rests today)
+2026-04-02,raysweather,69.5,54.2,12.4,0.043,Moderate drizzle,74.0,51.0,10.0,,Early fog possible; Then sunny skies giving way to scattered afternoon clouds; Isolated afternoon showers (thunder possible); Pleasant temperatures; Light wind becoming South 5-15 mph,70.1,meh,3,22.5,26.4,11.2,,,,,,NO,0 (the sweater rests today)
 2026-04-02,apple_weather,69.5,54.2,12.4,0.043,Moderate drizzle,70.9,52.1,13.4,0.0,Fog,89.7,right,4,30.0,29.7,20.0,,,,,,NO,0 (the sweater rests today)
 2026-04-03,openmeteo,68.4,50.6,10.5,0.024,Light drizzle,69.5,51.0,9.6,0.0,Overcast,90.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-04-03,raysweather,68.4,50.6,10.5,0.024,Light drizzle,73.0,54.0,,,Mostly sunny; Isolated afternoon showers; Pleasant temperatures; Calm wind becoming South 5-10 mph,58.0,wrong,2,22.2,25.8,,,,,,,NO,0 (the sweater rests today)
+2026-04-03,raysweather,68.4,50.6,10.5,0.024,Light drizzle,73.0,54.0,7.5,,Mostly sunny; Isolated afternoon showers; Pleasant temperatures; Calm wind becoming South 5-10 mph,73.0,meh,3,22.2,25.8,15.0,,,,,,NO,0 (the sweater rests today)
 2026-04-03,apple_weather,68.4,50.6,10.5,0.024,Light drizzle,69.5,51.0,9.6,0.0,Overcast,90.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-04-04,openmeteo,67.9,51.2,12.1,0.087,Dense drizzle,69.4,54.7,12.9,0.035,Light drizzle,95.5,right,5,30.0,25.5,20.0,,,,,,NO,0 (the sweater rests today)
-2026-04-04,raysweather,67.9,51.2,12.1,0.087,Dense drizzle,71.0,53.0,10.0,,"Partly sunny; Scattered afternoon showers & a stray thundershower or two; Warm; Wind becoming South 5-15 mph, except increasing to 15-25 mph and gusty higher elevs",86.7,right,4,26.7,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-04-04,raysweather,67.9,51.2,12.1,0.087,Dense drizzle,71.0,53.0,15.0,,"Partly sunny; Scattered afternoon showers & a stray thundershower or two; Warm; Wind becoming South 5-15 mph, except increasing to 15-25 mph and gusty higher elevs",66.9,meh,3,26.7,30.0,0.2,,,,,,NO,0 (the sweater rests today)
 2026-04-04,apple_weather,67.9,51.2,12.1,0.087,Dense drizzle,69.4,54.7,12.9,0.035,Light drizzle,95.5,right,5,30.0,25.5,20.0,,,,,,NO,0 (the sweater rests today)
 2026-04-05,openmeteo,58.6,42.4,20.0,0.291,Slight rain,58.7,39.9,26.5,0.071,Moderate drizzle,89.1,right,4,30.0,28.5,13.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-04-05,raysweather,58.6,42.4,20.0,0.291,Slight rain,59.0,37.0,10.0,,Morning rain tapers off midday; Breaks in the clouds later in the day; Turning cooler after early morning highs; SW wind 5-15 mph becoming WNW 10-20 mph and gusty,65.8,meh,3,30.0,19.8,6.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-04-05,raysweather,58.6,42.4,20.0,0.291,Slight rain,59.0,37.0,12.5,,Morning rain tapers off midday; Breaks in the clouds later in the day; Turning cooler after early morning highs; SW wind 5-15 mph becoming WNW 10-20 mph and gusty,59.8,wrong,2,30.0,19.8,0.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-04-05,apple_weather,58.6,42.4,20.0,0.291,Slight rain,58.7,39.9,26.5,0.071,Moderate drizzle,89.1,right,4,30.0,28.5,13.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-04-06,openmeteo,54.8,33.3,18.2,0.0,Overcast,56.2,33.3,16.8,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
-2026-04-06,raysweather,54.8,33.3,18.2,0.0,Overcast,58.0,36.0,15.0,,Lots of sunshine & seasonably cool; NW wind 10-20 mph and gusty,83.9,right,4,26.4,27.9,19.6,,,,,,YES,1-2 (light to medium sweater)
+2026-04-06,raysweather,54.8,33.3,18.2,0.0,Overcast,58.0,36.0,15.0,,Lots of sunshine & seasonably cool; NW wind 10-20 mph and gusty,73.9,meh,3,26.4,27.9,9.6,,,,,,YES,1-2 (light to medium sweater)
 2026-04-06,apple_weather,54.8,33.3,18.2,0.0,Overcast,56.2,33.3,16.8,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
 2026-04-07,openmeteo,56.0,37.2,10.5,0.0,Overcast,57.4,38.2,10.4,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-04-07,raysweather,56.0,37.2,10.5,0.0,Overcast,57.0,29.0,10.0,,"Sunny; Cool; NW wind 5-15 mph, breezy int he morning",71.4,meh,3,30.0,11.4,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-04-07,raysweather,56.0,37.2,10.5,0.0,Overcast,57.0,29.0,10.0,,"Sunny; Cool; NW wind 5-15 mph, breezy int he morning",66.4,meh,3,30.0,11.4,15.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-04-07,apple_weather,56.0,37.2,10.5,0.0,Overcast,57.4,38.2,10.4,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-04-08,openmeteo,49.3,31.1,8.1,0.0,Overcast,52.3,32.7,9.6,0.0,Overcast,97.0,right,5,27.0,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
-2026-04-08,raysweather,49.3,31.1,8.1,0.0,Overcast,53.0,32.0,10.0,,High cloudiness developing; Cooler; SE wind 5-15 mph,84.9,right,4,24.9,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2026-04-08,raysweather,49.3,31.1,8.1,0.0,Overcast,53.0,32.0,10.0,,High cloudiness developing; Cooler; SE wind 5-15 mph,77.1,right,4,24.9,30.0,12.2,,,,,,YES,1-2 (light to medium sweater)
 2026-04-08,apple_weather,49.3,31.1,8.1,0.0,Overcast,52.3,32.7,9.6,0.0,Overcast,97.0,right,5,27.0,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
 2026-04-09,openmeteo,56.8,32.8,6.5,0.0,Overcast,60.3,30.8,7.0,0.0,Overcast,95.5,right,5,25.5,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-04-09,raysweather,56.8,32.8,6.5,0.0,Overcast,61.0,36.0,,,Frosty sunrise in valleys; Some morning high cloudiness with a mostly sunny afternoon; Milder afternoon; Light SE wind,59.8,wrong,2,23.4,26.4,,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-04-09,raysweather,56.8,32.8,6.5,0.0,Overcast,61.0,36.0,4.0,,Frosty sunrise in valleys; Some morning high cloudiness with a mostly sunny afternoon; Milder afternoon; Light SE wind,74.8,meh,3,23.4,26.4,15.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-04-09,apple_weather,56.8,32.8,6.5,0.0,Overcast,60.3,30.8,7.0,0.0,Overcast,95.5,right,5,25.5,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-04-10,openmeteo,67.9,40.8,6.4,0.0,Overcast,69.7,38.9,8.8,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-04-10,raysweather,67.9,40.8,6.4,0.0,Overcast,72.0,45.0,,,Abundant sunshine; Warmer; Light west wind,57.1,wrong,2,23.7,23.4,,,,,,,NO,0 (the sweater rests today)
+2026-04-10,raysweather,67.9,40.8,6.4,0.0,Overcast,72.0,45.0,4.0,,Abundant sunshine; Warmer; Light west wind,72.3,meh,3,23.7,23.4,15.2,,,,,,NO,0 (the sweater rests today)
 2026-04-10,apple_weather,67.9,40.8,6.4,0.0,Overcast,69.7,38.9,8.8,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-04-11,openmeteo,67.4,48.0,10.4,0.0,Overcast,70.5,49.0,11.3,0.0,Overcast,96.7,right,5,26.7,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-04-11,raysweather,67.4,48.0,10.4,0.0,Overcast,73.0,50.0,10.0,,Scattered cloudiness; Warm; A rogue afternoon thundershower possible; NW wind 5-15 mph,69.2,meh,3,19.2,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-04-11,raysweather,67.4,48.0,10.4,0.0,Overcast,73.0,50.0,10.0,,Scattered cloudiness; Warm; A rogue afternoon thundershower possible; NW wind 5-15 mph,64.4,meh,3,19.2,30.0,15.2,,,,,,NO,0 (the sweater rests today)
 2026-04-11,apple_weather,67.4,48.0,10.4,0.0,Overcast,70.5,49.0,11.3,0.0,Overcast,96.7,right,5,26.7,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-04-12,openmeteo,69.9,49.5,11.6,0.0,Overcast,71.9,46.9,11.9,0.0,Overcast,98.2,right,5,30.0,28.2,20.0,,,,,,NO,0 (the sweater rests today)
-2026-04-12,raysweather,69.9,49.5,11.6,0.0,Overcast,73.0,51.0,10.0,,High clouds; Pleasant; South wind 5-15 mph,86.7,right,4,26.7,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-04-12,raysweather,69.9,49.5,11.6,0.0,Overcast,73.0,51.0,10.0,,High clouds; Pleasant; South wind 5-15 mph,79.5,right,4,26.7,30.0,12.8,,,,,,NO,0 (the sweater rests today)
 2026-04-12,apple_weather,69.9,49.5,11.6,0.0,Overcast,71.9,46.9,11.9,0.0,Overcast,98.2,right,5,30.0,28.2,20.0,,,,,,NO,0 (the sweater rests today)
 2026-04-13,openmeteo,71.7,52.1,9.9,0.0,Overcast,73.2,57.0,14.3,0.0,Overcast,88.5,right,4,30.0,21.3,17.2,,,,,,NO,0 (the sweater rests today)
-2026-04-13,raysweather,71.7,52.1,9.9,0.0,Overcast,75.0,54.0,10.0,,High cloudiness; Warm; Warm; SW wind 5-15 mph,86.1,right,4,26.1,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-04-13,raysweather,71.7,52.1,9.9,0.0,Overcast,75.0,54.0,10.0,,High cloudiness; Warm; Warm; SW wind 5-15 mph,81.9,right,4,26.1,30.0,15.8,,,,,,NO,0 (the sweater rests today)
 2026-04-13,apple_weather,71.7,52.1,9.9,0.0,Overcast,73.2,57.0,14.3,0.0,Overcast,88.5,right,4,30.0,21.3,17.2,,,,,,NO,0 (the sweater rests today)
 2026-04-14,openmeteo,70.9,50.6,8.8,0.008,Light drizzle,74.1,53.9,17.1,0.0,Overcast,71.9,meh,3,26.4,26.1,9.4,,,,,,NO,0 (the sweater rests today)
-2026-04-14,raysweather,70.9,50.6,8.8,0.008,Light drizzle,78.0,54.0,10.0,,Intervals of clouds and sunshine; Unseasonably warm with near record high temperatures; Breezy west wind 5-15 mph,60.5,meh,3,14.7,25.8,20.0,,,,,,NO,0 (the sweater rests today)
+2026-04-14,raysweather,70.9,50.6,8.8,0.008,Light drizzle,78.0,54.0,10.0,,Intervals of clouds and sunshine; Unseasonably warm with near record high temperatures; Breezy west wind 5-15 mph,54.1,wrong,2,14.7,25.8,13.6,,,,,,NO,0 (the sweater rests today)
 2026-04-14,apple_weather,70.9,50.6,8.8,0.008,Light drizzle,74.1,53.9,17.1,0.0,Overcast,71.9,meh,3,26.4,26.1,9.4,,,,,,NO,0 (the sweater rests today)
 2026-04-15,openmeteo,77.6,55.7,11.7,0.0,Overcast,80.3,57.2,15.6,0.0,Overcast,96.1,right,5,27.9,30.0,18.2,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
-2026-04-15,raysweather,77.6,55.7,11.7,0.0,Overcast,80.0,55.0,10.0,,Plenty of sunshine with record warmth; WNW wind 5-15 mph becoming south,88.8,right,4,28.8,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-04-15,raysweather,77.6,55.7,11.7,0.0,Overcast,80.0,55.0,10.0,,Plenty of sunshine with record warmth; WNW wind 5-15 mph becoming south,81.4,right,4,28.8,30.0,12.6,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-04-15,apple_weather,77.6,55.7,11.7,0.0,Overcast,80.3,57.2,15.6,0.0,Overcast,96.1,right,5,27.9,30.0,18.2,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-04-16,openmeteo,74.9,56.5,11.5,0.004,Light drizzle,77.2,58.5,18.0,0.0,Overcast,92.1,right,5,29.1,30.0,13.0,,,,,,NO,0 (the sweater rests today)
-2026-04-16,raysweather,74.9,56.5,11.5,0.004,Light drizzle,79.0,54.0,10.0,,"Mostly sunny; Warm, but not as warm as yesterday; West wind 5-15 mph",82.2,right,4,23.7,28.5,20.0,,,,,,NO,0 (the sweater rests today)
+2026-04-16,raysweather,74.9,56.5,11.5,0.004,Light drizzle,79.0,54.0,10.0,,"Mostly sunny; Warm, but not as warm as yesterday; West wind 5-15 mph",75.2,right,4,23.7,28.5,13.0,,,,,,NO,0 (the sweater rests today)
 2026-04-16,apple_weather,74.9,56.5,11.5,0.004,Light drizzle,77.2,58.5,18.0,0.0,Overcast,92.1,right,5,29.1,30.0,13.0,,,,,,NO,0 (the sweater rests today)
 2026-04-17,openmeteo,69.0,54.4,10.9,0.008,Light drizzle,72.4,54.6,14.7,0.043,Moderate drizzle,94.2,right,5,25.8,30.0,18.4,,,,,,NO,0 (the sweater rests today)
-2026-04-17,raysweather,69.0,54.4,10.9,0.008,Light drizzle,77.0,54.0,10.0,,Early clouds followed by mostly sunny skies; Pleasant temperatures. NW wind 5-15 mph,62.0,meh,3,12.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-04-17,raysweather,69.0,54.4,10.9,0.008,Light drizzle,77.0,54.0,10.0,,Early clouds followed by mostly sunny skies; Pleasant temperatures. NW wind 5-15 mph,56.2,wrong,2,12.0,30.0,14.2,,,,,,NO,0 (the sweater rests today)
 2026-04-17,apple_weather,69.0,54.4,10.9,0.008,Light drizzle,72.4,54.6,14.7,0.043,Moderate drizzle,94.2,right,5,25.8,30.0,18.4,,,,,,NO,0 (the sweater rests today)
 2026-04-18,openmeteo,73.8,54.0,10.3,0.028,Moderate drizzle,79.2,51.2,11.9,0.0,Overcast,77.4,right,4,19.8,27.6,20.0,,,,,,NO,0 (the sweater rests today)
-2026-04-18,raysweather,73.8,54.0,10.3,0.028,Moderate drizzle,80.0,44.0,10.0,,"Mostly sunny to more afternoon clouds; Warm; Isolated afternoon showers and thundershowers, especially at higher western elevations; Wind becoming SSW 5-15 mph",53.4,wrong,2,17.4,6.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-04-18,raysweather,73.8,54.0,10.3,0.028,Moderate drizzle,80.0,44.0,10.0,,"Mostly sunny to more afternoon clouds; Warm; Isolated afternoon showers and thundershowers, especially at higher western elevations; Wind becoming SSW 5-15 mph",48.8,wrong,2,17.4,6.0,15.4,,,,,,NO,0 (the sweater rests today)
 2026-04-18,apple_weather,73.8,54.0,10.3,0.028,Moderate drizzle,79.2,51.2,11.9,0.0,Overcast,77.4,right,4,19.8,27.6,20.0,,,,,,NO,0 (the sweater rests today)
 2026-04-19,openmeteo,57.6,36.7,29.3,0.028,Light drizzle,60.0,36.7,31.3,0.063,Dense drizzle,98.8,right,5,28.8,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-04-19,raysweather,57.6,36.7,29.3,0.028,Light drizzle,54.0,36.0,20.0,,"Morning clouds, afternoon clearing; Showers exit east by 8 AM; Much chillier; NW wind 15-25 mph, gusts to 50 mph in the AM",72.6,meh,3,25.2,30.0,7.4,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-04-19,raysweather,57.6,36.7,29.3,0.028,Light drizzle,54.0,36.0,20.0,,"Morning clouds, afternoon clearing; Showers exit east by 8 AM; Much chillier; NW wind 15-25 mph, gusts to 50 mph in the AM",65.2,meh,3,25.2,30.0,0.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-04-19,apple_weather,57.6,36.7,29.3,0.028,Light drizzle,60.0,36.7,31.3,0.063,Dense drizzle,98.8,right,5,28.8,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-04-20,openmeteo,52.4,35.2,18.3,0.0,Partly cloudy,54.3,35.9,21.5,0.0,Clear sky,99.6,right,5,30.0,30.0,19.6,,,,,,YES,1-2 (light to medium sweater)
-2026-04-20,raysweather,52.4,35.2,18.3,0.0,Partly cloudy,55.0,31.0,15.0,,Sunny followed by some extra afternoon clouds; Remaining cool; NW wind 10-20 mph & gusty,81.0,right,4,28.2,23.4,19.4,,,,,,YES,1-2 (light to medium sweater)
+2026-04-20,raysweather,52.4,35.2,18.3,0.0,Partly cloudy,55.0,31.0,15.0,,Sunny followed by some extra afternoon clouds; Remaining cool; NW wind 10-20 mph & gusty,71.0,meh,3,28.2,23.4,9.4,,,,,,YES,1-2 (light to medium sweater)
 2026-04-20,apple_weather,52.4,35.2,18.3,0.0,Partly cloudy,54.3,35.9,21.5,0.0,Clear sky,99.6,right,5,30.0,30.0,19.6,,,,,,YES,1-2 (light to medium sweater)
 2026-04-21,openmeteo,61.3,34.1,8.4,0.0,Overcast,65.6,31.8,11.2,0.0,Overcast,92.2,right,5,23.1,29.1,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-04-21,raysweather,61.3,34.1,8.4,0.0,Overcast,66.0,44.0,,,Early valley frost; Mostly sunny; Closer to average temperatures by afternoon; Light south wind,38.2,wrong,1,21.9,6.3,,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-04-21,raysweather,61.3,34.1,8.4,0.0,Overcast,66.0,44.0,4.0,,Early valley frost; Mostly sunny; Closer to average temperatures by afternoon; Light south wind,49.4,wrong,2,21.9,6.3,11.2,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-04-21,apple_weather,61.3,34.1,8.4,0.0,Overcast,65.6,31.8,11.2,0.0,Overcast,92.2,right,5,23.1,29.1,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-04-22,openmeteo,65.7,44.7,17.5,0.0,Overcast,68.2,50.6,18.2,0.0,Overcast,86.8,right,4,28.5,18.3,20.0,,,,,,NO,0 (the sweater rests today)
-2026-04-22,raysweather,65.7,44.7,17.5,0.0,Overcast,70.0,48.0,15.0,,Partly sunny; Warmer; WNW wind 10-20 mph gusting to 35,79.2,right,4,23.1,26.1,20.0,,,,,,NO,0 (the sweater rests today)
+2026-04-22,raysweather,65.7,44.7,17.5,0.0,Overcast,70.0,48.0,15.0,,Partly sunny; Warmer; WNW wind 10-20 mph gusting to 35,70.2,meh,3,23.1,26.1,11.0,,,,,,NO,0 (the sweater rests today)
 2026-04-22,apple_weather,65.7,44.7,17.5,0.0,Overcast,68.2,50.6,18.2,0.0,Overcast,86.8,right,4,28.5,18.3,20.0,,,,,,NO,0 (the sweater rests today)
 2026-04-23,openmeteo,67.7,49.4,9.0,0.0,Mainly clear,72.2,50.1,9.4,0.0,Clear sky,92.5,right,5,22.5,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-04-23,raysweather,67.7,49.4,9.0,0.0,Mainly clear,75.0,48.0,,,Sunshine with a few more afternoon clouds; Unseasonably warm; Light NW wind becoming SW,54.1,wrong,2,14.1,30.0,,,,,,,NO,0 (the sweater rests today)
+2026-04-23,raysweather,67.7,49.4,9.0,0.0,Mainly clear,75.0,48.0,4.0,,Sunshine with a few more afternoon clouds; Unseasonably warm; Light NW wind becoming SW,64.1,meh,3,14.1,30.0,10.0,,,,,,NO,0 (the sweater rests today)
 2026-04-23,apple_weather,67.7,49.4,9.0,0.0,Mainly clear,72.2,50.1,9.4,0.0,Clear sky,92.5,right,5,22.5,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-04-24,openmeteo,68.6,50.7,9.6,0.004,Light drizzle,71.1,53.0,10.8,0.0,Overcast,97.6,right,5,28.5,29.1,20.0,,,,,,NO,0 (the sweater rests today)
-2026-04-24,raysweather,68.6,50.7,9.6,0.004,Light drizzle,74.0,52.0,7.5,,Mostly sunny followed by extra afternoon clouds; Cannot completely rule out a renegade afternoon shower; Warm; Light NW wind becoming SW 5-10 mph,69.8,meh,3,19.8,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-04-24,raysweather,68.6,50.7,9.6,0.004,Light drizzle,74.0,52.0,7.5,,Mostly sunny followed by extra afternoon clouds; Cannot completely rule out a renegade afternoon shower; Warm; Light NW wind becoming SW 5-10 mph,66.6,meh,3,19.8,30.0,16.8,,,,,,NO,0 (the sweater rests today)
 2026-04-24,apple_weather,68.6,50.7,9.6,0.004,Light drizzle,71.1,53.0,10.8,0.0,Overcast,97.6,right,5,28.5,29.1,20.0,,,,,,NO,0 (the sweater rests today)
 2026-04-25,openmeteo,64.3,52.1,5.7,0.22,Slight rain,67.1,52.4,10.5,0.768,Moderate rain,85.0,right,4,27.6,30.0,16.4,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-04-25,raysweather,64.3,52.1,5.7,0.22,Slight rain,70.0,49.0,7.5,,Mostly cloudy; Scattered afternoon showers & maybe a thundershower; Pleasant temperatures; Light wind becoming SW 5-10 mph,75.6,right,4,18.9,26.7,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-04-25,raysweather,64.3,52.1,5.7,0.22,Slight rain,70.0,49.0,7.5,,Mostly cloudy; Scattered afternoon showers & maybe a thundershower; Pleasant temperatures; Light wind becoming SW 5-10 mph,73.0,meh,3,18.9,26.7,17.4,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-04-25,apple_weather,64.3,52.1,5.7,0.22,Slight rain,67.1,52.4,10.5,0.768,Moderate rain,85.0,right,4,27.6,30.0,16.4,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-04-26,openmeteo,68.5,49.0,8.6,0.004,Light drizzle,65.7,50.3,8.4,0.0,Fog,97.6,right,5,27.6,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-04-26,raysweather,68.5,49.0,8.6,0.004,Light drizzle,68.0,42.0,10.0,,Becoming mostly sunny; Not as warm; Light wind becoming SE 5-15 mph,75.0,right,4,30.0,15.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-04-26,raysweather,68.5,49.0,8.6,0.004,Light drizzle,68.0,42.0,10.0,,Becoming mostly sunny; Not as warm; Light wind becoming SE 5-15 mph,68.2,meh,3,30.0,15.0,13.2,,,,,,NO,0 (the sweater rests today)
 2026-04-26,apple_weather,68.5,49.0,8.6,0.004,Light drizzle,65.7,50.3,8.4,0.0,Fog,97.6,right,5,27.6,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-04-27,openmeteo,60.4,42.0,9.3,0.0,Overcast,62.1,43.1,9.8,0.0,Fog,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-04-27,raysweather,60.4,42.0,9.3,0.0,Overcast,66.0,45.0,7.5,,Clouds and fog to start; Becoming partly to mostly sunny; A bit cooler; ESE wind 5-10 mph,76.2,right,4,19.2,27.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-04-27,raysweather,60.4,42.0,9.3,0.0,Overcast,66.0,45.0,7.5,,Clouds and fog to start; Becoming partly to mostly sunny; A bit cooler; ESE wind 5-10 mph,73.6,meh,3,19.2,27.0,17.4,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-04-27,apple_weather,60.4,42.0,9.3,0.0,Overcast,62.1,43.1,9.8,0.0,Fog,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-04-28,openmeteo,68.1,45.3,9.3,0.846,Heavy rain,67.2,46.4,18.4,0.26,Moderate rain,78.1,right,4,30.0,30.0,7.8,,,,,,NO,0 (the sweater rests today)
-2026-04-28,raysweather,68.1,45.3,9.3,0.846,Heavy rain,67.0,52.0,10.0,,"Morning showers; Turning partly sunny in the afternoon; Pleasant temperatures; SW wind 5-15 mph, decreasing in the afternoon",75.9,right,4,30.0,15.9,20.0,,,,,,NO,0 (the sweater rests today)
+2026-04-28,raysweather,68.1,45.3,9.3,0.846,Heavy rain,67.0,52.0,10.0,,"Morning showers; Turning partly sunny in the afternoon; Pleasant temperatures; SW wind 5-15 mph, decreasing in the afternoon",70.5,meh,3,30.0,15.9,14.6,,,,,,NO,0 (the sweater rests today)
 2026-04-28,apple_weather,68.1,45.3,9.3,0.846,Heavy rain,67.2,46.4,18.4,0.26,Moderate rain,78.1,right,4,30.0,30.0,7.8,,,,,,NO,0 (the sweater rests today)
 2026-04-29,openmeteo,67.7,54.2,14.6,0.264,Moderate rain,67.2,54.0,16.7,0.106,Slight rain,98.8,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-04-29,raysweather,67.7,54.2,14.6,0.264,Moderate rain,68.0,46.0,10.0,,"Cloudy with patchy fog; Scattered morning showers & thundershowers, developing again in the late afternoon; Some afternoon breaks in the clouds develop; South wind 5-15 mph, becoming West 10-20 mph & gusty in the afternoon",68.2,meh,3,30.0,11.4,16.8,,,,,,NO,0 (the sweater rests today)
+2026-04-29,raysweather,67.7,54.2,14.6,0.264,Moderate rain,68.0,46.0,12.5,,"Cloudy with patchy fog; Scattered morning showers & thundershowers, developing again in the late afternoon; Some afternoon breaks in the clouds develop; South wind 5-15 mph, becoming West 10-20 mph & gusty in the afternoon",58.2,wrong,2,30.0,11.4,6.8,,,,,,NO,0 (the sweater rests today)
 2026-04-29,apple_weather,67.7,54.2,14.6,0.264,Moderate rain,67.2,54.0,16.7,0.106,Slight rain,98.8,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-04-30,openmeteo,57.0,43.4,15.7,0.004,Light drizzle,58.8,46.1,16.1,0.0,Overcast,97.9,right,5,30.0,27.9,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-04-30,raysweather,57.0,43.4,15.7,0.004,Light drizzle,60.0,37.0,10.0,,Morning cloudiness; Becoming mostly sunny; Cooler; NW wind 5-15 mph,68.4,meh,3,27.0,16.8,14.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-04-30,raysweather,57.0,43.4,15.7,0.004,Light drizzle,60.0,37.0,10.0,,Morning cloudiness; Becoming mostly sunny; Cooler; NW wind 5-15 mph,58.4,wrong,2,27.0,16.8,4.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-04-30,apple_weather,57.0,43.4,15.7,0.004,Light drizzle,58.8,46.1,16.1,0.0,Overcast,97.9,right,5,30.0,27.9,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-05-01,openmeteo,58.2,40.7,9.2,0.0,Overcast,60.7,40.8,13.9,0.0,Overcast,95.1,right,5,28.5,30.0,16.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-05-01,raysweather,58.2,40.7,9.2,0.0,Overcast,62.0,40.0,,,Mostly to partly cloudy; Cool; Light SSW wind,64.6,meh,3,24.6,30.0,,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-05-01,raysweather,58.2,40.7,9.2,0.0,Overcast,62.0,40.0,4.0,,Mostly to partly cloudy; Cool; Light SSW wind,74.2,meh,3,24.6,30.0,9.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-05-01,apple_weather,58.2,40.7,9.2,0.0,Overcast,60.7,40.8,13.9,0.0,Overcast,95.1,right,5,28.5,30.0,16.6,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-05-02,openmeteo,51.7,38.1,13.4,0.0,Overcast,54.5,41.1,14.3,0.0,Overcast,94.6,right,5,27.6,27.0,20.0,,,,,,YES,1-2 (light to medium sweater)
-2026-05-02,raysweather,51.7,38.1,13.4,0.0,Overcast,56.0,34.0,7.5,,"Cloudy, but decreasing clouds later this afternoon; Unseasonably chilly; A few spotty sprinkles in the morning; North wind 5-10 mph, becoming NW 5-15 mph later today",71.0,meh,3,23.1,23.7,14.2,,,,,,YES,1-2 (light to medium sweater)
+2026-05-02,raysweather,51.7,38.1,13.4,0.0,Overcast,56.0,34.0,10.0,,"Cloudy, but decreasing clouds later this afternoon; Unseasonably chilly; A few spotty sprinkles in the morning; North wind 5-10 mph, becoming NW 5-15 mph later today",66.0,meh,3,23.1,23.7,9.2,,,,,,YES,1-2 (light to medium sweater)
 2026-05-02,apple_weather,51.7,38.1,13.4,0.0,Overcast,54.5,41.1,14.3,0.0,Overcast,94.6,right,5,27.6,27.0,20.0,,,,,,YES,1-2 (light to medium sweater)
 2026-05-03,openmeteo,54.2,31.9,11.8,0.0,Clear sky,55.3,32.7,13.0,0.0,Clear sky,100.0,right,5,30.0,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
-2026-05-03,raysweather,54.2,31.9,11.8,0.0,Clear sky,60.0,36.0,10.0,,"Abundant sunshine; Still cool; NW wind 5-15 mph, becoming West in the afternoon",72.3,meh,3,18.6,23.7,20.0,,,,,,YES,1-2 (light to medium sweater)
+2026-05-03,raysweather,54.2,31.9,11.8,0.0,Clear sky,60.0,36.0,10.0,,"Abundant sunshine; Still cool; NW wind 5-15 mph, becoming West in the afternoon",64.7,meh,3,18.6,23.7,12.4,,,,,,YES,1-2 (light to medium sweater)
 2026-05-03,apple_weather,54.2,31.9,11.8,0.0,Clear sky,55.3,32.7,13.0,0.0,Clear sky,100.0,right,5,30.0,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
 2026-05-04,openmeteo,66.7,37.0,9.3,0.004,Light drizzle,69.6,41.1,11.9,0.0,Mainly clear,91.0,right,5,27.3,23.7,20.0,,,,,,NO,0 (the sweater rests today)
-2026-05-04,raysweather,66.7,37.0,9.3,0.004,Light drizzle,70.0,46.0,10.0,,A quick passing morning shower along the NC/VA border; Otherwise partly to mostly sunny; Warmer afternoon; NW wind 5-15 mph becoming SW,55.1,wrong,2,26.1,9.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-05-04,raysweather,66.7,37.0,9.3,0.004,Light drizzle,70.0,46.0,10.0,,A quick passing morning shower along the NC/VA border; Otherwise partly to mostly sunny; Warmer afternoon; NW wind 5-15 mph becoming SW,49.7,wrong,2,26.1,9.0,14.6,,,,,,NO,0 (the sweater rests today)
 2026-05-04,apple_weather,66.7,37.0,9.3,0.004,Light drizzle,69.6,41.1,11.9,0.0,Mainly clear,91.0,right,5,27.3,23.7,20.0,,,,,,NO,0 (the sweater rests today)
 2026-05-05,openmeteo,65.4,46.8,11.7,0.0,Overcast,68.4,49.2,14.8,0.0,Overcast,95.6,right,5,27.0,28.8,19.8,,,,,,NO,0 (the sweater rests today)
-2026-05-05,raysweather,65.4,46.8,11.7,0.0,Overcast,71.0,52.0,10.0,,Clear start but increasing afternoon clouds; Mild; Light West wind becoming South 10-20 mph in the afternoon,69.6,meh,3,19.2,20.4,20.0,,,,,,NO,0 (the sweater rests today)
+2026-05-05,raysweather,65.4,46.8,11.7,0.0,Overcast,71.0,52.0,15.0,,Clear start but increasing afternoon clouds; Mild; Light West wind becoming South 10-20 mph in the afternoon,59.0,wrong,2,19.2,20.4,9.4,,,,,,NO,0 (the sweater rests today)
 2026-05-05,apple_weather,65.4,46.8,11.7,0.0,Overcast,68.4,49.2,14.8,0.0,Overcast,95.6,right,5,27.0,28.8,19.8,,,,,,NO,0 (the sweater rests today)
 2026-05-06,openmeteo,66.4,51.5,9.7,0.402,Slight rain,66.4,52.4,16.4,0.465,Moderate rain,92.6,right,5,30.0,30.0,12.6,,,,,,NO,0 (the sweater rests today)
-2026-05-06,raysweather,66.4,51.5,9.7,0.402,Slight rain,68.0,53.0,10.0,,"Generally cloudy; Scattered showers, tapering off by mid-afternoon; More showers and thundershowers move in late in the day; SW wind 5-15 mph, becoming West",90.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-05-06,raysweather,66.4,51.5,9.7,0.402,Slight rain,68.0,53.0,10.0,,"Generally cloudy; Scattered showers, tapering off by mid-afternoon; More showers and thundershowers move in late in the day; SW wind 5-15 mph, becoming West",85.4,right,4,30.0,30.0,15.4,,,,,,NO,0 (the sweater rests today)
 2026-05-06,apple_weather,66.4,51.5,9.7,0.402,Slight rain,66.4,52.4,16.4,0.465,Moderate rain,92.6,right,5,30.0,30.0,12.6,,,,,,NO,0 (the sweater rests today)
 2026-05-07,openmeteo,59.7,45.2,17.0,0.11,Dense drizzle,59.5,46.1,16.7,0.047,Moderate drizzle,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-05-07,raysweather,59.7,45.2,17.0,0.11,Dense drizzle,61.0,38.0,10.0,,"Cloudy morning with a few light showers; Ligh showers end this afternoon with breaks in the clouds developing; Steady to cooler temperatures; Light NW wind, becoming 5-15 mph",66.4,meh,3,30.0,14.4,12.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-05-07,raysweather,59.7,45.2,17.0,0.11,Dense drizzle,61.0,38.0,10.0,,"Cloudy morning with a few light showers; Ligh showers end this afternoon with breaks in the clouds developing; Steady to cooler temperatures; Light NW wind, becoming 5-15 mph",56.4,wrong,2,30.0,14.4,2.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-05-07,apple_weather,59.7,45.2,17.0,0.11,Dense drizzle,59.5,46.1,16.7,0.047,Moderate drizzle,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-05-08,openmeteo,59.1,38.8,12.9,0.0,Overcast,61.0,36.8,12.0,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-05-08,raysweather,59.1,38.8,12.9,0.0,Overcast,64.0,44.0,,,"Generally sunny, but a few clouds late-day; Cool afternoon after a chilly start; ; Light wind becoming South 5-15 mph",51.7,wrong,2,21.3,20.4,,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-05-08,raysweather,59.1,38.8,12.9,0.0,Overcast,64.0,44.0,10.0,,"Generally sunny, but a few clouds late-day; Cool afternoon after a chilly start; ; Light wind becoming South 5-15 mph",61.9,meh,3,21.3,20.4,10.2,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-05-08,apple_weather,59.1,38.8,12.9,0.0,Overcast,61.0,36.8,12.0,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-05-09,openmeteo,66.2,45.2,11.8,0.0,Overcast,67.6,43.6,15.9,0.0,Overcast,97.8,right,5,30.0,30.0,17.8,,,,,,NO,0 (the sweater rests today)
-2026-05-09,raysweather,66.2,45.2,11.8,0.0,Overcast,69.0,47.0,7.5,,Partly sunny with a milder afternoon; Light SW wind becoming NW 5-10 mph,85.0,right,4,27.6,30.0,17.4,,,,,,NO,0 (the sweater rests today)
+2026-05-09,raysweather,66.2,45.2,11.8,0.0,Overcast,69.0,47.0,7.5,,Partly sunny with a milder afternoon; Light SW wind becoming NW 5-10 mph,80.0,right,4,27.6,30.0,12.4,,,,,,NO,0 (the sweater rests today)
 2026-05-09,apple_weather,66.2,45.2,11.8,0.0,Overcast,67.6,43.6,15.9,0.0,Overcast,97.8,right,5,30.0,30.0,17.8,,,,,,NO,0 (the sweater rests today)
 2026-05-10,openmeteo,67.7,48.8,8.1,0.0,Overcast,70.9,49.0,10.8,0.0,Overcast,96.4,right,5,26.4,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-05-10,raysweather,67.7,48.8,8.1,0.0,Overcast,73.0,51.0,7.5,,Sunny followed by a few more afternoon clouds; Even warmer; WNW wind 5-10 mph,79.5,right,4,20.1,29.4,20.0,,,,,,NO,0 (the sweater rests today)
+2026-05-10,raysweather,67.7,48.8,8.1,0.0,Overcast,73.0,51.0,7.5,,Sunny followed by a few more afternoon clouds; Even warmer; WNW wind 5-10 mph,79.3,right,4,20.1,29.4,19.8,,,,,,NO,0 (the sweater rests today)
 2026-05-10,apple_weather,67.7,48.8,8.1,0.0,Overcast,70.9,49.0,10.8,0.0,Overcast,96.4,right,5,26.4,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-05-11,openmeteo,59.3,45.8,10.6,0.213,Slight rain,61.2,47.0,12.0,0.016,Light drizzle,98.1,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-05-11,raysweather,59.3,45.8,10.6,0.213,Slight rain,61.0,39.0,,,"Cloudy into early afternoon, but mostly sunny by sunset; Few lingering light showers; Light NNW wind, except 5-15 mph late morning and early afternoon",55.6,wrong,2,30.0,15.6,,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-05-11,raysweather,59.3,45.8,10.6,0.213,Slight rain,61.0,39.0,10.0,,"Cloudy into early afternoon, but mostly sunny by sunset; Few lingering light showers; Light NNW wind, except 5-15 mph late morning and early afternoon",70.4,meh,3,30.0,15.6,14.8,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-05-11,apple_weather,59.3,45.8,10.6,0.213,Slight rain,61.2,47.0,12.0,0.016,Light drizzle,98.1,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-05-12,openmeteo,61.0,42.5,8.4,0.0,Overcast,63.8,37.1,9.3,0.0,Overcast,87.4,right,4,27.6,19.8,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-05-12,raysweather,61.0,42.5,8.4,0.0,Overcast,68.0,41.0,7.5,,Abundant sunshine; Chilly start; Seasonal afternoon; Light wind becoming south 5-10 mph,75.0,right,4,15.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-05-12,raysweather,61.0,42.5,8.4,0.0,Overcast,68.0,41.0,7.5,,Abundant sunshine; Chilly start; Seasonal afternoon; Light wind becoming south 5-10 mph,74.2,meh,3,15.0,30.0,19.2,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-05-12,apple_weather,61.0,42.5,8.4,0.0,Overcast,63.8,37.1,9.3,0.0,Overcast,87.4,right,4,27.6,19.8,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-05-13,openmeteo,65.4,42.5,12.2,0.083,Moderate drizzle,67.1,45.7,13.4,0.24,Moderate rain,95.3,right,5,30.0,26.4,20.0,,,,,,NO,0 (the sweater rests today)
-2026-05-13,raysweather,65.4,42.5,12.2,0.083,Moderate drizzle,67.0,39.0,7.5,,"More clouds than sun; A stray, passing light shower or two; SW wind 5-10 mph",82.1,right,4,30.0,25.5,16.6,,,,,,NO,0 (the sweater rests today)
+2026-05-13,raysweather,65.4,42.5,12.2,0.083,Moderate drizzle,67.0,39.0,7.5,,"More clouds than sun; A stray, passing light shower or two; SW wind 5-10 mph",77.1,right,4,30.0,25.5,11.6,,,,,,NO,0 (the sweater rests today)
 2026-05-13,apple_weather,65.4,42.5,12.2,0.083,Moderate drizzle,67.1,45.7,13.4,0.24,Moderate rain,95.3,right,5,30.0,26.4,20.0,,,,,,NO,0 (the sweater rests today)
 2026-05-14,openmeteo,51.7,39.0,15.6,0.008,Light drizzle,55.2,42.8,13.5,0.0,Overcast,80.1,right,4,25.5,24.6,20.0,,,,,,YES,1-2 (light to medium sweater)
-2026-05-14,raysweather,51.7,39.0,15.6,0.008,Light drizzle,56.0,37.0,15.0,,Intervals of cloudiness and sunshine; Brisk; NW wind 10-20 mph gusting to 35,73.1,meh,3,23.1,30.0,20.0,,,,,,YES,1-2 (light to medium sweater)
+2026-05-14,raysweather,51.7,39.0,15.6,0.008,Light drizzle,56.0,37.0,15.0,,Intervals of cloudiness and sunshine; Brisk; NW wind 10-20 mph gusting to 35,67.9,meh,3,23.1,30.0,14.8,,,,,,YES,1-2 (light to medium sweater)
 2026-05-14,apple_weather,51.7,39.0,15.6,0.008,Light drizzle,55.2,42.8,13.5,0.0,Overcast,80.1,right,4,25.5,24.6,20.0,,,,,,YES,1-2 (light to medium sweater)
 2026-05-15,openmeteo,65.3,35.7,11.1,0.0,Overcast,69.8,36.6,10.0,0.0,Overcast,92.5,right,5,22.5,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-05-15,raysweather,65.3,35.7,11.1,0.0,Overcast,70.0,48.0,,,"Becoming sunny,, then some afternoon cloudiness; Moderating temperatures; Light NW wind becoming SW",31.9,wrong,1,21.9,0.0,,,,,,,NO,0 (the sweater rests today)
+2026-05-15,raysweather,65.3,35.7,11.1,0.0,Overcast,70.0,48.0,4.0,,"Becoming sunny,, then some afternoon cloudiness; Moderating temperatures; Light NW wind becoming SW",37.7,wrong,1,21.9,0.0,5.8,,,,,,NO,0 (the sweater rests today)
 2026-05-15,apple_weather,65.3,35.7,11.1,0.0,Overcast,69.8,36.6,10.0,0.0,Overcast,92.5,right,5,22.5,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-05-16,openmeteo,73.3,48.5,5.6,0.016,Light drizzle,76.9,48.6,11.8,0.0,Overcast,78.8,right,4,25.2,30.0,13.6,,,,,,NO,0 (the sweater rests today)
-2026-05-16,raysweather,73.3,48.5,5.6,0.016,Light drizzle,78.0,53.0,7.5,,Partly to mostly cloudy; Warmer; Light wind becoming SW 5-10 mph,64.4,meh,3,21.9,22.5,20.0,,,,,,NO,0 (the sweater rests today)
+2026-05-16,raysweather,73.3,48.5,5.6,0.016,Light drizzle,78.0,53.0,7.5,,Partly to mostly cloudy; Warmer; Light wind becoming SW 5-10 mph,61.6,meh,3,21.9,22.5,17.2,,,,,,NO,0 (the sweater rests today)
 2026-05-16,apple_weather,73.3,48.5,5.6,0.016,Light drizzle,76.9,48.6,11.8,0.0,Overcast,78.8,right,4,25.2,30.0,13.6,,,,,,NO,0 (the sweater rests today)
 2026-05-17,openmeteo,76.3,58.0,10.6,0.008,Light drizzle,80.0,57.2,9.7,0.0,Overcast,84.9,right,4,24.9,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
-2026-05-17,raysweather,76.3,58.0,10.6,0.008,Light drizzle,82.0,58.0,7.5,,Partly sunny; Even warmer; A renegade afternoon shower or thundershower; Light wind becoming South 5-10 mph,78.7,right,4,18.9,30.0,19.8,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-05-17,raysweather,76.3,58.0,10.6,0.008,Light drizzle,82.0,58.0,7.5,,Partly sunny; Even warmer; A renegade afternoon shower or thundershower; Light wind becoming South 5-10 mph,73.7,meh,3,18.9,30.0,14.8,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-05-17,apple_weather,76.3,58.0,10.6,0.008,Light drizzle,80.0,57.2,9.7,0.0,Overcast,84.9,right,4,24.9,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-05-18,openmeteo,76.2,58.9,11.6,0.008,Light drizzle,79.8,59.6,11.7,0.0,Clear sky,85.2,right,4,25.2,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
-2026-05-18,raysweather,76.2,58.9,11.6,0.008,Light drizzle,84.0,60.0,10.0,,Mostly sunny; Summer temperatures; Light wind becoming South 5-15 mph,62.6,meh,3,12.6,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-05-18,raysweather,76.2,58.9,11.6,0.008,Light drizzle,84.0,60.0,10.0,,Mostly sunny; Summer temperatures; Light wind becoming South 5-15 mph,55.4,wrong,2,12.6,30.0,12.8,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-05-18,apple_weather,76.2,58.9,11.6,0.008,Light drizzle,79.8,59.6,11.7,0.0,Clear sky,85.2,right,4,25.2,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-05-19,openmeteo,78.6,59.4,9.7,0.0,Overcast,81.0,59.5,10.6,0.0,Overcast,98.8,right,5,28.8,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
-2026-05-19,raysweather,78.6,59.4,9.7,0.0,Overcast,83.0,60.0,7.5,,Partly to mostly sunny; High temperatures flirting with records; SSW wind 5-10 mph,82.8,right,4,22.8,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-05-19,raysweather,78.6,59.4,9.7,0.0,Overcast,83.0,60.0,7.5,,Partly to mostly sunny; High temperatures flirting with records; SSW wind 5-10 mph,79.4,right,4,22.8,30.0,16.6,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-05-19,apple_weather,78.6,59.4,9.7,0.0,Overcast,81.0,59.5,10.6,0.0,Overcast,98.8,right,5,28.8,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-05-20,openmeteo,78.1,58.8,7.6,0.024,Light drizzle,82.3,58.4,9.1,0.0,Overcast,83.4,right,4,23.4,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
-2026-05-20,raysweather,78.1,58.8,7.6,0.024,Light drizzle,83.0,59.0,,,Becoming partly sunny; Isolated mainly late-afternoon showers; Light SW wind becoming South 5-15 mph,61.3,meh,3,21.3,30.0,,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-05-20,raysweather,78.1,58.8,7.6,0.024,Light drizzle,83.0,59.0,10.0,,Becoming partly sunny; Isolated mainly late-afternoon showers; Light SW wind becoming South 5-15 mph,72.5,meh,3,21.3,30.0,11.2,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-05-20,apple_weather,78.1,58.8,7.6,0.024,Light drizzle,82.3,58.4,9.1,0.0,Overcast,83.4,right,4,23.4,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-05-21,openmeteo,73.4,60.0,6.5,0.409,Moderate rain,72.7,60.6,10.0,0.508,Moderate rain,99.0,right,5,30.0,30.0,19.0,,,,,,NO,0 (the sweater rests today)
-2026-05-21,raysweather,73.4,60.0,6.5,0.409,Moderate rain,75.0,55.0,,,"Generally cloudy; Showers and thundershowers, primarily during the afternoon; Light south wind",61.0,meh,3,30.0,21.0,,,,,,,NO,0 (the sweater rests today)
+2026-05-21,raysweather,73.4,60.0,6.5,0.409,Moderate rain,75.0,55.0,4.0,,"Generally cloudy; Showers and thundershowers, primarily during the afternoon; Light south wind",76.0,right,4,30.0,21.0,15.0,,,,,,NO,0 (the sweater rests today)
 2026-05-21,apple_weather,73.4,60.0,6.5,0.409,Moderate rain,72.7,60.6,10.0,0.508,Moderate rain,99.0,right,5,30.0,30.0,19.0,,,,,,NO,0 (the sweater rests today)
 2026-05-23,openmeteo,57.2,51.3,6.9,0.894,Moderate rain,61.4,51.0,7.7,0.528,Moderate rain,88.1,right,4,23.4,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-05-23,raysweather,57.2,51.3,6.9,0.894,Moderate rain,60.0,55.0,,,"Cloudy; Areas of fog; Periods of rain, tapering off in the afternoon; Light SSE wind, but breezy at higher elev's",62.5,meh,3,27.6,24.9,,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-05-23,raysweather,57.2,51.3,6.9,0.894,Moderate rain,60.0,55.0,10.5,,"Cloudy; Areas of fog; Periods of rain, tapering off in the afternoon; Light SSE wind, but breezy at higher elev's",62.5,meh,3,27.6,24.9,0.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-05-23,apple_weather,57.2,51.3,6.9,0.894,Moderate rain,61.4,51.0,7.7,0.528,Moderate rain,88.1,right,4,23.4,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-05-24,openmeteo,62.9,54.6,6.6,0.094,Light drizzle,64.7,55.7,7.7,0.047,Moderate drizzle,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-05-24,raysweather,62.9,54.6,6.6,0.094,Light drizzle,68.0,59.0,,,"Generally cloudy; Morning fog and drizzle; A passing shower remains possible through the afternoon; Light South wind, but breezy at higher elevations",53.5,wrong,2,20.7,22.8,,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-05-24,raysweather,62.9,54.6,6.6,0.094,Light drizzle,68.0,59.0,10.5,,"Generally cloudy; Morning fog and drizzle; A passing shower remains possible through the afternoon; Light South wind, but breezy at higher elevations",53.5,wrong,2,20.7,22.8,0.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-05-24,apple_weather,62.9,54.6,6.6,0.094,Light drizzle,64.7,55.7,7.7,0.047,Moderate drizzle,100.0,right,5,30.0,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-05-25,openmeteo,72.3,59.7,6.8,0.909,Moderate rain,71.3,60.7,9.3,0.398,Moderate rain,91.8,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-05-25,raysweather,72.3,59.7,6.8,0.909,Moderate rain,72.0,59.0,,,Mostly cloudy for Memorial Day; Some morning fog; Scattered afternoon showers and thundershowers; Seasonable temperatures; Light South wind,70.0,meh,3,30.0,30.0,,,,,,,NO,0 (the sweater rests today)
+2026-05-25,raysweather,72.3,59.7,6.8,0.909,Moderate rain,72.0,59.0,4.0,,Mostly cloudy for Memorial Day; Some morning fog; Scattered afternoon showers and thundershowers; Seasonable temperatures; Light South wind,84.4,right,4,30.0,30.0,14.4,,,,,,NO,0 (the sweater rests today)
 2026-05-25,apple_weather,72.3,59.7,6.8,0.909,Moderate rain,71.3,60.7,9.3,0.398,Moderate rain,91.8,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-05-26,openmeteo,70.8,61.7,8.7,0.39,Moderate rain,71.7,61.8,8.1,0.287,Slight rain showers,99.9,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-05-26,raysweather,70.8,61.7,8.7,0.39,Moderate rain,74.0,61.0,,,Mostly cloudy through the afternoon; Occasional showers and thundershowers; Light south wind,66.4,meh,3,26.4,30.0,,,,,,,NO,0 (the sweater rests today)
+2026-05-26,raysweather,70.8,61.7,8.7,0.39,Moderate rain,74.0,61.0,4.0,,Mostly cloudy through the afternoon; Occasional showers and thundershowers; Light south wind,77.0,right,4,26.4,30.0,10.6,,,,,,NO,0 (the sweater rests today)
 2026-05-26,apple_weather,70.8,61.7,8.7,0.39,Moderate rain,71.7,61.8,8.1,0.287,Slight rain showers,99.9,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-05-27,openmeteo,73.5,62.3,5.8,0.205,Dense drizzle,73.7,63.1,11.9,0.071,Dense drizzle,93.1,right,5,30.0,30.0,13.8,,,,,,NO,0 (the sweater rests today)
-2026-05-27,raysweather,73.5,62.3,5.8,0.205,Dense drizzle,76.0,61.0,10.0,,"Lots of clouds; Most spots get a shower or thunderstorm, locally heavy; WSW wind 5-15 mph, gusty near storms",86.1,right,4,28.5,30.0,17.6,,,,,,NO,0 (the sweater rests today)
+2026-05-27,raysweather,73.5,62.3,5.8,0.205,Dense drizzle,76.0,61.0,10.0,,"Lots of clouds; Most spots get a shower or thunderstorm, locally heavy; WSW wind 5-15 mph, gusty near storms",76.1,right,4,28.5,30.0,7.6,,,,,,NO,0 (the sweater rests today)
 2026-05-27,apple_weather,73.5,62.3,5.8,0.205,Dense drizzle,73.7,63.1,11.9,0.071,Dense drizzle,93.1,right,5,30.0,30.0,13.8,,,,,,NO,0 (the sweater rests today)
 2026-05-28,openmeteo,75.3,59.7,10.7,0.055,Light drizzle,75.0,61.7,13.5,0.0,Overcast,90.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
-2026-05-28,raysweather,75.3,59.7,10.7,0.055,Light drizzle,77.0,50.0,10.0,,Partly to mostly sunny; An isolated shower possible; North wind 5-15 mph,66.9,meh,3,30.0,6.9,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-05-28,raysweather,75.3,59.7,10.7,0.055,Light drizzle,77.0,50.0,10.0,,Partly to mostly sunny; An isolated shower possible; North wind 5-15 mph,61.5,meh,3,30.0,6.9,14.6,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-05-28,apple_weather,75.3,59.7,10.7,0.055,Light drizzle,75.0,61.7,13.5,0.0,Overcast,90.0,right,5,30.0,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-05-29,openmeteo,70.1,54.3,6.7,0.0,Overcast,71.7,52.8,7.9,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-05-29,raysweather,70.1,54.3,6.7,0.0,Overcast,77.0,58.0,7.5,,"Considerable sunshine, but scattered clouds late-day; Pleasant; SE wind 5-10 mph , becoming South",70.2,meh,3,15.3,24.9,20.0,,,,,,NO,0 (the sweater rests today)
+2026-05-29,raysweather,70.1,54.3,6.7,0.0,Overcast,77.0,58.0,7.5,,"Considerable sunshine, but scattered clouds late-day; Pleasant; SE wind 5-10 mph , becoming South",59.6,wrong,2,15.3,24.9,19.4,,,,,,NO,0 (the sweater rests today)
 2026-05-29,apple_weather,70.1,54.3,6.7,0.0,Overcast,71.7,52.8,7.9,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-05-30,openmeteo,72.8,59.6,8.7,0.012,Light drizzle,74.2,61.3,12.3,0.0,Overcast,88.8,right,4,30.0,30.0,18.8,,,,,,NO,0 (the sweater rests today)
-2026-05-30,raysweather,72.8,59.6,8.7,0.012,Light drizzle,76.0,50.0,7.5,,"Mostly cloudy early, becoming partly sunny; A shower possible from Avery County southward, mostly in the morning. Otherwise pleasant; Light wind becoming NW",63.6,meh,3,26.4,7.2,20.0,,,,,,NO,0 (the sweater rests today)
+2026-05-30,raysweather,72.8,59.6,8.7,0.012,Light drizzle,76.0,50.0,4.0,,"Mostly cloudy early, becoming partly sunny; A shower possible from Avery County southward, mostly in the morning. Otherwise pleasant; Light wind becoming NW",54.2,wrong,2,26.4,7.2,10.6,,,,,,NO,0 (the sweater rests today)
 2026-05-30,apple_weather,72.8,59.6,8.7,0.012,Light drizzle,74.2,61.3,12.3,0.0,Overcast,88.8,right,4,30.0,30.0,18.8,,,,,,NO,0 (the sweater rests today)
 2026-05-31,openmeteo,65.2,48.8,11.4,0.0,Overcast,66.5,51.5,8.1,0.0,Overcast,97.3,right,5,30.0,27.9,19.4,,,,,,NO,0 (the sweater rests today)
-2026-05-31,raysweather,65.2,48.8,11.4,0.0,Overcast,69.0,54.0,10.0,,Scattered clouds; Nice weather; East to SE wind 5-15 mph,75.0,right,4,24.6,20.4,20.0,,,,,,NO,0 (the sweater rests today)
+2026-05-31,raysweather,65.2,48.8,11.4,0.0,Overcast,69.0,54.0,10.0,,Scattered clouds; Nice weather; East to SE wind 5-15 mph,68.2,meh,3,24.6,20.4,13.2,,,,,,NO,0 (the sweater rests today)
 2026-05-31,apple_weather,65.2,48.8,11.4,0.0,Overcast,66.5,51.5,8.1,0.0,Overcast,97.3,right,5,30.0,27.9,19.4,,,,,,NO,0 (the sweater rests today)
 2026-06-01,openmeteo,70.2,54.3,9.4,0.047,Light drizzle,71.6,59.3,13.2,0.012,Light drizzle,89.4,right,4,30.0,21.0,18.4,,,,,,NO,0 (the sweater rests today)
-2026-06-01,raysweather,70.2,54.3,9.4,0.047,Light drizzle,63.0,52.0,,,,43.5,wrong,2,14.4,29.1,,,,,,,NO,0 (the sweater rests today)
+2026-06-01,raysweather,70.2,54.3,9.4,0.047,Light drizzle,63.0,52.0,7.5,,,60.7,meh,3,14.4,29.1,17.2,,,,,,NO,0 (the sweater rests today)
 2026-06-01,apple_weather,70.2,54.3,9.4,0.047,Light drizzle,71.6,59.3,13.2,0.012,Light drizzle,89.4,right,4,30.0,21.0,18.4,,,,,,NO,0 (the sweater rests today)
 2026-06-02,openmeteo,59.9,50.2,6.7,0.15,Dense drizzle,63.1,51.7,8.1,0.11,Slight rain,96.4,right,5,26.4,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
-2026-06-02,raysweather,59.9,50.2,6.7,0.15,Dense drizzle,71.0,46.0,,,,26.1,wrong,1,2.7,23.4,,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
+2026-06-02,raysweather,59.9,50.2,6.7,0.15,Dense drizzle,71.0,46.0,10.5,,,26.1,wrong,1,2.7,23.4,0.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-06-02,apple_weather,59.9,50.2,6.7,0.15,Dense drizzle,63.1,51.7,8.1,0.11,Slight rain,96.4,right,5,26.4,30.0,20.0,,,,,,MAYBE,"0-1 (light layer, keep one in the car)"
 2026-06-03,openmeteo,67.3,45.2,6.3,0.0,Mainly clear,67.5,44.1,7.9,0.0,Fog,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-06-03,raysweather,67.3,45.2,6.3,0.0,Mainly clear,77.0,46.0,,,,36.9,wrong,1,6.9,30.0,,,,,,,NO,0 (the sweater rests today)
+2026-06-03,raysweather,67.3,45.2,6.3,0.0,Mainly clear,77.0,46.0,0.5,,,60.3,meh,3,6.9,30.0,13.4,,,,,,NO,0 (the sweater rests today)
 2026-06-03,apple_weather,67.3,45.2,6.3,0.0,Mainly clear,67.5,44.1,7.9,0.0,Fog,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-06-04,openmeteo,71.6,51.5,5.3,0.0,Overcast,73.5,49.2,6.6,0.0,Overcast,99.1,right,5,30.0,29.1,20.0,,,,,,NO,0 (the sweater rests today)
-2026-06-04,raysweather,71.6,51.5,5.3,0.0,Overcast,77.0,50.0,,,"A few afternoon clouds; Warmer; Light wind, becoming South",59.8,wrong,2,19.8,30.0,,,,,,,NO,0 (the sweater rests today)
+2026-06-04,raysweather,71.6,51.5,5.3,0.0,Overcast,77.0,50.0,4.0,,"A few afternoon clouds; Warmer; Light wind, becoming South",77.2,right,4,19.8,30.0,17.4,,,,,,NO,0 (the sweater rests today)
 2026-06-04,apple_weather,71.6,51.5,5.3,0.0,Overcast,73.5,49.2,6.6,0.0,Overcast,99.1,right,5,30.0,29.1,20.0,,,,,,NO,0 (the sweater rests today)
 2026-06-05,openmeteo,74.3,53.7,5.4,0.0,Overcast,78.3,53.9,6.8,0.0,Overcast,94.0,right,5,24.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-06-05,raysweather,74.3,53.7,5.4,0.0,Overcast,81.0,54.0,,,Plenty of sunshine; More warming; Light SSW wind,55.9,wrong,2,15.9,30.0,,,,,,,NO,0 (the sweater rests today)
+2026-06-05,raysweather,74.3,53.7,5.4,0.0,Overcast,81.0,54.0,4.0,,Plenty of sunshine; More warming; Light SSW wind,73.1,meh,3,15.9,30.0,17.2,,,,,,NO,0 (the sweater rests today)
 2026-06-05,apple_weather,74.3,53.7,5.4,0.0,Overcast,78.3,53.9,6.8,0.0,Overcast,94.0,right,5,24.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-06-06,openmeteo,73.8,57.6,7.5,0.0,Overcast,78.5,57.6,11.4,0.0,Overcast,90.1,right,5,21.9,30.0,18.2,,,,,,NO,0 (the sweater rests today)
 2026-06-06,raysweather,73.8,57.6,7.5,0.0,Overcast,80.0,57.0,7.5,,"High clouds, but becoming sunnier late-day; Nice, warm weather; WNW wind 5-10 mph",77.4,right,4,17.4,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-06-06,apple_weather,73.8,57.6,7.5,0.0,Overcast,78.5,57.6,11.4,0.0,Overcast,90.1,right,5,21.9,30.0,18.2,,,,,,NO,0 (the sweater rests today)
 2026-06-07,openmeteo,75.9,59.2,10.6,0.0,Overcast,79.8,60.1,10.5,0.0,Overcast,94.3,right,5,24.3,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
-2026-06-07,raysweather,75.9,59.2,10.6,0.0,Overcast,81.0,61.0,10.0,,Sunshine through increasing high clouds; Warm; West wind 5-15 mph,80.7,right,4,20.7,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-06-07,raysweather,75.9,59.2,10.6,0.0,Overcast,81.0,61.0,10.0,,Sunshine through increasing high clouds; Warm; West wind 5-15 mph,75.5,right,4,20.7,30.0,14.8,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-06-07,apple_weather,75.9,59.2,10.6,0.0,Overcast,79.8,60.1,10.5,0.0,Overcast,94.3,right,5,24.3,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-06-08,openmeteo,75.5,61.2,8.1,0.031,Light drizzle,78.9,60.0,8.6,0.0,Overcast,85.8,right,4,25.8,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
-2026-06-08,raysweather,75.5,61.2,8.1,0.031,Light drizzle,81.0,61.0,10.0,,Partly to mostly cloudy; Isolated afternoon showers and thundershowers; Humid; Light wind becoming SE 5-15 mph,79.5,right,4,19.5,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-06-08,raysweather,75.5,61.2,8.1,0.031,Light drizzle,81.0,61.0,10.0,,Partly to mostly cloudy; Isolated afternoon showers and thundershowers; Humid; Light wind becoming SE 5-15 mph,71.7,meh,3,19.5,30.0,12.2,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-06-08,apple_weather,75.5,61.2,8.1,0.031,Light drizzle,78.9,60.0,8.6,0.0,Overcast,85.8,right,4,25.8,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-06-09,openmeteo,68.4,62.9,7.1,0.201,Moderate drizzle,72.2,62.7,10.2,0.177,Moderate rain,94.4,right,5,24.6,30.0,19.8,,,,,,NO,0 (the sweater rests today)
 2026-06-09,raysweather,68.4,62.9,7.1,0.201,Moderate drizzle,71.0,62.0,7.5,,"Generally cloudy; Areas of fog persist; Showers diminish mid-late afternoon; Not as warm; SE wind 5-10 mph, becoming South",88.2,right,4,28.2,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-06-09,apple_weather,68.4,62.9,7.1,0.201,Moderate drizzle,72.2,62.7,10.2,0.177,Moderate rain,94.4,right,5,24.6,30.0,19.8,,,,,,NO,0 (the sweater rests today)
 2026-06-10,openmeteo,76.4,62.1,9.1,0.094,Moderate drizzle,79.7,62.5,11.4,0.0,Overcast,86.1,right,4,26.1,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
-2026-06-10,raysweather,76.4,62.1,9.1,0.094,Moderate drizzle,79.0,63.0,10.0,,Mostly to partly cloudy; Widely scattered showers and thunderstorms; Humid; West wind 5-15 mph,88.2,right,4,28.2,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-06-10,raysweather,76.4,62.1,9.1,0.094,Moderate drizzle,79.0,63.0,10.0,,Mostly to partly cloudy; Widely scattered showers and thunderstorms; Humid; West wind 5-15 mph,82.4,right,4,28.2,30.0,14.2,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-06-10,apple_weather,76.4,62.1,9.1,0.094,Moderate drizzle,79.7,62.5,11.4,0.0,Overcast,86.1,right,4,26.1,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-06-11,openmeteo,79.3,61.8,9.8,0.252,Moderate rain,83.4,65.6,13.7,0.0,Overcast,73.5,meh,3,23.7,24.6,18.2,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
-2026-06-11,raysweather,79.3,61.8,9.8,0.252,Moderate rain,84.0,65.0,10.0,,Mostly sunny; Warmer; Muggy; Isolated afternoon showers and thunderstorms; West wind 5-15 mph,78.3,right,4,21.9,26.4,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-06-11,raysweather,79.3,61.8,9.8,0.252,Moderate rain,84.0,65.0,10.0,,Mostly sunny; Warmer; Muggy; Isolated afternoon showers and thunderstorms; West wind 5-15 mph,73.9,meh,3,21.9,26.4,15.6,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-06-11,apple_weather,79.3,61.8,9.8,0.252,Moderate rain,83.4,65.6,13.7,0.0,Overcast,73.5,meh,3,23.7,24.6,18.2,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-06-12,openmeteo,80.9,65.1,11.2,0.028,Light drizzle,83.9,67.5,17.1,0.0,Overcast,80.0,right,4,27.0,28.8,14.2,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
-2026-06-12,raysweather,80.9,65.1,11.2,0.028,Light drizzle,85.0,64.0,10.0,,A good deal of sunshine; Very warm & humid; Widely scattered late-day showers and thunderstorms; West to NW wind 5-15 mph but gusty near t-storms,83.7,right,4,23.7,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-06-12,raysweather,80.9,65.1,11.2,0.028,Light drizzle,85.0,64.0,10.0,,A good deal of sunshine; Very warm & humid; Widely scattered late-day showers and thunderstorms; West to NW wind 5-15 mph but gusty near t-storms,77.3,right,4,23.7,30.0,13.6,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-06-12,apple_weather,80.9,65.1,11.2,0.028,Light drizzle,83.9,67.5,17.1,0.0,Overcast,80.0,right,4,27.0,28.8,14.2,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-06-13,openmeteo,79.3,63.1,9.3,0.012,Light drizzle,81.6,63.6,11.1,0.0,Overcast,89.1,right,4,29.1,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
-2026-06-13,raysweather,79.3,63.1,9.3,0.012,Light drizzle,83.0,64.0,10.0,,Mostly to partly sunny; Warm but less humid; Isolated afternoon showers and thunderstorms; NW wind 5-15 mph diminishing through the day,84.9,right,4,24.9,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-06-13,raysweather,79.3,63.1,9.3,0.012,Light drizzle,83.0,64.0,10.0,,Mostly to partly sunny; Warm but less humid; Isolated afternoon showers and thunderstorms; NW wind 5-15 mph diminishing through the day,79.5,right,4,24.9,30.0,14.6,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-06-13,apple_weather,79.3,63.1,9.3,0.012,Light drizzle,81.6,63.6,11.1,0.0,Overcast,89.1,right,4,29.1,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-06-14,openmeteo,76.1,62.8,12.0,0.142,Slight rain,78.8,61.8,13.0,0.031,Moderate drizzle,97.7,right,5,27.9,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
-2026-06-14,raysweather,76.1,62.8,12.0,0.142,Slight rain,82.0,59.0,10.0,,"Increasing clouds; Warm and more humid; Scattered afternoon showers and thunderstorms; West wind, becoming 5-15 mph",72.9,meh,3,18.3,24.6,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-06-14,raysweather,76.1,62.8,12.0,0.142,Slight rain,82.0,59.0,10.0,,"Increasing clouds; Warm and more humid; Scattered afternoon showers and thunderstorms; West wind, becoming 5-15 mph",64.9,meh,3,18.3,24.6,12.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-06-14,apple_weather,76.1,62.8,12.0,0.142,Slight rain,78.8,61.8,13.0,0.031,Moderate drizzle,97.7,right,5,27.9,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-06-15,openmeteo,66.1,54.5,14.6,0.008,Light drizzle,68.5,55.2,16.3,0.024,Moderate drizzle,98.8,right,5,28.8,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-06-15,raysweather,66.1,54.5,14.6,0.008,Light drizzle,73.0,50.0,,,,37.8,wrong,1,15.3,22.5,,,,,,,NO,0 (the sweater rests today)
+2026-06-15,raysweather,66.1,54.5,14.6,0.008,Light drizzle,73.0,50.0,10.0,,,44.6,wrong,2,15.3,22.5,6.8,,,,,,NO,0 (the sweater rests today)
 2026-06-15,apple_weather,66.1,54.5,14.6,0.008,Light drizzle,68.5,55.2,16.3,0.024,Moderate drizzle,98.8,right,5,28.8,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-06-16,openmeteo,67.1,53.1,9.4,0.039,Moderate drizzle,71.0,54.2,10.3,0.0,Overcast,84.3,right,4,24.3,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-06-16,raysweather,67.1,53.1,9.4,0.039,Moderate drizzle,79.0,55.0,,,,30.3,wrong,1,0.3,30.0,,,,,,,NO,0 (the sweater rests today)
+2026-06-16,raysweather,67.1,53.1,9.4,0.039,Moderate drizzle,79.0,55.0,4.0,,,39.5,wrong,1,0.3,30.0,9.2,,,,,,NO,0 (the sweater rests today)
 2026-06-16,apple_weather,67.1,53.1,9.4,0.039,Moderate drizzle,71.0,54.2,10.3,0.0,Overcast,84.3,right,4,24.3,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-06-17,openmeteo,73.3,53.2,8.1,0.016,Light drizzle,77.3,53.4,11.1,0.0,Overcast,84.0,right,4,24.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-06-17,raysweather,73.3,53.2,8.1,0.016,Light drizzle,80.0,62.0,7.5,,"Lots of sunshine, but some afternoon clouds near the Blue Ridge; Warming up; Light WNW wind becoming SSW 5-10 mph",45.5,wrong,2,15.9,9.6,20.0,,,,,,NO,0 (the sweater rests today)
+2026-06-17,raysweather,73.3,53.2,8.1,0.016,Light drizzle,80.0,62.0,7.5,,"Lots of sunshine, but some afternoon clouds near the Blue Ridge; Warming up; Light WNW wind becoming SSW 5-10 mph",45.3,wrong,2,15.9,9.6,19.8,,,,,,NO,0 (the sweater rests today)
 2026-06-17,apple_weather,73.3,53.2,8.1,0.016,Light drizzle,77.3,53.4,11.1,0.0,Overcast,84.0,right,4,24.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-06-19,openmeteo,70.0,57.4,15.1,0.319,Moderate rain,71.7,59.4,17.1,0.134,Slight rain,98.3,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-06-19,raysweather,70.0,57.4,15.1,0.319,Moderate rain,75.0,53.0,10.0,,"Cloudy early but breaks developing; Showers end early for most, but linger a bit along the western escarpment; Cooler; NW wind becoming 10-20 mph,, gusty",69.6,meh,3,21.0,22.8,15.8,,,,,,NO,0 (the sweater rests today)
+2026-06-19,raysweather,70.0,57.4,15.1,0.319,Moderate rain,75.0,53.0,15.0,,"Cloudy early but breaks developing; Showers end early for most, but linger a bit along the western escarpment; Cooler; NW wind becoming 10-20 mph,, gusty",69.6,meh,3,21.0,22.8,15.8,,,,,,NO,0 (the sweater rests today)
 2026-06-19,apple_weather,70.0,57.4,15.1,0.319,Moderate rain,71.7,59.4,17.1,0.134,Slight rain,98.3,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-06-20,openmeteo,72.2,54.0,8.7,0.0,Overcast,73.5,54.5,10.4,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
-2026-06-20,raysweather,72.2,54.0,8.7,0.0,Overcast,77.0,55.0,,,Partly sunny; Quite pleasant; Light NW wind,61.6,meh,3,21.6,30.0,,,,,,,NO,0 (the sweater rests today)
+2026-06-20,raysweather,72.2,54.0,8.7,0.0,Overcast,77.0,55.0,4.0,,Partly sunny; Quite pleasant; Light NW wind,72.2,meh,3,21.6,30.0,10.6,,,,,,NO,0 (the sweater rests today)
 2026-06-20,apple_weather,72.2,54.0,8.7,0.0,Overcast,73.5,54.5,10.4,0.0,Overcast,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
 2026-06-21,openmeteo,75.9,57.5,6.3,0.012,Light drizzle,78.0,58.2,9.0,0.0,Overcast,89.7,right,4,29.7,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
-2026-06-21,raysweather,75.9,57.5,6.3,0.012,Light drizzle,82.0,62.0,7.5,,"Sunshine, mixed with some clouds in the afternoon; Warmer for Dad; Wind becoming SW 5-10 mph",60.2,meh,3,17.7,22.5,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-06-21,raysweather,75.9,57.5,6.3,0.012,Light drizzle,82.0,62.0,7.5,,"Sunshine, mixed with some clouds in the afternoon; Warmer for Dad; Wind becoming SW 5-10 mph",58.8,wrong,2,17.7,22.5,18.6,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-06-21,apple_weather,75.9,57.5,6.3,0.012,Light drizzle,78.0,58.2,9.0,0.0,Overcast,89.7,right,4,29.7,30.0,20.0,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-06-22,openmeteo,78.6,59.8,8.1,0.256,Slight rain,78.0,60.2,11.9,0.362,Moderate rain showers,98.3,right,5,30.0,30.0,18.4,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
-2026-06-22,raysweather,78.6,59.8,8.1,0.256,Slight rain,71.0,63.0,,,,39.6,wrong,1,13.2,26.4,,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-06-22,raysweather,78.6,59.8,8.1,0.256,Slight rain,71.0,63.0,10.0,,,61.8,meh,3,13.2,26.4,12.2,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
 2026-06-22,apple_weather,78.6,59.8,8.1,0.256,Slight rain,78.0,60.2,11.9,0.362,Moderate rain showers,98.3,right,5,30.0,30.0,18.4,,,,,,ABSOLUTELY NOT,"0 (this is shorts weather, Dave)"
+2026-06-23,openmeteo,68.3,58.2,15.1,0.339,Moderate rain,67.5,57.6,16.0,0.193,Moderate rain,99.1,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-06-23,raysweather,68.3,58.2,15.1,0.339,Moderate rain,71.0,53.0,15.0,,"Lingering light shower through early afternoon; Turning partly sunny late-day; Cooler; NW wind 10-20 mph, gusty at times",74.1,meh,3,27.9,20.4,15.8,,,,,,NO,0 (the sweater rests today)
+2026-06-23,apple_weather,68.3,58.2,15.1,0.339,Moderate rain,67.5,57.6,16.0,0.193,Moderate rain,99.1,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-06-23,nws,68.3,58.2,15.1,0.339,Moderate rain,70.0,51.0,16.0,,,64.4,meh,3,30.0,14.4,20.0,,,,,,NO,0 (the sweater rests today)
+2026-06-23,metno,68.3,58.2,15.1,0.339,Moderate rain,67.6,63.0,17.9,,,86.9,right,4,30.0,21.6,20.0,,,,,,NO,0 (the sweater rests today)
+2026-06-23,openweathermap,68.3,58.2,15.1,0.339,Moderate rain,67.0,64.9,13.4,,,81.4,right,4,30.0,15.9,20.0,,,,,,NO,0 (the sweater rests today)
+2026-06-23,weatherapi,68.3,58.2,15.1,0.339,Moderate rain,67.8,57.0,13.0,,,100.0,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-06-23,visualcrossing,68.3,58.2,15.1,0.339,Moderate rain,69.3,58.0,17.2,,,99.4,right,5,30.0,30.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-06-23,tomorrowio,68.3,58.2,15.1,0.339,Moderate rain,65.7,52.2,14.9,,,86.2,right,4,28.2,18.0,20.0,,,,,,NO,0 (the sweater rests today)
+2026-06-23,googleweather,68.3,58.2,15.1,0.339,Moderate rain,67.9,52.0,15.0,,,86.1,right,4,30.0,17.4,20.0,,,,,,NO,0 (the sweater rests today)
