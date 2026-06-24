@@ -73,21 +73,22 @@ Plan: `planning/plans/2026-06-24-rays-capture-interval-scoring.md`.
 - [ ] **Capture-quality monitoring** — alert when a source's coverage drops (this regression went unnoticed
       for weeks). Part of the promotion audit.
 
-## M3 — dynamic data-viz (v1 built + verified; PR pending)
-Turn the now-richer accuracy data (multi-source season + per-source coverage index + the 474-day
-Open-Meteo record) into **interactive data-viz**. Visual excellence is part of the satirical proof —
-craft must be **defensible and accurate** (grade bands ≠ rankings; honest screenshot label; verify grade
-thresholds against `scripts/scoring.py`, not `CLAUDE.md`). Locked: direction **"B + visx"**; **heat map
-DECLINED**; **ambitious / iterative**. Inherits the M2 visual identity. `src/`-only — no pipeline/scoring/
-workflow changes; stats stay build-time-derived. **Full handoff:
-`planning/handoffs/2026-06-23-m3-data-viz-handoff.md`** — start a new session there via
-superpowers:brainstorming → writing-plans → subagent-driven-development; spec to live at
-`planning/specs/2026-06-23-m3-data-viz-design.md`.
-Spec/plan: `planning/specs/2026-06-23-m3-data-viz-design.md`, `planning/plans/2026-06-23-m3-data-viz.md`.
-**v1 scope (hardened via review):** Open-Meteo (free) vs Ray's (paid) — Apple dropped because its scored
-data is the Open-Meteo fallback. Built via subagent-driven TDD (6 phases, per-task spec+quality review),
-final whole-impl review = READY_TO_MERGE; 45 tests + lint + build green; verified live (chart hover/tap,
-keyboard table sort, coverage matrix). On branch `feat/m3-dataviz`.
+## Active (next session): Promotion-readiness audit (dimensions 1–4)
+Harden the inherited v1 pipeline before promotion (it publicly grades a named competitor → scrutiny).
+**Full handoff: `planning/handoffs/2026-06-24-promotion-readiness-handoff.md`.** Dimensions: (1) data
+integrity & silent-failure monitoring, (2) source-labeling honesty, (3) claim defensibility + legal,
+(4) scoring robustness. Output = prioritized risk register → this checklist. Known seed issues: no
+capture-quality monitoring (the Ray regression went unnoticed for weeks); the live M2 hero still labels the
+Open-Meteo fallback as "Apple" (`homeStats.ts`/`Scoreboard.tsx`/`IphoneShot.tsx`); the on-site + `CLAUDE.md`
+methodology is stale (no interval/snow model); snow handling unproven on winter data. Run as a multi-agent
+Workflow → synthesize → triage → fix; adversarially verify anything touching scoring or public numbers.
+
+## Done: M3 — dynamic data-viz (PR #68 — merged + live)
+v1 = Open-Meteo (free) vs Ray's (paid); Apple dropped (its scored data is the Open-Meteo fallback). Built
+via subagent-driven TDD + per-task + final adversarial review (READY_TO_MERGE), rebased onto the fair-scoring
+`main` (PR #67) and verified live on the corrected data. Spec/plan/handoff:
+`planning/specs/2026-06-23-m3-data-viz-design.md`, `planning/plans/2026-06-23-m3-data-viz.md`,
+`planning/handoffs/2026-06-23-m3-data-viz-handoff.md`.
 - [x] **Interactive trend chart (visx)** — `src/components/TrendChartInteractive.tsx` (`'use client'`):
       Open-Meteo vs Ray's, hover+tap tooltip (predicted/actual/error from the #61 differentials; Ray's
       unpublished precip → "not published"), axes, grade-band lines at 75/60, `@visx/responsive` ParentSize
