@@ -1,6 +1,6 @@
 {
   "date": "2026-03-12",
-  "generated_at": "2026-06-23T12:44:04.723988-04:00",
+  "generated_at": "2026-06-24T12:44:53.125463-04:00",
   "actuals": {
     "date": "2026-03-12",
     "fetched_at": "2026-03-13T08:32:47.760495-04:00",
@@ -97,10 +97,13 @@
         "tonight_low_f": 26.0,
         "category": "unknown",
         "daytime_desc": "Morning rain ending as snow, especially at higher elevations near the NC/TN line; Clearing during the afternoon; Temperatures fall through the day; Windy and colder; NW wind 15-25 mph gusting to 45",
-        "wind_mph": 20.0
+        "wind_mph": 20.0,
+        "wind_lo": 15,
+        "wind_hi": 25,
+        "precip_type": "mixed"
       },
       "score": {
-        "score": 51.3,
+        "score": 41.3,
         "grade": {
           "verdict": "wrong",
           "ray_count": 2
@@ -130,10 +133,10 @@
             "error": 3.9
           },
           "wind": {
-            "points": 14.0,
+            "points": 4.0,
             "max": 20,
             "scored": true,
-            "predicted": 20.0,
+            "predicted": "15-25",
             "actual": 26.0,
             "error": 6.0
           },
@@ -141,7 +144,7 @@
             "points": 4.0,
             "max": 10,
             "scored": true,
-            "predicted": "snow",
+            "predicted": "mixed",
             "actual": "rain"
           },
           "precip_amount": {

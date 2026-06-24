@@ -1,6 +1,6 @@
 {
   "date": "2026-05-07",
-  "generated_at": "2026-06-23T12:44:10.200252-04:00",
+  "generated_at": "2026-06-24T12:44:54.745407-04:00",
   "actuals": {
     "date": "2026-05-07",
     "fetched_at": "2026-05-08T11:58:35.856793-04:00",
@@ -99,13 +99,16 @@
         "tonight_low_f": 38.0,
         "category": "unknown",
         "daytime_desc": "Cloudy morning with a few light showers; Ligh showers end this afternoon with breaks in the clouds developing; Steady to cooler temperatures; Light NW wind, becoming 5-15 mph",
-        "wind_mph": 10.0
+        "wind_mph": 10.0,
+        "wind_lo": 5,
+        "wind_hi": 15,
+        "precip_type": "rain"
       },
       "score": {
-        "score": 66.4,
+        "score": 56.4,
         "grade": {
-          "verdict": "meh",
-          "ray_count": 3
+          "verdict": "wrong",
+          "ray_count": 2
         },
         "coverage": {
           "high_temp": true,
@@ -132,10 +135,10 @@
             "error": 7.2
           },
           "wind": {
-            "points": 12.0,
+            "points": 2.0,
             "max": 20,
             "scored": true,
-            "predicted": 10.0,
+            "predicted": "5-15",
             "actual": 17.0,
             "error": 7.0
           },

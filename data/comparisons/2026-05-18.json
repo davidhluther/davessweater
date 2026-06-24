@@ -1,6 +1,6 @@
 {
   "date": "2026-05-18",
-  "generated_at": "2026-06-23T12:44:11.311931-04:00",
+  "generated_at": "2026-06-24T12:44:55.079646-04:00",
   "actuals": {
     "date": "2026-05-18",
     "fetched_at": "2026-05-19T13:25:28.770397-04:00",
@@ -99,13 +99,16 @@
         "tonight_low_f": 60.0,
         "category": "unknown",
         "daytime_desc": "Mostly sunny; Summer temperatures; Light wind becoming South 5-15 mph",
-        "wind_mph": 10.0
+        "wind_mph": 10.0,
+        "wind_lo": 5,
+        "wind_hi": 15,
+        "precip_type": "none"
       },
       "score": {
-        "score": 62.6,
+        "score": 55.4,
         "grade": {
-          "verdict": "meh",
-          "ray_count": 3
+          "verdict": "wrong",
+          "ray_count": 2
         },
         "coverage": {
           "high_temp": true,
@@ -132,10 +135,10 @@
             "error": 1.1
           },
           "wind": {
-            "points": 20.0,
+            "points": 12.8,
             "max": 20,
             "scored": true,
-            "predicted": 10.0,
+            "predicted": "5-15",
             "actual": 11.6,
             "error": 1.6
           },

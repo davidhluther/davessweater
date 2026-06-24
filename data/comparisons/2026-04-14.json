@@ -1,6 +1,6 @@
 {
   "date": "2026-04-14",
-  "generated_at": "2026-06-23T12:44:07.760697-04:00",
+  "generated_at": "2026-06-24T12:44:54.111305-04:00",
   "actuals": {
     "date": "2026-04-14",
     "fetched_at": "2026-04-15T11:46:50.056988-04:00",
@@ -99,13 +99,16 @@
         "tonight_low_f": 54.0,
         "category": "unknown",
         "daytime_desc": "Intervals of clouds and sunshine; Unseasonably warm with near record high temperatures; Breezy west wind 5-15 mph",
-        "wind_mph": 10.0
+        "wind_mph": 10.0,
+        "wind_lo": 5,
+        "wind_hi": 15,
+        "precip_type": "none"
       },
       "score": {
-        "score": 60.5,
+        "score": 54.1,
         "grade": {
-          "verdict": "meh",
-          "ray_count": 3
+          "verdict": "wrong",
+          "ray_count": 2
         },
         "coverage": {
           "high_temp": true,
@@ -132,10 +135,10 @@
             "error": 3.4
           },
           "wind": {
-            "points": 20.0,
+            "points": 13.6,
             "max": 20,
             "scored": true,
-            "predicted": 10.0,
+            "predicted": "5-15",
             "actual": 8.8,
             "error": 1.2
           },

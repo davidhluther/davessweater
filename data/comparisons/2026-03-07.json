@@ -1,6 +1,6 @@
 {
   "date": "2026-03-07",
-  "generated_at": "2026-06-23T12:44:04.287297-04:00",
+  "generated_at": "2026-06-24T12:44:52.993170-04:00",
   "actuals": {
     "date": "2026-03-07",
     "fetched_at": "2026-03-08T16:51:53.507691-05:00",
@@ -96,19 +96,23 @@
         "today_high_f": 72.0,
         "tonight_low_f": 53.0,
         "category": "unknown",
-        "daytime_desc": ""
+        "daytime_desc": "Partly to mostly cloudy; Early AM drizzle; Widely scattered afternoon showers; Maybe a rumble of thunder; SSW wind 5-15 mph, breezy at times",
+        "wind_mph": 10.0,
+        "wind_lo": 5,
+        "wind_hi": 15,
+        "precip_type": "rain"
       },
       "score": {
-        "score": 48.9,
+        "score": 68.5,
         "grade": {
-          "verdict": "wrong",
-          "ray_count": 2
+          "verdict": "meh",
+          "ray_count": 3
         },
         "coverage": {
           "high_temp": true,
           "low_temp": true,
-          "wind": false,
-          "precip_type": false,
+          "wind": true,
+          "precip_type": true,
           "precip_amount": false
         },
         "breakdown": {
@@ -129,18 +133,18 @@
             "error": 1.5
           },
           "wind": {
-            "points": null,
+            "points": 9.6,
             "max": 20,
-            "scored": false,
-            "predicted": null,
+            "scored": true,
+            "predicted": "5-15",
             "actual": 13.2,
-            "error": null
+            "error": 3.2
           },
           "precip_type": {
-            "points": null,
+            "points": 10.0,
             "max": 10,
-            "scored": false,
-            "predicted": null,
+            "scored": true,
+            "predicted": "rain",
             "actual": "rain"
           },
           "precip_amount": {
