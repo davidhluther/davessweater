@@ -335,6 +335,188 @@ def _parse_wind_from_desc(desc: str) -> float | None:
     return None
 
 
+# NWS qualitative-wind → speed interval (mph). Mirrors scoring's locked mapping.
+_WIND_QUALITATIVE = {
+    "calm":   (0, 1),
+    "light":  (1, 7),
+    "breezy": (12, 20),
+    "windy":  (18, 30),
+    "gusty":  (18, 30),
+}
+
+# Strip gust clauses so a "gusting to 40" tail never widens the sustained-wind
+# interval. Matches "gust(s)/gusting to/up to/of N" and the trailing number.
+_GUST_CLAUSE_RE = re.compile(
+    r"gust(?:s|ing)?\s+(?:to|up\s+to|of|near|around)?\s*\d+",
+    re.I,
+)
+# Numeric ranges like "5-10", "5–10" (en dash), or "5 - 10".
+_WIND_RANGE_RE = re.compile(r"(\d+)\s*[-–]\s*(\d+)\s*mph", re.I)
+# Single approximate value: "around/about/near 5 mph".
+_WIND_AROUND_RE = re.compile(r"(?:around|about|near(?:ly)?)\s+(\d+)\s*mph", re.I)
+# Any remaining "N mph" single value.
+_WIND_SINGLE_RE = re.compile(r"(\d+)\s*mph", re.I)
+
+# A qualitative descriptor counts as a WIND descriptor only when it sits next to
+# the word "wind" (either order, within a couple of words). This keeps "light"
+# from "light shower"/"light rain" out of the wind interval. The descriptor and
+# "wind" must be on the same side of a clause break — we scan each clause.
+_QUAL_WORDS_RE = re.compile(
+    r"\b(calm|light|breezy|windy|gusty)\b", re.I
+)
+
+
+def _qualitative_wind_interval(text: str):
+    """
+    Map NWS qualitative wind descriptors to an interval, but ONLY for words that
+    actually qualify the wind (adjacent to a "wind" token in the same clause).
+
+    Returns ``(lo, hi)`` (the union of every qualifying descriptor) or ``None``.
+    Used solely as the no-number fallback inside :func:`_parse_wind_interval`.
+    """
+    endpoints = []
+    # Split on clause boundaries so "light shower; calm wind" only contributes
+    # the "calm" (which is adjacent to "wind"), not the "light".
+    for clause in re.split(r"[;,.]", text):
+        if "wind" not in clause.lower():
+            # A bare "Nearly calm" / "Breezy." with no "wind" token still reads
+            # as a wind descriptor when the WHOLE clause is essentially just the
+            # descriptor (no precip noun to steal it). Only allow this when the
+            # clause has no precip/sky noun that the word could be modifying.
+            if not _clause_is_bare_wind_descriptor(clause):
+                continue
+        low = clause.lower()
+        for m in _QUAL_WORDS_RE.finditer(low):
+            word = m.group(1)
+            qlo, qhi = _WIND_QUALITATIVE[word]
+            endpoints.append(qlo)
+            endpoints.append(qhi)
+    if not endpoints:
+        return None
+    return (min(endpoints), max(endpoints))
+
+
+# Nouns a qualitative word might be modifying that are NOT wind (so a clause
+# containing one is not a "bare wind descriptor").
+_NON_WIND_NOUN_RE = re.compile(
+    r"\b(shower|rain|snow|drizzle|storm|thunder|fog|cloud|sun|sky|precip|flurr|mist|frost)",
+    re.I,
+)
+
+
+def _clause_is_bare_wind_descriptor(clause: str) -> bool:
+    """
+    True when a clause with no "wind" token is still unambiguously a wind
+    descriptor — i.e. it contains a qualitative wind word and no competing
+    non-wind noun (so "Nearly calm" / "Breezy" reads as wind, but "light shower"
+    does not).
+    """
+    if not _QUAL_WORDS_RE.search(clause):
+        return False
+    return not _NON_WIND_NOUN_RE.search(clause)
+
+
+def _parse_wind_interval(desc: str):
+    """
+    Parse a wind-speed interval ``(lo, hi)`` from a forecast description, or
+    ``None`` when the text carries no wind information.
+
+    Numbers win over words (the plan's locked rule): if the text names ANY
+    sustained-wind number — a range ("5-10 mph"), an approximate single
+    ("around 5 mph"), or a bare "N mph" — the interval is the min/max of those
+    numbers ONLY. Qualitative descriptors are consulted *only as a fallback*,
+    when no number is present at all.
+
+    This matters because Ray routinely pairs a number with a qualitative word
+    that describes a *different* part of the day or a gust, e.g.
+      "SW wind 5-15 mph & gusty"          -> (5, 15)   (not (5, 30))
+      "Light South wind becoming 5-15 mph" -> (5, 15)   (not (1, 15))
+      "NW wind 10-20 mph, gusty at times"  -> (10, 20)
+    Treating "gusty"/"windy" (NWS 18-30) or "light" (NWS 1-7) as an extra
+    endpoint in those cases would blow the sustained interval out by ~25 mph and
+    unfairly tax the wind score. Gusts are definitionally excluded from the
+    sustained-wind interval, and a "light shower" elsewhere in the sentence must
+    never be misread as "light WIND".
+
+    Only when the text carries no number do the NWS qualitative descriptors
+    apply (calm→(0,1), light→(1,7), breezy→(12,20), windy/gusty→(18,30)), and
+    even then only when the descriptor co-occurs with the word "wind".
+
+    Gust clauses ("gusting to 40") are stripped first so a peak-gust number
+    never widens the sustained-wind interval.
+    """
+    if not desc:
+        return None
+
+    # Drop gust clauses before collecting any numbers.
+    cleaned = _GUST_CLAUSE_RE.sub(" ", desc)
+
+    endpoints = []
+
+    # Numeric ranges first; remove them so their endpoints aren't re-counted as
+    # bare singles below.
+    def _take_range(m):
+        endpoints.append(int(m.group(1)))
+        endpoints.append(int(m.group(2)))
+        return " "
+    remainder = _WIND_RANGE_RE.sub(_take_range, cleaned)
+
+    # Approximate singles ("around 5 mph"), then strip so the bare-single sweep
+    # doesn't double-count them.
+    def _take_around(m):
+        endpoints.append(int(m.group(1)))
+        return " "
+    remainder = _WIND_AROUND_RE.sub(_take_around, remainder)
+
+    # Remaining bare "N mph" singles.
+    for m in _WIND_SINGLE_RE.finditer(remainder):
+        endpoints.append(int(m.group(1)))
+
+    # Numbers win: if any sustained-wind number was named, the interval is the
+    # min/max of those numbers alone. Qualitative words ("gusty", "light", …)
+    # are NOT unioned in — gusts are excluded by definition, and a stray "light"
+    # often belongs to "light shower"/"light rain", not the wind.
+    if endpoints:
+        return (min(endpoints), max(endpoints))
+
+    # No number anywhere → fall back to the NWS qualitative map, but only for a
+    # descriptor that actually qualifies the WIND (adjacent to a "wind" token).
+    # This keeps "Lingering light shower …" from injecting a (1, 7) wind range.
+    qual = _qualitative_wind_interval(cleaned)
+    return qual
+
+
+def _parse_precip_type(desc: str):
+    """
+    Recover Ray's precipitation *type* from a forecast description.
+
+    Returns ``"snow"``, ``"rain"``, ``"mixed"`` (both kinds named), ``"none"``
+    (an explicitly dry/clear sky), or ``None`` when the text says nothing about
+    precipitation either way. Amount is never inferred — Ray publishes no number.
+    """
+    if not desc:
+        return None
+    low = desc.lower()
+
+    has_snow = bool(re.search(r"\b(?:snow|flurr|wintry|sleet|ice|icy|freezing)", low))
+    # Unambiguous liquid-precip words. "shower"/"thunder"/"storm" are deliberately
+    # excluded here because they attach to snow too ("snow showers", "snowstorm")
+    # and would otherwise mislabel pure snow as a mix.
+    has_rain_word = bool(re.search(r"\b(?:rain|drizzle)", low))
+    has_wet_word = has_rain_word or bool(re.search(r"\b(?:shower|thunder|storm)", low))
+
+    if has_snow and has_rain_word:
+        return "mixed"
+    if has_snow:
+        return "snow"
+    if has_wet_word:
+        return "rain"
+
+    if re.search(r"\b(?:clear|sunny|sun|dry|cloud|cloudy|fair|partly|mostly)\b", low):
+        return "none"
+    return None
+
+
 def _parse_daily_forecast(text: str, capture_date: str | None = None) -> list:
     """
     Parse multi-day forecast from Ray's text.
@@ -456,15 +638,39 @@ def _parse_daily_forecast(text: str, capture_date: str | None = None) -> list:
     daily = []
     for idx, entry in enumerate(entries):
         forecast_date = anchor_dt + timedelta(days=idx)
-        wind_mph = _parse_wind_from_desc(entry["daytime_desc"])
-        if wind_mph is None:
-            wind_mph = _parse_wind_from_desc(entry["overnight_desc"])
+
+        # Wind interval: prefer the daytime narrative, fall back to the overnight
+        # half when the daytime line carries no wind cue.
+        wind_iv = _parse_wind_interval(entry["daytime_desc"])
+        if wind_iv is None:
+            wind_iv = _parse_wind_interval(entry["overnight_desc"])
+        if wind_iv is not None:
+            wind_lo, wind_hi = wind_iv
+            # Keep wind_mph = interval midpoint for backward compatibility with
+            # the point-scoring path and existing consumers.
+            wind_mph = round((wind_lo + wind_hi) / 2, 1)
+        else:
+            wind_lo = wind_hi = None
+            # Legacy fallback retains prior behaviour if the interval parser
+            # found nothing the old midpoint parser could still recover.
+            wind_mph = _parse_wind_from_desc(entry["daytime_desc"])
+            if wind_mph is None:
+                wind_mph = _parse_wind_from_desc(entry["overnight_desc"])
+
+        # Precip type: prefer the daytime narrative, fall back to overnight.
+        precip_type = _parse_precip_type(entry["daytime_desc"])
+        if precip_type is None:
+            precip_type = _parse_precip_type(entry["overnight_desc"])
+
         daily.append({
             "date": forecast_date.strftime("%Y-%m-%d"),
             "day_name": forecast_date.strftime("%A"),
             "high_f": entry["high_f"],
             "low_f": entry["low_f"],
             "wind_mph": wind_mph,
+            "wind_lo": wind_lo,
+            "wind_hi": wind_hi,
+            "precip_type": precip_type,
             "daytime_desc": entry["daytime_desc"],
             "overnight_desc": entry["overnight_desc"],
             "category": "unknown",
