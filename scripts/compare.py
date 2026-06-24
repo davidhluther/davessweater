@@ -325,8 +325,11 @@ def run_daily_comparison(target_date=None):
     else:
         print(f"  No Open-Meteo prediction found for {target_date}")
 
-    # Score Ray's prediction (from extracted data — may be sparse)
-    rays_path = pred_dir / "rays_boone.json"
+    # Score Ray's prediction (from extracted data — may be sparse).
+    # Prefer the backfill-rebuilt sibling (anchored dates + recovered wind
+    # interval / precip_type) when present; fall back to the original capture.
+    rays_rebuilt = pred_dir / "rays_boone.rebuilt.json"
+    rays_path = rays_rebuilt if rays_rebuilt.exists() else pred_dir / "rays_boone.json"
     if rays_path.exists():
         with open(rays_path) as f:
             rays_data = json.load(f)
