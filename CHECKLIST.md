@@ -55,16 +55,25 @@ source-registry/adapter pattern, and reworked scoring into the coupled, snow-awa
       reached `data/` on whatever branch M3 builds on before wiring N-source viz (the `feat/openmeteo-backfill`
       branch still carried only the 3 original sources + a single `precip_amount` field).
 
-## Open-Meteo backfill (PR #62 — OPEN, not yet merged)
-- [ ] **Open-Meteo historical backfill** — `scripts/backfill_openmeteo.py` pulls Open-Meteo's Historical
-      Forecast API (legit archived past forecasts) + actuals; Open-Meteo now has a **474-day record
-      (avg 91.6, 465–1–8, graded "Wrong" exactly once)**, full chronological re-score, pytest green. Homepage
-      derives a **tracking-period** head-to-head (~109 rays-present days) + a separate 474-day explainer line;
-      "never once graded Wrong" is now data-driven (`trackingFreeNeverWrong`); `trendSeries` scoped to the
-      rays-present window so the chart is a true free-vs-Ray's comparison. **[PR #62](https://github.com/davidhluther/davessweater/pull/62)
-      is OPEN as of this handoff — owner deciding merge-now vs bundle-with-M3; reconcile this line on merge.**
+## Done: Open-Meteo backfill (PR #62 — merged)
+- [x] **Open-Meteo historical backfill** — `scripts/backfill_openmeteo.py`; Open-Meteo has a **474-day record**;
+      homepage derives a tracking-period head-to-head + a 474-day explainer; `trendSeries` scoped to the
+      rays-present window. Merged to `main` + live.
 
-## Active: M3 — dynamic data-viz
+## Done: Fair Ray scoring — capture fix + interval wind scoring (PR #67 — merged)
+Fixed 3 capture/scoring bugs unfairly mis-scoring Ray + a latent append-only `entries[]` drift. Wind is now
+scored as an **interval** with a 0.5× width vagueness tax (point forecasts unchanged → Open-Meteo provably
+untouched); qualitative wind mapped via the NWS scale; precip amount honestly forfeited. Whole Ray era
+backfilled from saved `raw_text` (originals preserved) + re-scored; guarded by `tests/test_scores_consistency.py`.
+Plan: `planning/plans/2026-06-24-rays-capture-interval-scoring.md`.
+- [x] **Ray fair scoring** — Ray ≈ 65.2 (≈flat — capture-deflation + vagueness-reward cancelled; now every
+      point earned), Open-Meteo 91.65 unchanged, free wins by ~26.5, Ray's "Right" days 35→25. **Merged + live.**
+- [ ] **Methodology transparency (before promotion)** — document the interval scoring + NWS qualitative-wind
+      mapping + width penalty on `/right-wrong-ray` (+ refresh the stale `CLAUDE.md` scoring table).
+- [ ] **Capture-quality monitoring** — alert when a source's coverage drops (this regression went unnoticed
+      for weeks). Part of the promotion audit.
+
+## M3 — dynamic data-viz (v1 built + verified; PR pending)
 Turn the now-richer accuracy data (multi-source season + per-source coverage index + the 474-day
 Open-Meteo record) into **interactive data-viz**. Visual excellence is part of the satirical proof —
 craft must be **defensible and accurate** (grade bands ≠ rankings; honest screenshot label; verify grade
@@ -74,22 +83,30 @@ workflow changes; stats stay build-time-derived. **Full handoff:
 `planning/handoffs/2026-06-23-m3-data-viz-handoff.md`** — start a new session there via
 superpowers:brainstorming → writing-plans → subagent-driven-development; spec to live at
 `planning/specs/2026-06-23-m3-data-viz-design.md`.
-- [ ] **Interactive trend chart (visx)** — replace static inline-SVG `src/components/TrendChart.tsx` with a
-      `'use client'` visx chart (hover tooltips, axes, gridlines, multi-source). Preserve the rays-scoped
-      window; SSR-safe responsive sizing (`@visx/responsive` + fixed wrapper height); no CLS; server→client
-      prop boundary (no fs reads in client code).
-- [ ] **Sortable tables + inline sparklines** — extract the two scoreboard tables in
-      `src/app/right-wrong-ray/page.tsx` into a `'use client'` sortable component; per-source sparklines from
-      `scores.json.entries`; mobile-safe (table→stacked-card below `md`).
-- [ ] **Coverage matrix** — new display (none exists today) backing `scores.json.coverage` (source × field);
-      show Ray's `precip_amount` 0/N gap loudly. Add `coverage` to the `Scores` type in `src/lib/types.ts` first.
-- [ ] **Tasteful motion** — animated transitions need a separate dep (`@visx/react-spring`); framer-motion is
-      NOT installed — decide explicitly.
-- [ ] **Add `@visx/*` deps** — `@visx/responsive scale shape axis grid tooltip group event` (first new runtime
-      dep since the Next.js port; keep mobile-light). Every chart is `'use client'`.
-- [ ] **Widen the source-key type** (M3-blocking for N-source viz, gated on the expanded data landing) —
-      `src/lib/types.ts` + `SrcKey`/`ORDER`/`LABELS`/`IS_FREE` in `src/lib/homeStats.ts` (currently only
-      openmeteo/raysweather/apple_weather); surface all sources once the expanded `data/` ships.
+Spec/plan: `planning/specs/2026-06-23-m3-data-viz-design.md`, `planning/plans/2026-06-23-m3-data-viz.md`.
+**v1 scope (hardened via review):** Open-Meteo (free) vs Ray's (paid) — Apple dropped because its scored
+data is the Open-Meteo fallback. Built via subagent-driven TDD (6 phases, per-task spec+quality review),
+final whole-impl review = READY_TO_MERGE; 45 tests + lint + build green; verified live (chart hover/tap,
+keyboard table sort, coverage matrix). On branch `feat/m3-dataviz`.
+- [x] **Interactive trend chart (visx)** — `src/components/TrendChartInteractive.tsx` (`'use client'`):
+      Open-Meteo vs Ray's, hover+tap tooltip (predicted/actual/error from the #61 differentials; Ray's
+      unpublished precip → "not published"), axes, grade-band lines at 75/60, `@visx/responsive` ParentSize
+      in a fixed-height wrapper (no CLS), sr-only data-table equivalent. Static `TrendChart` deleted.
+- [x] **Sortable tables + inline sparklines** — `SortableScoreTable.tsx` (`'use client'`): keyboard
+      `<button>` headers + `aria-sort`, per-source sparklines over the shared rays-scoped window,
+      table→cards below `md`.
+- [x] **Coverage matrix** — `CoverageMatrix.tsx` (server): source × field from `scores.json.coverage`;
+      Ray's `precip_amount` 0/N as a deliberate "none", partial coverage (wind 76/109) framed as
+      availability. `coverage` + corrected `ScoreBreakdownField` added to `src/lib/types.ts`.
+- [x] **`@visx/*` deps** — installed (visx v4): responsive scale shape axis grid tooltip group event.
+- [x] **Tasteful motion (v1 minimal)** — tooltip/hover transitions only; the ambitious line-draw /
+      scrollytelling pass is deferred to a later M3 iteration (no motion lib added).
+- [ ] **Widen the source-key type + re-add a real Apple line** (deferred — gated on the expanded N-source
+      data + real iPhone-Shortcut Apple data landing) — `src/lib/types.ts` + `SrcKey`/`ORDER`/`LABELS`/
+      `IS_FREE`; surface all sources once the data ships.
+- [ ] **Relabel the live homepage Apple slot** — the M2 hero scoreboard + "free forecast averaged 91.8"
+      still present the Open-Meteo *fallback* as "Apple Weather" (M3 viz correctly omits it). Drop or
+      relabel it honestly. (Surfaced by the M3 review; out of M3-viz scope.)
 
 ## Post-M2 / parallel follow-ups
 - [ ] **Automate the *real* Apple Weather screenshot** — today the hero shot is daily-auto only for the

@@ -49,7 +49,7 @@ describe("heroStats", () => {
   });
 });
 
-import { trendSeries, trendChartGeometry } from "@/lib/homeStats";
+import { trendSeries } from "@/lib/homeStats";
 
 describe("trendSeries", () => {
   it("scopes to the head-to-head window (rays-present dates), free null when openmeteo missing", () => {
@@ -62,22 +62,6 @@ describe("trendSeries", () => {
       { date: "2026-06-18", free: null, rays: 50 },
       { date: "2026-06-19", free: 96.3, rays: 63.2 },
     ]);
-  });
-});
-
-describe("trendChartGeometry", () => {
-  it("produces polyline point strings skipping nulls, scaled into the viewbox", () => {
-    const g = trendChartGeometry(
-      [{ date: "a", free: 100, rays: 40 }, { date: "b", free: 100, rays: 100 }],
-      600, 120, 40, 100,
-    );
-    expect(g.width).toBe(600);
-    expect(g.free).toBe("0,0 600,0");
-    expect(g.rays).toBe("0,120 600,0");
-  });
-  it("omits null points from a series", () => {
-    const g = trendChartGeometry([{ date: "a", free: null, rays: 70 }, { date: "b", free: 70, rays: 70 }], 600, 120, 40, 100);
-    expect(g.free).toBe("600,60");
   });
 });
 

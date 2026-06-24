@@ -18,6 +18,18 @@ export async function getLatestComparison(): Promise<Comparison | null> {
   return readJson<Comparison>(join(dir, files[files.length - 1]));
 }
 
+export async function getComparisonWindow(dates: string[]): Promise<Comparison[]> {
+  const dir = join(DATA, "comparisons");
+  const out: Comparison[] = [];
+  for (const date of dates) {
+    const p = join(dir, `${date}.json`);
+    if (!existsSync(p)) continue;
+    const c = await readJson<Comparison>(p);
+    if (c) out.push(c);
+  }
+  return out;
+}
+
 export async function getScores(): Promise<Scores | null> {
   return readJson<Scores>(join(DATA, "scores.json"));
 }

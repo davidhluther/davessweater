@@ -102,7 +102,7 @@ export function heroStats(scores: Scores | null): HeroStats {
 }
 
 // ---------------------------------------------------------------------------
-// trendSeries + trendChartGeometry
+// trendSeries
 // ---------------------------------------------------------------------------
 
 export interface TrendPoint { date: string; free: number | null; rays: number | null; }
@@ -119,23 +119,6 @@ export function trendSeries(scores: Scores | null): TrendPoint[] {
     .map((e) => ({ date: String(e.date ?? ""), free: num(e.openmeteo), rays: num(e.raysweather) }))
     .filter((p) => p.date && p.rays !== null)
     .sort((a, b) => a.date.localeCompare(b.date));
-}
-
-export interface TrendGeometry { free: string; rays: string; width: number; height: number; }
-
-export function trendChartGeometry(
-  points: TrendPoint[], width = 600, height = 120, min = 40, max = 100,
-): TrendGeometry {
-  const span = Math.max(1, points.length - 1);
-  const x = (i: number) => Math.round((i / span) * width);
-  const y = (v: number) => Math.round((1 - (Math.min(max, Math.max(min, v)) - min) / (max - min)) * height);
-  const line = (sel: (p: TrendPoint) => number | null) =>
-    points
-      .map((p, i) => ({ i, v: sel(p) }))
-      .filter((d) => d.v != null)
-      .map((d) => `${x(d.i)},${y(d.v as number)}`)
-      .join(" ");
-  return { free: line((p) => p.free), rays: line((p) => p.rays), width, height };
 }
 
 // ---------------------------------------------------------------------------

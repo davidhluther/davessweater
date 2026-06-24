@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getLatestComparison, getScores, getBlogPosts, getBlogPost, slugFromLink } from "@/lib/data";
+import { getLatestComparison, getScores, getBlogPosts, getBlogPost, slugFromLink, getComparisonWindow } from "@/lib/data";
 
 describe("data readers", () => {
   it("reads the latest comparison with actuals", async () => {
@@ -27,5 +27,14 @@ describe("data readers", () => {
   it("derives slug from a substack /p/ link", () => {
     expect(slugFromLink("https://x.substack.com/p/welcome-to-daves-sweater", "Welcome"))
       .toBe("welcome-to-daves-sweater");
+  });
+});
+
+describe("getComparisonWindow", () => {
+  it("loads existing comparison files and skips missing dates", async () => {
+    const out = await getComparisonWindow(["2026-06-22", "1999-01-01"]);
+    expect(out.length).toBe(1);
+    expect(out[0].date).toBe("2026-06-22");
+    expect(out[0].sources).toBeTruthy();
   });
 });
