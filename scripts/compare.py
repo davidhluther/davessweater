@@ -446,57 +446,32 @@ def run_daily_comparison(target_date=None):
 
 
 def _update_running_scores(date, comparison):
-    """Append today's scores and recalculate totals from all comparison files."""
+    """Rebuild running scores (entries + totals + coverage) from ALL comparison
+    files — the single source of truth — so a re-score can never leave stale per-day
+    rows. (Was append-only, which silently froze existing entries after a re-score and
+    let the public per-day numbers drift out of sync with the totals.) The current
+    date's comparison file is already on disk when this runs, so it is included."""
     scores_path = DATA_DIR / "scores.json"
-    if scores_path.exists():
-        with open(scores_path) as f:
-            scores = json.load(f)
-    else:
-        scores = {"entries": [], "totals": {}}
-
-    # Skip if this date is already in the entries
-    if any(e.get("date") == date for e in scores["entries"]):
-        print(f"  Scores already recorded for {date}, skipping")
-    else:
-        entry = {"date": date}
-        for source, data in comparison.get("sources", {}).items():
-            if "score" in data:
-                entry[source] = data["score"]["score"]
-        entry["sweater_weather"] = comparison["sweater_weather"]["answer"]
-        scores["entries"].append(entry)
-
-    # Recalculate totals from all comparison files (source of truth)
-    totals = {}
     comp_dir = DATA_DIR / "comparisons"
+    cov_fields = ["high_temp", "low_temp", "wind", "precip_type", "precip_amount"]
+
+    entries, totals, coverage = [], {}, {}
     for comp_file in sorted(comp_dir.glob("*.json")):
         try:
             with open(comp_file) as f:
                 comp = json.load(f)
         except (json.JSONDecodeError, OSError):
             continue
+        entry = {"date": comp.get("date") or comp_file.stem}
         for source, data in comp.get("sources", {}).items():
             if "score" not in data:
                 continue
+            entry[source] = data["score"]["score"]
             if source not in totals:
                 totals[source] = {"right": 0, "wrong": 0, "meh": 0, "total_score": 0, "days": 0}
-            verdict = data["score"]["grade"]["verdict"]
-            totals[source][verdict] += 1
+            totals[source][data["score"]["grade"]["verdict"]] += 1
             totals[source]["total_score"] += data["score"]["score"]
             totals[source]["days"] += 1
-
-    scores["totals"] = totals
-
-    coverage = {}
-    cov_fields = ["high_temp", "low_temp", "wind", "precip_type", "precip_amount"]
-    for comp_file in sorted(comp_dir.glob("*.json")):
-        try:
-            with open(comp_file) as f:
-                comp = json.load(f)
-        except (json.JSONDecodeError, OSError):
-            continue
-        for source, data in comp.get("sources", {}).items():
-            if "score" not in data:
-                continue
             cov = data["score"].get("coverage", {})
             if source not in coverage:
                 coverage[source] = {fld: {"provided": 0, "days": 0} for fld in cov_fields}
@@ -504,11 +479,15 @@ def _update_running_scores(date, comparison):
                 coverage[source][fld]["days"] += 1
                 if cov.get(fld):
                     coverage[source][fld]["provided"] += 1
-    scores["coverage"] = coverage
+        sw = comp.get("sweater_weather")
+        if isinstance(sw, dict) and "answer" in sw:
+            entry["sweater_weather"] = sw["answer"]
+        entries.append(entry)
 
+    scores = {"entries": entries, "totals": totals, "coverage": coverage}
     with open(scores_path, "w") as f:
         json.dump(scores, f, indent=2)
-    print(f"  Updated running scores: {scores_path}")
+    print(f"  Updated running scores: {scores_path} ({len(entries)} entries)")
 
 
 if __name__ == "__main__":
