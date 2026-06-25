@@ -19,7 +19,7 @@ type Tooltip = Record<string, TooltipEntry>;
 function Beat({ children, reduce }: { children: ReactNode; reduce: boolean }) {
   return (
     <motion.div
-      className="relative pl-12"
+      className="relative pl-8"
       initial={reduce ? false : "hidden"}
       whileInView="visible"
       viewport={{ once: true, margin: "-80px" }}
@@ -28,7 +28,7 @@ function Beat({ children, reduce }: { children: ReactNode; reduce: boolean }) {
     >
       <span
         aria-hidden
-        className="absolute left-[13px] top-1.5 size-3 rounded-full bg-orange ring-2 ring-orange/40"
+        className="absolute left-[7px] top-1.5 size-2.5 rounded-full bg-orange ring-2 ring-orange/40"
       />
       {children}
     </motion.div>
@@ -56,12 +56,12 @@ function Stat({
   const numColor =
     tone === "free" ? "text-emerald-300" : tone === "rays" ? "text-orange" : "text-white";
   return (
-    <div className={`rounded-xl p-3 ${box} ${glow}`}>
-      <div className="text-[0.65rem] text-white/65">{label}</div>
-      <div className={`font-display text-xl font-bold sm:text-2xl ${numColor}`}>
+    <div className={`flex flex-col items-center rounded-xl p-3 text-center ${box} ${glow}`}>
+      <div className={`font-display text-2xl font-bold sm:text-3xl ${numColor}`}>
         <NumberTicker value={value} decimalPlaces={dec} />
         {suffix && <span className="text-sm text-white/60">{suffix}</span>}
       </div>
+      <div className="mt-1 text-[0.65rem] leading-tight text-white/65">{label}</div>
     </div>
   );
 }
@@ -86,7 +86,7 @@ export default function WhyTimeline({
         <div className="mb-1 text-xs font-bold uppercase tracking-wider text-orange">Why this exists</div>
         <p className="mb-8 text-sm text-white/60">Boone&apos;s outlook, fact-checked daily.</p>
 
-        <div aria-hidden className="absolute left-[18px] top-[5.5rem] bottom-10 w-0.5 bg-white/15">
+        <div aria-hidden className="absolute left-[11px] top-[5.5rem] bottom-10 w-0.5 bg-white/15">
           <motion.div
             className="w-full bg-gradient-to-b from-emerald-300 to-orange"
             style={{ height: reduce ? "100%" : beamHeight }}

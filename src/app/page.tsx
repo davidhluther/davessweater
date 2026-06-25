@@ -21,6 +21,15 @@ export default async function HomePage() {
     <>
       <Hero stats={stats} />
 
+      <SectionBand>
+        <LiveConditions
+          initialScore={sw.sweater_count ?? 0}
+          initialVerdict={sw.detail ?? sw.answer ?? ""}
+          initialLayers={sw.layers ?? ""}
+          initialTemp={temp}
+        />
+      </SectionBand>
+
       <WhyTimeline stats={why} points={trend} tooltip={tooltip} />
 
       {h2h && (
@@ -29,16 +38,6 @@ export default async function HomePage() {
           <HeadToHeadCard h={h2h} />
         </SectionBand>
       )}
-
-      <SectionBand>
-        <div className="mb-3 text-xs font-bold uppercase tracking-wide text-muted">Oh — and we do actual weather too</div>
-        <LiveConditions
-          initialScore={sw.sweater_count ?? 0}
-          initialVerdict={sw.detail ?? sw.answer ?? ""}
-          initialLayers={sw.layers ?? ""}
-          initialTemp={temp}
-        />
-      </SectionBand>
     </>
   );
 }

@@ -41,16 +41,9 @@ function Chart({ width, height, points, tooltip }:
         </Group>
       </svg>
       {tooltipData && (
-        <TooltipWithBounds left={tooltipLeft} top={tooltipTop} style={{ position: "absolute", background: "white", color: "#26323d", padding: "8px 10px", borderRadius: 8, fontSize: 12, pointerEvents: "none" }}>
-          <div style={{ fontWeight: 500 }}>{tooltipData.date}</div>
-          <div>Open-Meteo {tooltipData.openmeteo ?? "—"} · Ray&apos;s {tooltipData.rays ?? "—"}</div>
+        <TooltipWithBounds left={tooltipLeft} top={tooltipTop} style={{ position: "absolute", maxWidth: 200, background: "white", color: "#26323d", padding: "6px 9px", borderRadius: 8, fontSize: 12, lineHeight: 1.35, pointerEvents: "none" }}>
+          <div><span style={{ fontWeight: 500 }}>{tooltipData.date}</span> · OM {tooltipData.openmeteo ?? "—"} · Ray&apos;s {tooltipData.rays ?? "—"}</div>
           {tooltipData.actualLines[0] && <div style={{ color: "#5f6b75" }}>{tooltipData.actualLines.join(" · ")}</div>}
-          {tooltipData.rayMisses.filter((m) => m.published && m.error != null).slice(0, 2).map((m) => (
-            <div key={m.field} style={{ color: "#993c1d" }}>Ray&apos;s {m.label}: {String(m.predicted)} (±{m.error})</div>
-          ))}
-          {tooltipData.rayMisses.some((m) => m.field === "precip_amount" && !m.published) && (
-            <div style={{ color: "#993c1d" }}>Ray&apos;s precip amount: not published</div>
-          )}
         </TooltipWithBounds>
       )}
     </div>
