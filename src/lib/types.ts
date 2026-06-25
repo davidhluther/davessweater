@@ -53,6 +53,19 @@ export interface Scores {
   coverage?: Partial<Record<"openmeteo" | "raysweather" | "apple_weather", Partial<Record<CoverageField, CoverageStat>>>>;
 }
 
+export interface ForecastDisplay {
+  label: string;
+  high_f: number | null;
+  low_f: number | null;
+  wind: string | null;
+  precip_type: string | null;
+}
+export interface LatestForecasts {
+  date: string;
+  generated_at?: string;
+  sources: Record<string, ForecastDisplay>;
+}
+
 export interface BlogPost { title: string; link: string; date?: string; summary?: string; content?: string; }
 export interface Video { title: string; link: string; date: string; thumb?: string; }
 export interface Product { name: string; link: string; image?: string; price?: string; id?: string; }

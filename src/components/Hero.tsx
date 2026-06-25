@@ -19,13 +19,10 @@ export default function Hero({ stats }: { stats: HeroStats }) {
           <div className="max-w-md">
             <Scoreboard sources={stats.trackingSources} />
           </div>
-          <div className="mt-5 flex flex-wrap items-center gap-4">
+          <div className="mt-5 flex justify-center">
             <Link href="/right-wrong-ray"
-              className="inline-flex min-h-11 items-center rounded-lg bg-orange-600 px-5 font-bold text-white transition-colors hover:bg-[#9a3412]">
-              See the full scoreboard →
-            </Link>
-            <Link href="/right-wrong-ray" className="text-sm text-white/70 underline-offset-2 hover:underline">
-              How we score it →
+              className="inline-flex min-h-11 items-center justify-center rounded-lg bg-orange-600 px-5 font-bold text-white transition-colors hover:bg-[#9a3412]">
+              See the full scoreboard
             </Link>
           </div>
         </div>

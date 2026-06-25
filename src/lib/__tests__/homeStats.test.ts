@@ -121,6 +121,36 @@ describe("heroStats — tracking-period stats", () => {
   });
 });
 
+import { whyStats } from "@/lib/homeStats";
+
+describe("whyStats", () => {
+  const scores = {
+    entries: [
+      { date: "2026-06-23", openmeteo: 90, raysweather: 60 },
+      { date: "2026-06-24", openmeteo: 92, raysweather: 70 },
+    ],
+    totals: {},
+    coverage: { raysweather: { precip_amount: { provided: 0, days: 2 } } },
+  };
+
+  it("bundles the five beat stats from the tracking window + coverage", () => {
+    const w = whyStats(scores as never);
+    expect(w).toEqual({
+      trackedDays: 2,
+      freeLabel: "Open-Meteo",
+      freeAvg: 91,
+      raysAvg: 65,
+      gap: 26,
+      raysPrecipDays: 2,
+      raysPrecipProvided: 0,
+    });
+  });
+
+  it("never throws on null/empty scores", () => {
+    expect(whyStats(null)).toMatchObject({ trackedDays: 0, freeAvg: 0, raysAvg: 0, gap: 0, raysPrecipDays: 0 });
+  });
+});
+
 import { headToHead } from "@/lib/homeStats";
 
 describe("headToHead", () => {

@@ -73,6 +73,17 @@ Plan: `planning/plans/2026-06-24-rays-capture-interval-scoring.md`.
 - [ ] **Capture-quality monitoring** — alert when a source's coverage drops (this regression went unnoticed
       for weeks). Part of the promotion audit.
 
+## Done: M3 iteration #2 — "Why we exist" scrollytelling section
+Restrained, scroll-driven narrative section on the homepage (below the hero, replacing the standalone
+"It's not a fluke" trend block; the existing `TrendChartInteractive` now lives at its climax node). Built
+on a framer-motion timeline (scroll-driven beam via `useScroll`), five data-bound beats, spring
+`NumberTicker`s, a `PointerHighlight` accent, and a `ChartReveal` clip-path draw-in. All stats derived via
+`whyStats()` (vitest-tested); `prefers-reduced-motion`/mobile/no-CLS handled. Spec/plan:
+`planning/specs/2026-06-25-m3-scrollytelling-design.md`, `planning/plans/2026-06-25-m3-scrollytelling.md`.
+- [x] **M3 #2 — scrollytelling "Why we exist"** — framer-motion added; `NumberTicker`/`PointerHighlight`/
+      `ChartReveal`/`WhyTimeline` built; `whyStats` helper; `npm test`/lint/`build` green. Aurora deferred.
+- [ ] **M3 #3 — N-source viz** — surface the 7 new forecasters; still gated on them accruing enough scored days.
+
 ## Active (next session): Promotion-readiness audit (dimensions 1–4)
 Harden the inherited v1 pipeline before promotion (it publicly grades a named competitor → scrutiny).
 **Full handoff: `planning/handoffs/2026-06-24-promotion-readiness-handoff.md`.** Dimensions: (1) data
