@@ -526,8 +526,10 @@ def build_latest_forecasts():
     pred_root = DATA_DIR / "predictions"
     if not pred_root.exists():
         return None
+    comp_dir = DATA_DIR / "comparisons"
     dirs = sorted(d.name for d in pred_root.iterdir()
-                  if d.is_dir() and re.match(r"^\d{4}-\d{2}-\d{2}$", d.name))
+                  if d.is_dir() and re.match(r"^\d{4}-\d{2}-\d{2}$", d.name)
+                  and not (comp_dir / f"{d.name}.json").exists())
     if not dirs:
         return None
     date = dirs[-1]

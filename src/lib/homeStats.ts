@@ -148,19 +148,20 @@ export interface WhyStats {
   raysAvg: number;
   gap: number;
   raysPrecipDays: number;
+  raysPrecipProvided: number;
 }
 
 export function whyStats(scores: Scores | null): WhyStats {
   const h = heroStats(scores);
-  const raysPrecipDays =
-    scores?.coverage?.raysweather?.precip_amount?.days ?? h.trackingRays?.days ?? 0;
+  const raysPrecip = scores?.coverage?.raysweather?.precip_amount;
   return {
     trackedDays: h.trackingDays,
     freeLabel: h.trackingBestFree?.label ?? "Open-Meteo",
     freeAvg: h.trackingBestFree?.avg ?? 0,
     raysAvg: h.trackingRays?.avg ?? 0,
     gap: h.trackingPointGap,
-    raysPrecipDays,
+    raysPrecipDays: raysPrecip?.days ?? h.trackingRays?.days ?? 0,
+    raysPrecipProvided: raysPrecip?.provided ?? 0,
   };
 }
 

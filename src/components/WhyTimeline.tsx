@@ -120,7 +120,7 @@ export default function WhyTimeline({
             <h3 className="font-display text-lg font-bold sm:text-xl">It was never better weather.</h3>
             <p className="mt-1 text-sm text-white/70">
               It&apos;s open data anyone can pull. The bill bought the habit — he won&apos;t even commit to a
-              rain total: <strong className="text-white">0</strong> of{" "}
+              rain total: <strong className="text-white">{stats.raysPrecipProvided}</strong> of{" "}
               <NumberTicker value={stats.raysPrecipDays} className="font-display font-bold text-white" /> days.
             </p>
           </Beat>

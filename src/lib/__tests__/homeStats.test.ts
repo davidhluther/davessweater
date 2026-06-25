@@ -142,6 +142,7 @@ describe("whyStats", () => {
       raysAvg: 65,
       gap: 26,
       raysPrecipDays: 2,
+      raysPrecipProvided: 0,
     });
   });
 

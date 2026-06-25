@@ -6,7 +6,7 @@ const ORDER = [
 ];
 
 function fmtDate(d: string): string {
-  const dt = new Date(d + "T12:00:00");
+  const dt = new Date(d + "T12:00:00Z");
   return dt.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
 }
 
