@@ -22,6 +22,7 @@ export default async function HomePage() {
       <Hero stats={stats} />
 
       <SectionBand>
+        <h2 className="mb-3 text-center font-display text-lg font-bold sm:text-xl">Sweater Weather Index</h2>
         <LiveConditions
           initialScore={sw.sweater_count ?? 0}
           initialVerdict={sw.detail ?? sw.answer ?? ""}

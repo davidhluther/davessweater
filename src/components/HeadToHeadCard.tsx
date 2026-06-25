@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { HeadToHead } from "@/lib/homeStats";
 
 export default function HeadToHeadCard({ h }: { h: HeadToHead }) {
@@ -21,11 +20,6 @@ export default function HeadToHeadCard({ h }: { h: HeadToHead }) {
         <div className="mt-0.5 text-[0.8rem] leading-relaxed text-foreground">
           {h.actualLines.length ? h.actualLines.map((l, i) => <div key={i}>{l}</div>) : "—"}
         </div>
-      </div>
-      <div className="sm:col-span-3">
-        <Link href="/right-wrong-ray" className="text-sm font-medium text-orange-600 underline-offset-2 hover:underline">
-          See every day on the scoreboard →
-        </Link>
       </div>
     </div>
   );

@@ -1,13 +1,11 @@
 "use client";
 
 import { useRef } from "react";
-import Link from "next/link";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 import type { TrendPoint, WhyStats } from "@/lib/homeStats";
 import type { TooltipEntry } from "@/lib/trendTooltip";
 import TrendChartInteractive from "@/components/TrendChartInteractive";
-import ChartReveal from "@/components/ChartReveal";
 import { NumberTicker } from "@/components/ui/number-ticker";
 import { PointerHighlight } from "@/components/ui/pointer-highlight";
 
@@ -110,9 +108,7 @@ export default function WhyTimeline({
 
           <Beat reduce={reduce}>
             <h3 className="mb-3 font-display text-lg font-bold sm:text-xl">The gap isn&apos;t close.</h3>
-            <ChartReveal>
-              <TrendChartInteractive points={points} tooltip={tooltip} />
-            </ChartReveal>
+            <TrendChartInteractive points={points} tooltip={tooltip} />
             <div className="mt-3 grid grid-cols-3 gap-2">
               <Stat label={`${stats.freeLabel} · free`} value={stats.freeAvg} tone="free" />
               <Stat label="Ray's · paid" value={stats.raysAvg} tone="rays" />
@@ -134,12 +130,6 @@ export default function WhyTimeline({
               <PointerHighlight>The old way is out.</PointerHighlight>
             </h3>
             <p className="mt-1 text-sm text-white/70">Better data is free. Good design is cheap. This site is the proof.</p>
-            <Link
-              href="/right-wrong-ray"
-              className="mt-4 inline-flex min-h-11 items-center justify-center rounded-lg bg-orange px-5 py-2 text-center font-bold text-white transition-colors hover:bg-orange-600"
-            >
-              See every day on the scoreboard →
-            </Link>
           </Beat>
         </div>
       </div>
