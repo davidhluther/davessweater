@@ -1,4 +1,4 @@
-import { getLatestComparison, getScores } from "@/lib/data";
+import { getLatestComparison, getScores, getLatestForecasts } from "@/lib/data";
 import { scoreboardRows } from "@/lib/scoreboard";
 import { sparkSeries } from "@/lib/sparkline";
 import { actualLines } from "@/lib/homeStats";
@@ -6,8 +6,10 @@ import RayFaces from "@/components/RayFaces";
 import SectionBand from "@/components/SectionBand";
 import SortableScoreTable, { type ScoreRow } from "@/components/SortableScoreTable";
 import CoverageMatrix from "@/components/CoverageMatrix";
+import ScoreBreakdown from "@/components/ScoreBreakdown";
+import UpcomingForecasts from "@/components/UpcomingForecasts";
 import type { SourceEntry } from "@/lib/types";
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 
 export const metadata = { title: "Right Ray / Wrong Ray" };
 
@@ -40,7 +42,7 @@ const META: Record<string, { isFree: boolean }> = {
 };
 
 export default async function Page() {
-  const [comp, scores] = await Promise.all([getLatestComparison(), getScores()]);
+  const [comp, scores, forecasts] = await Promise.all([getLatestComparison(), getScores(), getLatestForecasts()]);
   const spark = sparkSeries(scores, ["openmeteo", "raysweather"]);
   const rows: ScoreRow[] = scoreboardRows(scores)
     .filter((r) => r.label === "Open-Meteo" || r.label === "Ray's Weather")
@@ -84,12 +86,19 @@ export default async function Page() {
                   const e = comp.sources?.[key];
                   if (!e || !e.score) return null;
                   return (
-                    <tr key={key} className="border-t border-border">
-                      <td className="py-2">{icon} {label}</td>
-                      <td>{predLines(e).map((l, i) => <div key={i}>{l}</div>)}</td>
-                      <td><strong>{e.score.score.toFixed(1)}/100</strong></td>
-                      <td><RayFaces score={e.score.score} /></td>
-                    </tr>
+                    <Fragment key={key}>
+                      <tr className="border-t border-border">
+                        <td className="py-2">{icon} {label}</td>
+                        <td>{predLines(e).map((l, i) => <div key={i}>{l}</div>)}</td>
+                        <td><strong>{e.score.score.toFixed(1)}/100</strong></td>
+                        <td><RayFaces score={e.score.score} /></td>
+                      </tr>
+                      <tr>
+                        <td colSpan={4} className="pb-3">
+                          <ScoreBreakdown score={e.score} />
+                        </td>
+                      </tr>
+                    </Fragment>
                   );
                 })}
               </tbody>
@@ -114,6 +123,7 @@ export default async function Page() {
                     </div>
                     <div className="mt-1 text-sm text-muted">{predLines(e).map((l, i) => <div key={i}>{l}</div>)}</div>
                     <div className="mt-1"><RayFaces score={e.score.score} /></div>
+                    <ScoreBreakdown score={e.score} />
                   </div>
                 );
               })}
@@ -124,6 +134,11 @@ export default async function Page() {
           Each source is scored out of 100 across four fields: high temp (30), low temp (30), wind (20),
           precipitation (20), based on closeness to actual recorded conditions.
         </p>
+      </SectionBand>
+
+      <SectionBand tone="light">
+        <h2 className="font-display mb-1 text-2xl font-bold">What they&apos;re predicting now</h2>
+        <UpcomingForecasts data={forecasts} />
       </SectionBand>
 
       {rows.length > 0 && (

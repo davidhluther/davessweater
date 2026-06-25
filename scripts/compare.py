@@ -442,6 +442,9 @@ def run_daily_comparison(target_date=None):
     # Update running score
     _update_running_scores(target_date, comparison)
 
+    # Emit the newest unscored forecasts for the "what they're predicting now" section
+    build_latest_forecasts()
+
     return comparison
 
 
@@ -490,14 +493,121 @@ def _update_running_scores(date, comparison):
     print(f"  Updated running scores: {scores_path} ({len(entries)} entries)")
 
 
+# ═══════════════════════════════════════════════════════════════════
+# UPCOMING (UNSCORED) FORECASTS — "what they're predicting now"
+# ═══════════════════════════════════════════════════════════════════
+
+SOURCE_LABELS = {"openmeteo": "Open-Meteo", "raysweather": "Ray's Weather", "apple_weather": "Apple Weather"}
+
+
+def _wind_display(contract):
+    lo, hi = contract.get("wind_lo"), contract.get("wind_hi")
+    if lo is not None and hi is not None:
+        return f"{round(lo)}–{round(hi)} mph"
+    w = contract.get("wind_mph")
+    return f"{round(w)} mph" if w is not None else None
+
+
+def _forecast_display(contract):
+    return {
+        "high_f": contract.get("high_f"),
+        "low_f": contract.get("low_f"),
+        "wind": _wind_display(contract),
+        "precip_type": contract.get("precip_type"),
+    }
+
+
+def build_latest_forecasts():
+    """Emit data/latest_forecasts.json — each source's newest *unscored* forecast
+    (the upcoming day, before its actuals exist), so the site can show "here's what
+    each predicts; come back and check." Reuses the same per-source parsing as the
+    daily comparison so nothing is duplicated. No scoring (no actuals yet)."""
+    import re
+    pred_root = DATA_DIR / "predictions"
+    if not pred_root.exists():
+        return None
+    dirs = sorted(d.name for d in pred_root.iterdir()
+                  if d.is_dir() and re.match(r"^\d{4}-\d{2}-\d{2}$", d.name))
+    if not dirs:
+        return None
+    date = dirs[-1]
+    pred_dir = pred_root / date
+    sources = {}
+
+    om = pred_dir / "openmeteo_forecast.json"
+    if om.exists():
+        for day in json.load(open(om)).get("daily", []):
+            if day.get("date") == date:
+                sources["openmeteo"] = _forecast_display(_to_contract(day))
+                break
+
+    rays_rebuilt = pred_dir / "rays_boone.rebuilt.json"
+    rays_path = rays_rebuilt if rays_rebuilt.exists() else pred_dir / "rays_boone.json"
+    if rays_path.exists():
+        rays_pred = _best_rays_prediction(json.load(open(rays_path)), date)
+        if rays_pred and (_get_high(rays_pred) is not None or _get_low(rays_pred) is not None):
+            sources["raysweather"] = _forecast_display(_to_contract(rays_pred))
+
+    apple_path = pred_dir / "iphone_forecast_apple.json"
+    apple_data = None
+    if apple_path.exists():
+        apple_data = _parse_apple_forecast(apple_path)
+    elif (pred_dir / "iphone_forecast.json").exists():
+        apple_data = _parse_apple_forecast(pred_dir / "iphone_forecast.json")
+        if isinstance(apple_data, dict) and isinstance(apple_data.get("forecast"), dict):
+            apple_data = dict(apple_data["forecast"])
+    if apple_data:
+        if apple_data.get("conditions") and not apple_data.get("category"):
+            apple_data["category"] = _apple_condition_to_category(apple_data["conditions"])
+        if "precip_in" not in apple_data and apple_data.get("category"):
+            cat = apple_data["category"]
+            if cat in ("rain", "drizzle", "storm", "snow"):
+                apple_data["precip_in"] = 0.01
+            elif cat != "unknown":
+                apple_data["precip_in"] = 0.0
+        if _get_high(apple_data) is not None or _get_low(apple_data) is not None:
+            sources["apple_weather"] = _forecast_display(_to_contract(apple_data))
+
+    for s in SOURCES:
+        key = s["key"]
+        if key in sources:
+            continue
+        fpath = pred_dir / f"{key}_forecast.json"
+        if not fpath.exists():
+            continue
+        try:
+            data = json.load(open(fpath))
+        except (json.JSONDecodeError, OSError):
+            continue
+        for day in data.get("daily", []):
+            if day.get("date") == date:
+                sources[key] = _forecast_display(_to_contract(day))
+                break
+
+    labels = dict(SOURCE_LABELS)
+    for s in SOURCES:
+        labels[s["key"]] = s["label"]
+    for k, v in sources.items():
+        v["label"] = labels.get(k, k)
+
+    out = {"date": date, "generated_at": datetime.now(EST).isoformat(), "sources": sources}
+    with open(DATA_DIR / "latest_forecasts.json", "w") as f:
+        json.dump(out, f, indent=2)
+    print(f"  Wrote latest forecasts: {len(sources)} sources for {date}")
+    return out
+
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Dave's Sweater daily comparison")
     parser.add_argument("--date", type=str, help="Date to compare (YYYY-MM-DD, default: yesterday)")
     parser.add_argument("--sweater-only", action="store_true", help="Just check sweater weather for today")
+    parser.add_argument("--forecasts-only", action="store_true", help="Just rebuild data/latest_forecasts.json")
     args = parser.parse_args()
 
-    if args.sweater_only:
+    if args.forecasts_only:
+        build_latest_forecasts()
+    elif args.sweater_only:
         # Quick sweater check using current Open-Meteo data
         from capture_openmeteo import fetch_json, FORECAST_URL
         raw = fetch_json(FORECAST_URL)

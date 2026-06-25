@@ -1,7 +1,7 @@
 import { readFile, readdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import type { Comparison, Scores, BlogPost } from "@/lib/types";
+import type { Comparison, Scores, BlogPost, LatestForecasts } from "@/lib/types";
 
 const DATA = join(process.cwd(), "data");
 
@@ -32,6 +32,10 @@ export async function getComparisonWindow(dates: string[]): Promise<Comparison[]
 
 export async function getScores(): Promise<Scores | null> {
   return readJson<Scores>(join(DATA, "scores.json"));
+}
+
+export async function getLatestForecasts(): Promise<LatestForecasts | null> {
+  return readJson<LatestForecasts>(join(DATA, "latest_forecasts.json"));
 }
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
