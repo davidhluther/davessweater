@@ -81,17 +81,17 @@ export default function WhyTimeline({
   const beamHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
-    <section className="w-full overflow-x-clip bg-teal-900 text-white [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px]">
+    <section className="w-full bg-teal-900 text-white [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px]">
       <div ref={ref} className="relative mx-auto w-full max-w-3xl px-4 py-10 sm:py-14">
         <div className="mb-1 text-xs font-bold uppercase tracking-wider text-orange">Why this exists</div>
         <p className="mb-8 text-sm text-white/60">Boone&apos;s outlook, fact-checked daily.</p>
 
-        <div aria-hidden className="absolute left-[18px] top-[5.5rem] bottom-10 w-0.5 bg-white/15" />
-        <motion.div
-          aria-hidden
-          className="absolute left-[18px] top-[5.5rem] w-0.5 bg-gradient-to-b from-emerald-300 to-orange"
-          style={{ height: reduce ? "100%" : beamHeight }}
-        />
+        <div aria-hidden className="absolute left-[18px] top-[5.5rem] bottom-10 w-0.5 bg-white/15">
+          <motion.div
+            className="w-full bg-gradient-to-b from-emerald-300 to-orange"
+            style={{ height: reduce ? "100%" : beamHeight }}
+          />
+        </div>
 
         <div className="relative space-y-8">
           <Beat reduce={reduce}>
@@ -136,7 +136,7 @@ export default function WhyTimeline({
             <p className="mt-1 text-sm text-white/70">Better data is free. Good design is cheap. This site is the proof.</p>
             <Link
               href="/right-wrong-ray"
-              className="mt-4 inline-flex min-h-11 items-center rounded-lg bg-orange px-5 font-bold text-white transition-colors hover:bg-orange-600"
+              className="mt-4 inline-flex min-h-11 items-center justify-center rounded-lg bg-orange px-5 py-2 text-center font-bold text-white transition-colors hover:bg-orange-600"
             >
               See every day on the scoreboard →
             </Link>

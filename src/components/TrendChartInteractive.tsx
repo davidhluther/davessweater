@@ -62,11 +62,13 @@ export default function TrendChartInteractive({ points, tooltip }:
   return (
     <div className="h-[260px] w-full">
       <ParentSize>{({ width, height }) => width > 0 ? <Chart width={width} height={height} points={points} tooltip={tooltip} /> : null}</ParentSize>
-      <table className="sr-only">
-        <caption>Daily accuracy scores, Open-Meteo vs Ray&apos;s</caption>
-        <thead><tr><th>Date</th><th>Open-Meteo</th><th>Ray&apos;s</th></tr></thead>
-        <tbody>{points.map((p) => <tr key={p.date}><td>{p.date}</td><td>{p.free ?? ""}</td><td>{p.rays ?? ""}</td></tr>)}</tbody>
-      </table>
+      <div className="sr-only">
+        <table>
+          <caption>Daily accuracy scores, Open-Meteo vs Ray&apos;s</caption>
+          <thead><tr><th>Date</th><th>Open-Meteo</th><th>Ray&apos;s</th></tr></thead>
+          <tbody>{points.map((p) => <tr key={p.date}><td>{p.date}</td><td>{p.free ?? ""}</td><td>{p.rays ?? ""}</td></tr>)}</tbody>
+        </table>
+      </div>
     </div>
   );
 }
