@@ -81,7 +81,7 @@ export default function WhyTimeline({
   const beamHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
-    <section className="w-full bg-teal-900 text-white [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px]">
+    <section className="w-full overflow-x-clip bg-teal-900 text-white [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px]">
       <div ref={ref} className="relative mx-auto w-full max-w-3xl px-4 py-10 sm:py-14">
         <div className="mb-1 text-xs font-bold uppercase tracking-wider text-orange">Why this exists</div>
         <p className="mb-8 text-sm text-white/60">Boone&apos;s outlook, fact-checked daily.</p>
