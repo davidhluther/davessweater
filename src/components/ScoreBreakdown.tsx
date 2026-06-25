@@ -23,7 +23,7 @@ function offBy(f: ScoreBreakdownField, unit: string): string {
 
 export default function ScoreBreakdown({ score }: { score: Score }) {
   const bd = score.breakdown ?? {};
-  const rows = FIELDS.filter((field) => bd[field.key]?.scored);
+  const rows = FIELDS.filter((field) => bd[field.key]);
   if (!rows.length) return null;
   return (
     <div className="mt-2 grid grid-cols-[1fr_auto_auto] gap-x-3 gap-y-1 rounded-lg border border-border/70 bg-background px-3 py-2 text-[0.7rem] leading-tight">
@@ -32,6 +32,15 @@ export default function ScoreBreakdown({ score }: { score: Score }) {
       <div className="text-right text-muted">Pts</div>
       {rows.map(({ key, label, unit }) => {
         const f = bd[key];
+        if (!f.scored) {
+          return (
+            <Fragment key={key}>
+              <div className="text-muted">{label} <span className="text-foreground/45">· not published</span></div>
+              <div className="text-right text-muted">— → {fmt(f.actual, unit)}</div>
+              <div className="text-right text-muted">—</div>
+            </Fragment>
+          );
+        }
         return (
           <Fragment key={key}>
             <div className="text-muted">
