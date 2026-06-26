@@ -70,8 +70,9 @@ Plan: `planning/plans/2026-06-24-rays-capture-interval-scoring.md`.
       point earned), Open-Meteo 91.65 unchanged, free wins by ~26.5, Ray's "Right" days 35→25. **Merged + live.**
 - [ ] **Methodology transparency (before promotion)** — document the interval scoring + NWS qualitative-wind
       mapping + width penalty on `/right-wrong-ray` (+ refresh the stale `CLAUDE.md` scoring table).
+      → **now tracked as R4 + R8** in the audit register (+ R5 adds actuals-provenance disclosure).
 - [ ] **Capture-quality monitoring** — alert when a source's coverage drops (this regression went unnoticed
-      for weeks). Part of the promotion audit.
+      for weeks). → **now tracked as R3** in the audit register.
 
 ## Done: M3 iteration #2 — "Why we exist" scrollytelling section
 Restrained, scroll-driven narrative section on the homepage (below the hero, replacing the standalone
@@ -84,15 +85,73 @@ on a framer-motion timeline (scroll-driven beam via `useScroll`), five data-boun
       `ChartReveal`/`WhyTimeline` built; `whyStats` helper; `npm test`/lint/`build` green. Aurora deferred.
 - [ ] **M3 #3 — N-source viz** — surface the 7 new forecasters; still gated on them accruing enough scored days.
 
-## Active (next session): Promotion-readiness audit (dimensions 1–4)
-Harden the inherited v1 pipeline before promotion (it publicly grades a named competitor → scrutiny).
-**Full handoff: `planning/handoffs/2026-06-24-promotion-readiness-handoff.md`.** Dimensions: (1) data
-integrity & silent-failure monitoring, (2) source-labeling honesty, (3) claim defensibility + legal,
-(4) scoring robustness. Output = prioritized risk register → this checklist. Known seed issues: no
-capture-quality monitoring (the Ray regression went unnoticed for weeks); the live M2 hero still labels the
-Open-Meteo fallback as "Apple" (`homeStats.ts`/`Scoreboard.tsx`/`IphoneShot.tsx`); the on-site + `CLAUDE.md`
-methodology is stale (no interval/snow model); snow handling unproven on winter data. Run as a multi-agent
-Workflow → synthesize → triage → fix; adversarially verify anything touching scoring or public numbers.
+## Promotion-readiness audit — RAN 2026-06-25 → risk register
+Multi-agent audit (Dims 1–4, adversarially verified) complete. 24 findings → 22 verified + 2 critic → a
+12-entry prioritized register. **Full detail: `planning/audits/2026-06-25-promotion-readiness-risk-register.md`.**
+Fix order: **R1 → R6 → R2 → R4 → R5 → R3 → R7 → R8 → R9 → R11 → R12** (R10 = counsel, parallel).
+
+> **Apple-branch decision (resolved 2026-06-26):** owner **accepts** the fallback-as-Apple labeling as a
+> known, low-likelihood risk (doesn't expect scrutiny on it; real historical Apple data is impractical for a
+> critic to reconstruct). R1 is **WON'T-FIX / accepted** — no gate, no relabel, no `bestFree` change. The
+> `feat/apple-real-data` branch (adds 26 real Apple days) may ship at the owner's discretion; it only improves honesty.
+
+**🔴 Critical:**
+- [~] **R1 — "Apple Weather" is the Open-Meteo fallback everywhere — ACCEPTED RISK (owner, 2026-06-26).**
+      107/108 "Apple" days aren't Apple (only 2026-03-06 real); shown on `/right-wrong-ray` (📱), the homepage
+      "free · 91.9" chip, and beside a real Apple photo. Owner's call: leave as-is. Residual (optional, not a
+      labeling issue): the headline free source can flip Apple↔Open-Meteo day-to-day on a 0.1-pt tiebreak —
+      stabilize the tiebreak only if desired. (`page.tsx:16-25`, `homeStats.ts:84-86`, `screenshot.ts:9-13`)
+- [x] **R2 — coverage-normalized scoring — DONE 2026-06-26 (verified; uncommitted).** Score =
+      `raw_points / max_available × 100`. Open-Meteo **91.66** + Apple **91.94** provably unchanged; Ray
+      65.3→**72.68**; tracking gap 26.5→**19.1**; Ray W/L/M 26/35/49→54/20/36. `scoring.py` (+`normalized_score`,
+      returns `raw_points`/`max_available`), `renormalize_history.py` backfilled 476 comparisons (idempotent) +
+      rebuilt `scores.json`/CSV; `ScoreBreakdown` footer "raw of max available → score"; `/right-wrong-ray`
+      caption + `CLAUDE.md` scoring table updated. 17 py + 45 vitest pass, lint/build green, **adversarially
+      reviewed CLEAN**. Plan: `planning/plans/2026-06-26-r2-coverage-normalized-scoring.md`.
+      ⚠️ **Ships on next commit + push** — the backfilled `data/` must travel with the code or the live site
+      contradicts its own methodology caption.
+
+**🟠 High:**
+- [ ] **R6 — The 7 "gated" new sources render publicly** via `UpcomingForecasts` (no allowlist;
+      `page.tsx:141`, `UpcomingForecasts.tsx:18-21`). Apply the scoreboard allowlist / one shared min-days
+      gate. *(Quick win — effort S.)*
+- [x] **R4 — methodology now visible — DONE 2026-06-26 (uncommitted).** New `/methodology` page
+      (`src/app/methodology/page.tsx`): the 5-field 100-pt model with exact tolerances, coverage normalization,
+      the NWS qualitative-wind mapping, grade bands, actuals provenance, and links to `scoring.py` + `data/` to
+      recompute. Fixed the stale `/right-wrong-ray` caption (now 5 fields + a "Full methodology →" link); footer
+      "How we score it" repointed to `/methodology`. Build green, verified in preview.
+- [~] **R5 — Open-Meteo graded against its own archive** — **disclosure DONE 2026-06-26** (the `/methodology`
+      "What counts as actual" section states the Open-Meteo-archive provenance + the self-judging circularity
+      plainly). Remaining (future/larger): cross-validate actuals vs NWS/station + stand up the Ecowitt
+      ground-truth station so the "actual" is independent (M6 hardware).
+- [ ] **R3 — No capture-quality / coverage-drop monitoring** (the Ray-regression class). All capture steps
+      `continue-on-error`; compare never exits nonzero. Add a post-compare guard that fails the job on a
+      coverage drop / missing expected source / source count < N, + a predictions↔comparisons parity test.
+      *(Replaces the standalone "capture-quality monitoring" item below.)*
+
+**🟡 Medium:**
+- [ ] **R7 — Silent missing-actuals dropped 2026-05-22 (green workflow); + 2 ghost empty rows.** Make
+      missing-actuals loud + retried + backfill sweep; backfill 05-22; stop writing empty comparisons; delete
+      the 2 ghost rows (`2026-03-03`, `2026-06-18`).
+- [x] **R8 — `CLAUDE.md` scoring section refreshed — DONE 2026-06-26 (uncommitted).** Repointed at
+      `scripts/scoring.py`, corrected the wind row (interval + 0.5 width tax), split precip into type(10, partial
+      credit)+amount(10, snow-aware), and added the coverage-normalization note. The on-site `/methodology` page
+      (R4) is the public-facing synced description.
+- [ ] **R9 — Concurrent compare + `-X ours` merge footgun** (benign today, latent). Add a `concurrency:` group
+      / rebase-and-retry; add `reset --hard origin/main` to `daily_capture`.
+- [ ] **R11 — OWM/Met.no day-0 low is the partial-bucket min, not the calendar-day low** (gated now → low
+      public impact, but **MUST fix before un-gating** those sources). Forfeit day-0 low or score next-day.
+- [ ] **R12 — Snow-depth scoring has never graded a real day** (0/478; the 2 Ray snow days used the legacy
+      model). Replay a past Boone snow event before surfacing any snow column / winter claim.
+
+**🟡 Counsel (parallel, not engineering):**
+- [ ] **R10 — Trademark / scrape-republish exposure.** Disclaimer present + global (good). Counsel review:
+      right to republish scraped Ray's screenshots; nominative fair use given the commercial `/shop` + phonetic
+      name; keep every claim data-traceable.
+
+**Low / no-launch-action** (detail in the register): new sources mislabeled "free" internally (5/7 are
+keyed/paid-tier); the gate is a by-name allowlist (add a min-days rule when wiring new sources in); iPhone
+JSON/PNG can diverge.
 
 ## Done: M3 — dynamic data-viz (PR #68 — merged + live)
 v1 = Open-Meteo (free) vs Ray's (paid); Apple dropped (its scored data is the Open-Meteo fallback). Built
@@ -118,7 +177,8 @@ via subagent-driven TDD + per-task + final adversarial review (READY_TO_MERGE), 
       `IS_FREE`; surface all sources once the data ships.
 - [ ] **Relabel the live homepage Apple slot** — the M2 hero scoreboard + "free forecast averaged 91.8"
       still present the Open-Meteo *fallback* as "Apple Weather" (M3 viz correctly omits it). Drop or
-      relabel it honestly. (Surfaced by the M3 review; out of M3-viz scope.)
+      relabel it honestly. → **now R1 (critical)** in the audit register — scope widened (also `/right-wrong-ray`,
+      the `bestFree` headline chip, and the phone-photo caption).
 
 ## Post-M2 / parallel follow-ups
 - [ ] **Automate the *real* Apple Weather screenshot** — today the hero shot is daily-auto only for the
