@@ -9,6 +9,7 @@ import CoverageMatrix from "@/components/CoverageMatrix";
 import ScoreBreakdown from "@/components/ScoreBreakdown";
 import UpcomingForecasts from "@/components/UpcomingForecasts";
 import type { SourceEntry } from "@/lib/types";
+import Link from "next/link";
 import { Fragment, type ReactNode } from "react";
 
 export const metadata = { title: "Right Ray / Wrong Ray" };
@@ -131,8 +132,14 @@ export default async function Page() {
           </>
         ) : <p className="text-muted">No comparison yet.</p>}
         <p className="mt-4 text-xs italic text-muted">
-          Each source is scored out of 100 across four fields: high temp (30), low temp (30), wind (20),
-          precipitation (20), based on closeness to actual recorded conditions.
+          Each forecast is scored on five fields — high temp (30), low temp (30), wind (20, scored as a range
+          when the source gives one), precip type (10) and precip amount (10) — by closeness to the actual
+          recorded conditions, then expressed as a percentage of the points it was eligible for. A source
+          isn&apos;t penalized for a field it never publishes (e.g. Ray&apos;s doesn&apos;t publish a rain
+          total): that field drops out of its denominator instead of counting as a miss.
+        </p>
+        <p className="mt-2 text-xs">
+          <Link href="/methodology" className="text-teal underline underline-offset-2">Full methodology &rarr;</Link>
         </p>
       </SectionBand>
 
