@@ -50,13 +50,17 @@ jobs:
           DIR="data/predictions/${DATE}"
           mkdir -p "$DIR"
 
-          # Decode base64 screenshot
-          echo "$SCREENSHOT_B64" | base64 -d > "${DIR}/iphone_screenshot.png"
-
-          # Validate it's actually a PNG
-          if ! file "${DIR}/iphone_screenshot.png" | grep -q PNG; then
-            echo "ERROR: Decoded file is not a valid PNG"
-            exit 1
+          # Decode base64 screenshot (OPTIONAL — data-only dispatches omit it)
+          if [ -n "$SCREENSHOT_B64" ]; then
+            echo "$SCREENSHOT_B64" | base64 -d > "${DIR}/iphone_screenshot.png"
+            # Validate it's actually a PNG
+            if ! file "${DIR}/iphone_screenshot.png" | grep -q PNG; then
+              echo "ERROR: Decoded file is not a valid PNG"
+              exit 1
+            fi
+            echo "Saved screenshot."
+          else
+            echo "No screenshot in payload — data-only upload, skipping PNG."
           fi
 
           # Save Apple Weather forecast numbers if provided
@@ -94,7 +98,7 @@ jobs:
           fi
 
           echo "date=${DATE}" >> "$GITHUB_ENV"
-          echo "Saved screenshot to ${DIR}/iphone_screenshot.png"
+          echo "Upload complete for ${DATE}."
 
       # Site is built by Vercel (next build) on push; the bot only commits data/.
       - name: Commit and push
