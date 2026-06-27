@@ -8,7 +8,7 @@ function fmt(date: string | null): string {
 
 export default function IphoneShot({ className = "" }: { className?: string }) {
   const info = latestScreenshotInfo();
-  const label = info.source === "apple" ? "Apple Weather · free" : "Open-Meteo forecast";
+  const label = info.source === "apple" ? "Apple Weather" : "Open-Meteo forecast";
   return (
     <figure className={className}>
       <div className="mx-auto w-[150px] rounded-[1.4rem] bg-black p-1.5">

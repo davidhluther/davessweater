@@ -31,7 +31,7 @@ function Chart({ width, height, points, tooltip }:
 
   return (
     <div style={{ position: "relative" }} onMouseLeave={hideTooltip}>
-      <svg width={width} height={height} role="img" aria-label="Daily forecast accuracy: Open-Meteo (free) vs Ray's Weather (paid) over the tracked head-to-head window">
+      <svg width={width} height={height} role="img" aria-label="Daily forecast accuracy: Open-Meteo vs Ray's Weather over the tracked head-to-head window">
         <Group left={M.left} top={M.top}>
           <GridRows scale={y} width={iw} height={ih} tickValues={[60, 75]} stroke="var(--color-border, #ffffff22)" strokeDasharray="3 4" />
           <AxisLeft scale={y} numTicks={3} tickStroke="transparent" stroke="transparent" tickLabelProps={() => ({ fill: "#ffffff80", fontSize: 10, dx: -2 })} />
