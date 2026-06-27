@@ -55,6 +55,14 @@ export default function ScoreBreakdown({ score }: { score: Score }) {
           </Fragment>
         );
       })}
+      {score.max_available != null && score.raw_points != null && (
+        <div className="col-span-3 mt-1 border-t border-border/60 pt-1 text-foreground/70">
+          Total: <span className="font-semibold text-foreground">{score.raw_points}</span> of{" "}
+          {score.max_available} available
+          <span className="text-muted"> → </span>
+          <span className="font-semibold text-foreground">{score.score.toFixed(1)}</span>
+        </div>
+      )}
     </div>
   );
 }

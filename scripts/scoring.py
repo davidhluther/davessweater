@@ -96,6 +96,16 @@ def _score_grade(score):
     return {"verdict": "wrong", "ray_count": 1}
 
 
+def normalized_score(raw_points, max_available):
+    """Score as a percentage of the points the forecast was actually eligible for.
+    A forfeited field (e.g. Ray's precip amount, which he never publishes) shrinks
+    max_available instead of dragging the score against a fixed 100-pt denominator —
+    so a source is graded on what it forecasts, not penalized for what it omits."""
+    if not max_available:
+        return 0.0
+    return round(raw_points / max_available * 100, 1)
+
+
 def _delta(p, a):
     return round(abs(p - a), 3) if (p is not None and a is not None) else None
 
@@ -140,7 +150,7 @@ def score_prediction(pred, actual):
         wind_mid = (lo + hi) / 2.0
         wind_predicted = f"{lo}-{hi}" if lo != hi else wind_mid
 
-    total = round(sum((p or 0) for p in (high, low, wind, ptype, pamt)), 1)
+    raw_points = round(sum((p or 0) for p in (high, low, wind, ptype, pamt)), 1)
     breakdown = {
         "high_temp": _bd(high, 30, pred.get("high_f") if "high" in fp else None, actual.get("high_f")),
         "low_temp": _bd(low, 30, pred.get("low_f") if "low" in fp else None, actual.get("low_f")),
@@ -151,9 +161,13 @@ def score_prediction(pred, actual):
                         "predicted": pred.get("precip_type") if "precip_type" in fp else None, "actual": actual_type},
         "precip_amount": _amount_bd(pred, actual, actual_type, pamt),
     }
+    max_available = sum(f["max"] for f in breakdown.values() if f["scored"])
+    score = normalized_score(raw_points, max_available)
     return {
-        "score": total,
-        "grade": _score_grade(total),
+        "score": score,
+        "raw_points": raw_points,
+        "max_available": max_available,
+        "grade": _score_grade(score),
         "coverage": {k: v["points"] is not None for k, v in breakdown.items()},
         "breakdown": breakdown,
     }
