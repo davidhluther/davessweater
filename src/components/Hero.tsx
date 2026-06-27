@@ -4,6 +4,7 @@ import BrandMark from "@/components/BrandMark";
 import Scoreboard from "@/components/Scoreboard";
 import IphoneShot from "@/components/IphoneShot";
 import CompositeForecast from "@/components/CompositeForecast";
+import { copy } from "@/content/copy";
 
 export default function Hero({ stats }: { stats: HeroStats }) {
   return (
@@ -14,23 +15,27 @@ export default function Hero({ stats }: { stats: HeroStats }) {
             <BrandMark /> · {stats.trackingDays} days on the record
           </div>
           <h1 className="font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-            The free forecast keeps beating the one <span className="text-orange">you pay for.</span>
+            {copy.hero.headlineLead}<span className="text-orange">{copy.hero.headlineEmphasis}</span>
           </h1>
           <IphoneShot className="my-5 md:hidden" />
           <div className="max-w-md">
             <Scoreboard sources={stats.trackingSources} />
           </div>
-          <div className="mt-5 flex justify-center">
+          <div className="mt-5 flex flex-wrap justify-center gap-3">
             <Link href="/right-wrong-ray"
               className="inline-flex min-h-11 items-center justify-center rounded-lg bg-orange-600 px-5 font-bold text-white transition-colors hover:bg-[#9a3412]">
-              See the full scoreboard
+              {copy.hero.ctaPrimary}
+            </Link>
+            <Link href="/methodology"
+              className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/30 px-5 font-bold text-white transition-colors hover:bg-white/10">
+              {copy.hero.ctaSecondary}
             </Link>
           </div>
         </div>
         <div className="hidden md:block">
           <IphoneShot />
           <p className="mt-3 max-w-[12rem] text-xs text-white/70">
-            The only weather service you need is already in your pocket.
+            {copy.hero.iphoneAside}
           </p>
         </div>
         <div className="md:col-span-2">

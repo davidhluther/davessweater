@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     default: "Dave's Sweater — Boone's most mostly reliable weather tracker and resource",
     template: "%s — Dave's Sweater",
   },
-  description: "The free forecast keeps beating the paid one. We score every Boone forecast against what actually happened — and keep the receipts.",
+  description: "The free forecasts keep beating the paid one. We score every Boone forecast against what actually happened — and keep the receipts.",
   icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
   other: {
     "google-site-verification": "Ajmlc52hA5hJQr-7WY7T9YU4Vlej8vkx1_GHmYHCAJo",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Dave's Sweater — Boone's most mostly reliable weather tracker",
-    description: "The free forecast keeps beating the paid one. We score every Boone forecast against what actually happened — and keep the receipts.",
+    description: "The free forecasts keep beating the paid one. We score every Boone forecast against what actually happened — and keep the receipts.",
   },
 };
 
