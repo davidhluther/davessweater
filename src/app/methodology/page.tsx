@@ -2,9 +2,17 @@ import Link from "next/link";
 import SectionBand from "@/components/SectionBand";
 
 export const metadata = {
-  title: "Methodology",
+  title: "How we score weather forecast accuracy",
   description:
-    "Exactly how Dave's Sweater scores every Boone forecast against what actually happened — the 100-point model, coverage normalization, and where the 'actual' numbers come from. All public and reproducible.",
+    "How Dave's Sweater grades every Boone forecast against what actually happened: the 100-point model, coverage-fair scoring, and public data you can recompute.",
+  alternates: { canonical: "/methodology" },
+  openGraph: {
+    title: "How Dave's Sweater scores forecast accuracy",
+    description:
+      "The 100-point model, coverage-fair scoring, and where the “actual” weather comes from — all public and reproducible.",
+    url: "https://davessweater.com/methodology",
+    type: "article",
+  },
 };
 
 const REPO = "https://github.com/davidhluther/davessweater";

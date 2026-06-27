@@ -25,6 +25,11 @@ export const metadata: Metadata = {
     description: "Free forecasts beat Ray's, tracked daily. Boone's most mostly reliable weather resource.",
     url: "https://davessweater.com", type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Dave's Sweater — Boone's most mostly reliable weather tracker",
+    description: "The free forecast keeps beating the paid one. We score every Boone forecast against what actually happened — and keep the receipts.",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
