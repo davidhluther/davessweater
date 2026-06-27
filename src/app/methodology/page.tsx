@@ -1,5 +1,6 @@
 import Link from "next/link";
 import SectionBand from "@/components/SectionBand";
+import JsonLd from "@/components/JsonLd";
 
 export const metadata = {
   title: "How we score weather forecast accuracy",
@@ -17,9 +18,34 @@ export const metadata = {
 
 const REPO = "https://github.com/davidhluther/davessweater";
 
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "How Dave's Sweater scores weather forecast accuracy",
+    "description":
+      "The 100-point model, coverage-fair scoring, the NWS qualitative-wind mapping, and where the actual weather comes from. All public and reproducible.",
+    "about": "Weather forecast accuracy scoring methodology",
+    "isAccessibleForFree": true,
+    "author": { "@type": "Organization", "name": "Dave's Sweater" },
+    "publisher": { "@type": "Organization", "name": "Dave's Sweater", "url": "https://davessweater.com" },
+    "mainEntityOfPage": "https://davessweater.com/methodology",
+    "url": "https://davessweater.com/methodology",
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://davessweater.com" },
+      { "@type": "ListItem", "position": 2, "name": "Methodology", "item": "https://davessweater.com/methodology" },
+    ],
+  },
+];
+
 export default function Page() {
   return (
     <>
+      <JsonLd data={jsonLd} />
       <SectionBand tone="surface">
         <h1 className="font-display text-2xl font-bold sm:text-3xl">How we score it</h1>
         <p className="mt-2 max-w-2xl text-sm text-muted">

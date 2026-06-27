@@ -93,9 +93,11 @@ Fix order: **R1 → R6 → R2 → R4 → R5 → R3 → R7 → R8 → R9 → R11 
 > **✅ Shipped 2026-06-27 — PR #72 merged + live:** R2 (renormalized scoring), R4 (on-site `/methodology`),
 > R5 (actuals-provenance disclosure), R8 (`CLAUDE.md` refresh). Ray now ≈72.8 / gap ≈19 on davessweater.com.
 > **SEO follow-up (branch `seo-methodology-structure`):** `/methodology` added to `sitemap.ts`; homepage
-> in-content link added; keyword title + canonical + OpenGraph/Twitter metadata. ⚠️ **JSON-LD structured data**
-> (TechArticle/Dataset/Organization) still **pending** — the security hook blocks the standard inline
-> `<script type="application/ld+json">` injection pattern; needs owner OK on the (escaped, safe) approach.
+> in-content link added; keyword title + canonical + OpenGraph/Twitter metadata. ✅ **JSON-LD structured data**
+> added 2026-06-27: site-wide `WebSite`+`Organization`; `TechArticle`+breadcrumb on `/methodology`; `Dataset`
+> on `/right-wrong-ray` (the public scores as a downloadable dataset). Rendered via React's safe text-escaping
+> (`src/components/JsonLd.tsx`, no inline-HTML-injection API), so the security hook stays fully intact; all
+> blocks validate as parseable JSON. (PR #73.)
 
 > **Apple-branch decision (resolved 2026-06-26):** owner **accepts** the fallback-as-Apple labeling as a
 > known, low-likelihood risk (doesn't expect scrutiny on it; real historical Apple data is impractical for a
