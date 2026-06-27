@@ -10,6 +10,7 @@ import ScoreBreakdown from "@/components/ScoreBreakdown";
 import UpcomingForecasts from "@/components/UpcomingForecasts";
 import type { SourceEntry } from "@/lib/types";
 import Link from "next/link";
+import JsonLd from "@/components/JsonLd";
 import { Fragment, type ReactNode } from "react";
 
 export const metadata = { title: "Right Ray / Wrong Ray" };
@@ -42,6 +43,22 @@ const META: Record<string, { isFree: boolean }> = {
   "Ray's Weather": { isFree: false },
 };
 
+const datasetJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "Boone, NC forecast accuracy scores",
+  "description":
+    "Daily accuracy scores comparing Ray's Weather, Open-Meteo, and other forecasts for Boone and Deep Gap, NC against verified actual conditions.",
+  "creator": { "@type": "Organization", "name": "Dave's Sweater", "url": "https://davessweater.com" },
+  "isAccessibleForFree": true,
+  "url": "https://davessweater.com/right-wrong-ray",
+  "keywords": ["weather forecast accuracy", "Boone NC weather", "Ray's Weather", "Open-Meteo"],
+  "distribution": [
+    { "@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": "https://github.com/davidhluther/davessweater/blob/main/data/scores_export.csv" },
+    { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://github.com/davidhluther/davessweater/blob/main/data/scores.json" },
+  ],
+};
+
 export default async function Page() {
   const [comp, scores, forecasts] = await Promise.all([getLatestComparison(), getScores(), getLatestForecasts()]);
   const spark = sparkSeries(scores, ["openmeteo", "raysweather"]);
@@ -59,6 +76,7 @@ export default async function Page() {
   const a = comp?.actuals;
   return (
     <>
+      <JsonLd data={datasetJsonLd} />
       <SectionBand tone="surface">
         <h2 className="font-display text-2xl font-bold">Right Ray / Wrong Ray</h2>
         <p className="mb-4 mt-1 text-sm text-muted">

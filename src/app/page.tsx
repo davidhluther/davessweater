@@ -1,6 +1,7 @@
 import { getScores, getLatestComparison, getComparisonWindow } from "@/lib/data";
 import { heroStats, trendSeries, headToHead, whyStats } from "@/lib/homeStats";
 import { buildTooltipMap } from "@/lib/trendTooltip";
+import Link from "next/link";
 import Hero from "@/components/Hero";
 import SectionBand from "@/components/SectionBand";
 import WhyTimeline from "@/components/WhyTimeline";
@@ -32,6 +33,15 @@ export default async function HomePage() {
       </SectionBand>
 
       <WhyTimeline stats={why} points={trend} tooltip={tooltip} />
+
+      <SectionBand>
+        <p className="text-center text-sm text-muted">
+          Every score here comes from one transparent rubric, applied to all forecasters alike.{" "}
+          <Link href="/methodology" className="font-medium text-teal underline underline-offset-2">
+            See exactly how we score each forecast &rarr;
+          </Link>
+        </p>
+      </SectionBand>
 
       {h2h && (
         <SectionBand tone="surface">

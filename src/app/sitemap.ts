@@ -7,9 +7,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = ["", "/right-wrong-ray", "/videos", "/blog", "/shop"].map((r) => ({
     url: `${base}${r}`, lastModified: new Date(), changeFrequency: "daily" as const, priority: r === "" ? 1 : 0.7,
   }));
+  // Reference/evergreen pages — high priority, low churn.
+  const staticPages = [
+    { url: `${base}/methodology`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 },
+  ];
   const postRoutes = posts.map((p) => ({
     url: `${base}/blog/${slugFromLink(p.link, p.title)}`, lastModified: new Date(),
     changeFrequency: "monthly" as const, priority: 0.6,
   }));
-  return [...routes, ...postRoutes];
+  return [...routes, ...staticPages, ...postRoutes];
 }
