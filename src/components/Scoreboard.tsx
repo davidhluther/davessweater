@@ -8,7 +8,7 @@ export default function Scoreboard({ sources }: { sources: SourceStat[] }) {
         <div key={s.key}
           className={cn("flex flex-col rounded-xl border p-3", s.isFree ? "border-transparent bg-teal-800" : "border-orange bg-orange/15")}>
           <div className={cn("min-h-[2.5em] text-[0.65rem] leading-tight sm:text-xs", s.isFree ? "text-white/65" : "text-orange")}>
-            {s.label} · {s.isFree ? "free" : "paid"}
+            {s.label}
           </div>
           <div className={cn("font-display text-2xl font-bold sm:text-3xl", s.isFree ? "text-white" : "text-orange")}>
             {s.avg.toFixed(1)}

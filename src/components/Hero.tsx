@@ -3,6 +3,7 @@ import type { HeroStats } from "@/lib/homeStats";
 import BrandMark from "@/components/BrandMark";
 import Scoreboard from "@/components/Scoreboard";
 import IphoneShot from "@/components/IphoneShot";
+import CompositeForecast from "@/components/CompositeForecast";
 
 export default function Hero({ stats }: { stats: HeroStats }) {
   return (
@@ -31,6 +32,9 @@ export default function Hero({ stats }: { stats: HeroStats }) {
           <p className="mt-3 max-w-[12rem] text-xs text-white/70">
             The only weather service you need is already in your pocket.
           </p>
+        </div>
+        <div className="md:col-span-2">
+          <CompositeForecast />
         </div>
       </div>
     </section>

@@ -110,8 +110,8 @@ export default function WhyTimeline({
             <h3 className="mb-3 font-display text-lg font-bold sm:text-xl">The gap isn&apos;t close.</h3>
             <TrendChartInteractive points={points} tooltip={tooltip} />
             <div className="mt-3 grid grid-cols-3 gap-2">
-              <Stat label={`${stats.freeLabel} · free`} value={stats.freeAvg} tone="free" />
-              <Stat label="Ray's · paid" value={stats.raysAvg} tone="rays" />
+              <Stat label={stats.freeLabel} value={stats.freeAvg} tone="free" />
+              <Stat label="Ray's" value={stats.raysAvg} tone="rays" />
               <Stat label="The gap" value={stats.gap} tone="gap" suffix=" pts" />
             </div>
           </Beat>
