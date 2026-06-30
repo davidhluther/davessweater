@@ -115,21 +115,20 @@ export default function Page() {
       </SectionBand>
 
       <SectionBand tone="surface">
-        <h2 className="font-display text-xl font-bold">Scored on what you actually forecast</h2>
+        <h2 className="font-display text-xl font-bold">Saying &ldquo;no rain&rdquo; is a forecast too</h2>
         <p className="mt-1 max-w-2xl text-sm text-muted">
-          Not every service publishes every field. Rather than punish a forecaster for a number it never gave,
-          we score each source out of the points it was <em>eligible</em> for:
+          Every forecast is scored out of a fixed 100. The one wrinkle is the rain total. When a service says it{" "}
+          <em>won&rsquo;t</em> rain, that&rsquo;s a zero-inch prediction &mdash; and on a dry day it earns those
+          points like any other right call. When a service says it <em>will</em> rain but won&rsquo;t say how
+          much, it leaves the amount blank and gets no credit for it.
         </p>
-        <p className="my-3 rounded-lg border border-border bg-background px-4 py-3 text-center font-display text-base font-semibold">
-          score = points earned &divide; points available &times; 100
-        </p>
-        <p className="max-w-2xl text-sm text-muted">
-          A field a source never publishes drops out of its denominator instead of counting as a zero. The
-          clearest case: Ray&rsquo;s Weather never gives a numeric rain total, so its 10 precip-amount points
-          simply aren&rsquo;t in play &mdash; it&rsquo;s graded out of 90, not docked 10 for a question it was
-          never asked. You can see this on every breakdown row on the{" "}
-          <Link href="/right-wrong-ray" className="text-teal underline underline-offset-2">scoreboard</Link>{" "}
-          (&ldquo;Total: 80.7 of 90 available &rarr; 89.7&rdquo;).
+        <p className="mt-3 max-w-2xl text-sm text-muted">
+          That matters for{" "}
+          <Link href="/right-wrong-ray" className="text-teal underline underline-offset-2">Ray&rsquo;s Weather</Link>,
+          who never publishes a numeric rain total: he earns the amount points on the days he forecasts dry, and
+          forfeits them on the days he forecasts rain. What he can&rsquo;t do is come out ahead of a more accurate
+          forecast just by staying quiet on the hard number &mdash; leaving a field blank is never worth more than
+          answering it.
         </p>
       </SectionBand>
 

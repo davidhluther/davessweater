@@ -50,8 +50,6 @@
       },
       "score": {
         "score": 90.0,
-        "raw_points": 90.0,
-        "max_available": 100,
         "grade": {
           "verdict": "right",
           "ray_count": 5
@@ -119,9 +117,7 @@
         "precip_type": "rain"
       },
       "score": {
-        "score": 88.4,
-        "raw_points": 79.6,
-        "max_available": 90,
+        "score": 79.6,
         "grade": {
           "verdict": "right",
           "ray_count": 4
@@ -191,8 +187,6 @@
       },
       "score": {
         "score": 100.0,
-        "raw_points": 100.0,
-        "max_available": 100,
         "grade": {
           "verdict": "right",
           "ray_count": 5
@@ -265,9 +259,7 @@
         ]
       },
       "score": {
-        "score": 83.3,
-        "raw_points": 75.0,
-        "max_available": 90,
+        "score": 85.0,
         "grade": {
           "verdict": "right",
           "ray_count": 4
@@ -277,7 +269,7 @@
           "low_temp": true,
           "wind": true,
           "precip_type": true,
-          "precip_amount": false
+          "precip_amount": true
         },
         "breakdown": {
           "high_temp": {
@@ -312,12 +304,12 @@
             "actual": "rain"
           },
           "precip_amount": {
-            "points": null,
+            "points": 10.0,
             "max": 10,
-            "scored": false,
-            "predicted": null,
+            "scored": true,
+            "predicted": 0.0,
             "actual": 0.063,
-            "error": null,
+            "error": 0.063,
             "unit": "in_liquid"
           }
         }
@@ -342,8 +334,6 @@
       },
       "score": {
         "score": 70.0,
-        "raw_points": 70.0,
-        "max_available": 100,
         "grade": {
           "verdict": "meh",
           "ray_count": 3
@@ -417,12 +407,10 @@
         ]
       },
       "score": {
-        "score": 50.0,
-        "raw_points": 50.0,
-        "max_available": 100,
+        "score": 60.0,
         "grade": {
-          "verdict": "wrong",
-          "ray_count": 2
+          "verdict": "meh",
+          "ray_count": 3
         },
         "coverage": {
           "high_temp": true,
@@ -464,12 +452,12 @@
             "actual": "rain"
           },
           "precip_amount": {
-            "points": 0.0,
+            "points": 10.0,
             "max": 10,
             "scored": true,
-            "predicted": null,
+            "predicted": 0.0,
             "actual": 0.063,
-            "error": null,
+            "error": 0.063,
             "unit": "in_liquid"
           }
         }
@@ -495,8 +483,6 @@
       },
       "score": {
         "score": 81.0,
-        "raw_points": 81.0,
-        "max_available": 100,
         "grade": {
           "verdict": "right",
           "ray_count": 4
@@ -572,8 +558,6 @@
       },
       "score": {
         "score": 100.0,
-        "raw_points": 100.0,
-        "max_available": 100,
         "grade": {
           "verdict": "right",
           "ray_count": 5
@@ -649,8 +633,6 @@
       },
       "score": {
         "score": 90.0,
-        "raw_points": 90.0,
-        "max_available": 100,
         "grade": {
           "verdict": "right",
           "ray_count": 5
@@ -725,8 +707,6 @@
       },
       "score": {
         "score": 99.4,
-        "raw_points": 99.4,
-        "max_available": 100,
         "grade": {
           "verdict": "right",
           "ray_count": 5

@@ -249,8 +249,22 @@ def _to_contract(pred):
                 ptype = "none"
         elif rain is not None or snow is not None:
             ptype = derive_type(rain, snow)
+    # A "no precipitation" forecast IS a zero-inch amount forecast — score it as
+    # such, so a source that says "no rain" earns the amount points on dry days
+    # instead of forfeiting them. When rain/snow IS predicted but no amount is
+    # given (Ray says "rain" but no total), the amount stays None and is scored as
+    # a miss — you can't gain by leaving the hard field blank.
+    if ptype == "none":
+        if rain is None:
+            rain = 0.0
+        if snow is None:
+            snow = 0.0
     if pred.get("fields_provided"):
         fp = list(pred["fields_provided"])
+        if ptype == "none":
+            for amt in ("rain_amount", "snow_amount"):
+                if amt not in fp:
+                    fp.append(amt)
     else:
         fp = []
         if high is not None: fp.append("high")

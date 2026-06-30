@@ -150,11 +150,10 @@ export default async function Page() {
           </>
         ) : <p className="text-muted">No comparison yet.</p>}
         <p className="mt-4 text-xs italic text-muted">
-          Each forecast is scored on five fields — high temp (30), low temp (30), wind (20, scored as a range
-          when the source gives one), precip type (10) and precip amount (10) — by closeness to the actual
-          recorded conditions, then expressed as a percentage of the points it was eligible for. A source
-          isn&apos;t penalized for a field it never publishes (e.g. Ray&apos;s doesn&apos;t publish a rain
-          total): that field drops out of its denominator instead of counting as a miss.
+          Each forecast is scored out of 100 across five fields — high temp (30), low temp (30), wind (20,
+          scored as a range when the source gives one), precip type (10) and precip amount (10) — by closeness
+          to the actual recorded conditions. A forecast of &ldquo;no rain&rdquo; counts as a zero-inch prediction
+          (scored); predicting rain with no stated total leaves the amount blank (no credit).
         </p>
         <p className="mt-2 text-xs">
           <Link href="/methodology" className="text-teal underline underline-offset-2">Full methodology &rarr;</Link>
