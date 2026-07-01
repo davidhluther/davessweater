@@ -43,14 +43,17 @@ export interface Comparison {
   generated_at?: string;
   actuals: Actuals;
   sweater_weather: SweaterWeather;
-  sources: Partial<Record<"openmeteo" | "raysweather" | "apple_weather", SourceEntry>>;
+  // Keyed by source id. The original three (openmeteo/raysweather/apple_weather)
+  // plus the expanded roster (nws, metno, openweathermap, weatherapi,
+  // visualcrossing, tomorrowio, googleweather) — see src/lib/forecasters.ts.
+  sources: Partial<Record<string, SourceEntry>>;
 }
 
 export interface SourceTotals { right: number; wrong: number; meh: number; total_score: number; days: number; }
 export interface Scores {
   entries: Array<Record<string, unknown>>;
-  totals: Partial<Record<"openmeteo" | "raysweather" | "apple_weather", SourceTotals>>;
-  coverage?: Partial<Record<"openmeteo" | "raysweather" | "apple_weather", Partial<Record<CoverageField, CoverageStat>>>>;
+  totals: Partial<Record<string, SourceTotals>>;
+  coverage?: Partial<Record<string, Partial<Record<CoverageField, CoverageStat>>>>;
 }
 
 export interface ForecastDisplay {
