@@ -86,11 +86,12 @@ on a framer-motion timeline (scroll-driven beam via `useScroll`), five data-boun
 - [ ] **M3 #3 — N-source viz** — surface the 7 new forecasters; still gated on them accruing enough scored days.
   - [x] First surfacing: hero logo strip of the 8 index forecasters (`ForecasterLogos` + `FORECASTERS` map),
         homepage links `nofollow`, wraps on mobile (PR #78). Full N-source scoreboard/columns still pending.
-  - [ ] **PR2 — "the rest of the field" scoreboard** (R6 + M3 #3): shared `MIN_SCORED_DAYS` gate (ranked vs
-        "provisional"), applied to both the new scoreboard AND `UpcomingForecasts` (closes R6); widen the
-        `types.ts` source union. **MUST also add the R11 capture-day-low disclosure to `/methodology`** (a
-        score-moving mechanic on championed sources becomes publicly rendered here — mechanical copy only, per
-        the fairness review: "measured on a partial day → the full day", never "unfair/corrected").
+  - [x] **PR2 — "the rest of the field" scoreboard** (R6 + M3 #3) — ✅ DONE (PR pending). New
+        `/right-wrong-ray` section (`OtherSourcesBoard` + `otherSourcesRows`) surfaces all 7 free forecasters,
+        ranked once past a shared `MIN_SCORED_DAYS` (=14) gate (`src/lib/gating.ts`), provisional with a day
+        count until then (all 7 at 8 days today). `types.ts` source union widened to string-keyed. R11
+        capture-day-low disclosure added to `/methodology` ("Reading the overnight low", mechanical copy).
+        Full N-source trend sparklines still a future nicety.
 
 ## Promotion-readiness audit — RAN 2026-06-25 → risk register
 Multi-agent audit (Dims 1–4, adversarially verified) complete. 24 findings → 22 verified + 2 critic → a
@@ -128,9 +129,11 @@ Fix order: **R1 → R6 → R2 → R4 → R5 → R3 → R7 → R8 → R9 → R11 
       contradicts its own methodology caption.
 
 **🟠 High:**
-- [ ] **R6 — The 7 "gated" new sources render publicly** via `UpcomingForecasts` (no allowlist;
-      `page.tsx:141`, `UpcomingForecasts.tsx:18-21`). Apply the scoreboard allowlist / one shared min-days
-      gate. *(Quick win — effort S.)*
+- [x] **R6 — The 7 "gated" new sources render publicly** — ✅ RESOLVED (PR pending) by *consistency*, not
+      hiding (per owner's "I want more sources"): the new sources now also appear in the scored scoreboard
+      ("the rest of the field"), so no surface gates them anymore; `UpcomingForecasts` marks the under-14-day
+      ones "new" (a shared `MIN_SCORED_DAYS` gate labels, doesn't remove). The R11 fix already un-tanked the
+      numbers those surfaces show.
 - [x] **R4 — methodology now visible — DONE 2026-06-26 (uncommitted).** New `/methodology` page
       (`src/app/methodology/page.tsx`): the 5-field 100-pt model with exact tolerances, coverage normalization,
       the NWS qualitative-wind mapping, grade bands, actuals provenance, and links to `scoring.py` + `data/` to

@@ -1,10 +1,12 @@
 import { getLatestComparison, getScores, getLatestForecasts } from "@/lib/data";
-import { scoreboardRows } from "@/lib/scoreboard";
+import { scoreboardRows, otherSourcesRows } from "@/lib/scoreboard";
+import { MIN_SCORED_DAYS } from "@/lib/gating";
 import { sparkSeries } from "@/lib/sparkline";
 import { actualLines } from "@/lib/homeStats";
 import RayFaces from "@/components/RayFaces";
 import SectionBand from "@/components/SectionBand";
 import SortableScoreTable, { type ScoreRow } from "@/components/SortableScoreTable";
+import OtherSourcesBoard from "@/components/OtherSourcesBoard";
 import ScoreBreakdown from "@/components/ScoreBreakdown";
 import UpcomingForecasts from "@/components/UpcomingForecasts";
 import type { SourceEntry } from "@/lib/types";
@@ -72,6 +74,8 @@ export default async function Page() {
       days: r.days,
       spark: r.label === "Open-Meteo" ? spark.openmeteo : spark.raysweather,
     }));
+  const otherRows = otherSourcesRows(scores);
+  const provisionalKeys = new Set(otherRows.filter((r) => r.provisional).map((r) => r.key));
   const a = comp?.actuals;
   return (
     <>
@@ -167,7 +171,7 @@ export default async function Page() {
 
       <SectionBand tone="light">
         <h2 className="font-display mb-1 text-2xl font-bold">What they&apos;re predicting now</h2>
-        <UpcomingForecasts data={forecasts} />
+        <UpcomingForecasts data={forecasts} provisional={provisionalKeys} />
       </SectionBand>
 
       {rows.length > 0 && (
@@ -177,6 +181,21 @@ export default async function Page() {
           <SortableScoreTable rows={rows} />
 
           <p className="mt-3 text-xs text-muted">W = graded Right (75+) · L = graded Wrong (under 60) · M = Meh (60&ndash;74)</p>
+        </SectionBand>
+      )}
+
+      {otherRows.length > 0 && (
+        <SectionBand tone="surface">
+          <h2 className="font-display mb-1 text-2xl font-bold">The rest of the field</h2>
+          <p className="mb-4 mt-1 text-sm text-muted">
+            Ray&apos;s is the headline, but he&apos;s not the only forecast in town. We track these free, automated
+            services against the same actuals, scored the same way. A new one stays provisional until it has{" "}
+            {MIN_SCORED_DAYS} scored days.
+          </p>
+          <OtherSourcesBoard rows={otherRows} />
+          <p className="mt-4 text-xs">
+            <Link href="/methodology" className="text-teal underline underline-offset-2">How we score it &rarr;</Link>
+          </p>
         </SectionBand>
       )}
 

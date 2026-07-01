@@ -147,6 +147,22 @@ export default async function Page() {
         </p>
       </SectionBand>
 
+      <SectionBand tone="light">
+        <h2 className="font-display text-xl font-bold">Reading the overnight low</h2>
+        <p className="mt-1 max-w-2xl text-sm text-muted">
+          Most services hand us a finished daily low that already covers the whole day, including the pre-dawn
+          hours. Two of them, Met.no and OpenWeather, don&apos;t. We rebuild their daily low ourselves from an
+          hour-by-hour feed, and by the time we capture at midday that feed no longer reaches back to the
+          overnight low.
+        </p>
+        <p className="mt-3 max-w-2xl text-sm text-muted">
+          So for those two we read the low from the forecast they published the morning before, when the full day
+          was still ahead. That is a longer lead time than the same-day number every other source gets, so if
+          anything it is a slightly harder test. Sources that give us a full-day low directly are scored on it
+          as is.
+        </p>
+      </SectionBand>
+
       <SectionBand tone="surface">
         <h2 className="font-display text-xl font-bold">Grades</h2>
         <p className="mt-1 text-sm text-muted">The day&apos;s score becomes a verdict:</p>

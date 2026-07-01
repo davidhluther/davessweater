@@ -13,8 +13,20 @@ function fmtDate(d: string): string {
 const deg = (v: number | null) => (v != null ? `${Math.round(v)}°` : "—");
 const precip = (p: string | null) => (p && p !== "none" ? p : "none");
 
-export default function UpcomingForecasts({ data }: { data: LatestForecasts | null }) {
+function NewTag() {
+  return (
+    <span title="Provisional: fewer than 14 scored days"
+      className="ml-1.5 rounded bg-border px-1 text-[10px] font-semibold uppercase tracking-wide text-muted">
+      new
+    </span>
+  );
+}
+
+export default function UpcomingForecasts(
+  { data, provisional }: { data: LatestForecasts | null; provisional?: Set<string> },
+) {
   if (!data || !Object.keys(data.sources).length) return null;
+  const isNew = (k: string) => provisional?.has(k) ?? false;
   const keys = [
     ...ORDER.filter((k) => data.sources[k]),
     ...Object.keys(data.sources).filter((k) => !ORDER.includes(k)),
@@ -38,7 +50,7 @@ export default function UpcomingForecasts({ data }: { data: LatestForecasts | nu
             const f = data.sources[k];
             return (
               <tr key={k} className="border-t border-border">
-                <td className="py-2 font-medium">{f.label}</td>
+                <td className="py-2 font-medium">{f.label}{isNew(k) && <NewTag />}</td>
                 <td>{deg(f.high_f)}</td>
                 <td>{deg(f.low_f)}</td>
                 <td>{f.wind ?? "—"}</td>
@@ -54,7 +66,7 @@ export default function UpcomingForecasts({ data }: { data: LatestForecasts | nu
           const f = data.sources[k];
           return (
             <div key={k} className="rounded-xl border border-border bg-background p-3">
-              <div className="font-display text-sm font-bold">{f.label}</div>
+              <div className="font-display text-sm font-bold">{f.label}{isNew(k) && <NewTag />}</div>
               <div className="mt-1 text-xs text-muted">Hi {deg(f.high_f)} · Lo {deg(f.low_f)}</div>
               <div className="text-xs text-muted">Wind {f.wind ?? "—"}</div>
               <div className="text-xs text-muted">Precip {precip(f.precip_type)}</div>
