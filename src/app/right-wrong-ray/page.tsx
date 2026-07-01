@@ -5,7 +5,6 @@ import { actualLines } from "@/lib/homeStats";
 import RayFaces from "@/components/RayFaces";
 import SectionBand from "@/components/SectionBand";
 import SortableScoreTable, { type ScoreRow } from "@/components/SortableScoreTable";
-import CoverageMatrix from "@/components/CoverageMatrix";
 import ScoreBreakdown from "@/components/ScoreBreakdown";
 import UpcomingForecasts from "@/components/UpcomingForecasts";
 import type { SourceEntry } from "@/lib/types";
@@ -82,6 +81,12 @@ export default async function Page() {
         <p className="mb-4 mt-1 text-sm text-muted">
           When you trust us to tell you how many rays of sunshine, golfballs, or snowmen you can expect,
           we need to be held to account. Here&apos;s the scoreboard comparing each forecast to the actual weather.
+        </p>
+        <p className="mb-4">
+          <Link href="/methodology"
+            className="inline-flex min-h-9 items-center rounded-lg border border-border px-3 text-sm font-medium text-teal transition-colors hover:bg-teal/10">
+            How we score it &rarr;
+          </Link>
         </p>
         {comp ? (
           <>
@@ -176,10 +181,6 @@ export default async function Page() {
         </SectionBand>
       )}
 
-      <SectionBand tone="surface">
-        <h2 className="font-display mb-4 text-2xl font-bold">What Each Service Reports</h2>
-        <CoverageMatrix scores={scores} />
-      </SectionBand>
     </>
   );
 }
