@@ -94,3 +94,27 @@ def test_healthy_comparison_with_actuals_passes(tmp_path, monkeypatch):
     monkeypatch.setattr(h, "DATA_DIR", tmp_path)
     _write(tmp_path, "2026-07-01", actuals=True, comparison=HEALTHY)
     assert h.check("2026-07-01")[0] == []
+
+
+# ── Apple-fallback detection (screenshot uploaded but scored as Open-Meteo) ──
+def _with_screenshot(tmp, date, apple_source):
+    (tmp / "predictions" / date).mkdir(parents=True, exist_ok=True)
+    (tmp / "predictions" / date / "iphone_screenshot.png").write_text("png")
+    comp = {"sources": {**HEALTHY["sources"],
+                        "apple_weather": {"source": apple_source, "score": {"coverage": {}}}}}
+    _write(tmp, date, actuals=True, comparison=comp)
+
+
+def test_apple_fallback_with_screenshot_is_noted_but_not_failed(tmp_path, monkeypatch):
+    monkeypatch.setattr(h, "DATA_DIR", tmp_path)
+    _with_screenshot(tmp_path, "2026-07-02", apple_source="Open-Meteo")
+    problems, lines = h.check("2026-07-02")
+    assert problems == []  # non-fatal — the fallback is an accepted stand-in
+    assert any("fallback" in l.lower() for l in lines)
+
+
+def test_real_apple_with_screenshot_is_not_noted(tmp_path, monkeypatch):
+    monkeypatch.setattr(h, "DATA_DIR", tmp_path)
+    _with_screenshot(tmp_path, "2026-07-02", apple_source="iPhone Shortcut")
+    _, lines = h.check("2026-07-02")
+    assert not any("fallback" in l.lower() for l in lines)

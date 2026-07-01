@@ -1,6 +1,6 @@
 {
   "date": "2026-06-25",
-  "generated_at": "2026-06-26T12:31:35.742850-04:00",
+  "generated_at": "2026-07-01T14:29:33.605094-04:00",
   "actuals": {
     "date": "2026-06-25",
     "fetched_at": "2026-06-26T12:31:35.672264-04:00",
@@ -175,18 +175,19 @@
     },
     "apple_weather": {
       "prediction": {
-        "today_high_f": 76.1,
-        "tonight_low_f": 54.4,
-        "day_low_f": 54.4,
-        "wind_mph": 8.0,
-        "precip_in": 0.0,
-        "snow_in": 0.0,
-        "conditions": "Overcast",
+        "today_high_f": 74,
+        "tonight_low_f": 53,
+        "conditions": "Partly Cloudy",
+        "source": "iPhone screenshot (backfilled from 2026-06-25/iphone_screenshot.png)",
+        "observed_headline": "Partly Cloudy; cloudy conditions expected 12AM; gusts to 8",
+        "wind_lo": 0,
+        "wind_hi": 8,
         "category": "cloudy",
-        "source": "Open-Meteo (iPhone fallback)"
+        "precip_in": 0.0
       },
+      "source": "iPhone Shortcut",
       "score": {
-        "score": 81.0,
+        "score": 75.1,
         "grade": {
           "verdict": "right",
           "ray_count": 4
@@ -200,28 +201,28 @@
         },
         "breakdown": {
           "high_temp": {
-            "points": 24.3,
+            "points": 30.0,
             "max": 30,
             "scored": true,
-            "predicted": 76.1,
+            "predicted": 74,
             "actual": 72.2,
-            "error": 3.9
+            "error": 1.8
           },
           "low_temp": {
-            "points": 26.7,
+            "points": 22.5,
             "max": 30,
             "scored": true,
-            "predicted": 54.4,
+            "predicted": 53,
             "actual": 57.5,
-            "error": 3.1
+            "error": 4.5
           },
           "wind": {
-            "points": 20.0,
+            "points": 12.6,
             "max": 20,
             "scored": true,
-            "predicted": 8.0,
+            "predicted": "0-8",
             "actual": 6.7,
-            "error": 1.3
+            "error": 2.7
           },
           "precip_type": {
             "points": 0.0,
