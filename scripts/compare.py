@@ -235,11 +235,16 @@ def _to_contract(pred):
     if rain is None and pred.get("precip_in") is not None:
         rain = max(0.0, pred["precip_in"] - (snow or 0))
     ptype = pred.get("precip_type")
-    if ptype is None:
-        cat = pred.get("category")
-        if cat in _CAT_TO_TYPE:
-            ptype = _CAT_TO_TYPE[cat]
-        elif pred.get("daytime_desc"):
+    cat = pred.get("category")
+    # Precip TYPE follows the forecast's weather category: a rain / storm / snow
+    # forecast IS a precip forecast even when its predicted amount rounds to 0" (e.g.
+    # Open-Meteo can pair a thunderstorm weather-code with 0" QPF). This overrides an
+    # amount-derived "none", and keeps the Apple fallback — which reads the conditions
+    # text — consistent with Open-Meteo. Amount is scored separately.
+    if cat in _CAT_TO_TYPE and _CAT_TO_TYPE[cat] != "none" and ptype in (None, "none"):
+        ptype = _CAT_TO_TYPE[cat]
+    elif ptype is None:
+        if pred.get("daytime_desc"):
             d = pred["daytime_desc"].lower()
             if any(w in d for w in ("snow", "flurr", "sleet", "wintry")):
                 ptype = "snow"
@@ -249,8 +254,22 @@ def _to_contract(pred):
                 ptype = "none"
         elif rain is not None or snow is not None:
             ptype = derive_type(rain, snow)
+    # A "no precipitation" forecast IS a zero-inch amount forecast — score it as
+    # such, so a source that says "no rain" earns the amount points on dry days
+    # instead of forfeiting them. When rain/snow IS predicted but no amount is
+    # given (Ray says "rain" but no total), the amount stays None and is scored as
+    # a miss — you can't gain by leaving the hard field blank.
+    if ptype == "none":
+        if rain is None:
+            rain = 0.0
+        if snow is None:
+            snow = 0.0
     if pred.get("fields_provided"):
         fp = list(pred["fields_provided"])
+        if ptype == "none":
+            for amt in ("rain_amount", "snow_amount"):
+                if amt not in fp:
+                    fp.append(amt)
     else:
         fp = []
         if high is not None: fp.append("high")

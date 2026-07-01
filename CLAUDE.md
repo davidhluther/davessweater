@@ -66,13 +66,17 @@ GitHub Actions run the **data** pipeline and commit `data/` to `main`; each push
 | Precip type   | 10        | exact = 10; right category / wrong form = 4 | 0 otherwise |
 | Precip amount | 10        | snow-aware (rain ±0.1", snow ±max(1", 20%)) | rain -20/in, snow -2/in |
 
-**Coverage-normalized (R2, 2026-06-26):** a source's score is `raw_points / max_available × 100`, where
-`max_available` sums only the fields it actually provides. A forfeited field (e.g. Ray's never publishes a
-numeric precip amount) drops out of the denominator instead of scoring 0 against a fixed 100 — so a source is
-graded on what it forecasts, not penalized for what it omits. `score_prediction` returns `raw_points` +
-`max_available` alongside the normalized `score`. *(Full interval/snow/NWS-mapping doc refresh is R8.)*
+**Precip & the implied-zero rule (2026-06-30):** scored out of a fixed 100. A forecast of **"no precip"** is a
+zero-inch amount forecast — scored as such, so a source that says "no rain" earns the amount points on dry days.
+A forecast of rain/snow with **no stated total** forfeits the amount (scored as a miss) — a source can't gain by
+leaving the hard field blank. Ray's Weather never gives numeric totals, so he earns amount credit on his
+dry-forecast days and forfeits it on his wet-forecast days (the implied-zero is set in `compare.py:_to_contract`
+when `precip_type == "none"`). This replaced the short-lived R2 coverage-normalization, which let a forecaster
+outrank a more-accurate one purely by omitting the amount. Precip **type** follows the forecast's weather
+category (a rain / storm / snow forecast counts as predicting precipitation even at 0" QPF, so a thunderstorm
+isn't mislabeled "none"), which also keeps the Apple/Open-Meteo fallback scoring consistent (`compare.py:_to_contract`).
 
-Grade thresholds (`_score_grade()`, applied to the normalized score):
+Grade thresholds (`_score_grade()`):
 - 90+ → Right (5 rays)
 - 75+ → Right (4 rays)
 - 60+ → Meh (3 rays)

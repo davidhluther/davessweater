@@ -1,4 +1,4 @@
-from scoring import score_prediction, precip_type, normalized_score
+from scoring import score_prediction, precip_type
 
 ACT = {"high_f": 84, "low_f": 61, "wind_mph": 6, "rain_in": 0.12, "snow_in": 0.0}
 
@@ -25,42 +25,44 @@ def test_breakdown_carries_predicted_actual_error_deltas():
               fields_provided=["high","low","precip_type","rain_amount"])
     assert score_prediction(pred2, ACT)["breakdown"]["wind"]["predicted"] is None
 
-def test_vague_precip_forfeits_amount_not_zeroed():
-    # raw 81 of 90 available (precip_amount forfeited) -> normalized 90.0, NOT 81/100.
+def test_predicted_rain_without_amount_forfeits_amount():
+    # Predicts rain but gives no total -> amount forfeited (scored as a miss, /100).
     pred = P(high_f=80, low_f=58, wind_mph=5, precip_type="rain",
              fields_provided=["high","low","wind","precip_type"])
     r = score_prediction(pred, ACT)
-    assert r["raw_points"] == 81.0 and r["max_available"] == 90
-    assert r["score"] == 90.0
+    assert r["score"] == 81.0
     assert r["coverage"]["precip_amount"] is False
     assert r["coverage"]["precip_type"] is True
 
 def test_omitted_wind_forfeits_its_category():
-    # perfect on the 4 fields it provides (wind omitted) -> 80 of 80 available -> 100.0
+    # wind omitted -> 80/100 (no credit for a field never forecast).
     pred = P(high_f=84, low_f=61, precip_type="rain", rain_in=0.12,
              fields_provided=["high","low","precip_type","rain_amount"])
     r = score_prediction(pred, ACT)
     assert r["coverage"]["wind"] is False
     assert r["breakdown"]["wind"]["points"] is None
-    assert r["raw_points"] == 80.0 and r["max_available"] == 80
-    assert r["score"] == 100.0
+    assert r["score"] == 80.0
 
 
-def test_forfeited_amount_perfect_forecast_scores_100():
-    # The Ray case: perfect high/low/wind/type, no precip amount published -> 90 of 90 -> 100, not capped at 90.
+def test_predicted_rain_without_amount_cannot_exceed_90():
+    # Perfect on high/low/wind/type but predicts rain with no total -> amount
+    # forfeited -> caps at 90/100. A source can't win by leaving the hard field blank.
     pred = P(high_f=84, low_f=61, wind_mph=6, precip_type="rain",
              fields_provided=["high","low","wind","precip_type"])
     r = score_prediction(pred, ACT)
-    assert r["raw_points"] == 90.0 and r["max_available"] == 90
-    assert r["score"] == 100.0
+    assert r["score"] == 90.0
     assert r["coverage"]["precip_amount"] is False
     assert r["grade"]["verdict"] == "right"
 
 
-def test_normalized_score_helper():
-    assert normalized_score(81.0, 90) == 90.0
-    assert normalized_score(100.0, 100) == 100.0
-    assert normalized_score(0.0, 0) == 0.0  # no scorable fields -> 0, never divide by zero
+def test_no_precip_forecast_scores_amount_as_zero_inches():
+    # "No rain" IS a zero-inch forecast: on a dry day it earns the full amount points.
+    dry = {"high_f": 80, "low_f": 60, "wind_mph": 5, "rain_in": 0.0, "snow_in": 0.0}
+    pred = P(high_f=80, low_f=60, wind_mph=5, precip_type="none", rain_in=0.0, snow_in=0.0,
+             fields_provided=["high","low","wind","precip_type","rain_amount","snow_amount"])
+    r = score_prediction(pred, dry)
+    assert r["breakdown"]["precip_amount"]["points"] == 10.0
+    assert r["score"] == 100.0
 
 def test_precision_not_punished_within_rain_tolerance():
     pred = P(high_f=84, low_f=61, wind_mph=6, precip_type="rain", rain_in=0.10,

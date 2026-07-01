@@ -33,8 +33,6 @@ export interface ScoreBreakdownField {
 }
 export interface Score {
   score: number;
-  raw_points?: number;
-  max_available?: number;
   grade: { verdict: string; ray_count: number };
   breakdown: Record<string, ScoreBreakdownField>;
 }
