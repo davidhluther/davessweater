@@ -14,8 +14,9 @@ export default function CoverageMatrix({ scores }: { scores: Scores | null }) {
   return (
     <div className="not-prose">
       <p className="mb-3 text-sm text-muted">
-        What each service even reports. <strong className="text-foreground">Ray&apos;s never publishes a precip amount</strong> — a
-        categorical gap (the dark orange cell), not a glitch. Lighter cells are days a value simply wasn&apos;t available to scrape.
+        Green cells are fully reported fields. Dark orange marks a deliberate gap, like{" "}
+        <strong className="text-foreground">Ray&apos;s, who never publishes a precip amount</strong>. Lighter
+        cells are days a value was not available to scrape.
       </p>
 
       {/* Matrix grid — hidden on mobile */}
