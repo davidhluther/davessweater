@@ -286,6 +286,62 @@ def _to_contract(pred):
 
 
 # ═══════════════════════════════════════════════════════════════════
+# CAPTURE-DAY LOW RECOVERY (bucket-aggregating sources)
+# ═══════════════════════════════════════════════════════════════════
+# Met.no and OpenWeatherMap derive the daily low as min() over their sub-daily
+# timeseries. On the capture day (~midday) that series no longer covers the
+# pre-dawn hours, so its "low" is the afternoon/evening minimum — biased warm by
+# 5–17°F, which unfairly tanked the low-temp score (30 of 100 pts) on every one
+# of their scored days. Recover the capture-day low from the day-ahead forecast
+# issued the prior morning (predictions/{date-1}/{key}_forecast.json), whose row
+# for the date spans the full (UTC) day and so still reaches the overnight trough
+# the midday capture missed. Forfeit the low only when no prior capture exists.
+# Sources reading a provider daily-min (Open-Meteo, NWS, WeatherAPI, Visual
+# Crossing, Tomorrow.io, Google) are unaffected.
+#
+# Membership rule: add any source whose adapter derives the daily low via min()
+# over a partial-day sub-daily series (rather than a provider-supplied daily
+# minimum), or it will silently reintroduce the warm bias for that source.
+_BUCKET_LOW_SOURCES = {"metno", "openweathermap"}
+
+
+def _prev_date(date_str):
+    return (datetime.strptime(date_str, "%Y-%m-%d") - timedelta(days=1)).strftime("%Y-%m-%d")
+
+
+def _day_ahead_low(key, date):
+    """The low `key` forecast for `date` in the prior day's capture, or None."""
+    fpath = DATA_DIR / "predictions" / _prev_date(date) / f"{key}_forecast.json"
+    if not fpath.exists():
+        return None
+    try:
+        data = json.load(open(fpath))
+    except (json.JSONDecodeError, OSError):
+        return None
+    for row in data.get("daily", []):
+        if row.get("date") == date:
+            return row.get("low_f")
+    return None
+
+
+def _fix_bucket_low(key, date, day):
+    """For bucket-low sources, replace the partial-capture-day low with the
+    day-ahead forecast low; forfeit 'low' when no prior forecast exists.
+    Mutates and returns the day/prediction dict; a no-op for other sources."""
+    if key not in _BUCKET_LOW_SOURCES:
+        return day
+    recovered = _day_ahead_low(key, date)
+    if recovered is not None:
+        day["low_f"] = recovered
+    else:
+        day["low_f"] = None
+        fp = day.get("fields_provided")
+        if isinstance(fp, list):
+            day["fields_provided"] = [f for f in fp if f != "low"]
+    return day
+
+
+# ═══════════════════════════════════════════════════════════════════
 # DAILY COMPARISON RUNNER
 # ═══════════════════════════════════════════════════════════════════
 
@@ -439,6 +495,7 @@ def run_daily_comparison(target_date=None):
             continue
         for day in data.get("daily", []):
             if day.get("date") == target_date:
+                day = _fix_bucket_low(key, target_date, day)
                 result = score_prediction(_to_contract(day), norm_actual)
                 comparison["sources"][key] = {"prediction": day, "score": result}
                 print(f"  {s['label']}: {result['score']}/100")
@@ -449,6 +506,13 @@ def run_daily_comparison(target_date=None):
     print(f"\n  🧣 Sweater Weather? {sw['answer']} {sw.get('emoji', '')}")
     print(f"     {sw['detail']}")
     print(f"     Recommended layers: {sw['layers']}")
+
+    # Don't persist a comparison with nothing scored — an empty-sources file only
+    # creates a ghost row in scores.json (a date with no source data). Skip it so
+    # a partial/failed run can't quietly seed a phantom day.
+    if not any("score" in d for d in comparison["sources"].values()):
+        print(f"  No source scored for {target_date}; skipping comparison write.")
+        return None
 
     # Save comparison
     comp_dir = DATA_DIR / "comparisons"
@@ -602,6 +666,7 @@ def build_latest_forecasts():
             continue
         for day in data.get("daily", []):
             if day.get("date") == date:
+                day = _fix_bucket_low(key, date, day)
                 sources[key] = _forecast_display(_to_contract(day))
                 break
 
