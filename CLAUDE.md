@@ -76,6 +76,16 @@ outrank a more-accurate one purely by omitting the amount. Precip **type** follo
 category (a rain / storm / snow forecast counts as predicting precipitation even at 0" QPF, so a thunderstorm
 isn't mislabeled "none"), which also keeps the Apple/Open-Meteo fallback scoring consistent (`compare.py:_to_contract`).
 
+**Capture-day low recovery (2026-07-01):** Met.no and OpenWeatherMap derive the daily low as `min()` over their
+sub-daily timeseries. On the capture day (~midday) that series no longer covers the pre-dawn hours, so its "low"
+is the afternoon minimum — biased warm by 5–17°F, which depressed the low-temp score (30 of 100 pts)
+on every one of those two sources' scored days. `compare.py:_fix_bucket_low` recovers the capture-day low from
+the **day-ahead forecast issued the prior morning** (`predictions/{date-1}/{key}_forecast.json`, whose row for
+that day spans the full (UTC) day and so reaches the overnight trough the midday capture missed), forfeiting the
+low only when no prior capture exists. Sources reading a
+provider daily-min (Open-Meteo, NWS, WeatherAPI, Visual Crossing, Tomorrow.io, Google) are unaffected. Applied
+forward in the daily run and backfilled across history via `scripts/backfill_bucket_low.py`.
+
 Grade thresholds (`_score_grade()`):
 - 90+ → Right (5 rays)
 - 75+ → Right (4 rays)

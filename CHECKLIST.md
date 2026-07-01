@@ -86,6 +86,11 @@ on a framer-motion timeline (scroll-driven beam via `useScroll`), five data-boun
 - [ ] **M3 #3 — N-source viz** — surface the 7 new forecasters; still gated on them accruing enough scored days.
   - [x] First surfacing: hero logo strip of the 8 index forecasters (`ForecasterLogos` + `FORECASTERS` map),
         homepage links `nofollow`, wraps on mobile (PR #78). Full N-source scoreboard/columns still pending.
+  - [ ] **PR2 — "the rest of the field" scoreboard** (R6 + M3 #3): shared `MIN_SCORED_DAYS` gate (ranked vs
+        "provisional"), applied to both the new scoreboard AND `UpcomingForecasts` (closes R6); widen the
+        `types.ts` source union. **MUST also add the R11 capture-day-low disclosure to `/methodology`** (a
+        score-moving mechanic on championed sources becomes publicly rendered here — mechanical copy only, per
+        the fairness review: "measured on a partial day → the full day", never "unfair/corrected").
 
 ## Promotion-readiness audit — RAN 2026-06-25 → risk register
 Multi-agent audit (Dims 1–4, adversarially verified) complete. 24 findings → 22 verified + 2 critic → a
@@ -141,17 +146,23 @@ Fix order: **R1 → R6 → R2 → R4 → R5 → R3 → R7 → R8 → R9 → R11 
       *(Replaces the standalone "capture-quality monitoring" item below.)*
 
 **🟡 Medium:**
-- [ ] **R7 — Silent missing-actuals dropped 2026-05-22 (green workflow); + 2 ghost empty rows.** Make
-      missing-actuals loud + retried + backfill sweep; backfill 05-22; stop writing empty comparisons; delete
-      the 2 ghost rows (`2026-03-03`, `2026-06-18`).
+- [~] **R7 — Silent missing-actuals dropped 2026-05-22 (green workflow); + 2 ghost empty rows.** ✅ Data half
+      DONE (PR pending, `fix/lowtemp-and-data-integrity`): backfilled 05-22 (Open-Meteo 100 / Ray's 81.5);
+      deleted the 2 ghost rows (`2026-03-03` pre-era, `2026-06-18` — a genuine no-capture gap, no predictions
+      ever existed, left honest); `compare.py` now skips writing empty-sources comparisons so no new ghosts. ⏳
+      Remaining (→ fold into R3/PR3): make missing-actuals **loud + retried** (exit nonzero) + a backfill sweep.
 - [x] **R8 — `CLAUDE.md` scoring section refreshed — DONE 2026-06-26 (uncommitted).** Repointed at
       `scripts/scoring.py`, corrected the wind row (interval + 0.5 width tax), split precip into type(10, partial
       credit)+amount(10, snow-aware), and added the coverage-normalization note. The on-site `/methodology` page
       (R4) is the public-facing synced description.
 - [ ] **R9 — Concurrent compare + `-X ours` merge footgun** (benign today, latent). Add a `concurrency:` group
       / rebase-and-retry; add `reset --hard origin/main` to `daily_capture`.
-- [ ] **R11 — OWM/Met.no day-0 low is the partial-bucket min, not the calendar-day low** (gated now → low
-      public impact, but **MUST fix before un-gating** those sources). Forfeit day-0 low or score next-day.
+- [x] **R11 — OWM/Met.no day-0 low is the partial-bucket min, not the calendar-day low** — ✅ FIXED (PR pending,
+      `fix/lowtemp-and-data-integrity`). `compare.py:_fix_bucket_low` recovers the capture-day low from the
+      day-ahead forecast (prior morning's capture, which spans the full day); forfeits it only when no prior
+      capture exists (2026-06-23). Backfilled all history (`scripts/backfill_bucket_low.py`) + regression tests.
+      The two free sources were being unfairly depressed; corrected avgs ≈ metno 91.3 / OWM 84.4. **Un-gating
+      prerequisite cleared.**
 - [ ] **R12 — Snow-depth scoring has never graded a real day** (0/478; the 2 Ray snow days used the legacy
       model). Replay a past Boone snow event before surfacing any snow column / winter claim.
 
