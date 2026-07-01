@@ -23,13 +23,21 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 EST = ZoneInfo("America/New_York")
 
 # Sources that must be captured and scored every day, with the coverage fields
-# each one must provide. Ray's never publishes a numeric precip amount, so
-# precip_amount is intentionally NOT required for him — that is honest
-# forfeiture, not a capture drop. Everything else here should always be present
-# when the capture actually worked.
+# each one must provide.
+#
+# Open-Meteo is a machine API: every one of these is always present, so a missing
+# field is a genuine capture/parse failure.
+#
+# Ray's reliably posts a high/low strip, so those prove his capture worked. His
+# precip_type and (qualitative) wind are HONEST FORFEITS — the scoring engine
+# already records them as coverage=False on days he gives no number — so requiring
+# them would misread a forfeit as a drop and fail a legitimate day. A total Ray
+# capture failure still trips the guard because the source is then unscored.
+# (Catching a subtle *sustained* wind-parser regression, vs a one-off forfeit,
+# needs a rolling coverage-delta check — a worthwhile follow-up, not this guard.)
 MANDATORY = {
     "openmeteo": ["high_temp", "low_temp", "wind", "precip_type"],
-    "raysweather": ["high_temp", "low_temp", "wind", "precip_type"],
+    "raysweather": ["high_temp", "low_temp"],
 }
 
 FIELD_LABEL = {"high_temp": "high", "low_temp": "low", "wind": "wind",
@@ -41,12 +49,12 @@ def evaluate(comp):
 
     `problems` is a list of human-readable failures (empty == healthy)."""
     problems, lines = [], []
-    sources = comp.get("sources", {}) if isinstance(comp, dict) else {}
-    scored = sorted(k for k, v in sources.items() if isinstance(v, dict) and "score" in v)
+    sources = (comp.get("sources") if isinstance(comp, dict) else None) or {}
+    scored = sorted(k for k, v in sources.items() if isinstance(v, dict) and isinstance(v.get("score"), dict))
     lines.append(f"Sources scored: {len(scored)} ({', '.join(scored) or 'none'})")
     for key, required in MANDATORY.items():
         sd = sources.get(key)
-        if not isinstance(sd, dict) or "score" not in sd:
+        if not isinstance(sd, dict) or not isinstance(sd.get("score"), dict):
             problems.append(f"{key}: not scored (capture drop?)")
             lines.append(f"  {key}: NOT SCORED")
             continue
@@ -63,10 +71,17 @@ def evaluate(comp):
 
 
 def check(date):
+    # The Open-Meteo archive lags 1-5 days, so yesterday's actuals may simply not
+    # be posted yet. That is a benign, self-correcting delay (not a capture drop),
+    # so skip the check rather than failing the run red. A backfill sweep, once
+    # built, re-scores the day when its actuals land.
+    if not (DATA_DIR / "actuals" / f"{date}.json").exists():
+        return [], [f"actuals for {date} not available yet (archive lag) — health check skipped"]
     cpath = DATA_DIR / "comparisons" / f"{date}.json"
     if not cpath.exists():
-        return ([f"No comparison file for {date} — nothing was scored."],
-                [f"comparison for {date}: MISSING"])
+        # Actuals ARE present but compare wrote no comparison: a real failure, not lag.
+        return ([f"Actuals exist for {date} but no comparison was written (compare failure?)."],
+                [f"comparison for {date}: MISSING despite actuals"])
     try:
         comp = json.load(open(cpath))
     except (json.JSONDecodeError, OSError) as e:

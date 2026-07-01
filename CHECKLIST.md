@@ -142,10 +142,15 @@ Fix order: **R1 → R6 → R2 → R4 → R5 → R3 → R7 → R8 → R9 → R11 
       ground-truth station so the "actual" is independent (M6 hardware).
 - [x] **R3 — No capture-quality / coverage-drop monitoring** — ✅ DONE (PR pending, `fix/pipeline-hardening`).
       New `scripts/check_capture_health.py` runs after `compare.py` in `daily_compare.yml` (NOT
-      continue-on-error, before the commit step): it fails the job red if a mandatory source (Open-Meteo, Ray's)
-      is absent or dropped a required field for the day, or the comparison is missing — so the exact
-      Ray-deflation failure mode becomes a red run + notification instead of a silent bad day, and questionable
-      data is never committed. Writes a coverage summary to the job summary. Tested (`tests/test_capture_health.py`).
+      continue-on-error, before the commit step): it fails the job red if a mandatory source is absent/unscored,
+      Open-Meteo drops any of high/low/wind/precip_type, Ray's drops his high/low, or a comparison is missing
+      **while its actuals exist** — so a real capture drop becomes a red run + notification and the bad day is
+      never committed. Adversarial-review-hardened to avoid false alarms: a **missing-actuals** day is a benign
+      skip (the archive lags 1-5 days, self-correcting), and Ray's qualitative-wind / no-precip-type days are
+      **honest forfeits** (not required of him), so neither trips the guard. Coverage summary → job summary.
+      Tested (`tests/test_capture_health.py`, incl. the lag-skip + forfeit-allowed paths). Follow-up niceties: a
+      rolling coverage-delta check (to catch a *sustained* Ray wind-parser regression vs a one-off forfeit) and
+      an auto-backfill sweep for lagged days.
 
 **🟡 Medium:**
 - [~] **R7 — Silent missing-actuals dropped 2026-05-22 (green workflow); + 2 ghost empty rows.** ✅ Data half
