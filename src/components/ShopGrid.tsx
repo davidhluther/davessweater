@@ -20,7 +20,7 @@ export default function ShopGrid({ products }: { products: Product[] }) {
             )}
             <div className="p-2">
               <div className="text-sm font-semibold">{p.name}</div>
-              {p.price && <div className="text-sm font-bold text-orange">{p.price}</div>}
+              {p.price && <div className="text-sm font-bold text-orange-600">{p.price}</div>}
             </div>
           </button>
         ))}

@@ -16,7 +16,7 @@ const precip = (p: string | null) => (p && p !== "none" ? p : "none");
 function NewTag() {
   return (
     <span title="Provisional: fewer than 14 scored days"
-      className="ml-1.5 rounded bg-border px-1 text-[10px] font-semibold uppercase tracking-wide text-muted">
+      className="ml-1.5 rounded bg-border px-1 text-[10px] font-semibold uppercase tracking-wide text-foreground">
       new
     </span>
   );

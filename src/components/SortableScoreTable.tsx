@@ -37,7 +37,7 @@ export default function SortableScoreTable({ rows }: { rows: ScoreRow[] }) {
         <tbody>
           {sorted.map((r) => (
             <tr key={r.key} className="border-b border-white/5">
-              <td className={`py-2 ${r.isFree ? "text-emerald-300" : "text-orange-400"}`}>{r.label}</td>
+              <td className={`py-2 ${r.isFree ? "text-emerald-300" : "text-orange-300"}`}>{r.label}</td>
               <td className="py-2 tabular-nums">{r.avg.toFixed(1)}</td>
               <td className="py-2 tabular-nums">{r.days}</td>
               <td className="py-2 text-white/70">{r.record}</td>
@@ -50,7 +50,7 @@ export default function SortableScoreTable({ rows }: { rows: ScoreRow[] }) {
         {sorted.map((r) => (
           <li key={r.key} className="rounded-lg border border-white/10 p-3">
             <div className="flex items-center justify-between">
-              <span className={`font-medium ${r.isFree ? "text-emerald-300" : "text-orange-400"}`}>{r.label}</span>
+              <span className={`font-medium ${r.isFree ? "text-emerald-300" : "text-orange-300"}`}>{r.label}</span>
               <span className="tabular-nums">{r.avg.toFixed(1)}</span>
             </div>
             <div className="mt-1 flex items-center justify-between text-white/60">

@@ -35,7 +35,7 @@ export default function ScoreBreakdown({ score }: { score: Score }) {
         if (!f.scored) {
           return (
             <Fragment key={key}>
-              <div className="text-muted">{label} <span className="text-foreground/45">· not published</span></div>
+              <div className="text-muted">{label} <span>· not published</span></div>
               <div className="text-right text-muted">— → {fmt(f.actual, unit)}</div>
               <div className="text-right text-muted">—</div>
             </Fragment>
@@ -44,7 +44,7 @@ export default function ScoreBreakdown({ score }: { score: Score }) {
         return (
           <Fragment key={key}>
             <div className="text-muted">
-              {label} <span className="text-foreground/55">· {offBy(f, unit)}</span>
+              {label} <span>· {offBy(f, unit)}</span>
             </div>
             <div className="text-right text-foreground">
               {fmt(f.predicted, unit)} <span className="text-muted">→</span> {fmt(f.actual, unit)}

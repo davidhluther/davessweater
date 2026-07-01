@@ -285,22 +285,31 @@ sitemap work nailed it — nothing to do). **Best Practices 96.**
       priority. Result on prod: **LCP 19.7s → 5.0s, Performance 70 → 78.**
   - [ ] Residual perf (diminishing returns, real users already ~1-2s): LCP still 5.0s / FCP 2.7s under Lighthouse's
         aggressive mobile throttle → font loading (display swap/preload) + render-blocking. Optional.
-- [ ] **Accessibility bundle — QUEUED (held 2026-07-01; resurface after the Fable reload).** Lighthouse a11y **92**;
-      the audit found these WCAG-AA gaps (do as one PR, should reach ~100):
-  - **[high] Contrast — orange text** `--orange #f97316` is 2.8:1 on white (fails AA). Small-text usages:
-    `ShopGrid.tsx:23` (price), `Scoreboard.tsx:10,16` (Ray's label/record), `BrandMark.tsx:6`. Fix: use
-    `--orange-600 #c2410c` (5.18:1) for orange **text** on light; keep `#f97316` for large headings / non-text UI.
-  - **[high] Contrast — green text** `--green #1d9e75` is ~3.4:1 (fails AA). Usages: `OtherSourcesBoard.tsx`
-    source names (`:29,40,59`), `CoverageMatrix.tsx:33,51` rowheaders/legend. Fix: add a darker `--green-700`
-    (~`#0f7a58`, ≥4.5:1) for green **text**; keep `#1d9e75` for the score-cell fills.
-  - **[med] Skip-to-content link** — add `sr-only focus:not-sr-only` link in `layout.tsx` + `id="main"` on `<main>`.
-  - **[med] Missing h1** on `/right-wrong-ray`, `/shop`, `/videos`, `/blog` (top out at h2) — promote lead heading.
-  - **[med] Visible focus ring** — only the unused shadcn Button has focus-visible. Add a shared
-    `focus-visible:ring-2 ring-ring ring-offset-2` to nav/menu/Hero CTAs/sortable headers/shop buttons.
-  - **[med] Icon alt spam** — `RayFaces.tsx:7` + `LiveConditions.tsx:9` render N identical `alt="Ray"`/`"sweater"`
-    (announces "Ray Ray Ray…"; greyed empties still alt-ed). Make icons `alt=""`/aria-hidden + one `aria-label`
-    ("4 of 5 rays"). **[low]** aria-hidden the decorative 🌐/📱 in `right-wrong-ray/page.tsx:26-27` + the ● in
-    `IphoneShot.tsx:27`.
+- [x] **Accessibility bundle — ✅ DONE 2026-07-01 (PR pending, `fix/a11y-bundle`).** All six audit items shipped
+      as one PR; **axe-core (WCAG 2.1 AA) now reports 0 violations on every route** (/, /right-wrong-ray,
+      /methodology, /shop, /videos, /blog, /blog/[slug]; desktop 1280 + mobile 375 with the menu open).
+  - Contrast fix respected each usage's real background (the audit's "#c2410c on light" would have *worsened*
+    the dark-hero usages): new `--orange-300 #fdba74` for orange text on dark teal (BrandMark, Scoreboard
+    label/score/record, SortableScoreTable names); `--orange-600` for orange text on light (ShopGrid price,
+    HeadToHeadCard Ray number, active nav pill); new `--green-700 #0f7a58` for green text on light
+    (OtherSourcesBoard names, CoverageMatrix rowheaders). `#1d9e75` stays for fills; `#f97316` stays for
+    large headings and non-text UI.
+  - Skip link (`layout.tsx`, `sr-only focus:not-sr-only`, target `id="main"`); h1 promoted on
+    /right-wrong-ray, /shop, /videos, /blog (each page now has exactly one h1).
+  - Focus ring: one shared `@layer base` rule in `globals.css` (`:where(a, button, …):focus-visible
+    { outline: 2px solid currentColor; outline-offset: 2px }`) instead of the per-element `ring-ring` utility
+    spam — currentColor passes non-text contrast on both the light body and the dark teal bands, where a
+    single fixed orange cannot; covers nav/menu/CTAs/sortable headers/shop buttons and everything else.
+  - Icon alt spam: RayFaces + LiveConditions icons are `alt=""` with one `role="img"` + `aria-label`
+    ("N of 5 rays" / "N of 5 sweaters"); 🌐/📱 + the ● dot aria-hidden.
+  - **Extras found while verifying (audit was Lighthouse-mobile, these hid from it):** the **Season
+    Scoreboard table had rendered white-on-white since M3** (dark-styled `SortableScoreTable` inside a
+    `tone="light"` band; records at ~1.3:1) — band flipped to `tone="dark"` per the M2 dark-feature-band
+    language; active nav pill (white on `bg-orange`, 2.8:1, desktop-only so mobile Lighthouse missed it) →
+    `bg-orange-600`; hero Ray score 2.93:1 vs the 3:1 large-text bar → orange-300; CompositeForecast kicker
+    `text-white/55` → `/70`; ScoreBreakdown `text-foreground/45|55` annotations → muted; provisional "new"
+    chip 4.42:1 → `text-foreground`; footer methodology link was color-only-distinguished → always underlined.
+  - lint / 51 vitest / `next build` green. Lighthouse a11y on prod after merge should confirm ~100 (was 92).
 
 ## To do — weather station hardware
 - [ ] Order Wittboy WS90 + GW2000.
