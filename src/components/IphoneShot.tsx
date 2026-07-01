@@ -14,8 +14,8 @@ export default function IphoneShot({ className = "" }: { className?: string }) {
       <div className="mx-auto w-[150px] rounded-[1.4rem] bg-black p-1.5">
         {info.available ? (
           /* eslint-disable-next-line @next/next/no-img-element */
-          <img src="/screenshots/iphone_screenshot.png" alt={`${label} for Boone, NC`}
-            loading="lazy" className="w-full rounded-[1.1rem]" />
+          <img src="/screenshots/iphone_screenshot.webp" alt={`${label} for Boone, NC`}
+            fetchPriority="high" className="w-full rounded-[1.1rem]" />
         ) : (
           <div className="flex aspect-[9/19] items-center justify-center rounded-[1.1rem] bg-surface px-3 text-center text-xs text-muted">
             Today&apos;s forecast isn&apos;t in yet — check back tomorrow.
