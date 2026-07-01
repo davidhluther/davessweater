@@ -179,7 +179,11 @@ Fix order: **R1 → R6 → R2 → R4 → R5 → R3 → R7 → R8 → R9 → R11 
         the 7 new sources lack history and Apple's coverage is intentionally shifting. **Non-fatal by default**
         (`DRIFT_FATAL=False` → warns in the job summary; flip to fail the run). Verified: no false positives on
         current data; a simulated 8-day Ray-wind blackout is flagged. Tested.
-  - [ ] Remaining nicety: an **auto-backfill sweep** to re-score an archive-lagged day once its actuals land.
+  - [x] **Auto-backfill sweep — ✅ DONE (PR pending, `feat/backfill-sweep`).** `scripts/backfill_missing.py`
+        runs after the main compare in `daily_compare.yml` (best-effort, `continue-on-error`): it sweeps the last
+        14 days for any date with a `predictions/` capture but no comparison (an archive-lagged gap), fetches its
+        now-posted actuals, and scores it. Idempotent; retried daily until a day ages out. This is what would
+        have auto-recovered 2026-05-22. Tested (`tests/test_backfill_missing.py`). **Reliability set complete.**
 
 **🟡 Medium:**
 - [~] **R7 — Silent missing-actuals dropped 2026-05-22 (green workflow); + 2 ghost empty rows.** ✅ Data half
