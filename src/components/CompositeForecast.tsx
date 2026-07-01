@@ -1,6 +1,7 @@
 import { getLatestForecasts } from "@/lib/data";
 import { compositeForecast } from "@/lib/composite";
 import { copy } from "@/content/copy";
+import ForecasterLogos from "@/components/ForecasterLogos";
 
 // The "Dave's Sweater Index" strip at the bottom of the hero: a composite of all
 // the independent automated forecasters' upcoming-day predictions. Self-fetches so
@@ -17,6 +18,7 @@ export default async function CompositeForecast() {
         High {c.high}° <span className="text-white/40">·</span> Low {c.low}° <span className="text-white/40">·</span> {c.precipLabel}
       </div>
       <div className="mt-1 text-xs text-white/55">{copy.index.footnote(c.count)}</div>
+      <ForecasterLogos sources={c.sources} />
     </div>
   );
 }
