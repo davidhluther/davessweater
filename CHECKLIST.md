@@ -140,31 +140,38 @@ Fix order: **R1 → R6 → R2 → R4 → R5 → R3 → R7 → R8 → R9 → R11 
       "What counts as actual" section states the Open-Meteo-archive provenance + the self-judging circularity
       plainly). Remaining (future/larger): cross-validate actuals vs NWS/station + stand up the Ecowitt
       ground-truth station so the "actual" is independent (M6 hardware).
-- [ ] **R3 — No capture-quality / coverage-drop monitoring** (the Ray-regression class). All capture steps
-      `continue-on-error`; compare never exits nonzero. Add a post-compare guard that fails the job on a
-      coverage drop / missing expected source / source count < N, + a predictions↔comparisons parity test.
-      *(Replaces the standalone "capture-quality monitoring" item below.)*
+- [x] **R3 — No capture-quality / coverage-drop monitoring** — ✅ DONE (PR pending, `fix/pipeline-hardening`).
+      New `scripts/check_capture_health.py` runs after `compare.py` in `daily_compare.yml` (NOT
+      continue-on-error, before the commit step): it fails the job red if a mandatory source (Open-Meteo, Ray's)
+      is absent or dropped a required field for the day, or the comparison is missing — so the exact
+      Ray-deflation failure mode becomes a red run + notification instead of a silent bad day, and questionable
+      data is never committed. Writes a coverage summary to the job summary. Tested (`tests/test_capture_health.py`).
 
 **🟡 Medium:**
 - [~] **R7 — Silent missing-actuals dropped 2026-05-22 (green workflow); + 2 ghost empty rows.** ✅ Data half
       DONE (PR pending, `fix/lowtemp-and-data-integrity`): backfilled 05-22 (Open-Meteo 100 / Ray's 81.5);
       deleted the 2 ghost rows (`2026-03-03` pre-era, `2026-06-18` — a genuine no-capture gap, no predictions
-      ever existed, left honest); `compare.py` now skips writing empty-sources comparisons so no new ghosts. ⏳
-      Remaining (→ fold into R3/PR3): make missing-actuals **loud + retried** (exit nonzero) + a backfill sweep.
+      ever existed, left honest); `compare.py` now skips writing empty-sources comparisons so no new ghosts.
+      ✅ Loud-missing-actuals now DONE via the R3 health guard (a missing comparison for the day fails the run).
+      ⏳ Only nicety left: an automatic backfill *sweep* to re-score a day once its lagged actuals land.
 - [x] **R8 — `CLAUDE.md` scoring section refreshed — DONE 2026-06-26 (uncommitted).** Repointed at
       `scripts/scoring.py`, corrected the wind row (interval + 0.5 width tax), split precip into type(10, partial
       credit)+amount(10, snow-aware), and added the coverage-normalization note. The on-site `/methodology` page
       (R4) is the public-facing synced description.
-- [ ] **R9 — Concurrent compare + `-X ours` merge footgun** (benign today, latent). Add a `concurrency:` group
-      / rebase-and-retry; add `reset --hard origin/main` to `daily_capture`.
+- [x] **R9 — Concurrent compare + `-X ours` merge footgun** — ✅ DONE (PR pending, `fix/pipeline-hardening`).
+      All three data workflows now share a `concurrency: { group: davessweater-data, cancel-in-progress: false }`
+      so no two runs write `data/` at once; added the `reset --hard origin/main` preamble to `daily_capture`.
 - [x] **R11 — OWM/Met.no day-0 low is the partial-bucket min, not the calendar-day low** — ✅ FIXED (PR pending,
       `fix/lowtemp-and-data-integrity`). `compare.py:_fix_bucket_low` recovers the capture-day low from the
       day-ahead forecast (prior morning's capture, which spans the full day); forfeits it only when no prior
       capture exists (2026-06-23). Backfilled all history (`scripts/backfill_bucket_low.py`) + regression tests.
       The two free sources were being unfairly depressed; corrected avgs ≈ metno 91.3 / OWM 84.4. **Un-gating
       prerequisite cleared.**
-- [ ] **R12 — Snow-depth scoring has never graded a real day** (0/478; the 2 Ray snow days used the legacy
-      model). Replay a past Boone snow event before surfacing any snow column / winter claim.
+- [x] **R12 — Snow-depth scoring has never graded a real day** — ✅ DONE (PR pending, `fix/pipeline-hardening`).
+      `tests/test_snow_scoring.py` replays snow-day scenarios through `scoring.py` — the coupled snow-depth band
+      (`_snow_tol`, tolerance, slope) and the rain/snow type cascade (exact / partial / miss / forfeit / mixed) —
+      so the winter-only path is proven before it debuts live. (Self-archived snow-depth *ground truth* still
+      leans on the Open-Meteo archive → the Ecowitt station remains the real R5/M6 fix for validation.)
 
 **🟡 Counsel (parallel, not engineering):**
 - [ ] **R10 — Trademark / scrape-republish exposure.** Disclaimer present + global (good). Counsel review:

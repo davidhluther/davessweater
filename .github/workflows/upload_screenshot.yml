@@ -22,6 +22,12 @@ on:
 permissions:
   contents: write
 
+# Shares the data-writing concurrency group so it never races the compare /
+# capture workflows on a data/ commit to main.
+concurrency:
+  group: davessweater-data
+  cancel-in-progress: false
+
 jobs:
   save-screenshot:
     runs-on: ubuntu-latest
