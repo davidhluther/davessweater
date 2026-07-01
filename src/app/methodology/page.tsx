@@ -1,6 +1,8 @@
 import Link from "next/link";
 import SectionBand from "@/components/SectionBand";
 import JsonLd from "@/components/JsonLd";
+import CoverageMatrix from "@/components/CoverageMatrix";
+import { getScores } from "@/lib/data";
 
 export const metadata = {
   title: "How we score weather forecast accuracy",
@@ -15,8 +17,6 @@ export const metadata = {
     type: "article",
   },
 };
-
-const REPO = "https://github.com/davidhluther/davessweater";
 
 const jsonLd = [
   {
@@ -42,7 +42,8 @@ const jsonLd = [
   },
 ];
 
-export default function Page() {
+export default async function Page() {
+  const scores = await getScores();
   return (
     <>
       <JsonLd data={jsonLd} />
@@ -51,8 +52,7 @@ export default function Page() {
         <p className="mt-2 max-w-2xl text-sm text-muted">
           The whole point of this site is that the claims are <em>tracked data</em>, not assertion. So here is
           the entire method, in the open: how each forecast earns its points, how we keep the comparison fair,
-          and where the &ldquo;actual&rdquo; weather comes from. Every input and the scoring code are public, so
-          you can recompute any number yourself.
+          and where the &ldquo;actual&rdquo; weather comes from.
         </p>
       </SectionBand>
 
@@ -178,27 +178,12 @@ export default function Page() {
       </SectionBand>
 
       <SectionBand tone="surface">
-        <h2 className="font-display text-xl font-bold">Check our work</h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
-          None of this is hidden. Every forecast we capture, the daily actuals, and each scored daily comparison
-          are committed to the public repository, and the scoring engine is one readable file. Pull it and
-          recompute any number on the board yourself.
+        <h2 className="font-display text-xl font-bold">What each service reports</h2>
+        <p className="mb-4 mt-1 max-w-2xl text-sm text-muted">
+          Not every forecaster publishes every field. Here&apos;s what each one gives us to score &mdash; a blank
+          isn&apos;t a wrong answer, it&apos;s a question they didn&apos;t answer.
         </p>
-        <ul className="mt-2 space-y-1 text-sm">
-          <li>
-            <a href={`${REPO}/blob/main/scripts/scoring.py`} className="text-teal underline underline-offset-2"
-               target="_blank" rel="noopener noreferrer">scripts/scoring.py</a>{" "}
-            <span className="text-muted">&mdash; the exact scoring engine</span>
-          </li>
-          <li>
-            <a href={`${REPO}/tree/main/data`} className="text-teal underline underline-offset-2"
-               target="_blank" rel="noopener noreferrer">data/</a>{" "}
-            <span className="text-muted">&mdash; every prediction, actual, and scored comparison</span>
-          </li>
-        </ul>
-        <p className="mt-4 text-xs italic text-muted">
-          Not affiliated with, endorsed by, or on speaking terms with Ray&rsquo;s Weather.
-        </p>
+        <CoverageMatrix scores={scores} />
       </SectionBand>
     </>
   );
