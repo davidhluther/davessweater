@@ -472,6 +472,9 @@ def run_daily_comparison(target_date=None):
             result = score_prediction(_to_contract(apple_data), norm_actual)
             comparison["sources"]["apple_weather"] = {
                 "prediction": apple_data,
+                # Record which data backed the Apple slot: real Apple ("iPhone
+                # Shortcut" or a backfilled screenshot) vs the Open-Meteo fallback.
+                "source": apple_source,
                 "score": result,
             }
             print(f"  Apple Weather ({apple_source}): {result['score']}/100")

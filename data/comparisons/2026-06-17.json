@@ -1,6 +1,6 @@
 {
   "date": "2026-06-17",
-  "generated_at": "2026-06-24T12:44:55.996595-04:00",
+  "generated_at": "2026-07-01T14:20:15.456947-04:00",
   "actuals": {
     "date": "2026-06-17",
     "fetched_at": "2026-06-18T18:55:26.584490-04:00",
@@ -163,18 +163,19 @@
     },
     "apple_weather": {
       "prediction": {
-        "today_high_f": 77.3,
-        "tonight_low_f": 53.4,
-        "day_low_f": 53.4,
-        "wind_mph": 11.1,
-        "precip_in": 0.0,
-        "snow_in": 0.0,
-        "conditions": "Overcast",
+        "today_high_f": 75,
+        "tonight_low_f": 54,
+        "conditions": "Cloudy",
+        "source": "iPhone screenshot (backfilled from 2026-06-17/iphone_screenshot.png)",
+        "observed_headline": "Cloudy; sunny expected 5PM",
+        "wind_lo": 0,
+        "wind_hi": 13,
         "category": "cloudy",
-        "source": "Open-Meteo (iPhone fallback)"
+        "precip_in": 0.0
       },
+      "source": "iPhone Shortcut",
       "score": {
-        "score": 84.0,
+        "score": 79.8,
         "grade": {
           "verdict": "right",
           "ray_count": 4
@@ -188,28 +189,28 @@
         },
         "breakdown": {
           "high_temp": {
-            "points": 24.0,
+            "points": 30.0,
             "max": 30,
             "scored": true,
-            "predicted": 77.3,
+            "predicted": 75,
             "actual": 73.3,
-            "error": 4.0
+            "error": 1.7
           },
           "low_temp": {
             "points": 30.0,
             "max": 30,
             "scored": true,
-            "predicted": 53.4,
+            "predicted": 54,
             "actual": 53.2,
-            "error": 0.2
+            "error": 0.8
           },
           "wind": {
-            "points": 20.0,
+            "points": 9.8,
             "max": 20,
             "scored": true,
-            "predicted": 11.1,
+            "predicted": "0-13",
             "actual": 8.1,
-            "error": 3.0
+            "error": 1.6
           },
           "precip_type": {
             "points": 0.0,

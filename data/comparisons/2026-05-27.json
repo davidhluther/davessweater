@@ -1,6 +1,6 @@
 {
   "date": "2026-05-27",
-  "generated_at": "2026-06-24T12:44:55.302185-04:00",
+  "generated_at": "2026-07-01T14:20:15.298195-04:00",
   "actuals": {
     "date": "2026-05-27",
     "fetched_at": "2026-05-28T13:48:38.678726-04:00",
@@ -163,26 +163,25 @@
     },
     "apple_weather": {
       "prediction": {
-        "today_high_f": 73.7,
-        "tonight_low_f": 63.1,
-        "day_low_f": 63.1,
-        "wind_mph": 11.9,
-        "precip_in": 0.071,
-        "snow_in": 0.0,
-        "conditions": "Dense drizzle",
-        "category": "drizzle",
-        "source": "Open-Meteo (iPhone fallback)"
+        "today_high_f": 72,
+        "tonight_low_f": 62,
+        "conditions": "Thunderstorms",
+        "source": "iPhone screenshot (backfilled from 2026-05-27/iphone_screenshot.png)",
+        "observed_headline": "Cloudy headline; thunderstorms 2-3PM; no gust shown",
+        "category": "storm",
+        "precip_in": 0.01
       },
+      "source": "iPhone Shortcut",
       "score": {
-        "score": 93.1,
+        "score": 78.1,
         "grade": {
           "verdict": "right",
-          "ray_count": 5
+          "ray_count": 4
         },
         "coverage": {
           "high_temp": true,
           "low_temp": true,
-          "wind": true,
+          "wind": false,
           "precip_type": true,
           "precip_amount": true
         },
@@ -191,25 +190,25 @@
             "points": 30.0,
             "max": 30,
             "scored": true,
-            "predicted": 73.7,
+            "predicted": 72,
             "actual": 73.5,
-            "error": 0.2
+            "error": 1.5
           },
           "low_temp": {
             "points": 30.0,
             "max": 30,
             "scored": true,
-            "predicted": 63.1,
+            "predicted": 62,
             "actual": 62.3,
-            "error": 0.8
+            "error": 0.3
           },
           "wind": {
-            "points": 13.8,
+            "points": null,
             "max": 20,
-            "scored": true,
-            "predicted": 11.9,
+            "scored": false,
+            "predicted": null,
             "actual": 5.8,
-            "error": 6.1
+            "error": null
           },
           "precip_type": {
             "points": 10.0,
@@ -219,12 +218,12 @@
             "actual": "rain"
           },
           "precip_amount": {
-            "points": 9.3,
+            "points": 8.1,
             "max": 10,
             "scored": true,
-            "predicted": 0.071,
+            "predicted": 0.01,
             "actual": 0.205,
-            "error": 0.134,
+            "error": 0.195,
             "unit": "in_liquid"
           }
         }

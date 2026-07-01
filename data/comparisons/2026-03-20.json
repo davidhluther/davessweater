@@ -1,6 +1,6 @@
 {
   "date": "2026-03-20",
-  "generated_at": "2026-06-24T12:44:53.400395-04:00",
+  "generated_at": "2026-07-01T14:20:14.648270-04:00",
   "actuals": {
     "date": "2026-03-20",
     "fetched_at": "2026-03-21T10:52:53.400381-04:00",
@@ -163,21 +163,22 @@
     },
     "apple_weather": {
       "prediction": {
-        "today_high_f": 62.8,
-        "tonight_low_f": 36.7,
-        "day_low_f": 36.7,
-        "wind_mph": 11.6,
-        "precip_in": 0.0,
-        "snow_in": 0.0,
-        "conditions": "Overcast",
+        "today_high_f": 62,
+        "tonight_low_f": 37,
+        "conditions": "Cloudy",
+        "source": "iPhone screenshot (backfilled from 2026-03-20/iphone_screenshot.png)",
+        "observed_headline": "Cloudy rest of day",
+        "wind_lo": 0,
+        "wind_hi": 16,
         "category": "cloudy",
-        "source": "Open-Meteo (iPhone fallback)"
+        "precip_in": 0.0
       },
+      "source": "iPhone Shortcut",
       "score": {
-        "score": 100.0,
+        "score": 87.6,
         "grade": {
           "verdict": "right",
-          "ray_count": 5
+          "ray_count": 4
         },
         "coverage": {
           "high_temp": true,
@@ -191,25 +192,25 @@
             "points": 30.0,
             "max": 30,
             "scored": true,
-            "predicted": 62.8,
+            "predicted": 62,
             "actual": 63.2,
-            "error": 0.4
+            "error": 1.2
           },
           "low_temp": {
             "points": 30.0,
             "max": 30,
             "scored": true,
-            "predicted": 36.7,
+            "predicted": 37,
             "actual": 37.0,
-            "error": 0.3
+            "error": 0.0
           },
           "wind": {
-            "points": 20.0,
+            "points": 7.6,
             "max": 20,
             "scored": true,
-            "predicted": 11.6,
+            "predicted": "0-16",
             "actual": 9.2,
-            "error": 2.4
+            "error": 1.2
           },
           "precip_type": {
             "points": 10.0,

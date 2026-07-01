@@ -1,6 +1,6 @@
 {
   "date": "2026-03-12",
-  "generated_at": "2026-06-24T12:44:53.125463-04:00",
+  "generated_at": "2026-07-01T14:20:14.283399-04:00",
   "actuals": {
     "date": "2026-03-12",
     "fetched_at": "2026-03-13T08:32:47.760495-04:00",
@@ -161,20 +161,22 @@
     },
     "apple_weather": {
       "prediction": {
-        "today_high_f": 58.1,
-        "tonight_low_f": 30.9,
-        "day_low_f": 30.9,
-        "wind_mph": 28.7,
-        "precip_in": 0.606,
-        "conditions": "Heavy snow",
-        "category": "snow",
-        "source": "Open-Meteo (iPhone fallback)"
+        "today_high_f": 57,
+        "tonight_low_f": 30,
+        "conditions": "Clear",
+        "source": "iPhone screenshot (backfilled from 2026-03-12/iphone_screenshot.png)",
+        "observed_headline": "Special Weather Statement; clear expected 8PM, gusts to 46",
+        "wind_lo": 0,
+        "wind_hi": 46,
+        "category": "clear",
+        "precip_in": 0.0
       },
+      "source": "iPhone Shortcut",
       "score": {
-        "score": 63.3,
+        "score": 42.3,
         "grade": {
-          "verdict": "meh",
-          "ray_count": 3
+          "verdict": "wrong",
+          "ray_count": 2
         },
         "coverage": {
           "high_temp": true,
@@ -185,43 +187,43 @@
         },
         "breakdown": {
           "high_temp": {
-            "points": 29.7,
+            "points": 30.0,
             "max": 30,
             "scored": true,
-            "predicted": 58.1,
+            "predicted": 57,
             "actual": 56.0,
-            "error": 2.1
+            "error": 1.0
           },
           "low_temp": {
-            "points": 9.6,
+            "points": 12.3,
             "max": 30,
             "scored": true,
-            "predicted": 30.9,
+            "predicted": 30,
             "actual": 22.1,
-            "error": 8.8
+            "error": 7.9
           },
           "wind": {
-            "points": 20.0,
+            "points": 0.0,
             "max": 20,
             "scored": true,
-            "predicted": 28.7,
+            "predicted": "0-46",
             "actual": 26.0,
-            "error": 2.7
+            "error": 3.0
           },
           "precip_type": {
-            "points": 4.0,
+            "points": 0.0,
             "max": 10,
             "scored": true,
-            "predicted": "snow",
+            "predicted": "none",
             "actual": "rain"
           },
           "precip_amount": {
             "points": 0.0,
             "max": 10,
             "scored": true,
-            "predicted": 0.606,
+            "predicted": 0.0,
             "actual": 1.276,
-            "error": 0.67,
+            "error": 1.276,
             "unit": "in_liquid"
           }
         }

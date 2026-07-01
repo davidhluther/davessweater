@@ -1,6 +1,6 @@
 {
   "date": "2026-05-05",
-  "generated_at": "2026-06-24T12:44:54.689721-04:00",
+  "generated_at": "2026-07-01T14:20:15.000004-04:00",
   "actuals": {
     "date": "2026-05-05",
     "fetched_at": "2026-05-06T12:13:52.937178-04:00",
@@ -163,21 +163,22 @@
     },
     "apple_weather": {
       "prediction": {
-        "today_high_f": 68.4,
-        "tonight_low_f": 49.2,
-        "day_low_f": 49.2,
-        "wind_mph": 14.8,
-        "precip_in": 0.0,
-        "snow_in": 0.0,
-        "conditions": "Overcast",
-        "category": "cloudy",
-        "source": "Open-Meteo (iPhone fallback)"
+        "today_high_f": 67,
+        "tonight_low_f": 48,
+        "conditions": "Sunny",
+        "source": "iPhone screenshot (backfilled from 2026-05-05/iphone_screenshot.png)",
+        "observed_headline": "Sunny; cloudy expected 12PM",
+        "wind_lo": 0,
+        "wind_hi": 10,
+        "category": "clear",
+        "precip_in": 0.0
       },
+      "source": "iPhone Shortcut",
       "score": {
-        "score": 95.6,
+        "score": 82.6,
         "grade": {
           "verdict": "right",
-          "ray_count": 5
+          "ray_count": 4
         },
         "coverage": {
           "high_temp": true,
@@ -188,28 +189,28 @@
         },
         "breakdown": {
           "high_temp": {
-            "points": 27.0,
+            "points": 30.0,
             "max": 30,
             "scored": true,
-            "predicted": 68.4,
+            "predicted": 67,
             "actual": 65.4,
-            "error": 3.0
+            "error": 1.6
           },
           "low_temp": {
-            "points": 28.8,
+            "points": 30.0,
             "max": 30,
             "scored": true,
-            "predicted": 49.2,
+            "predicted": 48,
             "actual": 46.8,
-            "error": 2.4
+            "error": 1.2
           },
           "wind": {
-            "points": 19.8,
+            "points": 2.6,
             "max": 20,
             "scored": true,
-            "predicted": 14.8,
+            "predicted": "0-10",
             "actual": 11.7,
-            "error": 3.1
+            "error": 6.7
           },
           "precip_type": {
             "points": 10.0,
