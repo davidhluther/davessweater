@@ -1,6 +1,6 @@
 {
   "date": "2026-03-17",
-  "generated_at": "2026-06-24T12:44:53.287923-04:00",
+  "generated_at": "2026-07-01T14:20:14.573912-04:00",
   "actuals": {
     "date": "2026-03-17",
     "fetched_at": "2026-03-18T11:48:06.030872-04:00",
@@ -162,20 +162,22 @@
     },
     "apple_weather": {
       "prediction": {
-        "today_high_f": 22.8,
-        "tonight_low_f": 13.1,
-        "day_low_f": 13.1,
-        "wind_mph": 28.4,
-        "precip_in": 0.028,
-        "conditions": "Slight snow",
-        "category": "snow",
-        "source": "Open-Meteo (iPhone fallback)"
+        "today_high_f": 25,
+        "tonight_low_f": 15,
+        "conditions": "Partly Cloudy",
+        "source": "iPhone screenshot (backfilled from 2026-03-17/iphone_screenshot.png)",
+        "observed_headline": "Partly cloudy expected 8PM; gusts to 30",
+        "wind_lo": 0,
+        "wind_hi": 30,
+        "category": "cloudy",
+        "precip_in": 0.0
       },
+      "source": "iPhone Shortcut",
       "score": {
-        "score": 81.4,
+        "score": 70.0,
         "grade": {
-          "verdict": "right",
-          "ray_count": 4
+          "verdict": "meh",
+          "ray_count": 3
         },
         "coverage": {
           "high_temp": true,
@@ -189,40 +191,40 @@
             "points": 30.0,
             "max": 30,
             "scored": true,
-            "predicted": 22.8,
+            "predicted": 25,
             "actual": 24.8,
-            "error": 2.0
+            "error": 0.2
           },
           "low_temp": {
             "points": 30.0,
             "max": 30,
             "scored": true,
-            "predicted": 13.1,
+            "predicted": 15,
             "actual": 13.5,
-            "error": 0.4
+            "error": 1.5
           },
           "wind": {
-            "points": 12.4,
+            "points": 0.0,
             "max": 20,
             "scored": true,
-            "predicted": 28.4,
+            "predicted": "0-30",
             "actual": 21.6,
-            "error": 6.8
+            "error": 6.6
           },
           "precip_type": {
-            "points": 4.0,
+            "points": 0.0,
             "max": 10,
             "scored": true,
-            "predicted": "snow",
+            "predicted": "none",
             "actual": "mixed"
           },
           "precip_amount": {
-            "points": 5.0,
+            "points": 10.0,
             "max": 10,
             "scored": true,
-            "predicted": 0.028,
+            "predicted": 0.0,
             "actual": 0.024,
-            "error": 0.004,
+            "error": 0.024,
             "unit": "in_liquid"
           }
         }

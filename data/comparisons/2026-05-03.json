@@ -1,6 +1,6 @@
 {
   "date": "2026-05-03",
-  "generated_at": "2026-06-24T12:44:54.634666-04:00",
+  "generated_at": "2026-07-01T14:20:14.856947-04:00",
   "actuals": {
     "date": "2026-05-03",
     "fetched_at": "2026-05-04T12:17:27.564908-04:00",
@@ -163,21 +163,22 @@
     },
     "apple_weather": {
       "prediction": {
-        "today_high_f": 55.3,
-        "tonight_low_f": 32.7,
-        "day_low_f": 32.7,
-        "wind_mph": 13.0,
-        "precip_in": 0.0,
-        "snow_in": 0.0,
-        "conditions": "Clear sky",
+        "today_high_f": 56,
+        "tonight_low_f": 33,
+        "conditions": "Sunny",
+        "source": "iPhone screenshot (backfilled from 2026-05-03/iphone_screenshot.png)",
+        "observed_headline": "Freeze Warning; sunny all day",
+        "wind_lo": 0,
+        "wind_hi": 14,
         "category": "clear",
-        "source": "Open-Meteo (iPhone fallback)"
+        "precip_in": 0.0
       },
+      "source": "iPhone Shortcut",
       "score": {
-        "score": 100.0,
+        "score": 82.4,
         "grade": {
           "verdict": "right",
-          "ray_count": 5
+          "ray_count": 4
         },
         "coverage": {
           "high_temp": true,
@@ -191,25 +192,25 @@
             "points": 30.0,
             "max": 30,
             "scored": true,
-            "predicted": 55.3,
+            "predicted": 56,
             "actual": 54.2,
-            "error": 1.1
+            "error": 1.8
           },
           "low_temp": {
             "points": 30.0,
             "max": 30,
             "scored": true,
-            "predicted": 32.7,
+            "predicted": 33,
             "actual": 31.9,
-            "error": 0.8
+            "error": 1.1
           },
           "wind": {
-            "points": 20.0,
+            "points": 2.4,
             "max": 20,
             "scored": true,
-            "predicted": 13.0,
+            "predicted": "0-14",
             "actual": 11.8,
-            "error": 1.2
+            "error": 4.8
           },
           "precip_type": {
             "points": 10.0,
