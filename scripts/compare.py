@@ -235,11 +235,16 @@ def _to_contract(pred):
     if rain is None and pred.get("precip_in") is not None:
         rain = max(0.0, pred["precip_in"] - (snow or 0))
     ptype = pred.get("precip_type")
-    if ptype is None:
-        cat = pred.get("category")
-        if cat in _CAT_TO_TYPE:
-            ptype = _CAT_TO_TYPE[cat]
-        elif pred.get("daytime_desc"):
+    cat = pred.get("category")
+    # Precip TYPE follows the forecast's weather category: a rain / storm / snow
+    # forecast IS a precip forecast even when its predicted amount rounds to 0" (e.g.
+    # Open-Meteo can pair a thunderstorm weather-code with 0" QPF). This overrides an
+    # amount-derived "none", and keeps the Apple fallback — which reads the conditions
+    # text — consistent with Open-Meteo. Amount is scored separately.
+    if cat in _CAT_TO_TYPE and _CAT_TO_TYPE[cat] != "none" and ptype in (None, "none"):
+        ptype = _CAT_TO_TYPE[cat]
+    elif ptype is None:
+        if pred.get("daytime_desc"):
             d = pred["daytime_desc"].lower()
             if any(w in d for w in ("snow", "flurr", "sleet", "wintry")):
                 ptype = "snow"

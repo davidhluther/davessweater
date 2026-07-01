@@ -72,7 +72,9 @@ A forecast of rain/snow with **no stated total** forfeits the amount (scored as 
 leaving the hard field blank. Ray's Weather never gives numeric totals, so he earns amount credit on his
 dry-forecast days and forfeits it on his wet-forecast days (the implied-zero is set in `compare.py:_to_contract`
 when `precip_type == "none"`). This replaced the short-lived R2 coverage-normalization, which let a forecaster
-outrank a more-accurate one purely by omitting the amount.
+outrank a more-accurate one purely by omitting the amount. Precip **type** follows the forecast's weather
+category (a rain / storm / snow forecast counts as predicting precipitation even at 0" QPF, so a thunderstorm
+isn't mislabeled "none"), which also keeps the Apple/Open-Meteo fallback scoring consistent (`compare.py:_to_contract`).
 
 Grade thresholds (`_score_grade()`):
 - 90+ → Right (5 rays)
