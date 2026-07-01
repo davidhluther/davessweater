@@ -84,8 +84,8 @@ on a framer-motion timeline (scroll-driven beam via `useScroll`), five data-boun
 - [x] **M3 #2 — scrollytelling "Why we exist"** — framer-motion added; `NumberTicker`/`PointerHighlight`/
       `ChartReveal`/`WhyTimeline` built; `whyStats` helper; `npm test`/lint/`build` green. Aurora deferred.
 - [ ] **M3 #3 — N-source viz** — surface the 7 new forecasters; still gated on them accruing enough scored days.
-  - [x] First surfacing: hero logo strip of the 8 index forecasters (`ForecasterLogos` + `FORECASTERS`), homepage
-        links `nofollow` (PR #78). Full ranked scoreboard still pending.
+  - [x] First surfacing: hero logo strip of the 8 index forecasters (`ForecasterLogos` + `FORECASTERS` map),
+        homepage links `nofollow`, wraps on mobile (PR #78). Full N-source scoreboard/columns still pending.
   - [ ] **PR2 — "the rest of the field" scoreboard** (R6 + M3 #3): shared `MIN_SCORED_DAYS` gate (ranked vs
         "provisional"), applied to both the new scoreboard AND `UpcomingForecasts` (closes R6); widen the
         `types.ts` source union. **MUST also add the R11 capture-day-low disclosure to `/methodology`** (a
