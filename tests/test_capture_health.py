@@ -118,3 +118,38 @@ def test_real_apple_with_screenshot_is_not_noted(tmp_path, monkeypatch):
     _with_screenshot(tmp_path, "2026-07-02", apple_source="iPhone Shortcut")
     _, lines = h.check("2026-07-02")
     assert not any("fallback" in l.lower() for l in lines)
+
+
+# ── Rolling drift detection (drift_findings) ───────────────────────────────
+def _rays_series(**override):
+    """A raysweather series with every field reliably provided, minus overrides."""
+    return {"raysweather": {f: override.get(f, [True] * 40) for f in h.FIELD_LABEL}}
+
+
+def test_sustained_dark_run_of_a_reliable_field_is_flagged():
+    # Ray's wind was provided for a month, then vanished for 8 straight days.
+    s = _rays_series(wind=[True] * 30 + [False] * 8)
+    out = h.drift_findings(s)
+    assert any("raysweather" in d and "wind" in d for d in out)
+
+
+def test_a_one_off_forfeit_is_not_flagged():
+    s = _rays_series(wind=[True] * 38 + [False] * 2)  # 2-day gap, below the 7-day run
+    assert h.drift_findings(s) == []
+
+
+def test_a_field_the_source_never_reliably_provides_is_not_flagged():
+    # Ray never gives a numeric precip amount — a permanent forfeit, not a drift.
+    s = _rays_series(precip_amount=[False] * 40)
+    assert h.drift_findings(s) == []
+
+
+def test_thin_baseline_is_not_flagged():
+    # Only 10 days of history before the dark run — not enough to judge "normally provided".
+    s = _rays_series(wind=[True] * 10 + [False] * 8)
+    assert h.drift_findings(s) == []
+
+
+def test_healthy_series_has_no_drift():
+    s = {src: {f: [True] * 40 for f in h.FIELD_LABEL} for src in h.DRIFT_SOURCES}
+    assert h.drift_findings(s) == []

@@ -168,9 +168,15 @@ Fix order: **R1 → R6 → R2 → R4 → R5 → R3 → R7 → R8 → R9 → R11 
       never committed. Adversarial-review-hardened to avoid false alarms: a **missing-actuals** day is a benign
       skip (the archive lags 1-5 days, self-correcting), and Ray's qualitative-wind / no-precip-type days are
       **honest forfeits** (not required of him), so neither trips the guard. Coverage summary → job summary.
-      Tested (`tests/test_capture_health.py`, incl. the lag-skip + forfeit-allowed paths). Follow-up niceties: a
-      rolling coverage-delta check (to catch a *sustained* Ray wind-parser regression vs a one-off forfeit) and
-      an auto-backfill sweep for lagged days.
+      Tested (`tests/test_capture_health.py`, incl. the lag-skip + forfeit-allowed paths).
+  - [x] **Rolling drift detection — ✅ DONE (PR pending, `feat/reliability-drift`).** `check_capture_health.py`
+        `drift_findings()` flags a source+field that has gone dark for 7+ straight scored days despite being
+        provided on ≥70% of the prior 30 — i.e. the *sustained* Ray wind-parser blackout the point-in-time check
+        can't see (it allows one-off forfeits). Scoped to the two stable-coverage sources (Open-Meteo, Ray's);
+        the 7 new sources lack history and Apple's coverage is intentionally shifting. **Non-fatal by default**
+        (`DRIFT_FATAL=False` → warns in the job summary; flip to fail the run). Verified: no false positives on
+        current data; a simulated 8-day Ray-wind blackout is flagged. Tested.
+  - [ ] Remaining nicety: an **auto-backfill sweep** to re-score an archive-lagged day once its actuals land.
 
 **🟡 Medium:**
 - [~] **R7 — Silent missing-actuals dropped 2026-05-22 (green workflow); + 2 ghost empty rows.** ✅ Data half
