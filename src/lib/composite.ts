@@ -19,20 +19,23 @@ export interface Composite {
   low: number;
   precipLabel: string;
   count: number;
+  sources: string[];
 }
 
 const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
 
 export function compositeForecast(latest: LatestForecasts | null): Composite | null {
   if (!latest?.sources) return null;
-  const sources = Object.entries(latest.sources).filter(([k]) => !EXCLUDE.has(k));
-  const highs = sources.map(([, v]) => v.high_f).filter((n): n is number => typeof n === "number");
-  const lows = sources.map(([, v]) => v.low_f).filter((n): n is number => typeof n === "number");
+  const entries = Object.entries(latest.sources).filter(([k]) => !EXCLUDE.has(k));
+  // A forecaster contributes to the index when it published a high for the day.
+  const contributing = entries.filter(([, v]) => typeof v.high_f === "number");
+  const highs = contributing.map(([, v]) => v.high_f as number);
+  const lows = entries.map(([, v]) => v.low_f).filter((n): n is number => typeof n === "number");
   if (highs.length < 2 || lows.length < 2) return null;
 
   // Majority precip type across the contributing forecasters.
   const counts: Record<string, number> = {};
-  for (const [, v] of sources) {
+  for (const [, v] of entries) {
     if (v.precip_type) counts[v.precip_type] = (counts[v.precip_type] ?? 0) + 1;
   }
   const precip = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "none";
@@ -47,5 +50,6 @@ export function compositeForecast(latest: LatestForecasts | null): Composite | n
     low: Math.round(mean(lows)),
     precipLabel: PRECIP_LABEL[precip] ?? precip,
     count: highs.length,
+    sources: contributing.map(([k]) => k),
   };
 }
