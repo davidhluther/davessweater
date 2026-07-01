@@ -125,9 +125,12 @@ Fix order: **R1 → R6 → R2 → R4 → R5 → R3 → R7 → R8 → R9 → R11 
 > off the screenshots into `backfill_apple_screenshots.py`'s table + re-scored → **32 real Apple days** (Apple
 > 88.28; headline + 7 new sources unchanged; 07-01 scores tomorrow). `check_capture_health.py` now emits a
 > **non-fatal NOTE** when Apple is scored on fallback despite an uploaded screenshot, so this regression stops
-> being silent. **Go-forward real fix is still owner-owned:** extend the iPhone Shortcut to write
-> `{today_high_f, tonight_low_f, wind_mph, conditions}` alongside the PNG (see `planning/apple-weather-shortcut-setup.md`);
-> until then, re-transcribing screenshots is the stopgap.
+> being silent. **Go-forward real fix is still owner-owned (on owner's to-do):** extend the iPhone Shortcut to
+> write `{today_high_f, tonight_low_f, wind_mph, conditions}` alongside the PNG (see
+> `planning/apple-weather-shortcut-setup.md`). **The priority field is SUSTAINED wind speed** (Get Current
+> Weather → Wind Speed) — the screenshots only show gusts, so real Apple is scored on a `[0, gust]` interval and
+> sits ~77; a real sustained number is what lifts it toward ~90 (honestly, from real data). Until the Shortcut
+> ships, re-transcribing screenshots is the stopgap.
 
 **🔴 Critical:**
 - [~] **R1 — "Apple Weather" is the Open-Meteo fallback everywhere — ACCEPTED RISK (owner, 2026-06-26).**
