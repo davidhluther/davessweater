@@ -77,6 +77,16 @@ TABLE = {
     "2026-06-22": (77, 60, "Thunderstorms", 15, "Mostly Sunny headline; thunderstorms expected 3PM"),
     "2026-06-23": (68, 56, "Rain",          15, "Cloudy headline; rainy conditions expected 9AM"),
     "2026-06-24": (74, 52, "Cloudy",        3,  "Cloudy; partly cloudy expected 4PM"),
+    # Extension (transcribed 2026-07-01): the Shortcut still uploads a screenshot
+    # PNG but no scoreable JSON, so these days were being scored as the Open-Meteo
+    # fallback until read off the screenshots here.
+    "2026-06-25": (74, 53, "Partly Cloudy", 8,    "Partly Cloudy; cloudy conditions expected 12AM; gusts to 8"),
+    "2026-06-26": (74, 58, "Cloudy",        5,    "Cloudy; sunny conditions expected 9AM; gusts to 5"),
+    "2026-06-27": (75, 62, "Rain",          9,    "Cloudy headline; rainy conditions expected 5PM; gusts to 9"),
+    "2026-06-28": (73, 65, "Rain",          None, "Compact 3-day card; Today forecast shows a rain icon; no wind shown"),
+    "2026-06-29": (80, 64, "Rain",          9,    "Special Weather Statement; Sunny headline; rainy conditions expected 3PM; gusts to 9"),
+    "2026-06-30": (82, 66, "Thunderstorms", 4,    "Mostly Cloudy headline; thunderstorms expected 4PM; gusts to 4"),
+    "2026-07-01": (87, 67, "Mostly Sunny",  7,    "Mostly Sunny; sunny conditions will continue all day; gusts to 7"),
 }
 
 # Screenshots whose H/L line was obscured by an alert banner — skipped on purpose.

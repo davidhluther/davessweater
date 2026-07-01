@@ -1,6 +1,6 @@
 {
   "date": "2026-06-30",
-  "generated_at": "2026-07-01T12:55:08.585876-04:00",
+  "generated_at": "2026-07-01T14:29:34.047647-04:00",
   "actuals": {
     "date": "2026-06-30",
     "fetched_at": "2026-07-01T12:55:08.502084-04:00",
@@ -175,18 +175,19 @@
     },
     "apple_weather": {
       "prediction": {
-        "today_high_f": 83.0,
-        "tonight_low_f": 65.8,
-        "day_low_f": 65.8,
-        "wind_mph": 6.5,
-        "precip_in": 0.0,
-        "snow_in": 0.0,
-        "conditions": "Thunderstorm",
+        "today_high_f": 82,
+        "tonight_low_f": 66,
+        "conditions": "Thunderstorms",
+        "source": "iPhone screenshot (backfilled from 2026-06-30/iphone_screenshot.png)",
+        "observed_headline": "Mostly Cloudy headline; thunderstorms expected 4PM; gusts to 4",
+        "wind_lo": 0,
+        "wind_hi": 4,
         "category": "storm",
-        "source": "Open-Meteo (iPhone fallback)"
+        "precip_in": 0.01
       },
+      "source": "iPhone Shortcut",
       "score": {
-        "score": 100.0,
+        "score": 97.2,
         "grade": {
           "verdict": "right",
           "ray_count": 5
@@ -203,25 +204,25 @@
             "points": 30.0,
             "max": 30,
             "scored": true,
-            "predicted": 83.0,
+            "predicted": 82,
             "actual": 82.0,
-            "error": 1.0
+            "error": 0.0
           },
           "low_temp": {
             "points": 30.0,
             "max": 30,
             "scored": true,
-            "predicted": 65.8,
+            "predicted": 66,
             "actual": 65.5,
-            "error": 0.3
+            "error": 0.5
           },
           "wind": {
-            "points": 20.0,
+            "points": 17.2,
             "max": 20,
             "scored": true,
-            "predicted": 6.5,
+            "predicted": "0-4",
             "actual": 4.4,
-            "error": 2.1
+            "error": 2.4
           },
           "precip_type": {
             "points": 10.0,
@@ -234,9 +235,9 @@
             "points": 10.0,
             "max": 10,
             "scored": true,
-            "predicted": 0.0,
+            "predicted": 0.01,
             "actual": 0.071,
-            "error": 0.071,
+            "error": 0.061,
             "unit": "in_liquid"
           }
         }

@@ -70,6 +70,21 @@ def evaluate(comp):
     return problems, lines
 
 
+def _apple_fallback_note(date, comp):
+    """A screenshot uploaded but scored as the Open-Meteo fallback means the iPhone
+    Shortcut sent a PNG without scoreable numbers — the silent real-Apple regression.
+    Surface it (non-fatal: the fallback is an owner-accepted stand-in, so it must not
+    fail the run — but a lost real-Apple day should still show up)."""
+    apple = comp.get("sources", {}).get("apple_weather", {})
+    if not isinstance(apple, dict) or "score" not in apple:
+        return []
+    screenshot = (DATA_DIR / "predictions" / date / "iphone_screenshot.png").exists()
+    if screenshot and apple.get("source") != "iPhone Shortcut":
+        return [f"  NOTE apple: scored on the Open-Meteo fallback though a screenshot was uploaded "
+                f"for {date} — the Shortcut may be sending a PNG but no scoreable data (real Apple lost)."]
+    return []
+
+
 def check(date):
     # The Open-Meteo archive lags 1-5 days, so yesterday's actuals may simply not
     # be posted yet. That is a benign, self-correcting delay (not a capture drop),
@@ -86,7 +101,9 @@ def check(date):
         comp = json.load(open(cpath))
     except (json.JSONDecodeError, OSError) as e:
         return ([f"Comparison for {date} is unreadable: {e}"], [f"comparison for {date}: UNREADABLE"])
-    return evaluate(comp)
+    problems, lines = evaluate(comp)
+    lines += _apple_fallback_note(date, comp)
+    return problems, lines
 
 
 def _target_date(argv):
