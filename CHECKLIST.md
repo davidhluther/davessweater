@@ -276,6 +276,32 @@ via subagent-driven TDD + per-task + final adversarial review (READY_TO_MERGE), 
 - [ ] Weekly summary workflow + graphic.
 - [ ] "Woolcam": JideTech 4K 8MP PoE bullet camera (built-in RTMP → YouTube). Not set up.
 
+## SEO / performance / accessibility (audited 2026-07-01)
+Multi-agent audit + Lighthouse (production, mobile). **SEO = 100** (the promotion-readiness metadata/JSON-LD/
+sitemap work nailed it — nothing to do). **Best Practices 96.**
+- [x] **Perf — hero LCP fixed (PR #87, merged + live).** Lighthouse was Performance **70** with **LCP 19.7s**
+      (CLS 0, TBT 30ms otherwise great). Cause: the hero iPhone screenshot was a **2.8MB** PNG shown at 150px;
+      `prepare_public.mjs` now resizes it with sharp to an **18KB WebP** and `IphoneShot` loads it eager/high-
+      priority. Result on prod: **LCP 19.7s → 5.0s, Performance 70 → 78.**
+  - [ ] Residual perf (diminishing returns, real users already ~1-2s): LCP still 5.0s / FCP 2.7s under Lighthouse's
+        aggressive mobile throttle → font loading (display swap/preload) + render-blocking. Optional.
+- [ ] **Accessibility bundle — QUEUED (held 2026-07-01; resurface after the Fable reload).** Lighthouse a11y **92**;
+      the audit found these WCAG-AA gaps (do as one PR, should reach ~100):
+  - **[high] Contrast — orange text** `--orange #f97316` is 2.8:1 on white (fails AA). Small-text usages:
+    `ShopGrid.tsx:23` (price), `Scoreboard.tsx:10,16` (Ray's label/record), `BrandMark.tsx:6`. Fix: use
+    `--orange-600 #c2410c` (5.18:1) for orange **text** on light; keep `#f97316` for large headings / non-text UI.
+  - **[high] Contrast — green text** `--green #1d9e75` is ~3.4:1 (fails AA). Usages: `OtherSourcesBoard.tsx`
+    source names (`:29,40,59`), `CoverageMatrix.tsx:33,51` rowheaders/legend. Fix: add a darker `--green-700`
+    (~`#0f7a58`, ≥4.5:1) for green **text**; keep `#1d9e75` for the score-cell fills.
+  - **[med] Skip-to-content link** — add `sr-only focus:not-sr-only` link in `layout.tsx` + `id="main"` on `<main>`.
+  - **[med] Missing h1** on `/right-wrong-ray`, `/shop`, `/videos`, `/blog` (top out at h2) — promote lead heading.
+  - **[med] Visible focus ring** — only the unused shadcn Button has focus-visible. Add a shared
+    `focus-visible:ring-2 ring-ring ring-offset-2` to nav/menu/Hero CTAs/sortable headers/shop buttons.
+  - **[med] Icon alt spam** — `RayFaces.tsx:7` + `LiveConditions.tsx:9` render N identical `alt="Ray"`/`"sweater"`
+    (announces "Ray Ray Ray…"; greyed empties still alt-ed). Make icons `alt=""`/aria-hidden + one `aria-label`
+    ("4 of 5 rays"). **[low]** aria-hidden the decorative 🌐/📱 in `right-wrong-ray/page.tsx:26-27` + the ● in
+    `IphoneShot.tsx:27`.
+
 ## To do — weather station hardware
 - [ ] Order Wittboy WS90 + GW2000.
 - [ ] Order mast/pole mount if not roof-mounting (~$20–50).
