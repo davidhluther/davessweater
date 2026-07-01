@@ -85,6 +85,73 @@ def _apple_fallback_note(date, comp):
     return []
 
 
+# ── Rolling drift detection ──────────────────────────────────────────────
+# The point-in-time check above lets a source forfeit a soft field on any single
+# day (Ray's qualitative wind, say). What it can't see is a field that was
+# reliably provided for months and then quietly goes dark for weeks — the exact
+# shape of the Ray wind-parser regression that deflated his scores unnoticed.
+# This flags a source+field that has provided NOTHING for DRIFT_DARK_RUN straight
+# scored days despite being provided on most of the prior DRIFT_BASELINE_DAYS.
+#
+# Scoped to the two stable-coverage sources: Open-Meteo (the machine API) and
+# Ray's (the graded competitor, where deflation is the credibility risk). The 7
+# new sources lack the history; Apple's coverage is intentionally shifting as real
+# screenshots replace the fallback. Non-fatal by default (a heuristic on live
+# data) — set DRIFT_FATAL = True to make a drift finding fail the run instead.
+DRIFT_SOURCES = {"openmeteo", "raysweather"}
+DRIFT_DARK_RUN = 7          # consecutive recent scored days a field is absent
+DRIFT_BASELINE_DAYS = 30    # scored days before that run used to judge "normally provided"
+DRIFT_MIN_BASELINE = 15     # need at least this many baseline days to judge
+DRIFT_BASELINE_MIN = 0.7    # ...and the field must have been provided >= this fraction
+DRIFT_FATAL = False
+
+
+def _drift_series(as_of_date):
+    """Build {source: {field: [covered_bool ... oldest->newest]}} for the drift
+    sources over the comparison files up to and including as_of_date (only days the
+    source was actually scored are recorded)."""
+    cov_fields = list(FIELD_LABEL)
+    series = {s: {f: [] for f in cov_fields} for s in DRIFT_SOURCES}
+    files = sorted(p for p in (DATA_DIR / "comparisons").glob("*.json") if p.stem <= as_of_date)
+    for p in files[-(DRIFT_DARK_RUN + DRIFT_BASELINE_DAYS + 10):]:
+        try:
+            comp = json.load(open(p))
+        except (json.JSONDecodeError, OSError):
+            continue
+        srcs = comp.get("sources", {}) if isinstance(comp, dict) else {}
+        for s in DRIFT_SOURCES:
+            sd = srcs.get(s)
+            if not isinstance(sd, dict) or not isinstance(sd.get("score"), dict):
+                continue  # source not scored that day — that's the point-in-time check's job
+            cov = sd["score"].get("coverage", {})
+            for f in cov_fields:
+                series[s][f].append(bool(cov.get(f)))
+    return series
+
+
+def drift_findings(series):
+    """series: {source: {field: [covered_bool ... oldest->newest]}}. Flag a field
+    that has gone dark for a sustained run despite normally being provided."""
+    out = []
+    for src in sorted(series):
+        for field, covered in series[src].items():
+            dark = 0
+            for c in reversed(covered):
+                if c:
+                    break
+                dark += 1
+            if dark < DRIFT_DARK_RUN:
+                continue
+            baseline = covered[:-dark][-DRIFT_BASELINE_DAYS:]
+            if len(baseline) < DRIFT_MIN_BASELINE:
+                continue
+            ratio = sum(baseline) / len(baseline)
+            if ratio >= DRIFT_BASELINE_MIN:
+                out.append(f"{src} {FIELD_LABEL[field]}: absent for the last {dark} scored days, but "
+                           f"provided {ratio * 100:.0f}% of the prior {len(baseline)} — likely a capture/parse regression.")
+    return out
+
+
 def check(date):
     # The Open-Meteo archive lags 1-5 days, so yesterday's actuals may simply not
     # be posted yet. That is a benign, self-correcting delay (not a capture drop),
@@ -117,18 +184,25 @@ def _target_date(argv):
 def main():
     date = _target_date(sys.argv[1:])
     problems, lines = check(date)
+    drift = drift_findings(_drift_series(date))
+    if drift:
+        lines.append("\nRolling coverage drift:")
+        lines += [f"  DRIFT {d}" for d in drift]
+        if DRIFT_FATAL:
+            problems += drift
     report = f"### Capture health — {date}\n\n" + "\n".join(lines)
     print(report)
     step_summary = os.environ.get("GITHUB_STEP_SUMMARY")
     if step_summary:
+        footer = "**FAIL**" if problems else ("**OK (drift warning)**" if drift else "**OK**")
         with open(step_summary, "a") as f:
-            f.write(report + "\n\n" + ("**FAIL**\n" if problems else "**OK**\n"))
+            f.write(report + "\n\n" + footer + "\n")
     if problems:
         print("\nCAPTURE HEALTH: FAIL")
         for p in problems:
             print(f"  - {p}")
         sys.exit(1)
-    print(f"\nCAPTURE HEALTH: OK ({date})")
+    print(f"\nCAPTURE HEALTH: OK{' with drift warning(s)' if drift else ''} ({date})")
 
 
 if __name__ == "__main__":
