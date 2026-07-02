@@ -48,4 +48,32 @@ describe("compositeForecast", () => {
     expect(c!.precip).toBe("none");
     expect(c!.precipLabel).toBe("No precip");
   });
+
+  it("only lets contributing sources (with a published high) vote on precip", () => {
+    const c = compositeForecast(latest({
+      openmeteo: src(80, 60, "none"),
+      nws: src(84, 64, "none"),
+      metno: src(null, 62, "snow"),
+      weatherapi: src(null, 63, "snow"),
+      tomorrowio: src(null, 61, "snow"),
+    }));
+    expect(c!.precip).toBe("none");
+  });
+
+  it("treats a tie that includes none as no consensus (none)", () => {
+    const c = compositeForecast(latest({
+      openmeteo: src(80, 60, "rain"),
+      nws: src(84, 64, "none"),
+    }));
+    expect(c!.precip).toBe("none");
+  });
+
+  it("treats a tie between precip types as mixed", () => {
+    const c = compositeForecast(latest({
+      openmeteo: src(30, 20, "rain"),
+      nws: src(32, 22, "snow"),
+    }));
+    expect(c!.precip).toBe("mixed");
+    expect(c!.precipLabel).toBe("Wintry mix");
+  });
 });

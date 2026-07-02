@@ -36,12 +36,17 @@ export function compositeForecast(latest: LatestForecasts | null): Composite | n
   const lows = entries.map(([, v]) => v.low_f).filter((n): n is number => typeof n === "number");
   if (highs.length < 2 || lows.length < 2) return null;
 
-  // Majority precip type across the contributing forecasters.
+  // Majority precip type across the contributing forecasters (only sources
+  // that made the index get a vote). A tie is not a consensus: a tie that
+  // includes "none" stays "none"; a tie between precip types reads as "mixed".
   const counts: Record<string, number> = {};
-  for (const [, v] of entries) {
+  for (const [, v] of contributing) {
     if (v.precip_type) counts[v.precip_type] = (counts[v.precip_type] ?? 0) + 1;
   }
-  const precip = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "none";
+  const top = Math.max(0, ...Object.values(counts));
+  const leaders = Object.keys(counts).filter((k) => counts[k] === top);
+  const precip =
+    leaders.length === 1 ? leaders[0] : leaders.length === 0 || leaders.includes("none") ? "none" : "mixed";
 
   const d = new Date(latest.date + "T12:00:00");
   const dateLabel = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });

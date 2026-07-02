@@ -82,7 +82,20 @@ on a framer-motion timeline (scroll-driven beam via `useScroll`), five data-boun
 `whyStats()` (vitest-tested); `prefers-reduced-motion`/mobile/no-CLS handled. Spec/plan:
 `planning/specs/2026-06-25-m3-scrollytelling-design.md`, `planning/plans/2026-06-25-m3-scrollytelling.md`.
 - [x] **M3 #2 — scrollytelling "Why we exist"** — framer-motion added; `NumberTicker`/`PointerHighlight`/
-      `ChartReveal`/`WhyTimeline` built; `whyStats` helper; `npm test`/lint/`build` green. Aurora deferred.
+      `ChartReveal`/`WhyTimeline` built; `whyStats` helper; `npm test`/lint/`build` green. Aurora deferred
+      → shipped 2026-07-01 as the weather backdrop's `wx-crisp` variant (next bullet).
+- [x] **Hero weather backdrop — ✅ DONE 2026-07-01 (PR pending, `feat/hero-weather-backdrop`).** Pure-CSS
+      ambient layer behind the hero (`WeatherBackdrop` + the `.wx` system in `globals.css`); the variant is
+      chosen at build time from the day's 8-forecaster composite (`lib/heroBackdrop.ts`; dry-day thresholds
+      reuse the published 75/55°F sweater boundaries). Variants: rain = passing light-sheets, snow = two
+      parallax fleck planes, mixed = both, hot = warm corner bloom, crisp = the deferred emerald aurora,
+      mild = near-silent. All share a "consensus floor": an emerald glow under the Index strip scaled by
+      today's forecaster count (`--n`); no composite → dim base only (never a fabricated glow). Invariants:
+      no client JS; transform/opacity animations only; `contain: layout paint`; reduced-motion = designed
+      still frame; light-add budget keeps hero text AA (worst stack ≈0.156 → ≥6.3:1). Verified: axe 0
+      violations on all six variants (desktop + mobile), lint/tests/build green, adversarial review run —
+      fixed its findings (reduced-motion specificity, snow fleck alpha cap, contributing-only precip vote
+      with principled ties in `composite.ts`).
 - [ ] **M3 #3 — N-source viz** — surface the 7 new forecasters; still gated on them accruing enough scored days.
   - [x] First surfacing: hero logo strip of the 8 index forecasters (`ForecasterLogos` + `FORECASTERS` map),
         homepage links `nofollow`, wraps on mobile (PR #78). Full N-source scoreboard/columns still pending.
