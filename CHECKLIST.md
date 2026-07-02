@@ -272,6 +272,12 @@ renders. Three date states built + build-tested (preview / tonight Jul 3–4 / a
       where the on-page checker auto-runs the same geocode-or-geolocate path on mount (reads
       `window.location` in an effect, not `useSearchParams`, so the static prerender survives). Verified
       end-to-end: address submitted on the Reports page landed at the checker with the full verdict rendered.
+- [x] **Route-scoped OG/Twitter share card — ✅ 2026-07-02.** `/fireworks` shares no longer inherit the
+      site scoreboard card: `src/app/fireworks/opengraph-image.tsx` (+ twitter-image re-export) renders a
+      build-time next/og card — red/white/blue blooms quoting the hero volley, headline «"At dusk" is not
+      a time. These are.», three chips (Sunset / Dark enough / First shells-our-read in orange), and the
+      URL + date footer. Dusk numbers bake from the same `lib/solar` the page uses (readWindow duplicated
+      with a keep-in-sync comment), so the card cannot disagree with the page.
 - [ ] **Owner, NOW THAT IT'S MERGED:** request indexing for `/fireworks` in GSC immediately — the only
       realistic organic lever this week; the organic play is the evergreen URL accruing for 2027.
 - [ ] **Owner, ads (Phase 5):** UTM every Meta variant, e.g.
