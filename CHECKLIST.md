@@ -84,7 +84,16 @@ on a framer-motion timeline (scroll-driven beam via `useScroll`), five data-boun
 - [x] **M3 #2 — scrollytelling "Why we exist"** — framer-motion added; `NumberTicker`/`PointerHighlight`/
       `ChartReveal`/`WhyTimeline` built; `whyStats` helper; `npm test`/lint/`build` green. Aurora deferred
       → shipped 2026-07-01 as the weather backdrop's `wx-crisp` variant (next bullet).
-- [x] **Hero weather backdrop — ✅ DONE 2026-07-01 (PR pending, `feat/hero-weather-backdrop`).** Pure-CSS
+- [x] **Homepage visual pass — ✅ DONE 2026-07-02 (PR #93; #92 was auto-closed by a GitHub stacked-branch
+      quirk).** Owner-directed five items: orange restricted to brand/editorial (data = green vs slate-gray;
+      winner card emphasized); DSI + Sweater Index merged into one Today module card; trend chart gained gap
+      fill / legend / labeled grade lines / 12px axes / 7-day-average default with Daily toggle; rubric strip
+      folded into the chart section footer; H1 phrase kept on one line. 87°-vs-85° source report delivered
+      (build-time 8-forecaster mean vs live Open-Meteo fetch); reconciliation decision banked below.
+- [x] **Hero weather backdrop — ✅ MERGED + LIVE 2026-07-02 (PR #91). Reworked LOUD at the owner's direction**
+      (whisper register rejected): wandering/swelling sun bloom + rotating ray sweep, dense snowfall, driving
+      rain sheets, fully lit aurora; a static quiet-zone mask on the wrapper keeps the text column ≤ ~40%
+      intensity so AA holds while the visual field runs bright; axe 0 violations ×6 variants. Pure-CSS
       ambient layer behind the hero (`WeatherBackdrop` + the `.wx` system in `globals.css`); the variant is
       chosen at build time from the day's 8-forecaster composite (`lib/heroBackdrop.ts`; dry-day thresholds
       reuse the published 75/55°F sweater boundaries). Variants: rain = passing light-sheets, snow = two
