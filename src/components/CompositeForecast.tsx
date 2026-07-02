@@ -12,10 +12,10 @@ export default async function CompositeForecast() {
   return (
     <div className="text-center">
       <div className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted">
-        {copy.index.title} · {c.dateLabel}
+        {copy.index.title} | {c.dateLabel}
       </div>
       <div className="mt-1 font-display text-2xl font-bold text-foreground sm:text-3xl">
-        High {c.high}° <span className="text-muted/60">·</span> Low {c.low}° <span className="text-muted/60">·</span> {c.precipLabel}
+        High {c.high}° <span className="text-muted/60">|</span> Low {c.low}° <span className="text-muted/60">|</span> {c.precipLabel}
       </div>
       <div className="mt-1 text-xs text-muted">{copy.index.footnote(c.count)}</div>
       <ForecasterLogos sources={c.sources} />

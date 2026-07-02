@@ -1,32 +1,36 @@
 import { getLatestComparison, getScores, getLatestForecasts } from "@/lib/data";
-import { scoreboardRows, otherSourcesRows } from "@/lib/scoreboard";
-import { MIN_SCORED_DAYS } from "@/lib/gating";
+import { scoreboardRows } from "@/lib/scoreboard";
+import { HEADLINE_SOURCES, isProvisional } from "@/lib/gating";
 import { sparkSeries } from "@/lib/sparkline";
 import { actualLines, heroStats } from "@/lib/homeStats";
+import { fmtLongDate } from "@/lib/dates";
+import { FORECASTERS } from "@/lib/forecasters";
 import { cn } from "@/lib/utils";
-import RayFaces from "@/components/RayFaces";
+import VerdictScale from "@/components/VerdictScale";
 import SectionBand from "@/components/SectionBand";
 import SortableScoreTable, { type ScoreRow } from "@/components/SortableScoreTable";
-import OtherSourcesBoard from "@/components/OtherSourcesBoard";
 import ScoreBreakdown from "@/components/ScoreBreakdown";
 import UpcomingForecasts from "@/components/UpcomingForecasts";
 import type { SourceEntry } from "@/lib/types";
 import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
-import { type ReactNode } from "react";
 
 export const metadata = { title: "Right Ray / Wrong Ray" };
 
-const SOURCES: Array<{ key: "raysweather" | "openmeteo" | "apple_weather"; label: string; icon: ReactNode }> = [
-  {
-    key: "raysweather",
-    label: "Ray's Weather",
-    // eslint-disable-next-line @next/next/no-img-element
-    icon: <img src="/assets/ray_face.svg" alt="" className="inline h-5 w-5 align-middle" />,
-  },
-  { key: "openmeteo", label: "Open-Meteo", icon: <span aria-hidden="true">🌐</span> },
-  { key: "apple_weather", label: "Apple Weather", icon: <span aria-hidden="true">📱</span> },
-];
+// Display metadata for sources that live outside the FORECASTERS index map.
+// Prices are what a reader pays to see the forecast; Ray's is the only one
+// with a bill (owner to supply the exact figure).
+const EXTRA_META: Record<string, { label: string; iconSrc?: string; iconChar?: string }> = {
+  raysweather: { label: "Ray's Weather", iconSrc: "/assets/ray_face.svg" },
+  apple_weather: { label: "Apple Weather", iconChar: "📱" },
+};
+const PRICES: Record<string, string> = { raysweather: "Paid" };
+
+function srcMeta(key: string): { label: string; iconSrc?: string; iconChar?: string; price: string } {
+  const f = FORECASTERS[key];
+  const base = f ? { label: f.label, iconSrc: f.logo } : (EXTRA_META[key] ?? { label: key });
+  return { ...base, price: PRICES[key] ?? "Free" };
+}
 
 function predFields(e: SourceEntry): { hiLo: string; wind: string; rain: string } {
   const p = e.prediction;
@@ -39,10 +43,10 @@ function predFields(e: SourceEntry): { hiLo: string; wind: string; rain: string 
   };
 }
 
-const META: Record<string, { isFree: boolean }> = {
-  "Open-Meteo": { isFree: true },
-  "Ray's Weather": { isFree: false },
-};
+// Score bars read by grade band: Right (75+) green, Meh slate, Wrong orange.
+function barColor(s: number): string {
+  return s >= 75 ? "bg-green" : s >= 60 ? "bg-slate-400" : "bg-orange-600";
+}
 
 const datasetJsonLd = {
   "@context": "https://schema.org",
@@ -63,32 +67,36 @@ const datasetJsonLd = {
 export default async function Page() {
   const [comp, scores, forecasts] = await Promise.all([getLatestComparison(), getScores(), getLatestForecasts()]);
   const trackingDays = heroStats(scores).trackingDays;
-  const spark = sparkSeries(scores, ["openmeteo", "raysweather"]);
-  const rows: ScoreRow[] = scoreboardRows(scores)
-    .filter((r) => r.label === "Open-Meteo" || r.label === "Ray's Weather")
-    .map((r) => ({
-      key: r.label,
-      label: r.label,
-      isFree: META[r.label]?.isFree ?? true,
-      record: r.record,
-      avg: r.avg,
-      days: r.days,
-      spark: r.label === "Open-Meteo" ? spark.openmeteo : spark.raysweather,
-    }));
-  const otherRows = otherSourcesRows(scores);
-  const provisionalKeys = new Set(otherRows.filter((r) => r.provisional).map((r) => r.key));
-  const a = comp?.actuals;
 
-  // Day cards run as a leaderboard: best score first, the winner marked.
-  const scored = SOURCES
-    .map((s) => ({ ...s, e: comp?.sources?.[s.key] }))
+  // Season scoreboard: every source we track, sparklines included.
+  const allRows = scoreboardRows(scores);
+  const spark = sparkSeries(scores, allRows.map((r) => r.key));
+  const rows: ScoreRow[] = allRows.map((r) => ({
+    key: r.key,
+    label: r.label,
+    isFree: r.key !== "raysweather",
+    record: r.record,
+    avg: r.avg,
+    days: r.days,
+    spark: spark[r.key] ?? [],
+  }));
+  const provisionalKeys = new Set(
+    allRows.filter((r) => isProvisional(r.days) && !HEADLINE_SOURCES.has(r.key)).map((r) => r.key)
+  );
+
+  // Day cards run as a leaderboard: best score first, winner and loser marked.
+  const scored = Object.keys(comp?.sources ?? {})
+    .map((key) => ({ key, ...srcMeta(key), e: comp!.sources![key] }))
     .filter((s): s is typeof s & { e: SourceEntry & { score: NonNullable<SourceEntry["score"]> } } =>
       Boolean(s.e && s.e.score))
     .sort((x, y) => y.e.score.score - x.e.score.score);
   const bestScore = scored[0]?.e.score.score;
+  const worstScore = scored[scored.length - 1]?.e.score.score;
+  const markWorst = scored.length > 2 && worstScore !== bestScore;
 
+  const a = comp?.actuals;
   const aLines = a ? actualLines(a) : [];
-  const actualMain = aLines.slice(0, 3).join(" · ");
+  const actualMain = aLines.slice(0, 3).join(" | ");
   const actualCond = aLines[3];
 
   return (
@@ -99,7 +107,7 @@ export default async function Page() {
       <section className="w-full bg-teal-700 text-white">
         <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:py-12">
           <div className="text-xs font-bold uppercase tracking-wider text-orange-300">
-            Tracked daily · {trackingDays} days on the record
+            Tracked daily | {trackingDays} days on the record
           </div>
           <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">Right Ray / Wrong Ray</h1>
           <p className="mt-2 max-w-2xl text-sm text-white/70">
@@ -115,12 +123,28 @@ export default async function Page() {
         </div>
       </section>
 
+      {rows.length > 0 && (
+        <section className="w-full border-t border-white/15 bg-teal-700 text-white">
+          <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
+            <h2 className="font-display mb-1 text-2xl font-bold">Season Scoreboard</h2>
+            <p className="mb-4 text-sm text-white/70">
+              Every forecaster we track, ranked by season average. The order is merit-based.
+            </p>
+            <SortableScoreTable rows={rows} />
+            <p className="mt-3 text-xs text-white/70">W = graded Right (75+) | L = graded Wrong (under 60) | M = Meh (60&ndash;74)</p>
+          </div>
+        </section>
+      )}
+
       <SectionBand tone="surface">
         {comp ? (
           <>
             <h2 className="font-display text-2xl font-bold">
-              Latest scored day{comp.date ? <span className="text-muted"> · {comp.date}</span> : null}
+              Latest scored day{comp.date ? <span className="text-muted"> | {fmtLongDate(comp.date)}</span> : null}
             </h2>
+            <p className="mt-1 text-sm text-muted">
+              Yesterday&apos;s forecasts, graded against what the sky actually did. The math is under each score.
+            </p>
 
             {/* The reference every card below is judged against */}
             {a && (
@@ -133,27 +157,49 @@ export default async function Page() {
               </div>
             )}
 
-            {scored.map(({ key, label, icon, e }) => {
+            {scored.map(({ key, label, iconSrc, iconChar, price, e }, i) => {
               const s = e.score.score;
               const isBest = s === bestScore;
+              const isWorst = markWorst && i === scored.length - 1;
               const f = predFields(e);
               return (
                 <div key={key}
-                  className={cn("mt-3 rounded-2xl border bg-background p-5 sm:p-6",
-                    isBest ? "border-emerald-300/70" : "border-border")}>
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                    <span className="font-display text-lg font-bold">{icon} {label}</span>
-                    {isBest && (
-                      <span className="rounded-full border border-green/30 bg-green/10 px-2.5 py-0.5 text-xs font-semibold text-green-700">
-                        day&apos;s best
-                      </span>
-                    )}
-                    <span className="ml-auto flex items-center gap-3">
-                      <RayFaces score={s} />
+                  className={cn(
+                    "mt-3 rounded-2xl border bg-background p-5 transition hover:-translate-y-0.5 hover:shadow-lg sm:p-6",
+                    isBest ? "border-emerald-300/70" : "border-border"
+                  )}>
+                  <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+                    <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      {iconSrc ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={iconSrc} alt="" className="inline h-5 w-5 rounded-sm object-contain align-middle" />
+                      ) : iconChar ? (
+                        <span aria-hidden="true">{iconChar}</span>
+                      ) : null}
+                      <span className="font-display text-base font-bold sm:text-lg">{label}</span>
+                      {isBest && (
+                        <span className="rounded-full border border-green/30 bg-green/10 px-2.5 py-0.5 text-xs font-semibold text-green-700">
+                          day&apos;s best
+                        </span>
+                      )}
+                      {isWorst && (
+                        <span className="rounded-full border border-slate-400/40 bg-slate-400/10 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
+                          day&apos;s worst
+                        </span>
+                      )}
+                    </span>
+                    <span className="justify-self-center rounded-full bg-surface px-2.5 py-0.5 text-xs font-semibold text-muted">
+                      {price}
+                    </span>
+                    <span className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
+                      <VerdictScale score={s} iconSrc={iconSrc} iconChar={iconChar} />
                       <span className="font-display text-2xl font-bold sm:text-3xl">
                         {s.toFixed(1)}<span className="text-sm font-normal text-muted">/100</span>
                       </span>
                     </span>
+                  </div>
+                  <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-border" aria-hidden="true">
+                    <div className={cn("h-full rounded-full", barColor(s))} style={{ width: `${Math.max(2, Math.min(100, s))}%` }} />
                   </div>
                   <div className="mt-4 grid grid-cols-3 gap-3 border-t border-border pt-4 text-sm">
                     <div>
@@ -198,31 +244,6 @@ export default async function Page() {
         <h2 className="font-display mb-1 text-2xl font-bold">What they&apos;re predicting now</h2>
         <UpcomingForecasts data={forecasts} provisional={provisionalKeys} />
       </SectionBand>
-
-      {rows.length > 0 && (
-        <SectionBand tone="dark">
-          <h2 className="font-display mb-4 text-2xl font-bold">Season Scoreboard</h2>
-
-          <SortableScoreTable rows={rows} />
-
-          <p className="mt-3 text-xs text-white/70">W = graded Right (75+) · L = graded Wrong (under 60) · M = Meh (60&ndash;74)</p>
-        </SectionBand>
-      )}
-
-      {otherRows.length > 0 && (
-        <SectionBand tone="surface">
-          <h2 className="font-display mb-1 text-2xl font-bold">The rest of the field</h2>
-          <p className="mb-4 mt-1 text-sm text-muted">
-            Ray&apos;s is the headline, but he&apos;s not the only forecast in town. We track these free, automated
-            services against the same actuals, scored the same way. A new one stays provisional until it has{" "}
-            {MIN_SCORED_DAYS} scored days.
-          </p>
-          <OtherSourcesBoard rows={otherRows} />
-          <p className="mt-4 text-xs">
-            <Link href="/methodology" className="text-teal underline underline-offset-2">How we score it &rarr;</Link>
-          </p>
-        </SectionBand>
-      )}
 
     </>
   );

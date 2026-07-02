@@ -25,7 +25,7 @@ export default function IphoneShot({ className = "" }: { className?: string }) {
       {info.available && (
         <figcaption className="mt-2 text-center text-[0.7rem] text-white/65">
           <span className="text-green" aria-hidden="true">●</span> {label}
-          {info.date ? ` · updated ${fmt(info.date)}` : ""}
+          {info.date ? ` | updated ${fmt(info.date)}` : ""}
         </figcaption>
       )}
     </figure>
