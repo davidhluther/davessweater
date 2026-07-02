@@ -1,7 +1,7 @@
 import { getLatestComparison, getScores, getLatestForecasts } from "@/lib/data";
 import { scoreboardRows } from "@/lib/scoreboard";
 import { HEADLINE_SOURCES, isProvisional } from "@/lib/gating";
-import { sparkSeries } from "@/lib/sparkline";
+import { sparkSeries, rollingMean } from "@/lib/sparkline";
 import { actualLines, heroStats } from "@/lib/homeStats";
 import { fmtLongDate } from "@/lib/dates";
 import { FORECASTERS } from "@/lib/forecasters";
@@ -78,7 +78,7 @@ export default async function Page() {
     record: r.record,
     avg: r.avg,
     days: r.days,
-    spark: spark[r.key] ?? [],
+    spark: rollingMean(spark[r.key] ?? []),
   }));
   const provisionalKeys = new Set(
     allRows.filter((r) => isProvisional(r.days) && !HEADLINE_SOURCES.has(r.key)).map((r) => r.key)
@@ -131,7 +131,7 @@ export default async function Page() {
               Every forecaster we track, ranked by season average. The order is merit-based.
             </p>
             <SortableScoreTable rows={rows} />
-            <p className="mt-3 text-xs text-white/70">W = graded Right (75+) | L = graded Wrong (under 60) | M = Meh (60&ndash;74)</p>
+            <p className="mt-3 text-xs text-white/70">W = graded Right (75+) | M = Meh (60&ndash;74) | L = graded Wrong (under 60). Trend = 7-day rolling average.</p>
           </div>
         </section>
       )}
@@ -192,7 +192,7 @@ export default async function Page() {
                       {price}
                     </span>
                     <span className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
-                      <VerdictScale score={s} iconSrc={iconSrc} iconChar={iconChar} />
+                      <VerdictScale score={s} />
                       <span className="font-display text-2xl font-bold sm:text-3xl">
                         {s.toFixed(1)}<span className="text-sm font-normal text-muted">/100</span>
                       </span>

@@ -19,7 +19,7 @@ export default function Hero({ stats }: { stats: HeroStats }) {
             {copy.hero.headlineLead}<span className="whitespace-nowrap text-orange">{copy.hero.headlineEmphasis}</span>
           </h1>
           <IphoneShot className="my-5 md:hidden" />
-          <div className="max-w-md">
+          <div className="mt-5 max-w-md">
             <Scoreboard sources={stats.trackingSources} />
           </div>
           <div className="mt-5 flex flex-wrap justify-center gap-3">
