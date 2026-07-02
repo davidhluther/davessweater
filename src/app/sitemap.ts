@@ -15,7 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Reference/evergreen pages — high priority, low churn.
   const staticPages = [
     { url: `${base}/methodology`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 },
-    { url: `${base}/fireworks`, lastModified: new Date(), changeFrequency: "daily" as const, priority: 0.8 },
+    { url: `${base}/reports/fireworks-fourth-july-2026`, lastModified: new Date(), changeFrequency: "daily" as const, priority: 0.8 },
   ];
   const postRoutes = posts.map((p) => {
     const slug = slugFromLink(p.link, p.title);

@@ -1,4 +1,4 @@
-// /fireworks — "fireworks begin at dusk" is the most repeated non-answer in
+// /reports/fireworks-fourth-july-2026 — "fireworks begin at dusk" is the most repeated non-answer in
 // local event listings. Dusk is a computable fact; this page computes it per
 // launch site, annually, forever (the build date drives everything). Three
 // states ship together: preview (default), "tonight" on July 3–4, archive
@@ -26,7 +26,7 @@ import {
   NY_TZ, fmtTime, lastDirectSun, localDateString, solarPacket, zonedTimeToUtcMs, type SolarPacket,
 } from "@/lib/solar";
 
-const PAGE_URL = "https://davessweater.com/fireworks";
+const PAGE_URL = "https://davessweater.com/reports/fireworks-fourth-july-2026";
 const BOONE = { lat: 36.2168, lon: -81.6746 };
 
 function today(): string {
@@ -76,7 +76,7 @@ export async function generateMetadata() {
   return {
     title: `${SEASON.year} Fourth of July Fireworks in Boone & the High Country: Exact Times, Computed`,
     description,
-    alternates: { canonical: "/fireworks" },
+    alternates: { canonical: "/reports/fireworks-fourth-july-2026" },
     openGraph: {
       title: `${SEASON.year} Fourth of July fireworks in Boone and the High Country: what time, exactly`,
       description, url: PAGE_URL, type: "website",
@@ -223,7 +223,7 @@ function buildJsonLd(views: VenueView[], faqs: Faq[], todayStr: string) {
       { name: "Home", path: "/" },
       { name: "Resources", path: "/resources" },
       { name: "Reports", path: "/resources/reports" },
-      { name: `${SEASON.year} Fourth of July fireworks in Boone and the High Country`, path: "/fireworks" },
+      { name: `${SEASON.year} Fourth of July fireworks in Boone and the High Country`, path: "/reports/fireworks-fourth-july-2026" },
     ]),
     {
       "@context": "https://schema.org",
