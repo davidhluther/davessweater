@@ -1,13 +1,35 @@
 import Link from "next/link";
 import { getVideos } from "@/lib/feeds";
+import { CATEGORIES } from "@/content/resources";
+import { breadcrumbs, collectionPage } from "@/lib/schema";
 import SectionBand from "@/components/SectionBand";
+import JsonLd from "@/components/JsonLd";
 
-export const metadata = { title: "Videos" };
+const DEF = CATEGORIES.find((c) => c.key === "videos")!;
+
+export const metadata = {
+  title: "Videos",
+  description: DEF.description,
+  alternates: { canonical: DEF.href },
+  openGraph: { title: "Videos — Dave's Sweater", description: DEF.description },
+};
 
 export default async function Page() {
   const videos = await getVideos();
+  const jsonLd = [
+    breadcrumbs([
+      { name: "Home", path: "/" },
+      { name: "Resources", path: "/resources" },
+      { name: DEF.schemaName, path: DEF.href },
+    ]),
+    collectionPage({
+      name: DEF.schemaName, path: DEF.href, description: DEF.description,
+      parts: videos.map((v) => ({ name: v.title, path: v.link })),
+    }),
+  ];
   return (
     <SectionBand>
+      <JsonLd data={jsonLd} />
       <p className="text-sm">
         <Link href="/resources" className="text-orange-600 hover:underline underline-offset-2">
           &larr; All resources
@@ -32,7 +54,7 @@ export default async function Page() {
                 <img src={v.thumb} alt="" className="aspect-video w-full object-cover" />
               )}
               <div className="p-4">
-                <p className="font-semibold text-foreground">{v.title}</p>
+                <h2 className="font-semibold text-foreground">{v.title}</h2>
                 <p className="mt-0.5 text-xs text-muted">{v.date}</p>
               </div>
             </a>

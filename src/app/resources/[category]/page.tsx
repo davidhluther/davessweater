@@ -2,7 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBlogPosts, slugFromLink } from "@/lib/data";
 import { CATEGORIES, postCategory, type PostCategory } from "@/content/resources";
+import { breadcrumbs, collectionPage } from "@/lib/schema";
 import SectionBand from "@/components/SectionBand";
+import JsonLd from "@/components/JsonLd";
 
 // Post-backed categories only — videos and reports have their own static routes.
 const POST_CATEGORIES: PostCategory[] = ["articles", "news"];
@@ -15,7 +17,14 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params;
-  return { title: CATEGORIES.find((c) => c.key === category)?.label ?? "Resources" };
+  const def = CATEGORIES.find((c) => c.key === category);
+  if (!def) return { title: "Resources" };
+  return {
+    title: def.label,
+    description: def.description,
+    alternates: { canonical: def.href },
+    openGraph: { title: `${def.label} — Dave's Sweater`, description: def.description },
+  };
 }
 
 export default async function Page({ params }: { params: Promise<{ category: string }> }) {
@@ -27,9 +36,24 @@ export default async function Page({ params }: { params: Promise<{ category: str
     (p) => postCategory(slugFromLink(p.link, p.title)) === category
   );
   const noun = category === "articles" ? "articles" : "posts";
+  const jsonLd = [
+    breadcrumbs([
+      { name: "Home", path: "/" },
+      { name: "Resources", path: "/resources" },
+      { name: def.schemaName, path: def.href },
+    ]),
+    collectionPage({
+      name: def.schemaName, path: def.href, description: def.description,
+      parts: posts.map((p) => {
+        const slug = slugFromLink(p.link, p.title);
+        return { name: p.title, path: `/resources/${category}/${slug}` };
+      }),
+    }),
+  ];
 
   return (
     <SectionBand>
+      <JsonLd data={jsonLd} />
       <p className="text-sm">
         <Link href="/resources" className="text-orange-600 hover:underline underline-offset-2">
           &larr; All resources
@@ -45,12 +69,14 @@ export default async function Page({ params }: { params: Promise<{ category: str
             const slug = slugFromLink(p.link, p.title);
             return (
               <li key={slug} className="border-b border-border pb-5 last:border-0">
-                <Link
-                  href={`/resources/${category}/${slug}`}
-                  className="text-xl font-semibold text-orange-600 hover:underline underline-offset-2"
-                >
-                  {p.title}
-                </Link>
+                <h2 className="text-xl font-semibold">
+                  <Link
+                    href={`/resources/${category}/${slug}`}
+                    className="text-orange-600 hover:underline underline-offset-2"
+                  >
+                    {p.title}
+                  </Link>
+                </h2>
                 {p.date && <p className="mt-0.5 text-xs text-muted">{p.date}</p>}
                 {p.summary && <p className="mt-1 text-sm text-muted">{p.summary}</p>}
               </li>

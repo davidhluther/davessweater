@@ -4,7 +4,9 @@ import parse from "html-react-parser";
 import { getBlogPosts, getBlogPost, slugFromLink } from "@/lib/data";
 import { sanitizePostHtml } from "@/lib/html";
 import { CATEGORIES, postCategory } from "@/content/resources";
+import { SITE_BASE, breadcrumbs } from "@/lib/schema";
 import SectionBand from "@/components/SectionBand";
+import JsonLd from "@/components/JsonLd";
 
 export const dynamicParams = false;
 
@@ -17,10 +19,16 @@ export async function generateStaticParams() {
     .map((slug) => ({ category: postCategory(slug), slug }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export async function generateMetadata({ params }: { params: Promise<{ category: string; slug: string }> }) {
+  const { category, slug } = await params;
   const post = await getBlogPost(slug);
-  return { title: post?.title ?? "Post" };
+  if (!post) return { title: "Post" };
+  return {
+    title: post.title,
+    description: post.summary,
+    alternates: { canonical: `/resources/${category}/${slug}` },
+    openGraph: { title: post.title, description: post.summary, type: "article" },
+  };
 }
 
 export default async function Page({ params }: { params: Promise<{ category: string; slug: string }> }) {
@@ -31,8 +39,29 @@ export default async function Page({ params }: { params: Promise<{ category: str
   if (!post) notFound();
   const def = CATEGORIES.find((c) => c.key === category);
   const html = sanitizePostHtml(post.content ?? post.summary ?? "");
+  const url = `/resources/${category}/${slug}`;
+  const jsonLd = [
+    breadcrumbs([
+      { name: "Home", path: "/" },
+      { name: "Resources", path: "/resources" },
+      { name: def?.schemaName ?? "Resources", path: def?.href ?? "/resources" },
+      { name: post.title, path: url },
+    ]),
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: post.title,
+      url: `${SITE_BASE}${url}`,
+      mainEntityOfPage: `${SITE_BASE}${url}`,
+      ...(post.date ? { datePublished: post.date } : {}),
+      ...(post.summary ? { description: post.summary } : {}),
+      author: { "@type": "Organization", name: "Dave's Sweater" },
+      publisher: { "@type": "Organization", name: "Dave's Sweater", url: SITE_BASE },
+    },
+  ];
   return (
     <SectionBand>
+      <JsonLd data={jsonLd} />
       <article>
         <Link href={def?.href ?? "/resources"} className="text-sm text-orange-600 hover:underline underline-offset-2">
           &larr; All {def?.label.toLowerCase() ?? "resources"}
