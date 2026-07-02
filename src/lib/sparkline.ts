@@ -1,6 +1,8 @@
 import type { Scores } from "@/lib/types";
 
-type Key = "openmeteo" | "raysweather";
+// Any tracked source key works; the series stays scoped to the Ray-era window
+// (entries where a raysweather score exists) so every sparkline shares an axis.
+type Key = string;
 
 export function sparkSeries(scores: Scores | null, keys: Key[]): Record<Key, number[]> {
   const entries = (scores?.entries ?? [])
@@ -17,7 +19,17 @@ export function sparkSeries(scores: Scores | null, keys: Key[]): Record<Key, num
   return out;
 }
 
-export function sparkPath(values: number[], width: number, height: number, min = 40, max = 100): string {
+// Trailing mean over up to `w` days — the scoreboard sparklines smooth with
+// this so the line reads as a trend, not daily noise (same 7-day treatment as
+// the homepage chart's default view). Works for any series length ≥ 2.
+export function rollingMean(values: number[], w = 7): number[] {
+  return values.map((_, i) => {
+    const win = values.slice(Math.max(0, i - w + 1), i + 1);
+    return win.reduce((a, b) => a + b, 0) / win.length;
+  });
+}
+
+export function sparkPath(values: number[], width: number, height: number, min = 0, max = 100): string {
   if (values.length < 2) return "";
   const span = values.length - 1;
   const x = (i: number) => Math.round((i / span) * width);

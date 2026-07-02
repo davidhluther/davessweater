@@ -1,48 +1,52 @@
 import { getLatestComparison, getScores, getLatestForecasts } from "@/lib/data";
-import { scoreboardRows, otherSourcesRows } from "@/lib/scoreboard";
-import { MIN_SCORED_DAYS } from "@/lib/gating";
-import { sparkSeries } from "@/lib/sparkline";
-import { actualLines } from "@/lib/homeStats";
-import RayFaces from "@/components/RayFaces";
+import { scoreboardRows } from "@/lib/scoreboard";
+import { HEADLINE_SOURCES, isProvisional } from "@/lib/gating";
+import { sparkSeries, rollingMean } from "@/lib/sparkline";
+import { actualLines, heroStats } from "@/lib/homeStats";
+import { fmtLongDate } from "@/lib/dates";
+import { FORECASTERS } from "@/lib/forecasters";
+import { cn } from "@/lib/utils";
+import VerdictScale from "@/components/VerdictScale";
 import SectionBand from "@/components/SectionBand";
 import SortableScoreTable, { type ScoreRow } from "@/components/SortableScoreTable";
-import OtherSourcesBoard from "@/components/OtherSourcesBoard";
 import ScoreBreakdown from "@/components/ScoreBreakdown";
 import UpcomingForecasts from "@/components/UpcomingForecasts";
 import type { SourceEntry } from "@/lib/types";
 import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
-import { Fragment, type ReactNode } from "react";
 
 export const metadata = { title: "Right Ray / Wrong Ray" };
 
-const SOURCES: Array<{ key: "raysweather" | "openmeteo" | "apple_weather"; label: string; icon: ReactNode }> = [
-  {
-    key: "raysweather",
-    label: "Ray's Weather",
-    // eslint-disable-next-line @next/next/no-img-element
-    icon: <img src="/assets/ray_face.svg" alt="" className="inline h-5 w-5 align-middle" />,
-  },
-  { key: "openmeteo", label: "Open-Meteo", icon: <span aria-hidden="true">🌐</span> },
-  { key: "apple_weather", label: "Apple Weather", icon: <span aria-hidden="true">📱</span> },
-];
+// Display metadata for sources that live outside the FORECASTERS index map.
+// Prices are what a reader pays to see the forecast; Ray's is the only one
+// with a bill (owner to supply the exact figure).
+const EXTRA_META: Record<string, { label: string; iconSrc?: string; iconChar?: string }> = {
+  raysweather: { label: "Ray's Weather", iconSrc: "/assets/ray_face.svg" },
+  apple_weather: { label: "Apple Weather", iconChar: "📱" },
+};
+const PRICES: Record<string, string> = { raysweather: "Paid" };
 
-function predLines(e: SourceEntry): string[] {
+function srcMeta(key: string): { label: string; iconSrc?: string; iconChar?: string; price: string } {
+  const f = FORECASTERS[key];
+  const base = f ? { label: f.label, iconSrc: f.logo } : (EXTRA_META[key] ?? { label: key });
+  return { ...base, price: PRICES[key] ?? "Free" };
+}
+
+function predFields(e: SourceEntry): { hiLo: string; wind: string; rain: string } {
   const p = e.prediction;
   const hi = p.today_high_f ?? p.high_f, lo = p.tonight_low_f ?? p.low_f;
   const wind = p.wind_mph, rain = p.precip_in ?? p.rainfall_in;
-  return [
-    `Hi: ${hi ?? "N/A"}° / Lo: ${lo ?? "N/A"}°`,
-    wind != null ? `Wind: ${Math.round(wind * 10) / 10} mph` : "Wind: —",
-    rain != null ? `Rain: ${rain}"` : "Rain: —",
-  ];
+  return {
+    hiLo: `${hi ?? "—"}° / ${lo ?? "—"}°`,
+    wind: wind != null ? `${Math.round(wind * 10) / 10} mph` : "—",
+    rain: rain != null ? `${rain}"` : "—",
+  };
 }
 
-
-const META: Record<string, { isFree: boolean }> = {
-  "Open-Meteo": { isFree: true },
-  "Ray's Weather": { isFree: false },
-};
+// Score bars read by grade band: Right (75+) green, Meh slate, Wrong orange.
+function barColor(s: number): string {
+  return s >= 75 ? "bg-green" : s >= 60 ? "bg-slate-400" : "bg-orange-600";
+}
 
 const datasetJsonLd = {
   "@context": "https://schema.org",
@@ -62,107 +66,199 @@ const datasetJsonLd = {
 
 export default async function Page() {
   const [comp, scores, forecasts] = await Promise.all([getLatestComparison(), getScores(), getLatestForecasts()]);
-  const spark = sparkSeries(scores, ["openmeteo", "raysweather"]);
-  const rows: ScoreRow[] = scoreboardRows(scores)
-    .filter((r) => r.label === "Open-Meteo" || r.label === "Ray's Weather")
-    .map((r) => ({
-      key: r.label,
-      label: r.label,
-      isFree: META[r.label]?.isFree ?? true,
-      record: r.record,
-      avg: r.avg,
-      days: r.days,
-      spark: r.label === "Open-Meteo" ? spark.openmeteo : spark.raysweather,
-    }));
-  const otherRows = otherSourcesRows(scores);
-  const provisionalKeys = new Set(otherRows.filter((r) => r.provisional).map((r) => r.key));
+  const trackingDays = heroStats(scores).trackingDays;
+
+  // Season scoreboard: every source we track, sparklines included.
+  const allRows = scoreboardRows(scores);
+  const spark = sparkSeries(scores, allRows.map((r) => r.key));
+  const rows: ScoreRow[] = allRows.map((r) => ({
+    key: r.key,
+    label: r.label,
+    isFree: r.key !== "raysweather",
+    record: r.record,
+    avg: r.avg,
+    days: r.days,
+    spark: rollingMean(spark[r.key] ?? []),
+  }));
+  const provisionalKeys = new Set(
+    allRows.filter((r) => isProvisional(r.days) && !HEADLINE_SOURCES.has(r.key)).map((r) => r.key)
+  );
+
+  // Day cards run as a leaderboard: best score first. Tied scores break on the
+  // summed miss across the graded "show the math" fields (the closer forecast
+  // ranks higher), so "day's best" and "day's worst" each land on exactly one
+  // card even when the headline numbers match.
+  const missTotal = (score: SourceEntry["score"]): number => {
+    let sum = 0, n = 0;
+    for (const f of Object.values(score.breakdown ?? {})) {
+      if (f.scored && typeof f.error === "number") { sum += Math.abs(f.error); n++; }
+    }
+    return n ? sum : Number.MAX_SAFE_INTEGER;
+  };
+  const scored = Object.keys(comp?.sources ?? {})
+    .map((key) => ({ key, ...srcMeta(key), e: comp!.sources![key] }))
+    .filter((s): s is typeof s & { e: SourceEntry & { score: NonNullable<SourceEntry["score"]> } } =>
+      Boolean(s.e && s.e.score))
+    .sort((x, y) =>
+      y.e.score.score - x.e.score.score ||
+      missTotal(x.e.score) - missTotal(y.e.score) ||
+      x.label.localeCompare(y.label));
+  const bestScore = scored[0]?.e.score.score;
+  const worstScore = scored[scored.length - 1]?.e.score.score;
+  const markWorst = scored.length > 2 && worstScore !== bestScore;
+  const hasRay = scored.some((s) => s.key === "raysweather");
+
   const a = comp?.actuals;
+  const aLines = a ? actualLines(a) : [];
+  const actualMain = aLines.slice(0, 3).join(" | ");
+  const actualCond = aLines[3];
+
   return (
     <>
       <JsonLd data={datasetJsonLd} />
+
+      {/* Branded page header: same band language as the homepage hero, none of its furniture */}
+      <section className="w-full bg-teal-700 text-white">
+        <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:py-12">
+          <div className="text-xs font-bold uppercase tracking-wider text-orange-300">
+            Tracked daily | {trackingDays} days on the record
+          </div>
+          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">Right Ray / Wrong Ray</h1>
+          <p className="mt-2 max-w-2xl text-sm text-white/70">
+            When you trust us to tell you how many rays of sunshine, golfballs, or snowmen you can expect,
+            we need to be held to account. Here&apos;s the scoreboard comparing each forecast to the actual weather.
+          </p>
+          <p className="mt-5 flex flex-wrap gap-3">
+            {hasRay && (
+              <a href="#rays-latest"
+                className="inline-flex min-h-10 items-center rounded-lg bg-orange-600 px-4 text-sm font-bold text-white transition-colors hover:bg-[#9a3412]">
+                How Ray did &darr;
+              </a>
+            )}
+            <Link href="/methodology"
+              className="inline-flex min-h-10 items-center rounded-lg border border-white/30 px-4 text-sm font-bold text-white transition-colors hover:bg-white/10">
+              How we score it &rarr;
+            </Link>
+          </p>
+        </div>
+      </section>
+
+      {/* The scoreboard sits on its own darker plane — same dot-grid ground as the
+          "what actually happened" card and the homepage "why we exist" band — so the
+          header and the ten-row table read as two surfaces, not one slab. */}
+      {rows.length > 0 && (
+        <section className="w-full bg-teal-900 text-white [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px]">
+          <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
+            <h2 className="font-display mb-1 text-2xl font-bold">Season Scoreboard</h2>
+            <p className="mb-4 text-sm text-white/70">
+              Every forecaster we track, ranked by season average. The order is merit-based.
+            </p>
+            <SortableScoreTable rows={rows} />
+            <p className="mt-3 text-xs text-white/70">R = graded Right (75+) | M = Meh (60&ndash;74) | W = graded Wrong (under 60). Trend = 7-day rolling average on the 0&ndash;100 scale.</p>
+          </div>
+        </section>
+      )}
+
       <SectionBand tone="surface">
-        <h1 className="font-display text-2xl font-bold">Right Ray / Wrong Ray</h1>
-        <p className="mb-4 mt-1 text-sm text-muted">
-          When you trust us to tell you how many rays of sunshine, golfballs, or snowmen you can expect,
-          we need to be held to account. Here&apos;s the scoreboard comparing each forecast to the actual weather.
-        </p>
-        <p className="mb-4">
-          <Link href="/methodology"
-            className="inline-flex min-h-9 items-center rounded-lg border border-border px-3 text-sm font-medium text-teal transition-colors hover:bg-teal/10">
-            How we score it &rarr;
-          </Link>
-        </p>
         {comp ? (
           <>
-            {/* Desktop table — hidden on mobile */}
-            <table className="hidden w-full text-sm sm:table">
-              <thead>
-                <tr className="text-left text-muted">
-                  <th className="py-2">Source</th>
-                  <th>Predicted</th>
-                  <th>Score</th>
-                  <th>Verdict</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-t border-border font-semibold">
-                  <td className="py-2">Actual{comp.date ? ` (${comp.date})` : ""}</td>
-                  <td>{a ? actualLines(a).map((l, i) => <div key={i}>{l}</div>) : "—"}</td>
-                  <td colSpan={2}>—</td>
-                </tr>
-                {SOURCES.map(({ key, label, icon }) => {
-                  const e = comp.sources?.[key];
-                  if (!e || !e.score) return null;
-                  return (
-                    <Fragment key={key}>
-                      <tr className="border-t border-border">
-                        <td className="py-2">{icon} {label}</td>
-                        <td>{predLines(e).map((l, i) => <div key={i}>{l}</div>)}</td>
-                        <td><strong>{e.score.score.toFixed(1)}/100</strong></td>
-                        <td><RayFaces score={e.score.score} /></td>
-                      </tr>
-                      <tr>
-                        <td colSpan={4} className="pb-3">
-                          <ScoreBreakdown score={e.score} />
-                        </td>
-                      </tr>
-                    </Fragment>
-                  );
-                })}
-              </tbody>
-            </table>
+            <h2 className="font-display text-2xl font-bold">
+              Latest scored day{comp.date ? <span className="text-muted"> | {fmtLongDate(comp.date)}</span> : null}
+            </h2>
+            <p className="mt-1 text-sm text-muted">
+              Yesterday&apos;s forecasts, graded against what the sky actually did. The math is under each score.
+            </p>
 
-            {/* Mobile cards — hidden on sm+ */}
-            <div className="space-y-2 sm:hidden">
-              {a && (
-                <div className="rounded-xl border border-border bg-background p-3">
-                  <div className="font-display font-bold text-teal">Actual{comp.date ? ` (${comp.date})` : ""}</div>
-                  <div className="mt-1 text-sm text-foreground">{actualLines(a).map((l, i) => <div key={i}>{l}</div>)}</div>
+            {/* The reference every card below is judged against */}
+            {a && (
+              <div className="mt-4 rounded-2xl bg-teal-900 p-5 text-white sm:p-6 [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px]">
+                <div className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-white/60">
+                  What actually happened
                 </div>
-              )}
-              {SOURCES.map(({ key, label, icon }) => {
-                const e = comp.sources?.[key];
-                if (!e || !e.score) return null;
-                return (
-                  <div key={key} className="rounded-xl border border-border bg-background p-3">
-                    <div className="flex items-center justify-between">
-                      <span className="font-display font-bold">{icon} {label}</span>
-                      <span className="text-sm font-bold">{e.score.score.toFixed(1)}/100</span>
-                    </div>
-                    <div className="mt-1 text-sm text-muted">{predLines(e).map((l, i) => <div key={i}>{l}</div>)}</div>
-                    <div className="mt-1"><RayFaces score={e.score.score} /></div>
-                    <ScoreBreakdown score={e.score} />
+                <div className="mt-1.5 font-display text-lg font-bold sm:text-2xl">{actualMain}</div>
+                {actualCond && <div className="mt-1 text-sm text-white/70">{actualCond}</div>}
+              </div>
+            )}
+
+            {scored.map(({ key, label, iconSrc, iconChar, price, e }, i) => {
+              const s = e.score.score;
+              const isBest = i === 0;
+              const isWorst = markWorst && i === scored.length - 1;
+              const f = predFields(e);
+              return (
+                <div key={key} id={key === "raysweather" ? "rays-latest" : undefined}
+                  className={cn(
+                    "mt-3 scroll-mt-20 rounded-2xl border bg-background p-5 transition hover:-translate-y-0.5 hover:shadow-lg sm:p-6",
+                    isBest ? "border-emerald-300/70" : isWorst ? "border-orange-300/70" : "border-border"
+                  )}>
+                  <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+                    <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      {iconSrc ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={iconSrc} alt="" className="inline h-5 w-5 rounded-sm object-contain align-middle" />
+                      ) : iconChar ? (
+                        <span aria-hidden="true">{iconChar}</span>
+                      ) : null}
+                      <span className="font-display text-base font-bold sm:text-lg">{label}</span>
+                      {isBest && (
+                        <span className="rounded-full border border-green/30 bg-green/10 px-2.5 py-0.5 text-xs font-semibold text-green-700">
+                          day&apos;s best
+                        </span>
+                      )}
+                      {isWorst && (
+                        <span className="rounded-full border border-orange-600/40 bg-orange-600/10 px-2.5 py-0.5 text-xs font-semibold text-orange-600">
+                          day&apos;s worst
+                        </span>
+                      )}
+                    </span>
+                    <span className="justify-self-center rounded-full bg-surface px-2.5 py-0.5 text-xs font-semibold text-muted">
+                      {price}
+                    </span>
+                    <span className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
+                      <VerdictScale score={s} />
+                      <span className="font-display text-2xl font-bold sm:text-3xl">
+                        {s.toFixed(1)}<span className="text-sm font-normal text-muted">/100</span>
+                      </span>
+                    </span>
                   </div>
-                );
-              })}
-            </div>
+                  <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-border" aria-hidden="true">
+                    <div className={cn("h-full rounded-full", barColor(s))} style={{ width: `${Math.max(2, Math.min(100, s))}%` }} />
+                  </div>
+                  <div className="mt-4 grid grid-cols-3 gap-3 border-t border-border pt-4 text-sm">
+                    <div>
+                      <div className="text-xs text-muted">Predicted hi / lo</div>
+                      <div className="mt-0.5 font-medium">{f.hiLo}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted">Wind</div>
+                      <div className="mt-0.5 font-medium">{f.wind}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted">Rain</div>
+                      <div className="mt-0.5 font-medium">{f.rain}</div>
+                    </div>
+                  </div>
+                  <details className="group mt-4">
+                    <summary className="inline-flex cursor-pointer list-none items-center rounded text-sm font-medium text-teal [&::-webkit-details-marker]:hidden">
+                      <span className="group-open:hidden">Show the math &darr;</span>
+                      <span className="hidden group-open:inline">Hide the math &uarr;</span>
+                    </summary>
+                    <div className="mt-2">
+                      <ScoreBreakdown score={e.score} />
+                    </div>
+                  </details>
+                </div>
+              );
+            })}
           </>
         ) : <p className="text-muted">No comparison yet.</p>}
-        <p className="mt-4 text-xs italic text-muted">
+        <p className="mt-5 text-xs italic text-muted">
           Each forecast is scored out of 100 across five fields — high temp (30), low temp (30), wind (20,
           scored as a range when the source gives one), precip type (10) and precip amount (10) — by closeness
           to the actual recorded conditions. A forecast of &ldquo;no rain&rdquo; counts as a zero-inch prediction
           (scored); predicting rain with no stated total leaves the amount blank (no credit).
+          When day scores tie, the smaller summed miss across the graded fields takes
+          &ldquo;day&apos;s best&rdquo; and the larger takes &ldquo;day&apos;s worst.&rdquo;
         </p>
         <p className="mt-2 text-xs">
           <Link href="/methodology" className="text-teal underline underline-offset-2">Full methodology &rarr;</Link>
@@ -173,31 +269,6 @@ export default async function Page() {
         <h2 className="font-display mb-1 text-2xl font-bold">What they&apos;re predicting now</h2>
         <UpcomingForecasts data={forecasts} provisional={provisionalKeys} />
       </SectionBand>
-
-      {rows.length > 0 && (
-        <SectionBand tone="dark">
-          <h2 className="font-display mb-4 text-2xl font-bold">Season Scoreboard</h2>
-
-          <SortableScoreTable rows={rows} />
-
-          <p className="mt-3 text-xs text-white/70">W = graded Right (75+) · L = graded Wrong (under 60) · M = Meh (60&ndash;74)</p>
-        </SectionBand>
-      )}
-
-      {otherRows.length > 0 && (
-        <SectionBand tone="surface">
-          <h2 className="font-display mb-1 text-2xl font-bold">The rest of the field</h2>
-          <p className="mb-4 mt-1 text-sm text-muted">
-            Ray&apos;s is the headline, but he&apos;s not the only forecast in town. We track these free, automated
-            services against the same actuals, scored the same way. A new one stays provisional until it has{" "}
-            {MIN_SCORED_DAYS} scored days.
-          </p>
-          <OtherSourcesBoard rows={otherRows} />
-          <p className="mt-4 text-xs">
-            <Link href="/methodology" className="text-teal underline underline-offset-2">How we score it &rarr;</Link>
-          </p>
-        </SectionBand>
-      )}
 
     </>
   );

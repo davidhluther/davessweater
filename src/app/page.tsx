@@ -2,6 +2,7 @@ import { getScores, getLatestComparison, getComparisonWindow, getLatestForecasts
 import { heroStats, trendSeries, headToHead, whyStats } from "@/lib/homeStats";
 import { compositeForecast } from "@/lib/composite";
 import { buildTooltipMap } from "@/lib/trendTooltip";
+import { fmtLongDate } from "@/lib/dates";
 import Hero from "@/components/Hero";
 import SectionBand from "@/components/SectionBand";
 import CompositeForecast from "@/components/CompositeForecast";
@@ -44,7 +45,7 @@ export default async function HomePage() {
 
       {h2h && (
         <SectionBand tone="surface">
-          <h2 className="mb-3 font-display text-lg font-bold sm:text-xl">Yesterday in Boone · {h2h.date}</h2>
+          <h2 className="mb-3 font-display text-lg font-bold sm:text-xl">Yesterday in Boone | {fmtLongDate(h2h.date)}</h2>
           <HeadToHeadCard h={h2h} />
         </SectionBand>
       )}

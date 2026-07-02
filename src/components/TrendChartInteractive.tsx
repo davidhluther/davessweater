@@ -10,6 +10,7 @@ import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import type { TrendPoint } from "@/lib/homeStats";
 import type { TooltipEntry } from "@/lib/trendTooltip";
+import { fmtShortDate } from "@/lib/dates";
 
 const M = { top: 8, right: 12, bottom: 4, left: 34 };
 const RAY_GRAY = "#94a3b8"; /* slate-400: Ray's in data contexts */
@@ -65,8 +66,8 @@ function Chart({ width, height, disp, tooltip }:
       </svg>
       {tooltipData && (
         <TooltipWithBounds left={tooltipLeft} top={tooltipTop} style={{ position: "absolute", maxWidth: 200, background: "white", color: "#26323d", padding: "6px 9px", borderRadius: 8, fontSize: 12, lineHeight: 1.35, pointerEvents: "none" }}>
-          <div><span style={{ fontWeight: 500 }}>{tooltipData.date}</span> · OM {tooltipData.openmeteo ?? "—"} · Ray&apos;s {tooltipData.rays ?? "—"}</div>
-          {tooltipData.actualLines[0] && <div style={{ color: "#5f6b75" }}>{tooltipData.actualLines.join(" · ")}</div>}
+          <div><span style={{ fontWeight: 500 }}>{fmtShortDate(tooltipData.date)}</span> | OM {tooltipData.openmeteo ?? "—"} | Ray&apos;s {tooltipData.rays ?? "—"}</div>
+          {tooltipData.actualLines[0] && <div style={{ color: "#5f6b75" }}>{tooltipData.actualLines.join(" | ")}</div>}
         </TooltipWithBounds>
       )}
     </div>

@@ -30,7 +30,7 @@ function toStat(key: SrcKey, t: SourceTotals): SourceStat {
     key, label: LABELS[key], isFree: IS_FREE[key],
     avg: t.days > 0 ? round1(t.total_score / t.days) : 0,
     right: t.right, wrong: t.wrong, meh: t.meh, days: t.days,
-    record: `${t.right}–${t.wrong}–${t.meh}`,
+    record: `${t.right}–${t.meh}–${t.wrong}`,
   };
 }
 
@@ -48,7 +48,7 @@ function buildTrackingStat(key: SrcKey, scores: number[]): SourceStat {
   return {
     key, label: LABELS[key], isFree: IS_FREE[key],
     avg, right, wrong, meh, days: scores.length,
-    record: `${right}–${wrong}–${meh}`,
+    record: `${right}–${meh}–${wrong}`,
   };
 }
 

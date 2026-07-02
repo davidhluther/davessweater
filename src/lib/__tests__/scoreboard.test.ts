@@ -6,7 +6,7 @@ describe("scoreboardRows", () => {
     const rows = scoreboardRows({ entries: [], totals: {
       openmeteo: { right: 104, wrong: 0, meh: 2, total_score: 9700.8, days: 106 },
     }});
-    expect(rows[0]).toMatchObject({ label: "Open-Meteo", record: "104W - 0L - 2M", days: 106 });
+    expect(rows[0]).toMatchObject({ label: "Open-Meteo", record: "104R - 2M - 0W", days: 106 });
     expect(rows[0].avg).toBeCloseTo(91.5, 1);
   });
 });

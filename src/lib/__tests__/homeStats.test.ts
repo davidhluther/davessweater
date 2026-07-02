@@ -33,7 +33,7 @@ describe("heroStats", () => {
   it("returns labeled per-source stats ordered free-first, then Ray's", () => {
     const h = heroStats(scores);
     expect(h.sources.map((s) => s.key)).toEqual(["openmeteo", "apple_weather", "raysweather"]);
-    expect(h.sources[0]).toMatchObject({ label: "Open-Meteo", isFree: true, record: "105–0–2" });
+    expect(h.sources[0]).toMatchObject({ label: "Open-Meteo", isFree: true, record: "105–2–0" });
     expect(h.sources[0].avg).toBeCloseTo(91.6, 1);
   });
   it("derives tracked days, graded-Wrong count, and the free-vs-Ray's point gap", () => {
@@ -94,7 +94,7 @@ describe("heroStats — tracking-period stats", () => {
     expect(h.openmeteoFull).not.toBeNull();
     expect(h.openmeteoFull?.days).toBe(474);
     expect(h.openmeteoFull?.wrong).toBe(1);
-    expect(h.openmeteoFull?.record).toBe("465–1–8");
+    expect(h.openmeteoFull?.record).toBe("465–8–1");
   });
 
   it("trackingSources are in order: openmeteo, apple_weather, raysweather", () => {

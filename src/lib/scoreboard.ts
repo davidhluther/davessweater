@@ -10,13 +10,14 @@ const label = (src: string) => FORECASTERS[src]?.label ?? LABELS[src] ?? src;
 const avgOf = (t: { total_score: number; days: number }) =>
   t.days > 0 ? Math.round((t.total_score / t.days) * 10) / 10 : 0;
 
-export interface ScoreboardRow { label: string; record: string; avg: number; days: number; }
+export interface ScoreboardRow { key: string; label: string; record: string; avg: number; days: number; }
 
 export function scoreboardRows(scores: Scores | null): ScoreboardRow[] {
   if (!scores?.totals) return [];
   return Object.entries(scores.totals).map(([src, t]) => ({
+    key: src,
     label: label(src),
-    record: `${t!.right}W - ${t!.wrong}L - ${t!.meh}M`,
+    record: `${t!.right}R - ${t!.meh}M - ${t!.wrong}W`,
     avg: avgOf(t!),
     days: t!.days,
   }));
@@ -40,7 +41,7 @@ export function otherSourcesRows(scores: Scores | null): OtherSourceRow[] {
       key: src,
       label: label(src),
       isFree: true,
-      record: `${t!.right}W - ${t!.wrong}L - ${t!.meh}M`,
+      record: `${t!.right}R - ${t!.meh}M - ${t!.wrong}W`,
       avg: avgOf(t!),
       days: t!.days,
       provisional: isProvisional(t!.days),
