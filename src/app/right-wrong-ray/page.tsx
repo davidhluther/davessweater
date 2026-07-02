@@ -23,8 +23,8 @@ const SOURCES: Array<{ key: "raysweather" | "openmeteo" | "apple_weather"; label
     // eslint-disable-next-line @next/next/no-img-element
     icon: <img src="/assets/ray_face.svg" alt="" className="inline h-5 w-5 align-middle" />,
   },
-  { key: "openmeteo", label: "Open-Meteo", icon: "🌐" },
-  { key: "apple_weather", label: "Apple Weather", icon: "📱" },
+  { key: "openmeteo", label: "Open-Meteo", icon: <span aria-hidden="true">🌐</span> },
+  { key: "apple_weather", label: "Apple Weather", icon: <span aria-hidden="true">📱</span> },
 ];
 
 function predLines(e: SourceEntry): string[] {
@@ -81,7 +81,7 @@ export default async function Page() {
     <>
       <JsonLd data={datasetJsonLd} />
       <SectionBand tone="surface">
-        <h2 className="font-display text-2xl font-bold">Right Ray / Wrong Ray</h2>
+        <h1 className="font-display text-2xl font-bold">Right Ray / Wrong Ray</h1>
         <p className="mb-4 mt-1 text-sm text-muted">
           When you trust us to tell you how many rays of sunshine, golfballs, or snowmen you can expect,
           we need to be held to account. Here&apos;s the scoreboard comparing each forecast to the actual weather.
@@ -175,12 +175,12 @@ export default async function Page() {
       </SectionBand>
 
       {rows.length > 0 && (
-        <SectionBand tone="light">
+        <SectionBand tone="dark">
           <h2 className="font-display mb-4 text-2xl font-bold">Season Scoreboard</h2>
 
           <SortableScoreTable rows={rows} />
 
-          <p className="mt-3 text-xs text-muted">W = graded Right (75+) · L = graded Wrong (under 60) · M = Meh (60&ndash;74)</p>
+          <p className="mt-3 text-xs text-white/70">W = graded Right (75+) · L = graded Wrong (under 60) · M = Meh (60&ndash;74)</p>
         </SectionBand>
       )}
 

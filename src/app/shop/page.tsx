@@ -8,7 +8,7 @@ export default async function Page() {
   const products = await getProducts();
   return (
     <SectionBand>
-      <h2 className="mb-2 font-display text-2xl font-bold text-foreground">Swag Shop</h2>
+      <h1 className="mb-2 font-display text-2xl font-bold text-foreground">Swag Shop</h1>
       <p className="mb-6 text-sm text-muted">
         The official Dave&apos;s Sweater merch, dropshipped so we don&apos;t keep boxes of stuff at our
         meteorological megaplex. Everything is set to the minimum price with a mandatory $3 &ldquo;profit&rdquo;

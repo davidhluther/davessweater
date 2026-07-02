@@ -7,7 +7,7 @@ export default async function Page() {
   const videos = await getVideos();
   return (
     <SectionBand>
-      <h2 className="mb-6 font-display text-2xl font-bold text-foreground">Videos</h2>
+      <h1 className="mb-6 font-display text-2xl font-bold text-foreground">Videos</h1>
       {videos.length === 0 ? (
         <p className="text-muted">No videos yet — check back soon.</p>
       ) : (

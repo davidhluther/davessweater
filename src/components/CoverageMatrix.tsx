@@ -30,7 +30,7 @@ export default function CoverageMatrix({ scores }: { scores: Scores | null }) {
           </div>
           {rows.map((r) => (
             <div role="row" key={r.key} className="grid grid-cols-[7rem_repeat(5,1fr)] items-center border-b border-border last:border-0">
-              <span role="rowheader" className={`px-3 py-2 font-medium ${r.isFree ? "text-green" : "text-orange-600"}`}>{r.label}</span>
+              <span role="rowheader" className={`px-3 py-2 font-medium ${r.isFree ? "text-green-700" : "text-orange-600"}`}>{r.label}</span>
               {r.cells.map((c) => (
                 <span role="cell" key={c.field} className="px-2 py-2 text-center"
                   title={`${c.provided}/${c.days} days`}>
@@ -48,7 +48,7 @@ export default function CoverageMatrix({ scores }: { scores: Scores | null }) {
       <ul className="space-y-3 md:hidden">
         {rows.map((r) => (
           <li key={r.key} className="rounded-lg border border-border p-3">
-            <div className={`font-medium ${r.isFree ? "text-green" : "text-orange-600"}`}>{r.label}</div>
+            <div className={`font-medium ${r.isFree ? "text-green-700" : "text-orange-600"}`}>{r.label}</div>
             <ul className="mt-2 space-y-1">
               {r.cells.map((c) => (
                 <li key={c.field} className="flex items-center gap-2 text-sm" title={`${c.provided}/${c.days} days`}>

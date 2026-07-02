@@ -8,7 +8,7 @@ export default async function Page() {
   const posts = await getBlogPosts();
   return (
     <SectionBand>
-      <h2 className="mb-6 font-display text-2xl font-bold text-foreground">Blog</h2>
+      <h1 className="mb-6 font-display text-2xl font-bold text-foreground">Blog</h1>
       {posts.length === 0 ? (
         <p className="text-muted">No posts yet — check back soon.</p>
       ) : (

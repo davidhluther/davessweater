@@ -32,7 +32,7 @@ export default function SiteHeader() {
           {links.map((l) => (
             <Link key={l.href} href={l.href}
               className={cn("rounded-md px-2.5 py-1.5 text-[0.78rem] font-medium transition-colors",
-                isActive(l.href) ? "bg-orange text-white" : "text-white/75 hover:bg-white/15 hover:text-white")}>
+                isActive(l.href) ? "bg-orange-600 text-white" : "text-white/75 hover:bg-white/15 hover:text-white")}>
               {l.label}
             </Link>
           ))}
@@ -48,7 +48,7 @@ export default function SiteHeader() {
           {links.map((l) => (
             <Link key={l.href} href={l.href} onClick={() => setOpen(false)}
               className={cn("rounded-md px-3 py-3 text-sm font-medium",
-                isActive(l.href) ? "bg-orange text-white" : "text-white/80 hover:bg-white/10")}>
+                isActive(l.href) ? "bg-orange-600 text-white" : "text-white/80 hover:bg-white/10")}>
               {l.label}
             </Link>
           ))}

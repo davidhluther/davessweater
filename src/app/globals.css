@@ -9,8 +9,10 @@
   --teal: #3c5468;
   --teal-50: #eef3f6;
   --orange: #f97316;
-  --orange-600: #c2410c;
-  --green: #1d9e75;
+  --orange-600: #c2410c; /* orange text on light backgrounds (5.18:1 on white) */
+  --orange-300: #fdba74; /* orange text on dark teal backgrounds (5.6:1 on teal-700) */
+  --green: #1d9e75; /* fills / large text only — 3.4:1, fails AA for small text */
+  --green-700: #0f7a58; /* green text on light backgrounds (5.3:1 on white) */
 
   --bg: #ffffff;
   --surface: #f5f7f9;
@@ -34,7 +36,9 @@
   --color-teal-50: var(--teal-50);
   --color-orange: var(--orange);
   --color-orange-600: var(--orange-600);
+  --color-orange-300: var(--orange-300);
   --color-green: var(--green);
+  --color-green-700: var(--green-700);
   --color-surface: var(--surface);
   --color-muted: var(--muted);
   --color-border: var(--border);
@@ -52,5 +56,13 @@
     color: var(--text);
     font-family: var(--font-inter), system-ui, sans-serif;
     line-height: 1.6;
+  }
+
+  /* Shared visible focus indicator. currentColor keeps it AA on both the
+     light body and the dark teal bands (any color the text passes in, the
+     ring passes in too). */
+  :where(a, button, input, select, textarea, summary):focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
   }
 }

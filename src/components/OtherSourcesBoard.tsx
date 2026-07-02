@@ -25,7 +25,7 @@ export default function OtherSourcesBoard({ rows }: { rows: OtherSourceRow[] }) 
             <tbody>
               {ranked.map((r) => (
                 <tr key={r.key} className="border-t border-border">
-                  <td className="py-2 font-medium text-green">{r.label}</td>
+                  <td className="py-2 font-medium text-green-700">{r.label}</td>
                   <td className="tabular-nums font-semibold">{r.avg.toFixed(1)}</td>
                   <td className="text-muted">{r.record}</td>
                   <td className="tabular-nums text-muted">{r.days}</td>
@@ -37,7 +37,7 @@ export default function OtherSourcesBoard({ rows }: { rows: OtherSourceRow[] }) 
             {ranked.map((r) => (
               <li key={r.key} className="rounded-xl border border-border bg-background p-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-green">{r.label}</span>
+                  <span className="font-medium text-green-700">{r.label}</span>
                   <span className="tabular-nums font-semibold">{r.avg.toFixed(1)}</span>
                 </div>
                 <div className="mt-1 text-xs text-muted">{r.record} &middot; {r.days} days</div>
@@ -56,7 +56,7 @@ export default function OtherSourcesBoard({ rows }: { rows: OtherSourceRow[] }) 
             {provisional.map((r) => (
               <li key={r.key}
                 className="flex items-center justify-between rounded-lg border border-border px-3 py-2 text-sm">
-                <span className="font-medium text-green">{r.label}</span>
+                <span className="font-medium text-green-700">{r.label}</span>
                 <span className="text-muted">
                   <span className="tabular-nums text-foreground">{r.avg.toFixed(1)}</span>
                   {" · "}{r.days} of {MIN_SCORED_DAYS} days
