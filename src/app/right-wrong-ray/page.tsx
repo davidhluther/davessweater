@@ -123,8 +123,11 @@ export default async function Page() {
         </div>
       </section>
 
+      {/* The scoreboard sits on its own darker plane — same dot-grid ground as the
+          "what actually happened" card and the homepage "why we exist" band — so the
+          header and the ten-row table read as two surfaces, not one slab. */}
       {rows.length > 0 && (
-        <section className="w-full border-t border-white/15 bg-teal-700 text-white">
+        <section className="w-full bg-teal-900 text-white [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px]">
           <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
             <h2 className="font-display mb-1 text-2xl font-bold">Season Scoreboard</h2>
             <p className="mb-4 text-sm text-white/70">
