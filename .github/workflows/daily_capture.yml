@@ -53,6 +53,10 @@ jobs:
         run: python scripts/capture_iphone_weather.py
         continue-on-error: true
 
+      - name: Capture fireworks forecast (seasonal; self-gating outside late June-July 5)
+        run: python scripts/capture_fireworks_forecast.py
+        continue-on-error: true
+
       - name: Capture free forecasters (NWS, Met.no, OWM, WeatherAPI, Visual Crossing, Tomorrow.io, Google)
         run: python scripts/capture_sources.py
         continue-on-error: true
@@ -67,7 +71,7 @@ jobs:
         run: |
           git config user.name "DavesSweaterBot"
           git config user.email "bot@davessweater.com"
-          git add data/predictions/ data/substack_feed.json
+          git add data/predictions/ data/substack_feed.json data/fireworks_forecast.json
           git commit -m "Daily capture $(date +%Y-%m-%d)" || echo "No changes to commit"
           git pull origin main --no-rebase -X ours || true
           git push origin main || (sleep 5 && git pull origin main --no-rebase -X ours && git push origin main)

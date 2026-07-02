@@ -115,6 +115,156 @@ on a framer-motion timeline (scroll-driven beam via `useScroll`), five data-boun
         capture-day-low disclosure added to `/methodology` ("Reading the overnight low", mechanical copy).
         Full N-source trend sparklines still a future nicety.
 
+## Done: P-DS-FW1 — /fireworks (Fireworks & Dusk asset) — ✅ BUILT 2026-07-02 (branch `feat/fireworks-dusk`, uncommitted)
+The "fireworks begin at dusk" page: per-venue dusk math (sunset / civil-dusk "dark enough" / nautical
+"fully dark" / moonrise+phase), computed annually forever from each launch site's coordinates
+(`src/lib/solar.ts` — interface is (lat, lon, elevationM, date, tz) → full solar packet, deliberately the
+future `/sunset` spine; almanac convention, elevation-dip OFF with the mountain-horizon caveat disclosed
+on-page). Boone Jul 4 2026: sunset 8:47 PM, dark enough 9:17 PM, fully dark 9:54 PM, 78% waning gibbous
+rises 11:42 PM (after the finales). **MANDATORY tz build gate** (`solar.test.ts`, hardcoded UTC bounds)
+runs in `prebuild` → a timezone slip fails the Vercel build. Fireworks Forecast (July 1–4): new seasonal
+self-gating `scripts/capture_fireworks_forecast.py` (stdlib) in `daily_capture.yml` pulls Open-Meteo hourly
+low/mid/high cloud, precip prob+amount, temp/dew-point spread, wind dir (smoke-drift note), visibility per
+venue → `data/fireworks_forecast.json`; verdicts (Clear / Iffy / Likely obstructed / unavailable) come from
+a rubric whose exact thresholds render on-page from the same `RUBRIC` const the code runs; fail-closed
+>36h + visible fetch stamp. Venue matrix verified against PRIMARY sources 2026-07-02 (agent pass):
+**confirmed** Boone (town says "around dusk"; the TDA listing's 9:00 stays out of schema), Tweetsie
+(9:30 PM verbatim, Jul 4 only, exit-by-9/no-re-entry, light-rain-or-shine), Beech Mtn resort ("at dusk"),
+West Jefferson/Ashe ("around dark", watch-from-vehicle). **Original corrections:** Blowing Rock = parade
+only (the town's own page still runs stale Country-Club-fireworks text); Banner Elk 2026 = daytime only,
+ends 3 PM ("Mile High Fourth"/9:30 = recycled 2024); Elk Park 9:30 = aggregator-only + textual copy-drift
+→ unconfirmed row. Newland (Jul 3!) / Sparta / N. Wilkesboro / Sugar Mtn = "reported, could not verify"
+tier. 7 FAQs (both-shows-no, Blowing Rock, Banner Elk, cancellations w/ confirmed Stage 2 water
+restrictions eff. 2026-07-01 — NO burn ban as of 07-02, framed as context) + FAQPage + Event (clock time
+in schema ONLY where the venue states one — Tweetsie) + WebPage JSON-LD built from the same data that
+renders. Three date states built + build-tested (preview / tonight Jul 3–4 / archive Jul 5+;
+`FIREWORKS_TODAY` env override); per-show anchors; nav + sitemap entries. 96 vitest (34 new) + lint +
+3 prod builds green. Analytics check (addendum H): GA4 `G-7XL0TZ4GSS` live in layout.
+- [x] **Answers-first restructure (2026-07-02 evening):** quick-answer cards (per-show time + verdict chip)
+      + Blowing Rock/Banner Elk one-liner + jump-nav pills now open the page; section anchors #times
+      #forecast #shows #faq #method (`SectionBand` gained an `id` prop). Owner flagged the overall visual
+      design as "kind of ugly" — a dedicated design pass is still owed.
+- [x] **Both-shows FAQ corrected (owner ground truth):** attend-one stays, but "see several at once from a
+      high open Boone vantage" is now affirmed — validated by a terrain line-of-sight POC (session
+      scratchpad `los_poc2.mjs`): owner's vantage clears Boone/Tweetsie/App State bursts; Beech marginal
+      on finale shells. Model = Census geocoder ($0) + AWS terrarium terrain tiles ($0) + own LOS math.
+- [x] **Social carousel v1 (2026-07-02):** 7 PNG slides (1080×1350) generated from computed values
+      (scratchpad `carousel.mjs`), delivered to owner. Regenerate after any venue-fact change.
+- [x] **Sightline checker v1 — ✅ SHIPPED 2026-07-02 (the computational meat).** "Can you see it from your
+      place?" on /fireworks (#checker): geolocation or address → per-show Clear / Marginal / Finale-only /
+      Blocked with margins, blocker distance, and required burst height. Fully client-side ($0): AWS
+      terrain tiles are CORS-open (browser-fetched, canvas-decoded); Census geocoder is not → tiny
+      `/api/geocode` passthrough (first serverless route in the repo; stores nothing — privacy note
+      on-page). Math in `src/lib/sightline.ts` (pure, injected elevation, 12 vitest tests incl. synthetic
+      walls + earth-bulge); published bands: clear ≥ +15 m on 90 m shells, ±15 m = marginal, 150 m finale
+      tier. Verified live: police-station address → Boone marginal 0.7 mi / Tweetsie blocked (needs 206 m).
+- [x] **Checker v1.1 — ✅ SHIPPED 2026-07-02 (owner-directed same day):** now a DECISION tool, not just
+      visibility — each result pairs the sight chip with that show's **sky-forecast chip** (verdicts passed
+      as props from the server page), and a "The call from here:" line ranks sight × sky × distance; if
+      nothing clears, it routes the user to a verified public spot with a computed clear line. **All
+      user-facing units imperial** (ft/mi; math stays metric — helpers in `sightline.ts`). Privacy line
+      rephrased (no store/log/track; address converted once by the Census geocoder then forgotten; shared
+      location never leaves the browser). **Elk Park demoted from ratings** (owner call): removed from
+      VENUES/matrix/forecast/checker + both generator scripts (data regenerated, 4 venues), now an
+      "Also asked" line + no-show-style card + FAQ ("listed everywhere, verified nowhere" + call-first
+      phone) — the FAQ auto-joins the existing FAQPage schema. `scripts/compute_terrain.mjs` (offline, DEM
+      static, rerun only when spots change) → `data/terrain.json`; page renders spot × show verdicts:
+      Rec Center lot Boone +90 m; **Howard's Knob clears BOTH Boone (+17) and Tweetsie (+11)** (gate-hours
+      caveat printed); State Farm overflow lot does NOT see typical Boone shells (−29 m — park, then walk
+      down); Jones House = Tweetsie finale-only; downtown Blowing Rock blocked from Tweetsie (−26 m).
+      Western shows unreachable from any Boone-area public spot — stated on-page.
+- [x] **Terrain last-direct-sun — ✅ SHIPPED 2026-07-02** as the "Last sun*" column in the dusk table
+      (`solar.ts lastDirectSun()` + committed horizons): Boone field goes to shade 8:22 PM (25 min before
+      sunset); **Tweetsie's valley at 7:29 PM (78 min before!)**. Physics distinction printed: terrain
+      moves last direct sun, NOT civil-dusk "dark enough" (sky-scatter). Convention-guard test pins this
+      suncalc build's getPosition = DEGREES/azimuth-from-north (a dependency update that flips it back to
+      radians fails the suite loudly). This column + horizons are the working /sunset spine.
+- [x] **Observed-record slot SHIPPED (2026-07-02):** research concluded — no public first-shell minute
+      exists anywhere (official FB pages post parking, never times; YouTube night-of uploads give only
+      BOUNDS). What we proved and now publish on venue cards, sourced: Boone 2024 shells in the air by
+      ~9:50 PM (clip uploaded 9:56 PM night-of); Boone 2025 bounded to civil-dusk→~10:40 PM; Tweetsie 2025
+      full-show video runs 15.5 min (≈9:30–9:46); Sugar Mtn's own site says "around 9:15 pm". **THE SLOT:**
+      when the owner's own Facebook dig finds a 2025 first-shell time, set `firstShell: "21:XX"` on the
+      2025 entry in `src/lib/fireworksVenues.ts` (marked "← THE SLOT") — venue card + FAQ update on next
+      build. Owner searches FB independently; broad-net agent research is DONE, don't repeat it.
+- [ ] **Observe 2026-07-04 live:** clock first-shell for Boone + Tweetsie (+ App State if firing) from the
+      owner's vantage; add as `observed` entries (year 2026) and publish "observed vs computed" July 5 —
+      original data nobody else has; repeat annually.
+- [x] **IA/copy restructure — ✅ SHIPPED 2026-07-02 (owner-approved plan).** New order: hero → checker →
+      merged outlook grid → dusk table → show details → tested spots → FAQ → methodology. H1/title now
+      "{year} Fourth of July fireworks in Boone & the High Country"; dek names Watauga County + Boone +
+      High Country. Redundancy killed: quick-answer cards + forecast section merged into ONE outlook grid
+      (one chip per show, time + single flag line + details link); the cloned per-card wind sentence became
+      one "Smoke check" line; rubric box moved into methodology (single methods home); "Official says"
+      column dropped from the dusk table (wording lives in cards/FAQ). Jump pills → 3 CTA buttons
+      (Check my view / outlook / Show details) + small text links. Reason strings rewritten
+      (condition → number → consequence; no rubric jargon on cards). Section heading is date-aware
+      ("Tonight's outlook" on Jul 3–4; archive variant after). 110 tests + lint + build green; verified in
+      preview. **Visual/design pass still owed** — this was structure + copy, not paint.
+- [x] **Labels/AP-case + spots-up pass — ✅ SHIPPED 2026-07-02 (owner-directed).** Verdict taxonomy is now
+      user-facing: sight = Clear View / Limited View / Blocked View (marginal + finale-only share the
+      Limited label; margins + detail text differentiate), sky = Clear Skies / Iffy Skies / Bad Skies /
+      No Forecast — consistent across checker, outlook cards, and spots table. Checker rows lead with
+      "{Show} Fireworks", distances read "X mi from you", em-dashes trimmed from data strings. Headings
+      retitled in AP title case: "When Will the Fireworks Start Around Boone?" (Our Read column highlighted
+      orange + defined as "when we expect the first shell"), "High Country Fourth of July Firework Show
+      Details" (+ 6 town quickjump pills), "Where to Watch Boone Fireworks" (moved up, directly under the
+      checker). Hero CTAs: Check My View / Fireworks Forecast / Event Details. THREE NEW SPOTS geocoded
+      (Census) + terrain-computed: Watauga High lots (Clear View +98 ft on Boone — best public find yet),
+      Boone Mall lot (Limited +10 ft), Daniel Boone Park/Horn in the West (Limited both shows); Brookshire
+      Park dropped (geocoder mismatched the street). 110 tests + lint + build green; owner live-tested the
+      checker from his own address mid-session (Boone Clear View +87 ft — ground truth holds).
+- [x] **State Farm lot verdict corrected + coordinate-sensitivity guard — ✅ 2026-07-02 (owner caught it).**
+      Owner ground truth ("literally the best spot") contradicted the model's "Blocked −95 ft"; profile
+      dump showed the shipped pin was invented ~800 m NW of the real lot, behind a genuine 130-ft knoll —
+      right math, wrong input. Real lot (off Dale St, verified against terrain profile, robust ±100 m):
+      **Clear View +141 ft**. Audit of other eyeballed pins: Jones House was ~750 m off (Census-geocoded →
+      now Limited −30 ft, was Blocked), Memorial Park corrected ~80 m, Howard's Knob unresolvable by
+      geocoder (kept, guarded). `compute_terrain.mjs` now runs a **±100 m sensitivity check** per
+      spot × show; verdicts that flip get a `sensitive` flag and render "treat it as a maybe" on the page
+      (currently flags: state-farm/Tweetsie, Howard's Knob/Tweetsie, Horn-in-the-West/both). Standing rule
+      encoded in the script comment: every viewpoint pin needs geocode- or profile-verified provenance.
+- [x] **Clutter allowance for known spots — ✅ 2026-07-02 (owner challenged 3 more verdicts; all upheld his
+      way).** Profile dumps confirmed the GEOMETRY is right (full-path sampling names the exact blocking
+      ridge per case: Jones→Boone 3,387 ft ridge @1.3 mi; Jones→Tweetsie 3,611 ft @2.1 mi; Memorial→Tweetsie
+      3,726 ft @2 mi, blocked even for finales at −19 ft — answers the owner's "maybe?" with no); the
+      failures were thin bare-earth margins in cluttered places (Jones finale +40 ft over King St's DIRT;
+      Horn finale +4 ft in a wooded bowl). Fix: viewpoints carry `environment: open|built|wooded`; built/
+      wooded spots pay a published ~50 ft clutter allowance (`CLUTTER_PENALTY_M`, `spotVerdict()` in
+      sightline.ts, 3 new tests) before any non-blocked verdict. Table now: Jones House Blocked/Blocked,
+      Horn Blocked/Blocked, Memorial Blocked/Blocked, Howard's Knob honestly degrades to Limited both
+      (wooded). Open lots unchanged. Allowance disclosed in the spots intro + methodology. Checker
+      (arbitrary addresses) can't know environment — bare-earth caveat stands there; possible future:
+      let the user tag their own surroundings.
+- [x] **Owner's 8-item polish batch — ✅ SHIPPED 2026-07-02 (crawler-safe throughout).** Show cards are now
+      native `<details>/<summary>` expandables — collapsed content stays in the prerendered HTML (verified
+      by grepping `.next/server/app/fireworks.html`: observed-record text, FAQ answers, schema all present;
+      JSON-LD = WebPage + 4 Events + FAQPage + site WebSite/Organization); `OpenTargetDetails` (tiny client
+      enhancement) auto-expands the card a quickjump/shared #anchor targets. "Also asked" line retired
+      (all three towns already have FAQs → FAQPage schema). Checker intro re-copyedited per owner; the
+      "call from here" recommendation now renders FIRST in results. Hero text links = "Start times | Where
+      to watch | Our methodology | Fireworks FAQs". Smoke Check got pipes + a line break. Section order:
+      hero → checker → forecast ("Boone Fireworks Forecast: Fourth of July | {year}") → dusk table →
+      spots ("Where to Watch Fireworks in Boone") → show details → FAQ → methodology. 113 tests + lint +
+      build green; verified live incl. quickjump-opens-card behavior.
+- [x] **Ship-final polish (owner, 2026-07-02):** Our Read column moved to first-after-Show; em-dashes
+      minimized across all user-facing strings (kept only as empty-cell placeholders); all external links
+      rel="nofollow". SHIPPED TO PRODUCTION same day (after #104/#105), owner refining in main project.
+- [ ] **Owner, NOW THAT IT'S MERGED:** request indexing for `/fireworks` in GSC immediately — the only
+      realistic organic lever this week; the organic play is the evergreen URL accruing for 2027.
+- [ ] **Owner, ads (Phase 5):** UTM every Meta variant, e.g.
+      `?utm_source=meta&utm_medium=paid-social&utm_campaign=fireworks-2026&utm_content=<variant>` — GA4 is
+      already on the site so cost-per-visitor is measurable.
+- [ ] **Jul 3–4:** glance at the daily-capture run — first unattended fireworks-forecast fetch commits that
+      morning (the initial JSON ships with this branch, so day one isn't fail-closed).
+- [ ] **Jul 5+:** confirm the archive flip on prod (forecast hidden, "in the books" banner, dusk math stays).
+- [ ] **If a primary source surfaces:** upgrade Elk Park (828-387-3003) / Sparta / N. Wilkesboro / Sugar
+      Mtn (seesugar.com) rows to confirmed in `src/lib/fireworksVenues.ts`.
+- [ ] **June 2027 (annual, ~1 hr):** re-verify venue facts + flip `SEASON.year` in `src/lib/fireworks.ts`;
+      dusk math, page metadata, and the capture season-gate re-arm themselves.
+- [ ] **Phase 2 (deferred by design):** terrain-adjusted `/sunset` page (DEM horizon profiles on top of
+      `solar.ts`), golden-hour tables, overlook viewing claims, NYE/Tweetsie-nights reuse of the module.
+
 ## Promotion-readiness audit — RAN 2026-06-25 → risk register
 Multi-agent audit (Dims 1–4, adversarially verified) complete. 24 findings → 22 verified + 2 critic → a
 12-entry prioritized register. **Full detail: `planning/audits/2026-06-25-promotion-readiness-risk-register.md`.**

@@ -2,6 +2,8 @@ import { readFile, readdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import type { Comparison, Scores, BlogPost, LatestForecasts } from "@/lib/types";
+import type { FireworksForecastFile } from "@/lib/fireworks";
+import type { TerrainFile } from "@/lib/sightline";
 
 const DATA = join(process.cwd(), "data");
 
@@ -36,6 +38,14 @@ export async function getScores(): Promise<Scores | null> {
 
 export async function getLatestForecasts(): Promise<LatestForecasts | null> {
   return readJson<LatestForecasts>(join(DATA, "latest_forecasts.json"));
+}
+
+export async function getFireworksForecast(): Promise<FireworksForecastFile | null> {
+  return readJson<FireworksForecastFile>(join(DATA, "fireworks_forecast.json"));
+}
+
+export async function getTerrain(): Promise<TerrainFile | null> {
+  return readJson<TerrainFile>(join(DATA, "terrain.json"));
 }
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
