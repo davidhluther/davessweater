@@ -182,23 +182,25 @@
   animation: wx-sheet 19s linear infinite;
 }
 
-/* hot — the sun, unmissable: a breathing corner bloom, a slow ray sweep
-   rotating around it, and a warm cast across the hero. Still the one thing
-   Ray can't invoice for. */
+/* hot — the sun, unmissable: a wandering, swelling corner bloom, a wide ray
+   sweep rotating around it, and a warm cast across the hero. Still the one
+   thing Ray can't invoice for. The bloom is oversized so its drift never
+   reveals an edge. */
 .wx-hot {
   background: linear-gradient(205deg, rgba(249, 115, 22, 0.24), rgba(253, 186, 116, 0.08) 38%, transparent 62%);
 }
 .wx-hot .wx-a {
-  background: radial-gradient(70% 90% at 82% -12%, rgba(253, 186, 116, 0.85), rgba(249, 115, 22, 0.4) 38%, rgba(249, 115, 22, 0.1) 62%, transparent 78%);
+  inset: -12%;
+  background: radial-gradient(70% 90% at 76% 0%, rgba(253, 186, 116, 0.85), rgba(249, 115, 22, 0.4) 38%, rgba(249, 115, 22, 0.1) 62%, transparent 78%);
   opacity: 0.9;
-  animation: wx-breathe 14s ease-in-out infinite;
+  animation: wx-sun 16s ease-in-out infinite;
 }
 .wx-hot .wx-b {
   inset: -40%;
   background: conic-gradient(from 130deg at 69% 19%, transparent 0deg, rgba(253, 186, 116, 0.22) 16deg, transparent 36deg, rgba(253, 186, 116, 0.14) 56deg, transparent 78deg, rgba(253, 186, 116, 0.18) 100deg, transparent 126deg);
   transform-origin: 69% 19%;
   opacity: 0.8;
-  animation: wx-rays 24s ease-in-out infinite alternate;
+  animation: wx-rays 13s ease-in-out infinite alternate;
 }
 
 /* crisp — sweater weather: the aurora, now fully lit — a saturated emerald
@@ -310,10 +312,24 @@
 }
 @keyframes wx-rays {
   from {
-    transform: rotate(-6deg);
+    transform: rotate(-11deg);
   }
   to {
-    transform: rotate(7deg);
+    transform: rotate(12deg);
+  }
+}
+/* the sun wanders: a slow loop of drift + swell (never returns the same way
+   it left, so the light feels alive rather than metronomic) */
+@keyframes wx-sun {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  30% {
+    transform: translate3d(-2.5%, 2%, 0) scale(1.09);
+  }
+  65% {
+    transform: translate3d(1.5%, -1%, 0) scale(1.03);
   }
 }
 
