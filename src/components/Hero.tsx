@@ -3,7 +3,6 @@ import type { HeroStats } from "@/lib/homeStats";
 import BrandMark from "@/components/BrandMark";
 import Scoreboard from "@/components/Scoreboard";
 import IphoneShot from "@/components/IphoneShot";
-import CompositeForecast from "@/components/CompositeForecast";
 import WeatherBackdrop from "@/components/WeatherBackdrop";
 import { copy } from "@/content/copy";
 
@@ -17,7 +16,7 @@ export default function Hero({ stats }: { stats: HeroStats }) {
             <BrandMark /> · {stats.trackingDays} days on the record
           </div>
           <h1 className="font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-            {copy.hero.headlineLead}<span className="text-orange">{copy.hero.headlineEmphasis}</span>
+            {copy.hero.headlineLead}<span className="whitespace-nowrap text-orange">{copy.hero.headlineEmphasis}</span>
           </h1>
           <IphoneShot className="my-5 md:hidden" />
           <div className="max-w-md">
@@ -39,9 +38,6 @@ export default function Hero({ stats }: { stats: HeroStats }) {
           <p className="mt-3 max-w-[12rem] text-xs text-white/70">
             {copy.hero.iphoneAside}
           </p>
-        </div>
-        <div className="md:col-span-2">
-          <CompositeForecast />
         </div>
       </div>
     </section>

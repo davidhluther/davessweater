@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
@@ -52,7 +53,7 @@ function Stat({
       ? "shadow-[0_0_0_1px_rgba(29,158,117,0.5),0_0_22px_rgba(29,158,117,0.25)]"
       : "";
   const numColor =
-    tone === "free" ? "text-emerald-300" : tone === "rays" ? "text-orange" : "text-white";
+    tone === "free" ? "text-emerald-300" : tone === "rays" ? "text-slate-300" : "text-white";
   return (
     <div className={`flex flex-col items-center rounded-xl p-3 text-center ${box} ${glow}`}>
       <div className={`font-display text-2xl font-bold sm:text-3xl ${numColor}`}>
@@ -132,6 +133,13 @@ export default function WhyTimeline({
             <p className="mt-1 text-sm text-white/70">Better data is free. Good design is cheap. This site is the proof.</p>
           </Beat>
         </div>
+
+        <p className="mt-10 border-t border-white/10 pt-4 text-center text-xs text-white/60">
+          Every score here comes from one transparent rubric, applied to all forecasters alike.{" "}
+          <Link href="/methodology" className="font-medium text-white/85 underline underline-offset-2">
+            See exactly how we score each forecast &rarr;
+          </Link>
+        </p>
       </div>
     </section>
   );

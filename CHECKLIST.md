@@ -271,6 +271,20 @@ via subagent-driven TDD + per-task + final adversarial review (READY_TO_MERGE), 
 - [ ] Then: M4 radar/maps + Woolcam + photo-of-the-day, M5 multi-location, M6 Ecowitt station ground-truth.
 
 ## To do — site (pre-station, outstanding)
+
+### Homepage design backlog (owner review, 2026-07-01 — banked, not yet actioned)
+- [ ] **iPhone shot: find it a new home; the Today module owns above-the-fold long-term.** The Apple
+      Weather screenshot is currently the richest visual in the hero. It supports the "already in your
+      pocket" line, but it is a competitor's UI as the hero image — long-term the DSI/Sweater "Today"
+      module is the visual that should own that slot. Decide where the phone lives instead.
+- [ ] **Chart layout vs the timeline beat.** The trend chart sits full-width inside a scrollytelling beat
+      while its text hangs in a narrow column — either let the chart break out of the column cleanly or
+      contain it to the column. (Separate from the chart-content fixes done in the 2026-07-01 visual pass.)
+- [ ] **Section-rhythm audit.** Homepage alternation runs dark → dark → white → dark → light with hairline
+      dividers; revisit the banding so each section earns its background change.
+- [ ] **DSI vs Sweater Index number reconciliation (decision pending).** The two "today" numbers come from
+      different sources (see the 2026-07-01 source report in the visual-pass PR): either reconcile to one
+      source or label the difference explicitly on-page. Data coherence is the brand.
 - [ ] **Recalibrate the 5-sweater scale for Boone's climate** — flagged wrong: 54°F scored only
       1/5 sweaters, too low. Boone's elevation/wind/humidity make 54°F feel colder than the
       same temp in a lower town; the scale should reflect local context.
