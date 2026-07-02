@@ -82,7 +82,20 @@ on a framer-motion timeline (scroll-driven beam via `useScroll`), five data-boun
 `whyStats()` (vitest-tested); `prefers-reduced-motion`/mobile/no-CLS handled. Spec/plan:
 `planning/specs/2026-06-25-m3-scrollytelling-design.md`, `planning/plans/2026-06-25-m3-scrollytelling.md`.
 - [x] **M3 #2 — scrollytelling "Why we exist"** — framer-motion added; `NumberTicker`/`PointerHighlight`/
-      `ChartReveal`/`WhyTimeline` built; `whyStats` helper; `npm test`/lint/`build` green. Aurora deferred.
+      `ChartReveal`/`WhyTimeline` built; `whyStats` helper; `npm test`/lint/`build` green. Aurora deferred
+      → shipped 2026-07-01 as the weather backdrop's `wx-crisp` variant (next bullet).
+- [x] **Hero weather backdrop — ✅ DONE 2026-07-01 (PR pending, `feat/hero-weather-backdrop`).** Pure-CSS
+      ambient layer behind the hero (`WeatherBackdrop` + the `.wx` system in `globals.css`); the variant is
+      chosen at build time from the day's 8-forecaster composite (`lib/heroBackdrop.ts`; dry-day thresholds
+      reuse the published 75/55°F sweater boundaries). Variants: rain = passing light-sheets, snow = two
+      parallax fleck planes, mixed = both, hot = warm corner bloom, crisp = the deferred emerald aurora,
+      mild = near-silent. All share a "consensus floor": an emerald glow under the Index strip scaled by
+      today's forecaster count (`--n`); no composite → dim base only (never a fabricated glow). Invariants:
+      no client JS; transform/opacity animations only; `contain: layout paint`; reduced-motion = designed
+      still frame; light-add budget keeps hero text AA (worst stack ≈0.156 → ≥6.3:1). Verified: axe 0
+      violations on all six variants (desktop + mobile), lint/tests/build green, adversarial review run —
+      fixed its findings (reduced-motion specificity, snow fleck alpha cap, contributing-only precip vote
+      with principled ties in `composite.ts`).
 - [ ] **M3 #3 — N-source viz** — surface the 7 new forecasters; still gated on them accruing enough scored days.
   - [x] First surfacing: hero logo strip of the 8 index forecasters (`ForecasterLogos` + `FORECASTERS` map),
         homepage links `nofollow`, wraps on mobile (PR #78). Full N-source scoreboard/columns still pending.
@@ -285,8 +298,9 @@ sitemap work nailed it — nothing to do). **Best Practices 96.**
       priority. Result on prod: **LCP 19.7s → 5.0s, Performance 70 → 78.**
   - [ ] Residual perf (diminishing returns, real users already ~1-2s): LCP still 5.0s / FCP 2.7s under Lighthouse's
         aggressive mobile throttle → font loading (display swap/preload) + render-blocking. Optional.
-- [x] **Accessibility bundle — ✅ DONE 2026-07-01 (PR pending, `fix/a11y-bundle`).** All six audit items shipped
-      as one PR; **axe-core (WCAG 2.1 AA) now reports 0 violations on every route** (/, /right-wrong-ray,
+- [x] **Accessibility bundle — ✅ MERGED + LIVE 2026-07-01 (PR #90). Prod Lighthouse (mobile): a11y 92→100,
+      perf 88 (LCP 3.3s, CLS 0, TBT 20ms), best practices 96, SEO 100.** All six audit items shipped as one
+      PR; **axe-core (WCAG 2.1 AA) reports 0 violations on every route** (/, /right-wrong-ray,
       /methodology, /shop, /videos, /blog, /blog/[slug]; desktop 1280 + mobile 375 with the menu open).
   - Contrast fix respected each usage's real background (the audit's "#c2410c on light" would have *worsened*
     the dark-hero usages): new `--orange-300 #fdba74` for orange text on dark teal (BrandMark, Scoreboard
@@ -309,7 +323,7 @@ sitemap work nailed it — nothing to do). **Best Practices 96.**
     `bg-orange-600`; hero Ray score 2.93:1 vs the 3:1 large-text bar → orange-300; CompositeForecast kicker
     `text-white/55` → `/70`; ScoreBreakdown `text-foreground/45|55` annotations → muted; provisional "new"
     chip 4.42:1 → `text-foreground`; footer methodology link was color-only-distinguished → always underlined.
-  - lint / 51 vitest / `next build` green. Lighthouse a11y on prod after merge should confirm ~100 (was 92).
+  - lint / 51 vitest / `next build` green. ✅ Confirmed on prod post-merge: Lighthouse a11y **100**.
 
 ## To do — weather station hardware
 - [ ] Order Wittboy WS90 + GW2000.
