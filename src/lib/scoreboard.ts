@@ -10,11 +10,12 @@ const label = (src: string) => FORECASTERS[src]?.label ?? LABELS[src] ?? src;
 const avgOf = (t: { total_score: number; days: number }) =>
   t.days > 0 ? Math.round((t.total_score / t.days) * 10) / 10 : 0;
 
-export interface ScoreboardRow { label: string; record: string; avg: number; days: number; }
+export interface ScoreboardRow { key: string; label: string; record: string; avg: number; days: number; }
 
 export function scoreboardRows(scores: Scores | null): ScoreboardRow[] {
   if (!scores?.totals) return [];
   return Object.entries(scores.totals).map(([src, t]) => ({
+    key: src,
     label: label(src),
     record: `${t!.right}W - ${t!.wrong}L - ${t!.meh}M`,
     avg: avgOf(t!),

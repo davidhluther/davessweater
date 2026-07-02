@@ -57,7 +57,7 @@ export default function SortableScoreTable({ rows }: { rows: ScoreRow[] }) {
               <span className={`tabular-nums ${r.isFree && r.avg === topFree ? "font-semibold text-emerald-300" : ""}`}>{r.avg.toFixed(1)}</span>
             </div>
             <div className="mt-1 flex items-center justify-between text-white/60">
-              <span>{r.record} · {r.days} days</span>
+              <span>{r.record} | {r.days} days</span>
               <Sparkline values={r.spark} stroke={r.isFree ? "var(--green)" : "#94a3b8"} label={`${r.label} score trend`} />
             </div>
           </li>

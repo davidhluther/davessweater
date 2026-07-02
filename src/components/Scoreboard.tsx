@@ -21,7 +21,7 @@ export default function Scoreboard({ sources }: { sources: SourceStat[] }) {
               {s.avg.toFixed(1)}
             </div>
             <div className={cn("mt-auto pt-1 text-[0.6rem] leading-tight sm:text-[0.7rem]", s.isFree ? "text-emerald-300" : "text-slate-300/80")}>
-              {s.record}{s.isFree && s.wrong === 0 ? " · never wrong" : ""}
+              {s.record}{s.isFree && s.wrong === 0 ? " | never wrong" : ""}
             </div>
           </div>
         );

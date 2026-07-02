@@ -1,6 +1,8 @@
 import type { Scores } from "@/lib/types";
 
-type Key = "openmeteo" | "raysweather";
+// Any tracked source key works; the series stays scoped to the Ray-era window
+// (entries where a raysweather score exists) so every sparkline shares an axis.
+type Key = string;
 
 export function sparkSeries(scores: Scores | null, keys: Key[]): Record<Key, number[]> {
   const entries = (scores?.entries ?? [])

@@ -1,4 +1,5 @@
 import type { LatestForecasts } from "@/lib/types";
+import { MIN_SCORED_DAYS } from "@/lib/gating";
 
 const ORDER = [
   "openmeteo", "apple_weather", "raysweather",
@@ -7,7 +8,7 @@ const ORDER = [
 
 function fmtDate(d: string): string {
   const dt = new Date(d + "T12:00:00Z");
-  return dt.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+  return dt.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
 }
 
 const deg = (v: number | null) => (v != null ? `${Math.round(v)}°` : "—");
@@ -15,7 +16,7 @@ const precip = (p: string | null) => (p && p !== "none" ? p : "none");
 
 function NewTag() {
   return (
-    <span title="Provisional: fewer than 14 scored days"
+    <span title={`Provisional: fewer than ${MIN_SCORED_DAYS} scored days`}
       className="ml-1.5 rounded bg-border px-1 text-[10px] font-semibold uppercase tracking-wide text-foreground">
       new
     </span>

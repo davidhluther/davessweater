@@ -84,6 +84,15 @@ on a framer-motion timeline (scroll-driven beam via `useScroll`), five data-boun
 - [x] **M3 #2 — scrollytelling "Why we exist"** — framer-motion added; `NumberTicker`/`PointerHighlight`/
       `ChartReveal`/`WhyTimeline` built; `whyStats` helper; `npm test`/lint/`build` green. Aurora deferred
       → shipped 2026-07-01 as the weather backdrop's `wx-crisp` variant (next bullet).
+- [x] **Right/Wrong Ray v2 + brand standards — ✅ DONE 2026-07-02 (owner-directed, pre-traffic).** Season
+      Scoreboard moved above the daily cards and includes ALL tracked sources (sparklines for each); daily
+      cards cover all 10 sources as a leaderboard (best first, emerald "day's best", slate "day's worst");
+      verdict 1-5 scale renders in each service's own brand icon (ray faces only for Ray's); price chip
+      centered between name and icons; grade-colored score bars + hover lift; dry section blurbs; "rest of
+      the field" section retired (superseded). **Gate lowered 14 → 9 scored days** (`lib/gating.ts`).
+      **Brand standards:** dates spell out as "Month D, YYYY" via `lib/dates.ts` (short "Jun 30" only in
+      chart tooltips); data-line separators are pipes ("|"), swept site-wide. Ray's price chip says "Paid" —
+      owner to supply the real figure.
 - [x] **Homepage visual pass — ✅ DONE 2026-07-02 (PR #93; #92 was auto-closed by a GitHub stacked-branch
       quirk).** Owner-directed five items: orange restricted to brand/editorial (data = green vs slate-gray;
       winner card emphasized); DSI + Sweater Index merged into one Today module card; trend chart gained gap

@@ -13,7 +13,7 @@ export default function Hero({ stats }: { stats: HeroStats }) {
       <div className="mx-auto grid w-full max-w-5xl gap-6 px-4 py-8 sm:py-10 md:grid-cols-[1.4fr_auto] md:items-center">
         <div>
           <div className="mb-2 text-xs text-white/75">
-            <BrandMark /> · {stats.trackingDays} days on the record
+            <BrandMark /> | {stats.trackingDays} days on the record
           </div>
           <h1 className="font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
             {copy.hero.headlineLead}<span className="whitespace-nowrap text-orange">{copy.hero.headlineEmphasis}</span>
