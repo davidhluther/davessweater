@@ -17,7 +17,7 @@ export function scoreboardRows(scores: Scores | null): ScoreboardRow[] {
   return Object.entries(scores.totals).map(([src, t]) => ({
     key: src,
     label: label(src),
-    record: `${t!.right}W - ${t!.wrong}L - ${t!.meh}M`,
+    record: `${t!.right}W - ${t!.meh}M - ${t!.wrong}L`,
     avg: avgOf(t!),
     days: t!.days,
   }));
@@ -41,7 +41,7 @@ export function otherSourcesRows(scores: Scores | null): OtherSourceRow[] {
       key: src,
       label: label(src),
       isFree: true,
-      record: `${t!.right}W - ${t!.wrong}L - ${t!.meh}M`,
+      record: `${t!.right}W - ${t!.meh}M - ${t!.wrong}L`,
       avg: avgOf(t!),
       days: t!.days,
       provisional: isProvisional(t!.days),
