@@ -2,7 +2,7 @@ name: "📸 Daily Capture"
 
 on:
   schedule:
-    - cron: '0 14 * * *'  # 10:00 AM EDT / 9:00 AM EST
+    - cron: '0 10 * * *'  # 6:00 AM EDT / 5:00 AM EST — early so the site shows today's forecasts by morning traffic
   workflow_dispatch:        # manual trigger for testing
 
 permissions:
