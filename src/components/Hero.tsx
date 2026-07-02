@@ -4,11 +4,13 @@ import BrandMark from "@/components/BrandMark";
 import Scoreboard from "@/components/Scoreboard";
 import IphoneShot from "@/components/IphoneShot";
 import CompositeForecast from "@/components/CompositeForecast";
+import WeatherBackdrop from "@/components/WeatherBackdrop";
 import { copy } from "@/content/copy";
 
 export default function Hero({ stats }: { stats: HeroStats }) {
   return (
-    <section className="w-full bg-teal-700 text-white">
+    <section className="relative isolate w-full overflow-hidden bg-teal-700 text-white">
+      <WeatherBackdrop />
       <div className="mx-auto grid w-full max-w-5xl gap-6 px-4 py-8 sm:py-10 md:grid-cols-[1.4fr_auto] md:items-center">
         <div>
           <div className="mb-2 text-xs text-white/75">

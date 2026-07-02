@@ -285,8 +285,9 @@ sitemap work nailed it — nothing to do). **Best Practices 96.**
       priority. Result on prod: **LCP 19.7s → 5.0s, Performance 70 → 78.**
   - [ ] Residual perf (diminishing returns, real users already ~1-2s): LCP still 5.0s / FCP 2.7s under Lighthouse's
         aggressive mobile throttle → font loading (display swap/preload) + render-blocking. Optional.
-- [x] **Accessibility bundle — ✅ DONE 2026-07-01 (PR pending, `fix/a11y-bundle`).** All six audit items shipped
-      as one PR; **axe-core (WCAG 2.1 AA) now reports 0 violations on every route** (/, /right-wrong-ray,
+- [x] **Accessibility bundle — ✅ MERGED + LIVE 2026-07-01 (PR #90). Prod Lighthouse (mobile): a11y 92→100,
+      perf 88 (LCP 3.3s, CLS 0, TBT 20ms), best practices 96, SEO 100.** All six audit items shipped as one
+      PR; **axe-core (WCAG 2.1 AA) reports 0 violations on every route** (/, /right-wrong-ray,
       /methodology, /shop, /videos, /blog, /blog/[slug]; desktop 1280 + mobile 375 with the menu open).
   - Contrast fix respected each usage's real background (the audit's "#c2410c on light" would have *worsened*
     the dark-hero usages): new `--orange-300 #fdba74` for orange text on dark teal (BrandMark, Scoreboard
@@ -309,7 +310,7 @@ sitemap work nailed it — nothing to do). **Best Practices 96.**
     `bg-orange-600`; hero Ray score 2.93:1 vs the 3:1 large-text bar → orange-300; CompositeForecast kicker
     `text-white/55` → `/70`; ScoreBreakdown `text-foreground/45|55` annotations → muted; provisional "new"
     chip 4.42:1 → `text-foreground`; footer methodology link was color-only-distinguished → always underlined.
-  - lint / 51 vitest / `next build` green. Lighthouse a11y on prod after merge should confirm ~100 (was 92).
+  - lint / 51 vitest / `next build` green. ✅ Confirmed on prod post-merge: Lighthouse a11y **100**.
 
 ## To do — weather station hardware
 - [ ] Order Wittboy WS90 + GW2000.

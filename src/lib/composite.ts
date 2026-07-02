@@ -17,6 +17,9 @@ export interface Composite {
   dateLabel: string;
   high: number;
   low: number;
+  /** Raw majority precip key ("rain" | "snow" | "mixed" | "none") — for logic like the hero backdrop. */
+  precip: string;
+  /** Human label for the raw key — for display. */
   precipLabel: string;
   count: number;
   sources: string[];
@@ -48,6 +51,7 @@ export function compositeForecast(latest: LatestForecasts | null): Composite | n
     dateLabel,
     high: Math.round(mean(highs)),
     low: Math.round(mean(lows)),
+    precip,
     precipLabel: PRECIP_LABEL[precip] ?? precip,
     count: highs.length,
     sources: contributing.map(([k]) => k),
