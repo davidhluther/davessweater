@@ -321,6 +321,14 @@ sitemap work nailed it — nothing to do). **Best Practices 96.**
       priority. Result on prod: **LCP 19.7s → 5.0s, Performance 70 → 78.**
   - [ ] Residual perf (diminishing returns, real users already ~1-2s): LCP still 5.0s / FCP 2.7s under Lighthouse's
         aggressive mobile throttle → font loading (display swap/preload) + render-blocking. Optional.
+  - [ ] **Lantern-simulation LCP artifact (post-#91/#93, 2026-07-02).** Lighthouse's default *simulated*
+        throttling now reports perf 70 / LCP 11.8s on prod, while *observed* (devtools) throttling reports
+        **perf 92 / LCP 2.7s / TTI 4.1s** — the best measured yet — and a real Chrome under Slow-4G + 4x CPU
+        emulation confirms the LCP paints at ~1.2s (last candidate = the hero iPhone img, no late repaint).
+        So the page is fine; lantern's dependency-graph model is mispricing something the new homepage does.
+        Matters because **PageSpeed Insights lab numbers use the same simulation** — investigate before
+        promotion (suspects: the LiveConditions client fetch chain being attributed to the LCP graph, or the
+        always-animating compositor layers extending lantern's quiet-window heuristics).
 - [x] **Accessibility bundle — ✅ MERGED + LIVE 2026-07-01 (PR #90). Prod Lighthouse (mobile): a11y 92→100,
       perf 88 (LCP 3.3s, CLS 0, TBT 20ms), best practices 96, SEO 100.** All six audit items shipped as one
       PR; **axe-core (WCAG 2.1 AA) reports 0 violations on every route** (/, /right-wrong-ray,
