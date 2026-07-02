@@ -4,6 +4,7 @@ import { compositeForecast } from "@/lib/composite";
 import { buildTooltipMap } from "@/lib/trendTooltip";
 import { fmtLongDate } from "@/lib/dates";
 import Hero from "@/components/Hero";
+import FireworksBanner from "@/components/FireworksBanner";
 import SectionBand from "@/components/SectionBand";
 import CompositeForecast from "@/components/CompositeForecast";
 import WhyTimeline from "@/components/WhyTimeline";
@@ -24,6 +25,7 @@ export default async function HomePage() {
   return (
     <>
       <Hero stats={stats} />
+      <FireworksBanner />
 
       {/* Today module: the Dave's Sweater Index consensus + the sweater verdict, one card */}
       <SectionBand>

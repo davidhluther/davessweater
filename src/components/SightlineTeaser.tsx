@@ -12,14 +12,17 @@ export default function SightlineTeaser() {
   return (
     <div className="rounded-lg border border-border bg-background p-4">
       <div className="flex flex-wrap items-center gap-2">
+        {/* Phones get the clean single row (input + Check); the location
+            button appears from sm up. The location path still exists on the
+            fireworks page itself. */}
         <button
           type="button"
           onClick={() => go("me")}
-          className="rounded-md bg-teal-700 px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-teal-800"
+          className="hidden rounded-md bg-teal-700 px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-teal-800 sm:inline-flex"
         >
           Use My Location
         </button>
-        <span className="text-sm text-muted">or</span>
+        <span className="hidden text-sm text-muted sm:inline">or</span>
         <form
           onSubmit={(e) => {
             e.preventDefault();

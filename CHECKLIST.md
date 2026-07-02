@@ -278,6 +278,12 @@ renders. Three date states built + build-tested (preview / tonight Jul 3–4 / a
       a time. These are.», three chips (Sunset / Dark enough / First shells-our-read in orange), and the
       URL + date footer. Dusk numbers bake from the same `lib/solar` the page uses (readWindow duplicated
       with a keep-in-sync comment), so the card cannot disagree with the page.
+- [x] **Share-week promo round — ✅ 2026-07-02.** Homepage gets a seasonal fireworks banner under the hero
+      (`FireworksBanner`: teal-900 dot-grid strip, static volley blooms — owned art, deliberately no stock
+      photo pending the owner's own July 4 shots; renders only through the season via `pageMode()` and
+      retires itself in archive mode). Reports teaser optimized for phones (the location button appears from
+      `sm` up; mobile is a clean input + Check row). Report summary + teaser pitch rewritten outcome-first
+      (what you get: per-show weather, projected start times, event details, sightlines from any address).
 - [ ] **Owner, NOW THAT IT'S MERGED:** request indexing for `/fireworks` in GSC immediately — the only
       realistic organic lever this week; the organic play is the evergreen URL accruing for 2027.
 - [ ] **Owner, ads (Phase 5):** UTM every Meta variant, e.g.
