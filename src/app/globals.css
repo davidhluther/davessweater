@@ -68,26 +68,30 @@
 }
 
 /* ── Weather backdrop (`.wx`) ─────────────────────────────────────────────
-   Ambient layer behind the hero (WeatherBackdrop.tsx). The wrapper carries
-   one variant class, chosen at build time from the day's composite forecast
-   (lib/heroBackdrop.ts); the three <i> children are fixed roles restyled per
-   variant. System rules:
+   Bold ambient layer behind the hero (WeatherBackdrop.tsx). The wrapper
+   carries one variant class, chosen at build time from the day's composite
+   forecast (lib/heroBackdrop.ts); the three <i> children are fixed roles
+   restyled per variant. System rules:
    - transform/opacity animations only (compositor-friendly); no filters, no
      animated background-position, no will-change.
-   - stays a whisper: any single layer adds ≤ ~0.16 white over the teal, and
-     the worst animated stack behind hero text measures ≈ 0.156 (rain, index
-     strip) → white text ≥ 6.3:1. Snow flecks are capped at ≤ 0.10 effective
-     so even the 12px white/70 kickers hold ≥ 4.5:1 under a fleck center.
+   - loud in the visual field, quiet behind text: the wrapper's static
+     quiet-zone mask holds the top-left text column to ≤ ~40% of any layer's
+     intensity, so worst case behind the 12px kickers stays ≈ 0.16 white over
+     the teal (≥ 4.5:1) while the right/center/bottom run at full strength.
+     The mask lives on the non-animated wrapper so it can never drift with
+     the motion. Darkening washes are contrast-positive and uncapped.
    - base rules double as the designed still frame: prefers-reduced-motion
      just stops the animations, it doesn't blank the art.
    - --n = number of forecasters in today's composite; it sets the consensus
      glow's brightness (no composite → dim base only, never a fabricated glow).
    Colors are rgba literals derived from the palette: teal-50 #eef3f6 =
-   rgb(238,243,246); emerald-300 #6ee7b7 = rgb(110,231,183); orange #f97316 =
-   rgb(249,115,22); orange-300 #fdba74 = rgb(253,186,116). */
+   rgb(238,243,246); emerald-300 #6ee7b7 = rgb(110,231,183); teal-300-ish
+   rgb(45,212,191); orange #f97316 = rgb(249,115,22); orange-300 #fdba74 =
+   rgb(253,186,116). */
 
 .wx {
   contain: layout paint;
+  mask-image: linear-gradient(115deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.45) 24%, rgb(0, 0, 0) 48%);
 }
 .wx > i {
   position: absolute;
@@ -95,126 +99,153 @@
   display: block;
 }
 
-/* Consensus floor — shared by every variant: emerald light pooled under the
-   Dave's Sweater Index strip; more contributing forecasters, warmer glow. */
+/* Consensus floor — shared by every variant: emerald light pooled along the
+   hero's base, toward the Today module below; more contributing forecasters,
+   warmer glow. */
 .wx > .wx-c {
-  background: radial-gradient(60% 50% at 50% 110%, rgba(110, 231, 183, 0.6), transparent 70%);
-  opacity: min(0.16, calc(0.04 + var(--n, 0) * 0.014));
-  animation: wx-breathe 26s ease-in-out infinite;
+  background: radial-gradient(65% 55% at 50% 112%, rgba(110, 231, 183, 0.8), rgba(110, 231, 183, 0.25) 55%, transparent 78%);
+  opacity: min(0.34, calc(0.1 + var(--n, 0) * 0.03));
+  animation: wx-breathe 18s ease-in-out infinite;
 }
 
-/* rain — passing squall sheets: soft 105° bands of light crossing the ridge,
-   no droplets. Oversized so the drift never reveals an edge. */
+/* rain — driving squalls: two double-band light sheets sweeping the ridge
+   over a storm-dark cap. Oversized so the drift never reveals an edge. */
+.wx-rain {
+  background: linear-gradient(165deg, rgba(16, 24, 32, 0.45), transparent 55%);
+}
 .wx-rain .wx-a,
 .wx-rain .wx-b {
-  inset: -25%;
-  transform: translate3d(-3%, -4%, 0);
-  animation: wx-sheet 26s linear infinite;
+  inset: -30%;
+  transform: translate3d(-4%, -5%, 0);
+  animation: wx-sheet 15s linear infinite;
 }
 .wx-rain .wx-a {
-  background: linear-gradient(105deg, transparent 32%, rgba(238, 243, 246, 0.1) 46%, rgba(238, 243, 246, 0.16) 50%, rgba(238, 243, 246, 0.1) 54%, transparent 68%);
-  --o: 0.55;
-  opacity: 0.55;
+  background: linear-gradient(105deg, transparent 16%, rgba(238, 243, 246, 0.2) 27%, transparent 38%, transparent 52%, rgba(238, 243, 246, 0.26) 63%, transparent 74%);
+  --o: 0.9;
+  opacity: 0.9;
 }
 .wx-rain .wx-b,
 .wx-mixed .wx-b {
-  background: linear-gradient(105deg, transparent 40%, rgba(238, 243, 246, 0.08) 49%, rgba(238, 243, 246, 0.12) 51%, rgba(238, 243, 246, 0.08) 58%, transparent 66%);
+  background: linear-gradient(105deg, transparent 30%, rgba(238, 243, 246, 0.16) 41%, transparent 52%, transparent 64%, rgba(238, 243, 246, 0.2) 75%, transparent 86%);
 }
 .wx-rain .wx-b {
-  --o: 0.4;
-  opacity: 0.4;
-  animation-duration: 21s;
-  animation-delay: -9s;
+  --o: 0.75;
+  opacity: 0.75;
+  animation-duration: 10s;
+  animation-delay: -4s;
 }
 
-/* snow — two parallax planes of sparse pre-blurred flecks (pure
+/* snow — a real snowfall: two dense parallax fleck planes (pure
    radial-gradient tiles, no images) falling one tile per loop so the repeat
-   wraps invisibly, under a static cold cap on the wrapper. */
+   wraps invisibly, between a bright cold cap and a darkening base. */
 .wx-snow {
-  background: linear-gradient(180deg, rgba(238, 243, 246, 0.06), transparent 35%);
+  background:
+    linear-gradient(180deg, rgba(238, 243, 246, 0.14), transparent 40%),
+    linear-gradient(200deg, rgba(16, 24, 32, 0.35), transparent 55%);
 }
 .wx-snow .wx-a {
-  inset: -240px -10% -10%;
+  inset: -240px -12% -12%;
   background-image:
-    radial-gradient(circle 7px at 40px 60px, rgba(255, 255, 255, 0.22), transparent),
-    radial-gradient(circle 5px at 150px 30px, rgba(255, 255, 255, 0.18), transparent),
-    radial-gradient(circle 8px at 200px 140px, rgba(255, 255, 255, 0.22), transparent),
-    radial-gradient(circle 5px at 90px 190px, rgba(255, 255, 255, 0.16), transparent);
+    radial-gradient(circle 8px at 40px 60px, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(circle 5px at 150px 30px, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(circle 9px at 200px 140px, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(circle 6px at 90px 190px, rgba(255, 255, 255, 0.45), transparent),
+    radial-gradient(circle 4px at 120px 100px, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(circle 7px at 20px 215px, rgba(255, 255, 255, 0.5), transparent);
   background-size: 240px 240px;
-  opacity: 0.5;
-  animation: wx-fall-a 60s linear infinite;
+  opacity: 0.7;
+  animation: wx-fall-a 22s linear infinite;
 }
 .wx-snow .wx-b,
 .wx-mixed .wx-a {
-  inset: -320px -10% -10%;
+  inset: -320px -12% -12%;
   background-image:
-    radial-gradient(circle 4px at 60px 40px, rgba(255, 255, 255, 0.3), transparent),
-    radial-gradient(circle 3px at 210px 120px, rgba(255, 255, 255, 0.26), transparent),
-    radial-gradient(circle 5px at 120px 250px, rgba(255, 255, 255, 0.3), transparent);
+    radial-gradient(circle 5px at 60px 40px, rgba(255, 255, 255, 0.45), transparent),
+    radial-gradient(circle 4px at 210px 120px, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(circle 6px at 120px 250px, rgba(255, 255, 255, 0.45), transparent),
+    radial-gradient(circle 4px at 280px 200px, rgba(255, 255, 255, 0.4), transparent);
   background-size: 320px 320px;
-  opacity: 0.3;
-  animation: wx-fall-b 96s linear infinite;
-}
-
-/* mixed — Boone's specialty: the far snow plane and one slowed, dimmed rain
-   sheet disagreeing with each other. Dimmest precip variant. */
-.wx-mixed .wx-b {
-  inset: -25%;
-  transform: translate3d(-3%, -4%, 0);
-  --o: 0.3;
-  opacity: 0.3;
-  animation: wx-sheet 34s linear infinite;
-}
-
-/* hot — one warm bloom pinned off the top-right corner (the sun: the one
-   thing Ray can't invoice for) over a faint warm wash. */
-.wx-hot .wx-a {
-  background: radial-gradient(55% 60% at 82% -8%, rgba(249, 115, 22, 0.32), rgba(253, 186, 116, 0.1) 45%, transparent 72%);
   opacity: 0.5;
-  animation: wx-breathe 44s ease-in-out infinite;
+  animation: wx-fall-b 40s linear infinite;
+}
+
+/* mixed — Boone's specialty: the far snow plane and a slower squall sheet
+   disagreeing with each other under the same storm-dark cap. */
+.wx-mixed {
+  background: linear-gradient(200deg, rgba(16, 24, 32, 0.35), transparent 50%);
+}
+.wx-mixed .wx-b {
+  inset: -30%;
+  transform: translate3d(-4%, -5%, 0);
+  --o: 0.6;
+  opacity: 0.6;
+  animation: wx-sheet 19s linear infinite;
+}
+
+/* hot — the sun, unmissable: a breathing corner bloom, a slow ray sweep
+   rotating around it, and a warm cast across the hero. Still the one thing
+   Ray can't invoice for. */
+.wx-hot {
+  background: linear-gradient(205deg, rgba(249, 115, 22, 0.24), rgba(253, 186, 116, 0.08) 38%, transparent 62%);
+}
+.wx-hot .wx-a {
+  background: radial-gradient(70% 90% at 82% -12%, rgba(253, 186, 116, 0.85), rgba(249, 115, 22, 0.4) 38%, rgba(249, 115, 22, 0.1) 62%, transparent 78%);
+  opacity: 0.9;
+  animation: wx-breathe 14s ease-in-out infinite;
 }
 .wx-hot .wx-b {
-  background: linear-gradient(160deg, rgba(253, 186, 116, 0.05), transparent 45%);
+  inset: -40%;
+  background: conic-gradient(from 130deg at 69% 19%, transparent 0deg, rgba(253, 186, 116, 0.22) 16deg, transparent 36deg, rgba(253, 186, 116, 0.14) 56deg, transparent 78deg, rgba(253, 186, 116, 0.18) 100deg, transparent 126deg);
+  transform-origin: 69% 19%;
+  opacity: 0.8;
+  animation: wx-rays 24s ease-in-out infinite alternate;
 }
 
-/* crisp — sweater weather: the faint emerald aurora the M3 spec deferred
-   ("a whisper behind the hero"), drifting against a cooler counter-light. */
+/* crisp — sweater weather: the aurora, now fully lit — a saturated emerald
+   ribbon over the ridge with a cooler counter-light drifting against it. */
 .wx-crisp .wx-a,
 .wx-crisp .wx-b {
-  inset: -20%;
+  inset: -25%;
 }
 .wx-crisp .wx-a {
-  background: radial-gradient(50% 40% at 30% 20%, rgba(110, 231, 183, 0.22), transparent 70%);
-  opacity: 0.7;
-  animation: wx-drift-a 48s ease-in-out infinite alternate;
+  background: radial-gradient(55% 45% at 62% 6%, rgba(110, 231, 183, 0.55), rgba(110, 231, 183, 0.16) 55%, transparent 75%);
+  opacity: 0.85;
+  animation: wx-drift-a 20s ease-in-out infinite alternate;
 }
 .wx-crisp .wx-b {
-  background: radial-gradient(45% 40% at 75% 55%, rgba(238, 243, 246, 0.1), transparent 70%);
-  opacity: 0.6;
-  animation: wx-drift-b 64s ease-in-out infinite alternate;
+  background: radial-gradient(50% 45% at 26% 60%, rgba(45, 212, 191, 0.32), transparent 72%);
+  opacity: 0.75;
+  animation: wx-drift-b 27s ease-in-out infinite alternate;
 }
 
-/* mild — almost nothing: one ultra-faint drifting wash. The weather is fine;
-   the backdrop declines to make a thing of it. */
+/* mild — fair weather, visibly so: a bright drifting sky sheen and a soft
+   emerald counter-glow. Calm, not invisible. */
 .wx-mild .wx-a {
-  inset: -20%;
-  background: radial-gradient(55% 45% at 70% 15%, rgba(238, 243, 246, 0.06), transparent 70%);
-  animation: wx-drift-a 72s ease-in-out infinite alternate;
+  inset: -25%;
+  background: radial-gradient(60% 50% at 70% 12%, rgba(238, 243, 246, 0.16), transparent 72%);
+  opacity: 0.9;
+  animation: wx-drift-a 26s ease-in-out infinite alternate;
+}
+.wx-mild .wx-b {
+  inset: -25%;
+  background: radial-gradient(50% 45% at 25% 70%, rgba(110, 231, 183, 0.14), transparent 70%);
+  opacity: 0.8;
+  animation: wx-drift-b 34s ease-in-out infinite alternate;
 }
 
 @keyframes wx-sheet {
   0% {
-    transform: translate3d(-6%, -8%, 0);
+    transform: translate3d(-7%, -9%, 0);
     opacity: 0;
   }
-  18% {
+  15% {
     opacity: var(--o);
   }
-  82% {
+  85% {
     opacity: var(--o);
   }
   100% {
-    transform: translate3d(5%, 8%, 0);
+    transform: translate3d(6%, 9%, 0);
     opacity: 0;
   }
 }
@@ -254,18 +285,18 @@
 }
 @keyframes wx-drift-a {
   from {
-    transform: translate3d(-2%, -2%, 0);
+    transform: translate3d(-5%, -3%, 0);
   }
   to {
-    transform: translate3d(3%, 2%, 0);
+    transform: translate3d(6%, 4%, 0);
   }
 }
 @keyframes wx-drift-b {
   from {
-    transform: translate3d(2%, 1%, 0);
+    transform: translate3d(5%, 2%, 0);
   }
   to {
-    transform: translate3d(-3%, -2%, 0);
+    transform: translate3d(-6%, -4%, 0);
   }
 }
 @keyframes wx-breathe {
@@ -274,7 +305,15 @@
     transform: scale(1);
   }
   50% {
-    transform: scale(1.05);
+    transform: scale(1.1);
+  }
+}
+@keyframes wx-rays {
+  from {
+    transform: rotate(-6deg);
+  }
+  to {
+    transform: rotate(7deg);
   }
 }
 
