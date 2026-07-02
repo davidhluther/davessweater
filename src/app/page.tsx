@@ -1,5 +1,6 @@
-import { getScores, getLatestComparison, getComparisonWindow } from "@/lib/data";
+import { getScores, getLatestComparison, getComparisonWindow, getLatestForecasts } from "@/lib/data";
 import { heroStats, trendSeries, headToHead, whyStats } from "@/lib/homeStats";
+import { compositeForecast } from "@/lib/composite";
 import { buildTooltipMap } from "@/lib/trendTooltip";
 import Hero from "@/components/Hero";
 import SectionBand from "@/components/SectionBand";
@@ -9,7 +10,8 @@ import HeadToHeadCard from "@/components/HeadToHeadCard";
 import LiveConditions from "@/components/LiveConditions";
 
 export default async function HomePage() {
-  const [scores, comp] = await Promise.all([getScores(), getLatestComparison()]);
+  const [scores, comp, forecasts] = await Promise.all([getScores(), getLatestComparison(), getLatestForecasts()]);
+  const composite = compositeForecast(forecasts);
   const stats = heroStats(scores);
   const trend = trendSeries(scores);
   const tooltip = buildTooltipMap(await getComparisonWindow(trend.map((p) => p.date)));
@@ -33,6 +35,7 @@ export default async function HomePage() {
             initialVerdict={sw.detail ?? sw.answer ?? ""}
             initialLayers={sw.layers ?? ""}
             initialTemp={temp}
+            consensusHigh={composite?.high ?? null}
           />
         </div>
       </SectionBand>

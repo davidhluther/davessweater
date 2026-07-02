@@ -291,9 +291,11 @@ via subagent-driven TDD + per-task + final adversarial review (READY_TO_MERGE), 
       contain it to the column. (Separate from the chart-content fixes done in the 2026-07-01 visual pass.)
 - [ ] **Section-rhythm audit.** Homepage alternation runs dark → dark → white → dark → light with hairline
       dividers; revisit the banding so each section earns its background change.
-- [ ] **DSI vs Sweater Index number reconciliation (decision pending).** The two "today" numbers come from
-      different sources (see the 2026-07-01 source report in the visual-pass PR): either reconcile to one
-      source or label the difference explicitly on-page. Data coherence is the brand.
+- [x] **DSI vs Sweater Index number reconciliation — ✅ DONE 2026-07-02.** The page now states ONE high for
+      today: the "High of X°F today" line under the live temperature reads the same 8-forecaster composite
+      the Index prints (passed server-side, so it also renders before hydration — no more flash of
+      yesterday's actual). The live Open-Meteo fetch still drives the current temp, the sweater verdict, and
+      the outlook strip, which now starts tomorrow so today's number appears exactly once on the page.
 - [ ] **Recalibrate the 5-sweater scale for Boone's climate** — flagged wrong: 54°F scored only
       1/5 sweaters, too low. Boone's elevation/wind/humidity make 54°F feel colder than the
       same temp in a lower town; the scale should reflect local context.
