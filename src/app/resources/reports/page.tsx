@@ -63,8 +63,9 @@ export default function Page() {
         </p>
         <h2 className="mt-1 font-display text-lg font-bold text-foreground">Where should you watch from?</h2>
         <p className="mt-1 mb-3 max-w-2xl text-sm text-muted">
-          Share your location or type an address; the report&apos;s terrain checker computes what
-          you&apos;d see from there and makes the call.
+          Type an address (or share your location) and the report computes the terrain between you
+          and every show &mdash; which fireworks you can actually see from there, paired with that
+          night&apos;s sky forecast.
         </p>
         <SightlineTeaser />
       </div>

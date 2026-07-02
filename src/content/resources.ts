@@ -28,7 +28,7 @@ export const REPORTS: ReportEntry[] = [
     href: "/fireworks",
     date: "2026-07-02",
     summary:
-      "Per-venue dusk math, verified show details, terrain sightlines, and a fireworks-specific forecast for every High Country show.",
+      "What you get: fireworks-specific weather for each show (clouds, wind, fog), start times projected from dusk math and mountain terrain, verified event details, and a sightline check from any address.",
   },
 ];
 
