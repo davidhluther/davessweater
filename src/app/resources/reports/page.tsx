@@ -3,6 +3,7 @@ import { CATEGORIES, REPORTS } from "@/content/resources";
 import { fmtLongDate } from "@/lib/dates";
 import { breadcrumbs, collectionPage } from "@/lib/schema";
 import SectionBand from "@/components/SectionBand";
+import SightlineTeaser from "@/components/SightlineTeaser";
 import JsonLd from "@/components/JsonLd";
 
 const DEF = CATEGORIES.find((c) => c.key === "reports")!;
@@ -53,6 +54,20 @@ export default function Page() {
           ))}
         </ul>
       )}
+      {/* Live teaser from the fireworks report: same input module as the
+          on-page checker; Check hands off to /fireworks, which auto-runs it.
+          Retire (or generalize) when the season's report rotates out. */}
+      <div className="mt-8 rounded-2xl border border-border bg-surface p-5">
+        <p className="text-xs font-bold uppercase tracking-wider text-orange-600">
+          Try the fireworks report
+        </p>
+        <h2 className="mt-1 font-display text-lg font-bold text-foreground">Where should you watch from?</h2>
+        <p className="mt-1 mb-3 max-w-2xl text-sm text-muted">
+          Share your location or type an address; the report&apos;s terrain checker computes what
+          you&apos;d see from there and makes the call.
+        </p>
+        <SightlineTeaser />
+      </div>
     </SectionBand>
   );
 }

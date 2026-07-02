@@ -6,7 +6,7 @@
 // sky verdicts + verified public spots arrive as props from the server page.
 // The only server involvement is the /api/geocode passthrough when someone
 // types an address instead of sharing their location. Nothing is stored.
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { VENUES } from "@/lib/fireworksVenues";
 import type { Verdict } from "@/lib/fireworks";
 import {
@@ -159,7 +159,7 @@ export default function SightlineChecker({ sky, spots }: { sky: CheckerShowSky[]
     }
   }
 
-  function useMyLocation() {
+  function checkMyLocation() {
     if (!("geolocation" in navigator)) {
       setStatus({ kind: "error", message: "this browser doesn't offer location; use the address box" });
       return;
@@ -172,10 +172,7 @@ export default function SightlineChecker({ sky, spots }: { sky: CheckerShowSky[]
     );
   }
 
-  async function checkAddress(e: React.FormEvent) {
-    e.preventDefault();
-    const q = address.trim();
-    if (!q) return;
+  async function geocodeAndRun(q: string) {
     setStatus({ kind: "working", message: "Finding that address…" });
     try {
       const res = await fetch(`/api/geocode?address=${encodeURIComponent(q)}`);
@@ -193,12 +190,40 @@ export default function SightlineChecker({ sky, spots }: { sky: CheckerShowSky[]
     }
   }
 
+  async function checkAddress(e: React.FormEvent) {
+    e.preventDefault();
+    const q = address.trim();
+    if (!q) return;
+    await geocodeAndRun(q);
+  }
+
+  // Deep-link handoff (the Reports-page teaser): /fireworks?check=me runs the
+  // location path, ?check=<address> geocodes and runs. Read from
+  // window.location instead of useSearchParams so the static page never takes
+  // a CSR bailout; runs once, on mount, only when the param is present.
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("check");
+    if (!q) return;
+    // Deferred a tick so the trigger runs after paint instead of setting
+    // state synchronously inside the effect (react-hooks/set-state-in-effect).
+    const t = setTimeout(() => {
+      if (q === "me") {
+        checkMyLocation();
+      } else {
+        setAddress(q);
+        void geocodeAndRun(q);
+      }
+    }, 0);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="rounded-lg border border-border bg-background p-4">
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
-          onClick={useMyLocation}
+          onClick={checkMyLocation}
           disabled={status.kind === "working"}
           className="rounded-md bg-teal-700 px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-teal-800 disabled:opacity-50"
         >

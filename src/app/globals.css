@@ -366,9 +366,88 @@
   }
 }
 
+/* fw — the /fireworks hero: red, white, and blue shells blooming over a
+   darkened ridge. Same discipline as .wx: compositor-only transforms, the
+   static quiet-zone mask on the (non-animated) wrapper, and base rules that
+   double as the designed still frame — reduced motion shows a sky mid-bloom,
+   never a blank. Colors: red-400 rgb(248,113,113); blue-400 rgb(96,165,250);
+   white. */
+.fw {
+  contain: layout paint;
+  mask-image: linear-gradient(115deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.5) 28%, rgb(0, 0, 0) 52%);
+  background: linear-gradient(195deg, rgba(10, 18, 26, 0.4), transparent 60%);
+}
+.fw > i {
+  position: absolute;
+  display: block;
+  aspect-ratio: 1;
+  animation: fw-shell 9.4s ease-out infinite;
+}
+/* Each shell: a bright core, its bloom, and a thin expanding ring that
+   scales with the element. */
+.fw .fw-red {
+  background:
+    radial-gradient(circle, rgba(255, 235, 235, 0.9) 0%, rgba(248, 113, 113, 0.55) 14%, rgba(248, 113, 113, 0.18) 34%, transparent 55%),
+    radial-gradient(circle, transparent 42%, rgba(248, 113, 113, 0.28) 47%, transparent 56%);
+}
+.fw .fw-white {
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.4) 14%, rgba(255, 255, 255, 0.12) 34%, transparent 55%),
+    radial-gradient(circle, transparent 42%, rgba(255, 255, 255, 0.22) 47%, transparent 56%);
+}
+.fw .fw-blue {
+  background:
+    radial-gradient(circle, rgba(235, 244, 255, 0.9) 0%, rgba(96, 165, 250, 0.55) 14%, rgba(96, 165, 250, 0.18) 34%, transparent 55%),
+    radial-gradient(circle, transparent 42%, rgba(96, 165, 250, 0.3) 47%, transparent 56%);
+}
+/* The volley: six shells on one 9.4s clock, staggered (negative delays, so
+   the sky is never empty on load) and sized toward the masked right side.
+   The frozen frame keeps three blooms and three faint embers. */
+.fw .fw-1 { top: 4%;  right: 8%;  width: 300px; opacity: 0.5;  animation-delay: -0.4s; }
+.fw .fw-2 { top: 26%; right: 30%; width: 210px; opacity: 0.4;  animation-delay: -2s; }
+.fw .fw-3 { top: 34%; right: 2%;  width: 250px; opacity: 0.45; animation-delay: -3.5s; }
+.fw .fw-4 { top: 2%;  right: 40%; width: 170px; opacity: 0.18; animation-delay: -5.1s; }
+.fw .fw-5 { top: 12%; right: 20%; width: 230px; opacity: 0.18; animation-delay: -6.6s; }
+.fw .fw-6 { top: 42%; right: 22%; width: 150px; opacity: 0.15; animation-delay: -8.1s; }
+/* Phone heroes are tall and narrow: keep a three-shell volley pinned near
+   the top-right so the bursts stay art, not haze (the .wx-hot mobile lesson). */
+@media (max-width: 767px) {
+  .fw .fw-4,
+  .fw .fw-5,
+  .fw .fw-6 {
+    display: none;
+  }
+  .fw .fw-1 { top: -30px; right: -40px; width: 240px; }
+  .fw .fw-2 { top: 90px;  right: 120px; width: 150px; }
+  .fw .fw-3 { top: 150px; right: -20px; width: 190px; }
+}
+@keyframes fw-shell {
+  0% {
+    transform: scale(0.12);
+    opacity: 0;
+  }
+  3% {
+    opacity: 0.95;
+  }
+  20% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  34% {
+    transform: scale(1.15);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.15);
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .wx,
-  .wx > i {
+  .wx > i,
+  .fw,
+  .fw > i {
     /* !important so this outranks the (0,2,0) variant selectors above */
     animation: none !important;
   }
