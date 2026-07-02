@@ -13,7 +13,7 @@ export async function GET(req: Request) {
   let payload: unknown;
   try {
     const res = await fetch(url, {
-      headers: { "User-Agent": "davessweater.com/fireworks sightline checker" },
+      headers: { "User-Agent": "davessweater.com/reports/fireworks-fourth-july-2026 sightline checker" },
       signal: AbortSignal.timeout(8000),
     });
     if (!res.ok) throw new Error(`census ${res.status}`);

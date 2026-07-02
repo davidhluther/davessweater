@@ -109,7 +109,7 @@ export default async function OgImage() {
             fontSize: 26,
           }}
         >
-          <span>davessweater.com/fireworks</span>
+          <span>davessweater.com/reports/fireworks-fourth-july-2026</span>
           <span style={{ color: "rgba(255, 255, 255, 0.65)" }}>
             July 4, {SEASON.year} | Boone, NC
           </span>

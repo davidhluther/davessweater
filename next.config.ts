@@ -30,6 +30,8 @@ const nextConfig: NextConfig = {
       { source: "/blog", destination: "/resources/news", permanent: true },
       { source: "/blog/:slug", destination: "/resources/news/:slug", permanent: true },
       { source: "/videos", destination: "/resources/videos", permanent: true },
+      // The fireworks report's launch URL moved to its permanent /reports/ slug.
+      { source: "/fireworks", destination: "/reports/fireworks-fourth-july-2026", permanent: true },
     ];
   },
 };

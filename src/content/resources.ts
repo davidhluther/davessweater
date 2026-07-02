@@ -14,7 +14,7 @@ export function postCategory(slug: string): PostCategory {
 }
 
 // Reports are curated by hand — one entry per published report. The fireworks
-// report joins this list when it ships (href of its live route, e.g. "/fireworks").
+// report joins this list when it ships (href of its live route, e.g. "/reports/fireworks-fourth-july-2026").
 export interface ReportEntry {
   title: string;
   href: string;
@@ -27,7 +27,7 @@ export interface ReportEntry {
 export const REPORTS: ReportEntry[] = [
   {
     title: "2026 Fourth of July fireworks in Boone and the High Country: exact times, computed",
-    href: "/fireworks",
+    href: "/reports/fireworks-fourth-july-2026",
     date: "2026-07-02",
     summary:
       "What you get: fireworks-specific weather for each show (clouds, wind, fog), start times projected from dusk math and mountain terrain, verified event details, and a sightline check from any address.",

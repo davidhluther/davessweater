@@ -17,7 +17,7 @@ export default function FireworksBanner() {
   const dark = fmtTime(p.civilDuskEnd, NY_TZ);
   return (
     <Link
-      href="/fireworks"
+      href="/reports/fireworks-fourth-july-2026"
       className="group relative block w-full overflow-hidden bg-teal-900 text-white [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px]"
     >
       <span

@@ -8,7 +8,7 @@ import { useState } from "react";
 export default function SightlineTeaser() {
   const router = useRouter();
   const [address, setAddress] = useState("");
-  const go = (q: string) => router.push(`/fireworks?check=${encodeURIComponent(q)}#checker`);
+  const go = (q: string) => router.push(`/reports/fireworks-fourth-july-2026?check=${encodeURIComponent(q)}#checker`);
   return (
     <div className="rounded-lg border border-border bg-background p-4">
       <div className="flex flex-wrap items-center gap-2">
