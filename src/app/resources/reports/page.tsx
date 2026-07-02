@@ -43,13 +43,26 @@ export default function Page() {
         <ul className="space-y-5">
           {REPORTS.map((r) => (
             <li key={r.href} className="border-b border-border pb-5 last:border-0">
-              <h2 className="text-xl font-semibold">
-                <Link href={r.href} className="text-orange-600 hover:underline underline-offset-2">
-                  {r.title}
-                </Link>
-              </h2>
-              {r.date && <p className="mt-0.5 text-xs text-muted">{fmtLongDate(r.date)}</p>}
-              {r.summary && <p className="mt-1 text-sm text-muted">{r.summary}</p>}
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                {r.image && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={r.image}
+                    alt={r.imageAlt ?? ""}
+                    loading="lazy"
+                    className="aspect-video w-full rounded-xl border border-border object-cover sm:w-56 sm:shrink-0"
+                  />
+                )}
+                <div>
+                  <h2 className="text-xl font-semibold">
+                    <Link href={r.href} className="text-orange-600 hover:underline underline-offset-2">
+                      {r.title}
+                    </Link>
+                  </h2>
+                  {r.date && <p className="mt-0.5 text-xs text-muted">{fmtLongDate(r.date)}</p>}
+                  {r.summary && <p className="mt-1 text-sm text-muted">{r.summary}</p>}
+                </div>
+              </div>
             </li>
           ))}
         </ul>

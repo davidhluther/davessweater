@@ -5,8 +5,9 @@ import { NY_TZ, fmtTime, localDateString, solarPacket } from "@/lib/solar";
 // Homepage promo strip for the fireworks report. Renders only through the
 // season (pageMode preview/tonight) and retires itself in archive mode — the
 // site rebuilds on every daily data commit, so the date check stays current.
-// The blooms are the hero volley's colors as static gradients: owned art,
-// no stock photo, no license exposure.
+// The photo is owner-supplied CC0 1.0 ("Feuerwerk_1"), generic fireworks on a
+// black sky — atmosphere only, no local-show claim; its black ground fades
+// into the teal-900 band behind the masked left edge.
 const BOONE = { lat: 36.2168, lon: -81.6746 };
 
 export default function FireworksBanner() {
@@ -19,18 +20,21 @@ export default function FireworksBanner() {
       href="/fireworks"
       className="group relative block w-full overflow-hidden bg-teal-900 text-white [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px]"
     >
-      <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-1/2 overflow-hidden">
-        <i
-          className="absolute -top-10 right-6 h-28 w-28"
-          style={{ background: "radial-gradient(circle closest-side, rgba(248, 113, 113, 0.7), transparent 70%)" }}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 right-0 w-3/5 overflow-hidden sm:w-1/2 [mask-image:linear-gradient(90deg,transparent,rgb(0,0,0)_45%)]"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/assets/fireworks-photo-sm.webp"
+          alt=""
+          loading="lazy"
+          className="h-full w-full object-cover opacity-80"
         />
+        {/* right-edge scrim: the CTA sits over the photo's brightest bursts */}
         <i
-          className="absolute -bottom-9 right-28 h-24 w-24"
-          style={{ background: "radial-gradient(circle closest-side, rgba(255, 255, 255, 0.5), transparent 70%)" }}
-        />
-        <i
-          className="absolute top-1 right-48 h-20 w-20"
-          style={{ background: "radial-gradient(circle closest-side, rgba(96, 165, 250, 0.6), transparent 70%)" }}
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(90deg, transparent 45%, rgba(15, 34, 43, 0.6) 88%)" }}
         />
       </span>
       <span className="relative mx-auto flex w-full max-w-5xl flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3">

@@ -20,6 +20,8 @@ export interface ReportEntry {
   href: string;
   date?: string; // ISO, rendered "Month D, YYYY"
   summary?: string;
+  image?: string; // public/ path; keep alt honest — no local-show claims on stock art
+  imageAlt?: string;
 }
 
 export const REPORTS: ReportEntry[] = [
@@ -29,6 +31,9 @@ export const REPORTS: ReportEntry[] = [
     date: "2026-07-02",
     summary:
       "What you get: fireworks-specific weather for each show (clouds, wind, fog), start times projected from dusk math and mountain terrain, verified event details, and a sightline check from any address.",
+    // CC0 1.0, owner-supplied ("Feuerwerk_1"); generic fireworks, not a local shot.
+    image: "/assets/fireworks-photo.webp",
+    imageAlt: "Fireworks bursting against a night sky",
   },
 ];
 
