@@ -284,6 +284,10 @@ renders. Three date states built + build-tested (preview / tonight Jul 3–4 / a
       retires itself in archive mode). Reports teaser optimized for phones (the location button appears from
       `sm` up; mobile is a clean input + Check row). Report summary + teaser pitch rewritten outcome-first
       (what you get: per-show weather, projected start times, event details, sightlines from any address).
+      **Photo landed same day:** owner supplied a CC0 1.0 fireworks shot (Feuerwerk_1) →
+      `public/assets/fireworks-photo{,-sm}.webp` (sharp, 1200w/640w); used as the report thumbnail on
+      /resources/reports and the banner's masked backdrop. Generic fireworks — alt text makes no local
+      claim; swap in the owner's own July 4 shots when they exist.
 - [ ] **Owner, NOW THAT IT'S MERGED:** request indexing for `/fireworks` in GSC immediately — the only
       realistic organic lever this week; the organic play is the evergreen URL accruing for 2027.
 - [ ] **Owner, ads (Phase 5):** UTM every Meta variant, e.g.
