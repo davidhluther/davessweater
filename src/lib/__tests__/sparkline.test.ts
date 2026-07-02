@@ -17,8 +17,11 @@ describe("sparkSeries", () => {
 
 describe("sparkPath", () => {
   it("maps values into a width x height box, top=high score", () => {
-    const d = sparkPath([40, 100], 100, 20, 40, 100);
-    expect(d).toBe("M0,20 L100,0");   // 40→bottom(y=20), 100→top(y=0)
+    const d = sparkPath([0, 100], 100, 20);
+    expect(d).toBe("M0,20 L100,0");   // 0→bottom(y=20), 100→top(y=0) on the default 0–100 axis
+  });
+  it("honors a custom domain", () => {
+    expect(sparkPath([40, 100], 100, 20, 40, 100)).toBe("M0,20 L100,0");
   });
   it("returns empty string for <2 points", () => {
     expect(sparkPath([50], 100, 20)).toBe("");

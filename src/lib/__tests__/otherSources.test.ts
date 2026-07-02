@@ -35,7 +35,7 @@ describe("otherSourcesRows", () => {
     expect(nws.isFree).toBe(true);
     expect(nws.label).toBe("National Weather Service");
     expect(nws.avg).toBeCloseTo(82.1, 1);
-    expect(nws.record).toBe("30W - 10M - 0L");
+    expect(nws.record).toBe("30R - 10M - 0W");
   });
 
   it("flags sources under MIN_SCORED_DAYS as provisional, not those at or above", () => {

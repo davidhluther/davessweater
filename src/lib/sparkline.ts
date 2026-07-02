@@ -29,7 +29,7 @@ export function rollingMean(values: number[], w = 7): number[] {
   });
 }
 
-export function sparkPath(values: number[], width: number, height: number, min = 40, max = 100): string {
+export function sparkPath(values: number[], width: number, height: number, min = 0, max = 100): string {
   if (values.length < 2) return "";
   const span = values.length - 1;
   const x = (i: number) => Math.round((i / span) * width);
