@@ -11,7 +11,7 @@ export default function HeadToHeadCard({ h }: { h: HeadToHead }) {
       </div>
       <div className="rounded-xl border border-border bg-background p-4">
         <div className="text-xs text-muted">Ray&apos;s Weather</div>
-        <div className="font-display text-3xl font-bold text-orange-600">
+        <div className="font-display text-3xl font-bold text-slate-500">
           {h.rays != null ? h.rays.toFixed(1) : "—"}<span className="text-sm text-muted">/100</span>
         </div>
       </div>

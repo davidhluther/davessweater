@@ -7,7 +7,7 @@ function icons(score: number) {
   return Array.from({ length: 5 }, (_, i) => (
     // eslint-disable-next-line @next/next/no-img-element
     <img key={i} src="/assets/sweateremoji.webp" alt=""
-      className={i < score ? "inline h-7 w-7" : "inline h-7 w-7 opacity-25 grayscale"} />
+      className={i < score ? "inline h-10 w-10 sm:h-11 sm:w-11" : "inline h-10 w-10 opacity-25 grayscale sm:h-11 sm:w-11"} />
   ));
 }
 
@@ -37,10 +37,10 @@ export default function LiveConditions({
 
   return (
     <div className="text-center">
-      <div className="mb-1.5 flex justify-center gap-0.5" role="img" aria-label={`${s.score} of 5 sweaters`}>{icons(s.score)}</div>
-      <div className="text-3xl font-extrabold">{s.temp}{s.high ? <span className="ml-2 align-middle text-sm text-muted">now</span> : null}</div>
-      {s.high ? <div className="text-xs text-muted">{s.high}</div> : null}
-      <p className="mt-2 text-base font-semibold">{s.verdict}</p>
+      <div className="mb-2 flex justify-center gap-1" role="img" aria-label={`${s.score} of 5 sweaters`}>{icons(s.score)}</div>
+      <div className="font-display text-4xl font-extrabold">{s.temp}{s.high ? <span className="ml-2 align-middle font-sans text-sm font-normal text-muted">now</span> : null}</div>
+      {s.high ? <div className="mt-0.5 text-xs text-muted">{s.high}</div> : null}
+      <p className="mt-2.5 text-lg font-semibold">{s.verdict}</p>
       {s.layers ? <p className="mt-0.5 text-sm text-muted"><strong>Recommended layers:</strong> {s.layers}</p> : null}
       <Outlook days={outlook} />
     </div>
