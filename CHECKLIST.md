@@ -68,11 +68,10 @@ backfilled from saved `raw_text` (originals preserved) + re-scored; guarded by `
 Plan: `planning/plans/2026-06-24-rays-capture-interval-scoring.md`.
 - [x] **Ray fair scoring** — Ray ≈ 65.2 (≈flat — capture-deflation + vagueness-reward cancelled; now every
       point earned), Open-Meteo 91.65 unchanged, free wins by ~26.5, Ray's "Right" days 35→25. **Merged + live.**
-- [ ] **Methodology transparency (before promotion)** — document the interval scoring + NWS qualitative-wind
-      mapping + width penalty on `/right-wrong-ray` (+ refresh the stale `CLAUDE.md` scoring table).
-      → **now tracked as R4 + R8** in the audit register (+ R5 adds actuals-provenance disclosure).
-- [ ] **Capture-quality monitoring** — alert when a source's coverage drops (this regression went unnoticed
-      for weeks). → **now tracked as R3** in the audit register.
+- [x] **Methodology transparency (before promotion)** — shipped as **R4 + R8** (PR #72, 2026-06-27) + R5's
+      actuals-provenance disclosure; `/methodology` live.
+- [x] **Capture-quality monitoring** — shipped as **R3** (`check_capture_health.py` + drift detection +
+      auto-backfill sweep, live 2026-07-01).
 
 ## Done: M3 iteration #2 — "Why we exist" scrollytelling section
 Restrained, scroll-driven narrative section on the homepage (below the hero, replacing the standalone
@@ -124,7 +123,7 @@ on a framer-motion timeline (scroll-driven beam via `useScroll`), five data-boun
         capture-day-low disclosure added to `/methodology` ("Reading the overnight low", mechanical copy).
         Full N-source trend sparklines still a future nicety.
 
-## Done: P-DS-FW1 — /fireworks (Fireworks & Dusk asset) — ✅ BUILT 2026-07-02 (branch `feat/fireworks-dusk`, uncommitted)
+## Done: P-DS-FW1 — /fireworks (Fireworks & Dusk asset) — ✅ MERGED + LIVE 2026-07-02
 The "fireworks begin at dusk" page: per-venue dusk math (sunset / civil-dusk "dark enough" / nautical
 "fully dark" / moonrise+phase), computed annually forever from each launch site's coordinates
 (`src/lib/solar.ts` — interface is (lat, lon, elevationM, date, tz) → full solar packet, deliberately the
@@ -152,7 +151,7 @@ renders. Three date states built + build-tested (preview / tonight Jul 3–4 / a
 - [x] **Answers-first restructure (2026-07-02 evening):** quick-answer cards (per-show time + verdict chip)
       + Blowing Rock/Banner Elk one-liner + jump-nav pills now open the page; section anchors #times
       #forecast #shows #faq #method (`SectionBand` gained an `id` prop). Owner flagged the overall visual
-      design as "kind of ugly" — a dedicated design pass is still owed.
+      design as "kind of ugly" — resolved by the 2026-07-02 brand + hero pass (PR #106, below).
 - [x] **Both-shows FAQ corrected (owner ground truth):** attend-one stays, but "see several at once from a
       high open Boone vantage" is now affirmed — validated by a terrain line-of-sight POC (session
       scratchpad `los_poc2.mjs`): owner's vantage clears Boone/Tweetsie/App State bursts; Beech marginal
@@ -209,7 +208,7 @@ renders. Three date states built + build-tested (preview / tonight Jul 3–4 / a
       (Check my view / outlook / Show details) + small text links. Reason strings rewritten
       (condition → number → consequence; no rubric jargon on cards). Section heading is date-aware
       ("Tonight's outlook" on Jul 3–4; archive variant after). 110 tests + lint + build green; verified in
-      preview. **Visual/design pass still owed** — this was structure + copy, not paint.
+      preview. **Visual/design pass shipped 2026-07-02 (PR #106, below).**
 - [x] **Labels/AP-case + spots-up pass — ✅ SHIPPED 2026-07-02 (owner-directed).** Verdict taxonomy is now
       user-facing: sight = Clear View / Limited View / Blocked View (marginal + finale-only share the
       Limited label; margins + detail text differentiate), sky = Clear Skies / Iffy Skies / Bad Skies /
@@ -259,6 +258,20 @@ renders. Three date states built + build-tested (preview / tonight Jul 3–4 / a
 - [x] **Ship-final polish (owner, 2026-07-02):** Our Read column moved to first-after-Show; em-dashes
       minimized across all user-facing strings (kept only as empty-cell placeholders); all external links
       rel="nofollow". SHIPPED TO PRODUCTION same day (after #104/#105), owner refining in main project.
+- [x] **Brand + hero pass — ✅ MERGED + LIVE 2026-07-02 (PR #106).** The page opens on the branded dark band
+      now (orange-300 kicker, hero-scale display h1, brand CTA shapes, sentence-case labels; tonight/archive
+      callouts restyled onto the band). A red, white, and blue six-shell volley animates behind the hero:
+      `.fw` in `globals.css`, built in the homepage `.wx` dialect — compositor-only transforms, static
+      quiet-zone mask over the text column, base rules double as the reduced-motion still frame, fixed-size
+      three-shell volley on phones. Fireworks left the top-level nav; the report is the first `REPORTS`
+      entry in `src/content/resources.ts` (the Reports hub + hub card list it automatically); BreadcrumbList
+      (Home → Resources → Reports → page) joined the Event/FAQ schema; data-line middots → pipes; section
+      h2s to the sitewide text-2xl scale.
+- [x] **Reports-page checker teaser — ✅ MERGED + LIVE 2026-07-02 (PR #106).** `/resources/reports` embeds
+      the checker's input module (`SightlineTeaser`): Check routes to `/fireworks?check=<query>#checker`,
+      where the on-page checker auto-runs the same geocode-or-geolocate path on mount (reads
+      `window.location` in an effect, not `useSearchParams`, so the static prerender survives). Verified
+      end-to-end: address submitted on the Reports page landed at the checker with the full verdict rendered.
 - [ ] **Owner, NOW THAT IT'S MERGED:** request indexing for `/fireworks` in GSC immediately — the only
       realistic organic lever this week; the organic play is the evergreen URL accruing for 2027.
 - [ ] **Owner, ads (Phase 5):** UTM every Meta variant, e.g.
@@ -273,6 +286,50 @@ renders. Three date states built + build-tested (preview / tonight Jul 3–4 / a
       dusk math, page metadata, and the capture season-gate re-arm themselves.
 - [ ] **Phase 2 (deferred by design):** terrain-adjusted `/sunset` page (DEM horizon profiles on top of
       `solar.ts`), golden-hour tables, overlook viewing claims, NYE/Tweetsie-nights reuse of the module.
+
+## Done: Right/Wrong Ray visual break-up + polish (PR #104 — merged + live 2026-07-02)
+- [x] **A+C plane split + rank rails (owner's pick from the heavy-blue proposals):** the Season Scoreboard
+      sits on the teal-900 dot-grid plane (header stays teal-700); every row carries a 3px standing-colored
+      left rail — emerald winner / brand-orange loser / slate fading by merit rank — that follows the row
+      through re-sorts, same as the text tones.
+- [x] **Owner follow-ups (same PR):** hero "How Ray did" primary CTA jumps to Ray's day card
+      (`#rays-latest`, hidden when Ray goes unscored); day's-worst highlights orange (chip + card border);
+      **tied day scores break on the summed |error| across the graded breakdown fields**, so day's best and
+      day's worst each land on exactly one card (rule disclosed in the scoring footnote); **records read
+      R-M-W site-wide now — a "W" means Wrong, where it used to mean wins** (tests re-pinned); sparklines
+      plot on an absolute 0–100 axis inside solid row frames.
+
+## Done: Resources hub IA (PR #105 — merged + live 2026-07-02)
+- [x] Nav = Today | Right/Wrong Ray | **Resources ▾** | Swag Shop. The Resources label links to the
+      `/resources` hub; a disclosure dropdown (aria-expanded, Escape/blur close, hover opens) lists
+      Articles / News & Updates / Videos / Reports; the mobile sheet renders them as a flat indented list.
+      Feed posts default to News & Updates; `ARTICLE_SLUGS` in `src/content/resources.ts` shelves a slug
+      under Articles (a pre-split slug moved there also needs its own redirect entry); `REPORTS` is the
+      curated reports list. 301s: `/blog` → `/resources/news`, `/blog/:slug` → `/resources/news/:slug`,
+      `/videos` → `/resources/videos`; post detail lives at `/resources/{category}/{slug}` and the
+      wrong-category URL 404s. Every resources page: unique meta description, canonical, page OG; JSON-LD
+      BreadcrumbList everywhere, CollectionPage + ItemList on hub/categories, BlogPosting on post detail
+      (schema strings avoid raw "&" — the JsonLd component HTML-escapes text children).
+      **Next 16.2 gotcha (cost a silent zero-paths build):** a child of a dynamic segment gets empty parent
+      params in `generateStaticParams` — use the bottom-up pattern (child emits complete {category, slug}
+      pairs).
+
+## Pipeline + deploy ops (2026-07-02) — done + watch
+- [x] **Cron-skip incident:** GHA never fired the new 10:00/10:30 UTC crons on their first morning after
+      #101's schedule change — no runs, no failures; the static site served 7/1's build until ~12:40 PM
+      (owner caught it as stale dates). Recovery: `gh workflow run daily_capture.yml` (Daily Compare chains
+      automatically via its `workflow_run` trigger); fresh on prod ~15 min later.
+- [ ] **Watch the 2026-07-03 10:00 UTC firing** — if GHA skips again, move both crons off the top of the
+      hour (:07/:37), the standard mitigation for contended slots.
+- [ ] **Freshness sentinel (candidate):** nothing alerts when the cron simply never runs (the R3 health
+      check lives inside a run) — add a late-morning check that fails red when the newest comparison date
+      is older than yesterday.
+- [x] **Vercel webhook coalescing (lesson):** back-to-back merges to main can leave the second merge
+      undeployed — no build, no failure, just absent (#105 needed a manually created git-source deployment).
+      Leave a beat between merges, or confirm a deployment exists per merge.
+- [x] **Stale local `.vercel` cleaned (owner-delegated):** the main checkout still carried GitHub-Pages-era
+      settings (python build → `docs/`); backed up, removed, re-linked fresh (project/org IDs only). The
+      matching *dashboard* overrides remain an owner click (see Deployment notes in `CLAUDE.md`).
 
 ## Promotion-readiness audit — RAN 2026-06-25 → risk register
 Multi-agent audit (Dims 1–4, adversarially verified) complete. 24 findings → 22 verified + 2 critic → a
@@ -439,6 +496,20 @@ via subagent-driven TDD + per-task + final adversarial review (READY_TO_MERGE), 
 - [ ] Then: M4 radar/maps + Woolcam + photo-of-the-day, M5 multi-location, M6 Ecowitt station ground-truth.
 
 ## To do — site (pre-station, outstanding)
+
+- [ ] **Scoring recalibration — the big one (owner-flagged 2026-07-02).** Clustered 90s = weak
+      differentiation, and on trace days (0.071") a "none" forecast incoherently earned 10/10 amount after
+      0/10 type. Owner wants balance and explicitly NO double-penalty on trace misses. Model on FULL history
+      before touching the scorer: trace-day partial type credit / type-gated amount cap / merged 20-pt
+      precipitation score / tighter-steeper temp bands; show per-source deltas + the wins-by-omission
+      fairness check (as the R2 revert did); update `/methodology` + `CLAUDE.md`; rescore via
+      `scripts/rescore_history.py`. Never ship a scoring change without proving it wasn't tuned against Ray.
+- [ ] **DSI membership decision (analysis delivered 2026-07-02).** On the 8-day sample the composite (84.2)
+      scores below its best members (Google 95.1, MET.no 95.0) — banded scoring + majority-type misses make
+      averaging lossy; best subset (metno + visualcrossing + google, median, implied-zero) ≈ 89.
+      Recommendation: ship a private daily tracker, decide cuts at ~30 days (or earlier with a methodology
+      disclosure). Tracker script still to be written as `scripts/` tooling.
+- [ ] **Ray's real price for the "Paid" chip** on `/right-wrong-ray` — owner to supply the figure.
 
 ### Homepage design backlog (owner review, 2026-07-01 — banked, not yet actioned)
 - [ ] **iPhone shot: find it a new home; the Today module owns above-the-fold long-term.** The Apple
