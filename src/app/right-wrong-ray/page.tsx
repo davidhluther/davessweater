@@ -84,15 +84,29 @@ export default async function Page() {
     allRows.filter((r) => isProvisional(r.days) && !HEADLINE_SOURCES.has(r.key)).map((r) => r.key)
   );
 
-  // Day cards run as a leaderboard: best score first, winner and loser marked.
+  // Day cards run as a leaderboard: best score first. Tied scores break on the
+  // summed miss across the graded "show the math" fields (the closer forecast
+  // ranks higher), so "day's best" and "day's worst" each land on exactly one
+  // card even when the headline numbers match.
+  const missTotal = (score: SourceEntry["score"]): number => {
+    let sum = 0, n = 0;
+    for (const f of Object.values(score.breakdown ?? {})) {
+      if (f.scored && typeof f.error === "number") { sum += Math.abs(f.error); n++; }
+    }
+    return n ? sum : Number.MAX_SAFE_INTEGER;
+  };
   const scored = Object.keys(comp?.sources ?? {})
     .map((key) => ({ key, ...srcMeta(key), e: comp!.sources![key] }))
     .filter((s): s is typeof s & { e: SourceEntry & { score: NonNullable<SourceEntry["score"]> } } =>
       Boolean(s.e && s.e.score))
-    .sort((x, y) => y.e.score.score - x.e.score.score);
+    .sort((x, y) =>
+      y.e.score.score - x.e.score.score ||
+      missTotal(x.e.score) - missTotal(y.e.score) ||
+      x.label.localeCompare(y.label));
   const bestScore = scored[0]?.e.score.score;
   const worstScore = scored[scored.length - 1]?.e.score.score;
   const markWorst = scored.length > 2 && worstScore !== bestScore;
+  const hasRay = scored.some((s) => s.key === "raysweather");
 
   const a = comp?.actuals;
   const aLines = a ? actualLines(a) : [];
@@ -114,7 +128,13 @@ export default async function Page() {
             When you trust us to tell you how many rays of sunshine, golfballs, or snowmen you can expect,
             we need to be held to account. Here&apos;s the scoreboard comparing each forecast to the actual weather.
           </p>
-          <p className="mt-5">
+          <p className="mt-5 flex flex-wrap gap-3">
+            {hasRay && (
+              <a href="#rays-latest"
+                className="inline-flex min-h-10 items-center rounded-lg bg-orange-600 px-4 text-sm font-bold text-white transition-colors hover:bg-[#9a3412]">
+                How Ray did &darr;
+              </a>
+            )}
             <Link href="/methodology"
               className="inline-flex min-h-10 items-center rounded-lg border border-white/30 px-4 text-sm font-bold text-white transition-colors hover:bg-white/10">
               How we score it &rarr;
@@ -134,7 +154,7 @@ export default async function Page() {
               Every forecaster we track, ranked by season average. The order is merit-based.
             </p>
             <SortableScoreTable rows={rows} />
-            <p className="mt-3 text-xs text-white/70">W = graded Right (75+) | M = Meh (60&ndash;74) | L = graded Wrong (under 60). Trend = 7-day rolling average.</p>
+            <p className="mt-3 text-xs text-white/70">R = graded Right (75+) | M = Meh (60&ndash;74) | W = graded Wrong (under 60). Trend = 7-day rolling average on the 0&ndash;100 scale.</p>
           </div>
         </section>
       )}
@@ -162,14 +182,14 @@ export default async function Page() {
 
             {scored.map(({ key, label, iconSrc, iconChar, price, e }, i) => {
               const s = e.score.score;
-              const isBest = s === bestScore;
+              const isBest = i === 0;
               const isWorst = markWorst && i === scored.length - 1;
               const f = predFields(e);
               return (
-                <div key={key}
+                <div key={key} id={key === "raysweather" ? "rays-latest" : undefined}
                   className={cn(
-                    "mt-3 rounded-2xl border bg-background p-5 transition hover:-translate-y-0.5 hover:shadow-lg sm:p-6",
-                    isBest ? "border-emerald-300/70" : "border-border"
+                    "mt-3 scroll-mt-20 rounded-2xl border bg-background p-5 transition hover:-translate-y-0.5 hover:shadow-lg sm:p-6",
+                    isBest ? "border-emerald-300/70" : isWorst ? "border-orange-300/70" : "border-border"
                   )}>
                   <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
                     <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
@@ -186,7 +206,7 @@ export default async function Page() {
                         </span>
                       )}
                       {isWorst && (
-                        <span className="rounded-full border border-slate-400/40 bg-slate-400/10 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
+                        <span className="rounded-full border border-orange-600/40 bg-orange-600/10 px-2.5 py-0.5 text-xs font-semibold text-orange-600">
                           day&apos;s worst
                         </span>
                       )}
@@ -237,6 +257,8 @@ export default async function Page() {
           scored as a range when the source gives one), precip type (10) and precip amount (10) — by closeness
           to the actual recorded conditions. A forecast of &ldquo;no rain&rdquo; counts as a zero-inch prediction
           (scored); predicting rain with no stated total leaves the amount blank (no credit).
+          When day scores tie, the smaller summed miss across the graded fields takes
+          &ldquo;day&apos;s best&rdquo; and the larger takes &ldquo;day&apos;s worst.&rdquo;
         </p>
         <p className="mt-2 text-xs">
           <Link href="/methodology" className="text-teal underline underline-offset-2">Full methodology &rarr;</Link>

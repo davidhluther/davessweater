@@ -44,7 +44,7 @@ export default function SortableScoreTable({ rows }: { rows: ScoreRow[] }) {
     <div>
       <table className="hidden w-full text-sm md:table">
         <thead>
-          <tr className="border-b border-white/10 text-left">
+          <tr className="border-b border-white/15 text-left">
             {COLS.map((c) => (
               <th key={c.key} aria-sort={aria(c.key)}
                 className={c.key === "label" ? "border-l-[3px] border-l-transparent py-2 pl-2.5" : "py-2"}>
@@ -61,7 +61,7 @@ export default function SortableScoreTable({ rows }: { rows: ScoreRow[] }) {
           {sorted.map((r) => {
             const t = tone(r);
             return (
-              <tr key={r.key} className="border-b border-white/5">
+              <tr key={r.key} className="border-b border-white/15">
                 <td className={`border-l-[3px] py-2 pl-2.5 ${TEXT[t]}`} style={{ borderLeftColor: rail(r) }}>{r.label}</td>
                 <td className={`py-2 tabular-nums ${TEXT[t]} ${t === "win" ? "font-semibold" : ""}`}>{r.avg.toFixed(1)}</td>
                 <td className="py-2 tabular-nums">{r.days}</td>
