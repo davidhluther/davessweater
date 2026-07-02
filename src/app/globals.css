@@ -202,6 +202,39 @@
   opacity: 0.8;
   animation: wx-rays 13s ease-in-out infinite alternate;
 }
+/* On phones the hero is ~5x taller than wide, so the percentage-based bloom
+   stretches into an ambiguous haze. Swap it for a fixed-size sun: a bright
+   disk pinned just inside the top-right corner, rays fanning down-left and
+   fading radially. The rays' mask is centered on the same point the element
+   rotates around, so the fade never drifts with the sweep; the disk stays
+   oversized relative to its glow so the wander never reveals an edge. */
+@media (max-width: 767px) {
+  .wx-hot {
+    background: linear-gradient(200deg, rgba(249, 115, 22, 0.18), rgba(253, 186, 116, 0.04) 14%, transparent 24%);
+  }
+  .wx-hot .wx-a {
+    inset: -265px -265px auto auto;
+    width: 640px;
+    height: 640px;
+    background: radial-gradient(circle closest-side at center,
+      rgba(255, 238, 205, 1),
+      rgba(255, 216, 152, 0.9) 10%,
+      rgba(253, 186, 116, 0.55) 30%,
+      rgba(249, 115, 22, 0.25) 55%,
+      transparent 78%);
+  }
+  .wx-hot .wx-b {
+    inset: -265px -265px auto auto;
+    width: 1300px;
+    height: 1300px;
+    background: conic-gradient(from 185deg at calc(100% - 320px) 320px,
+      transparent 0deg, rgba(253, 186, 116, 0.24) 12deg, transparent 28deg,
+      rgba(253, 186, 116, 0.15) 44deg, transparent 60deg,
+      rgba(253, 186, 116, 0.19) 76deg, transparent 94deg);
+    transform-origin: calc(100% - 320px) 320px;
+    mask-image: radial-gradient(circle 460px at calc(100% - 320px) 320px, rgb(0, 0, 0), transparent 100%);
+  }
+}
 
 /* crisp — sweater weather: the aurora, now fully lit — a saturated emerald
    ribbon over the ridge with a cooler counter-light drifting against it. */
