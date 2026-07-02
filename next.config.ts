@@ -23,6 +23,15 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // Old top-level content routes moved under /resources. Every pre-split post
+  // was news; a slug later shelved under Articles needs its own entry here.
+  async redirects() {
+    return [
+      { source: "/blog", destination: "/resources/news", permanent: true },
+      { source: "/blog/:slug", destination: "/resources/news/:slug", permanent: true },
+      { source: "/videos", destination: "/resources/videos", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

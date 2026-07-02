@@ -3,11 +3,18 @@ import Link from "next/link";
 import parse from "html-react-parser";
 import { getBlogPosts, getBlogPost, slugFromLink } from "@/lib/data";
 import { sanitizePostHtml } from "@/lib/html";
+import { CATEGORIES, postCategory } from "@/content/resources";
 import SectionBand from "@/components/SectionBand";
 
+export const dynamicParams = false;
+
+// Bottom-up: emit complete { category, slug } pairs so generation never
+// depends on how the parent segment's params are threaded through.
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
-  return posts.map((p) => ({ slug: slugFromLink(p.link, p.title) }));
+  return posts
+    .map((p) => slugFromLink(p.link, p.title))
+    .map((slug) => ({ category: postCategory(slug), slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -16,16 +23,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return { title: post?.title ?? "Post" };
 }
 
-export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function Page({ params }: { params: Promise<{ category: string; slug: string }> }) {
+  const { category, slug } = await params;
+  // A slug only lives at its own category's URL — the other category 404s.
+  if (postCategory(slug) !== category) notFound();
   const post = await getBlogPost(slug);
   if (!post) notFound();
+  const def = CATEGORIES.find((c) => c.key === category);
   const html = sanitizePostHtml(post.content ?? post.summary ?? "");
   return (
     <SectionBand>
       <article>
-        <Link href="/blog" className="text-sm text-orange-600 hover:underline underline-offset-2">
-          ← All posts
+        <Link href={def?.href ?? "/resources"} className="text-sm text-orange-600 hover:underline underline-offset-2">
+          &larr; All {def?.label.toLowerCase() ?? "resources"}
         </Link>
         <h1 className="mt-3 font-display text-3xl font-extrabold text-foreground">{post.title}</h1>
         {post.date && <p className="mt-1 text-sm text-muted">{post.date}</p>}
