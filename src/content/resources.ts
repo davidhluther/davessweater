@@ -22,7 +22,15 @@ export interface ReportEntry {
   summary?: string;
 }
 
-export const REPORTS: ReportEntry[] = [];
+export const REPORTS: ReportEntry[] = [
+  {
+    title: "2026 Fourth of July fireworks in Boone and the High Country: exact times, computed",
+    href: "/fireworks",
+    date: "2026-07-02",
+    summary:
+      "Per-venue dusk math, verified show details, terrain sightlines, and a fireworks-specific forecast for every High Country show.",
+  },
+];
 
 // label = UI text; schemaName = the same name with raw "&" avoided (JSON-LD
 // renders through an HTML-escaping component); description = meta description.

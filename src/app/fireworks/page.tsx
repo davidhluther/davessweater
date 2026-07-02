@@ -21,6 +21,7 @@ import {
   windowStats, type FireworksForecastFile, type NightOutlook, type PageMode, type Verdict,
 } from "@/lib/fireworks";
 import { NO_SHOW_TOWNS, UNVERIFIED_REPORTS, VENUES, type FireworksVenue } from "@/lib/fireworksVenues";
+import { breadcrumbs } from "@/lib/schema";
 import {
   NY_TZ, fmtTime, lastDirectSun, localDateString, solarPacket, zonedTimeToUtcMs, type SolarPacket,
 } from "@/lib/solar";
@@ -217,6 +218,13 @@ function buildJsonLd(views: VenueView[], faqs: Faq[], todayStr: string) {
       : {}),
   }));
   return [
+    // This page lives in the Resources → Reports hub; say so to crawlers.
+    breadcrumbs([
+      { name: "Home", path: "/" },
+      { name: "Resources", path: "/resources" },
+      { name: "Reports", path: "/resources/reports" },
+      { name: `${SEASON.year} Fourth of July fireworks in Boone and the High Country`, path: "/fireworks" },
+    ]),
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
@@ -275,74 +283,88 @@ export default async function Page() {
       <JsonLd data={buildJsonLd(views, faqs, todayStr)} />
       <OpenTargetDetails />
 
-      <SectionBand tone="surface">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted">
-          The High Country fireworks page · updated every morning
-        </p>
-        <h1 className="mt-1 font-display text-2xl font-bold sm:text-3xl">
-          {`${SEASON.year} Fourth of July fireworks in Boone & the High Country`}
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm text-muted">
-          Every listing in Watauga County says &quot;at dusk.&quot; Dusk is math: exact computed times, a
-          fireworks-specific forecast, and terrain sightlines for every show in Boone and the High Country.
-        </p>
-        {mode === "tonight" && tonight.length > 0 && (
-          <div className="mt-4 rounded-md border-l-4 border-orange bg-surface px-4 py-3 text-sm">
-            <strong className="font-semibold">Tonight:</strong>{" "}
-            {tonight.map((v, i) => (
-              <span key={v.venue.id}>
-                {i > 0 && " · "}
-                <a href={`#${v.venue.id}`} className="text-teal underline underline-offset-2">{v.venue.name}</a>{" "}
-                {v.venue.clockTimeStated ? `at ${statedTimeLabel(v.venue)}` : `~${readWindow(v.packet.civilDuskEnd)}`}
-              </span>
-            ))}
-            {"; "}fully dark at {fmtTime(tonight[0].packet.nauticalDuskEnd, NY_TZ)}.
-          </div>
-        )}
-        {mode === "archive" && (
-          <div className="mt-4 rounded-md border-l-4 border-border bg-surface px-4 py-3 text-sm text-muted">
-            The {SEASON.year} shows are in the books. The dusk math below is timeless; show details get
-            re-verified next June.{" "}
-            {nextYearPacket && (
-              <>Planning ahead: July 4, {SEASON.year + 1} sunset in Boone computes to{" "}
-              {fmtTime(nextYearPacket.sunset, NY_TZ)}. The listings will still say &quot;dusk.&quot;</>
-            )}
-          </div>
-        )}
-
-        <div className="mt-5 flex flex-wrap gap-2">
-          <a
-            href="#checker"
-            className="rounded-md bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-orange"
-          >
-            Check My View
-          </a>
-          <a
-            href="#forecast"
-            className="rounded-md border border-teal-700 px-4 py-2.5 text-sm font-semibold text-teal transition-colors hover:bg-teal-50"
-          >
-            Fireworks Forecast
-          </a>
-          <a
-            href="#shows"
-            className="rounded-md border border-teal-700 px-4 py-2.5 text-sm font-semibold text-teal transition-colors hover:bg-teal-50"
-          >
-            Event Details
-          </a>
+      {/* Branded page header: the Right/Wrong Ray band language, plus a red,
+          white, and blue volley in the homepage backdrop's dialect (.fw in
+          globals.css) — masked quiet over the text column, still frame under
+          reduced motion. */}
+      <section className="relative isolate w-full overflow-hidden bg-teal-700 text-white">
+        <div aria-hidden="true" className="fw pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <i className="fw-1 fw-red" />
+          <i className="fw-2 fw-white" />
+          <i className="fw-3 fw-blue" />
+          <i className="fw-4 fw-white" />
+          <i className="fw-5 fw-red" />
+          <i className="fw-6 fw-blue" />
         </div>
-        <p className="mt-3 text-xs text-muted">
-          <a href="#times" className="underline underline-offset-2">Start times</a>
-          {" | "}
-          <a href="#spots" className="underline underline-offset-2">Where to watch</a>
-          {" | "}
-          <a href="#method" className="underline underline-offset-2">Our methodology</a>
-          {" | "}
-          <a href="#faq" className="underline underline-offset-2">Fireworks FAQs</a>
-        </p>
-      </SectionBand>
+        <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:py-12">
+          <p className="text-xs font-bold uppercase tracking-wider text-orange-300">
+            The High Country fireworks page | updated every morning
+          </p>
+          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+            {`${SEASON.year} Fourth of July fireworks in Boone & the High Country`}
+          </h1>
+          <p className="mt-2 max-w-2xl text-sm text-white/70">
+            Every listing in Watauga County says &quot;at dusk.&quot; Dusk is math: exact computed times, a
+            fireworks-specific forecast, and terrain sightlines for every show in Boone and the High Country.
+          </p>
+          {mode === "tonight" && tonight.length > 0 && (
+            <div className="mt-4 rounded-md border-l-4 border-orange bg-white/10 px-4 py-3 text-sm">
+              <strong className="font-semibold">Tonight:</strong>{" "}
+              {tonight.map((v, i) => (
+                <span key={v.venue.id}>
+                  {i > 0 && " | "}
+                  <a href={`#${v.venue.id}`} className="text-orange-300 underline underline-offset-2">{v.venue.name}</a>{" "}
+                  {v.venue.clockTimeStated ? `at ${statedTimeLabel(v.venue)}` : `~${readWindow(v.packet.civilDuskEnd)}`}
+                </span>
+              ))}
+              {"; "}fully dark at {fmtTime(tonight[0].packet.nauticalDuskEnd, NY_TZ)}.
+            </div>
+          )}
+          {mode === "archive" && (
+            <div className="mt-4 rounded-md border-l-4 border-white/30 bg-white/10 px-4 py-3 text-sm text-white/80">
+              The {SEASON.year} shows are in the books. The dusk math below is timeless; show details get
+              re-verified next June.{" "}
+              {nextYearPacket && (
+                <>Planning ahead: July 4, {SEASON.year + 1} sunset in Boone computes to{" "}
+                {fmtTime(nextYearPacket.sunset, NY_TZ)}. The listings will still say &quot;dusk.&quot;</>
+              )}
+            </div>
+          )}
+
+          <p className="mt-5 flex flex-wrap gap-3">
+            <a
+              href="#checker"
+              className="inline-flex min-h-10 items-center rounded-lg bg-orange-600 px-4 text-sm font-bold text-white transition-colors hover:bg-[#9a3412]"
+            >
+              Check my view &darr;
+            </a>
+            <a
+              href="#forecast"
+              className="inline-flex min-h-10 items-center rounded-lg border border-white/30 px-4 text-sm font-bold text-white transition-colors hover:bg-white/10"
+            >
+              Fireworks forecast &darr;
+            </a>
+            <a
+              href="#shows"
+              className="inline-flex min-h-10 items-center rounded-lg border border-white/30 px-4 text-sm font-bold text-white transition-colors hover:bg-white/10"
+            >
+              Event details &darr;
+            </a>
+          </p>
+          <p className="mt-3 text-xs text-white/70">
+            <a href="#times" className="underline underline-offset-2 hover:text-white">Start times</a>
+            {" | "}
+            <a href="#spots" className="underline underline-offset-2 hover:text-white">Where to watch</a>
+            {" | "}
+            <a href="#method" className="underline underline-offset-2 hover:text-white">Our methodology</a>
+            {" | "}
+            <a href="#faq" className="underline underline-offset-2 hover:text-white">Fireworks FAQs</a>
+          </p>
+        </div>
+      </section>
 
       <SectionBand tone="light" id="checker" className="max-w-4xl">
-        <h2 className="font-display text-xl font-bold">Where Should You Watch From?</h2>
+        <h2 className="font-display text-2xl font-bold">Where Should You Watch From?</h2>
         <p className="mt-1 max-w-2xl text-sm text-muted">
           Share your location or type an address to see what the view would be like: your browser computes
           the terrain between you and every show, pairs it with the night&apos;s sky forecast, and makes
@@ -365,7 +387,7 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="surface" id="forecast" className="max-w-4xl">
-        <h2 className="font-display text-xl font-bold">
+        <h2 className="font-display text-2xl font-bold">
           {mode === "archive" ? `The ${SEASON.year} Shows` : `Boone Fireworks Forecast: Fourth of July | ${SEASON.year}`}
         </h2>
         <p className="mt-1 max-w-2xl text-sm text-muted">
@@ -388,12 +410,12 @@ export default async function Page() {
                 {forecastSeason && !stale && <VerdictChip verdict={outlook.verdict} />}
               </div>
               <p className="mt-1 text-sm text-muted">
-                {fmtNight(venue.date)} ·{" "}
+                {fmtNight(venue.date)} |{" "}
                 <strong className="font-semibold text-foreground">
                   {venue.clockTimeStated ? statedTimeLabel(venue) : `~${readWindow(packet.civilDuskEnd)}`}
                 </strong>
                 {venue.status === "unconfirmed" && (
-                  <span className="text-xs font-semibold uppercase text-orange-600"> · unconfirmed</span>
+                  <span className="text-xs font-semibold uppercase text-orange-600"> | unconfirmed</span>
                 )}
               </p>
               {forecastSeason && !stale && outlook.verdict !== "unavailable" && outlook.stats && (
@@ -434,7 +456,7 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="dark" id="times" className="max-w-4xl">
-        <h2 className="font-display text-xl font-bold">When Will the Fireworks Start Around Boone?</h2>
+        <h2 className="font-display text-2xl font-bold">When Will the Fireworks Start Around Boone?</h2>
         <p className="mb-3 mt-1 max-w-2xl text-sm text-white/70">
           Computed for each launch site&apos;s coordinates. <strong className="text-white">Dark Enough</strong>{" "}
           = end of civil twilight, the earliest a show plausibly starts.{" "}
@@ -504,7 +526,7 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="light" id="spots" className="max-w-4xl">
-        <h2 className="font-display text-xl font-bold">Where to Watch Fireworks in Boone</h2>
+        <h2 className="font-display text-2xl font-bold">Where to Watch Fireworks in Boone</h2>
         <p className="mt-1 max-w-2xl text-sm text-muted">
           We ran the same terrain line-of-sight from real public spots to every launch site: bare-earth
           elevation at about 33 ft resolution, earth curvature, typical (~{ftFromM50(BURST_TYPICAL_M)} ft)
@@ -562,7 +584,7 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="surface" id="shows" className="max-w-4xl">
-        <h2 className="font-display text-xl font-bold">High Country Fourth of July Firework Show Details</h2>
+        <h2 className="font-display text-2xl font-bold">High Country Fourth of July Firework Show Details</h2>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {([
             ["#boone", "Boone"],
@@ -592,7 +614,7 @@ export default async function Page() {
               <summary className="cursor-pointer list-none p-4 [&::-webkit-details-marker]:hidden">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <h3 className="font-display text-base font-bold">
-                    {venue.showName} <span className="font-normal text-muted">· {fmtNight(venue.date)}</span>
+                    {venue.showName} <span className="font-normal text-muted">| {fmtNight(venue.date)}</span>
                   </h3>
                   <span className="flex items-baseline gap-3">
                     {venue.status === "confirmed" ? (
@@ -667,7 +689,7 @@ export default async function Page() {
                   Source{venue.sources.length > 1 ? "s" : ""}:{" "}
                   {venue.sources.map((s, i) => (
                     <span key={s.url}>
-                      {i > 0 && " · "}
+                      {i > 0 && " | "}
                       <a href={s.url} target="_blank" rel="nofollow noopener noreferrer" className="text-teal underline underline-offset-2">{s.name}</a>
                     </span>
                   ))}
@@ -678,14 +700,14 @@ export default async function Page() {
           ))}
           {NO_SHOW_TOWNS.map((t) => (
             <div key={t.id} id={t.id} className="scroll-mt-20 rounded-lg border border-dashed border-border bg-background p-4">
-              <h3 className="font-display text-base font-bold">{t.town} <span className="font-normal text-muted">· {t.headline}</span></h3>
+              <h3 className="font-display text-base font-bold">{t.town} <span className="font-normal text-muted">| {t.headline}</span></h3>
               <p className="mt-1.5 text-sm text-muted">{t.note}</p>
               {t.sources.length > 0 && (
                 <p className="mt-2 text-xs text-muted">
                   Source{t.sources.length > 1 ? "s" : ""}:{" "}
                   {t.sources.map((s, i) => (
                     <span key={s.url}>
-                      {i > 0 && " · "}
+                      {i > 0 && " | "}
                       <a href={s.url} target="_blank" rel="nofollow noopener noreferrer" className="text-teal underline underline-offset-2">{s.name}</a>
                     </span>
                   ))}
@@ -712,7 +734,7 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="light" id="faq">
-        <h2 className="font-display text-xl font-bold">Questions People Actually Search</h2>
+        <h2 className="font-display text-2xl font-bold">Questions People Actually Search</h2>
         <div className="mt-3 max-w-2xl space-y-5">
           {faqs.map((f) => (
             <div key={f.id} id={f.id}>
@@ -724,7 +746,7 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="surface" id="method">
-        <h2 className="font-display text-xl font-bold">How the Math Works</h2>
+        <h2 className="font-display text-2xl font-bold">How the Math Works</h2>
         <p className="mt-1 max-w-2xl text-sm text-muted">
           Times are computed for each launch site&apos;s coordinates with standard almanac solar geometry
           (sunset = sun&apos;s upper limb at the refracted horizon; civil twilight ends at 6° below; nautical
