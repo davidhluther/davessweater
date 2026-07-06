@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import parse from "html-react-parser";
-import { getBlogPosts, getBlogPost, slugFromLink } from "@/lib/data";
+import { getBlogPosts, getBlogPost, postSlug, postCategoryOf } from "@/lib/data";
 import { sanitizePostHtml } from "@/lib/html";
-import { CATEGORIES, postCategory } from "@/content/resources";
+import { CATEGORIES } from "@/content/resources";
 import { SITE_BASE, breadcrumbs } from "@/lib/schema";
 import SectionBand from "@/components/SectionBand";
 import JsonLd from "@/components/JsonLd";
@@ -14,29 +14,29 @@ export const dynamicParams = false;
 // depends on how the parent segment's params are threaded through.
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
-  return posts
-    .map((p) => slugFromLink(p.link, p.title))
-    .map((slug) => ({ category: postCategory(slug), slug }));
+  return posts.map((p) => ({ category: postCategoryOf(p), slug: postSlug(p) }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string; slug: string }> }) {
   const { category, slug } = await params;
   const post = await getBlogPost(slug);
   if (!post) return { title: "Post" };
+  const title = post.metaTitle ?? post.title;
+  const description = post.metaDescription ?? post.summary;
   return {
-    title: post.title,
-    description: post.summary,
+    title,
+    description,
     alternates: { canonical: `/resources/${category}/${slug}` },
-    openGraph: { title: post.title, description: post.summary, type: "article" },
+    openGraph: { title, description, type: "article" },
   };
 }
 
 export default async function Page({ params }: { params: Promise<{ category: string; slug: string }> }) {
   const { category, slug } = await params;
-  // A slug only lives at its own category's URL — the other category 404s.
-  if (postCategory(slug) !== category) notFound();
   const post = await getBlogPost(slug);
   if (!post) notFound();
+  // A slug only lives at its own category's URL — the other category 404s.
+  if (postCategoryOf(post) !== category) notFound();
   const def = CATEGORIES.find((c) => c.key === category);
   const html = sanitizePostHtml(post.content ?? post.summary ?? "");
   const url = `/resources/${category}/${slug}`;
@@ -81,6 +81,10 @@ export default async function Page({ params }: { params: Promise<{ category: str
             "[&_li]:ml-5 [&_li]:list-disc",
             "[&_ol_li]:list-decimal",
             "[&_blockquote]:my-4 [&_blockquote]:border-l-4 [&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:text-muted",
+            "[&_table]:my-5 [&_table]:block [&_table]:w-full [&_table]:overflow-x-auto [&_table]:border-collapse [&_table]:text-sm",
+            "[&_th]:border [&_th]:border-border [&_th]:bg-foreground/5 [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:font-semibold [&_th]:align-top",
+            "[&_td]:border [&_td]:border-border [&_td]:px-3 [&_td]:py-2 [&_td]:align-top",
+            "[&_hr]:my-8 [&_hr]:border-border",
           ].join(" ")}
         >
           {parse(html)}

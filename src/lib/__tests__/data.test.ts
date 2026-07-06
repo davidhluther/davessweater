@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getLatestComparison, getScores, getBlogPosts, getBlogPost, slugFromLink, getComparisonWindow } from "@/lib/data";
+import { getLatestComparison, getScores, getBlogPosts, getBlogPost, slugFromLink, postSlug, postCategoryOf, getComparisonWindow } from "@/lib/data";
 
 describe("data readers", () => {
   it("reads the latest comparison with actuals", async () => {
@@ -27,6 +27,32 @@ describe("data readers", () => {
   it("derives slug from a substack /p/ link", () => {
     expect(slugFromLink("https://x.substack.com/p/welcome-to-daves-sweater", "Welcome"))
       .toBe("welcome-to-daves-sweater");
+  });
+});
+
+describe("native markdown posts", () => {
+  it("loads native posts with explicit slug, category, and rendered HTML", async () => {
+    const posts = await getBlogPosts();
+    const flagship = posts.find((p) => p.slug === "is-rays-weather-accurate");
+    expect(flagship).toBeTruthy();
+    expect(postSlug(flagship!)).toBe("is-rays-weather-accurate");
+    expect(postCategoryOf(flagship!)).toBe("articles");
+    // Markdown body was rendered to HTML (tables + headings), not left as markdown.
+    expect(flagship!.content ?? "").toContain("<table>");
+    expect(flagship!.content ?? "").not.toMatch(/^#\s/m);
+    // Per-post SEO meta is carried through for generateMetadata.
+    expect((flagship!.metaTitle ?? "").length).toBeGreaterThan(0);
+    expect((flagship!.metaDescription ?? "").length).toBeGreaterThan(0);
+  });
+  it("finds a native post by its explicit slug", async () => {
+    const post = await getBlogPost("how-accurate-is-a-10-day-forecast");
+    expect(post).not.toBeNull();
+    expect(postCategoryOf(post!)).toBe("articles");
+  });
+  it("still derives category for feed posts without an explicit category", async () => {
+    const posts = await getBlogPosts();
+    const feed = posts.find((p) => !p.slug);
+    if (feed) expect(["articles", "news"]).toContain(postCategoryOf(feed));
   });
 });
 

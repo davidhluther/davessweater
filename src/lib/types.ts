@@ -69,6 +69,10 @@ export interface LatestForecasts {
   sources: Record<string, ForecastDisplay>;
 }
 
-export interface BlogPost { title: string; link: string; date?: string; summary?: string; content?: string; }
+export interface BlogPost {
+  title: string; link: string; date?: string; summary?: string; content?: string;
+  // Native posts (src/content/posts/*.md) set these; Substack-mirrored feed posts omit them.
+  slug?: string; category?: "articles" | "news"; metaTitle?: string; metaDescription?: string;
+}
 export interface Video { title: string; link: string; date: string; thumb?: string; }
 export interface Product { name: string; link: string; image?: string; price?: string; id?: string; }
