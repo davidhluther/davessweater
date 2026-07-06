@@ -15,7 +15,20 @@ import type { SourceEntry } from "@/lib/types";
 import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 
-export const metadata = { title: "Right Ray / Wrong Ray" };
+export const metadata = {
+  title: "Right Ray / Wrong Ray — Boone forecast accuracy scoreboard",
+  description:
+    "Daily accuracy scores for every Boone, NC forecast — Ray's Weather, Open-Meteo, Apple Weather, and seven more — graded against verified actuals on a 100-point scale.",
+  alternates: { canonical: "/right-wrong-ray" },
+  openGraph: {
+    title: "Right Ray / Wrong Ray — Boone forecast accuracy scoreboard",
+    description:
+      "Who actually got Boone's weather right? Every forecast graded daily against what happened, receipts included.",
+    url: "https://davessweater.com/right-wrong-ray",
+    type: "website",
+  },
+  twitter: { card: "summary_large_image" as const },
+};
 
 // Display metadata for sources that live outside the FORECASTERS index map.
 // Prices are what a reader pays to see the forecast; Ray's is the only one

@@ -563,6 +563,27 @@ via subagent-driven TDD + per-task + final adversarial review (READY_TO_MERGE), 
 ## SEO / performance / accessibility (audited 2026-07-01)
 Multi-agent audit + Lighthouse (production, mobile). **SEO = 100** (the promotion-readiness metadata/JSON-LD/
 sitemap work nailed it — nothing to do). **Best Practices 96.**
+
+### SEO quick wins (re-audited 2026-07-02 post-#93/#104/#105/#111; PR `seo-quick-wins`)
+GSC baseline is a cold start (2 queries / ~10 clicks over 28 days, both navigational) — indexation + content
+coverage are the levers. Owner: GSC indexing requested + Bing WMT added 2026-07-02; llms.txt declined.
+SEO/AIO program spec: `planning/specs/2026-07-02-seo-aio-program-design.md` (blog-post wave pending owner picks).
+- [ ] **🔴 CRITICAL, owner, Vercel dashboard: flip the primary domain to the apex.** The platform currently
+      307-redirects `davessweater.com/*` → `www.davessweater.com/*` while every canonical, the sitemap,
+      `metadataBase`, and all JSON-LD say the apex — Google gets contradictory host signals sitewide, and
+      sitemap URLs all bounce through a *temporary* redirect. Fix: Project → Settings → Domains → set
+      `davessweater.com` as primary; `www` → 308 to apex. No code change needed (and adding one first would
+      loop). Re-verify: `curl -sI https://davessweater.com/` shows 200; `www` shows 308 → apex.
+- [x] **/right-wrong-ray full metadata** — was title-only; now description + canonical + OG/Twitter
+      (`summary_large_image`).
+- [x] **/right-wrong-ray OG/Twitter share card** — build-time `opengraph-image.tsx` from the same
+      `scores.json` the page renders (free avg vs Ray's avg vs head-to-head days; can't disagree with the
+      scoreboard). Verified rendered PNG (92.0 / 71.0 / 118 at build).
+- [x] **/resources OG share card** — hub card from the same `CATEGORIES` config the hub renders.
+- [x] **/shop metadata + BreadcrumbList** — was title-only, zero schema.
+- [ ] Franchise landing template doc (fireworks = instance #1, answer-block-first for the next franchise) —
+      write with the blog/pipeline work.
+- [ ] Homepage "All reports →" link to `/resources/reports` — deferred, homepage owned by the redesign pass.
 - [x] **Perf — hero LCP fixed (PR #87, merged + live).** Lighthouse was Performance **70** with **LCP 19.7s**
       (CLS 0, TBT 30ms otherwise great). Cause: the hero iPhone screenshot was a **2.8MB** PNG shown at 150px;
       `prepare_public.mjs` now resizes it with sharp to an **18KB WebP** and `IphoneShot` loads it eager/high-
