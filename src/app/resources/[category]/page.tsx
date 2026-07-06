@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getBlogPosts, slugFromLink } from "@/lib/data";
-import { CATEGORIES, postCategory, type PostCategory } from "@/content/resources";
+import { getBlogPosts, postSlug, postCategoryOf } from "@/lib/data";
+import { CATEGORIES, type PostCategory } from "@/content/resources";
 import { breadcrumbs, collectionPage } from "@/lib/schema";
 import SectionBand from "@/components/SectionBand";
 import JsonLd from "@/components/JsonLd";
@@ -33,7 +33,7 @@ export default async function Page({ params }: { params: Promise<{ category: str
   if (!def || !POST_CATEGORIES.includes(category as PostCategory)) notFound();
 
   const posts = (await getBlogPosts()).filter(
-    (p) => postCategory(slugFromLink(p.link, p.title)) === category
+    (p) => postCategoryOf(p) === category
   );
   const noun = category === "articles" ? "articles" : "posts";
   const jsonLd = [
@@ -45,7 +45,7 @@ export default async function Page({ params }: { params: Promise<{ category: str
     collectionPage({
       name: def.schemaName, path: def.href, description: def.description,
       parts: posts.map((p) => {
-        const slug = slugFromLink(p.link, p.title);
+        const slug = postSlug(p);
         return { name: p.title, path: `/resources/${category}/${slug}` };
       }),
     }),
@@ -66,7 +66,7 @@ export default async function Page({ params }: { params: Promise<{ category: str
       ) : (
         <ul className="space-y-5">
           {posts.map((p) => {
-            const slug = slugFromLink(p.link, p.title);
+            const slug = postSlug(p);
             return (
               <li key={slug} className="border-b border-border pb-5 last:border-0">
                 <h2 className="text-xl font-semibold">

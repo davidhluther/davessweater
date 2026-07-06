@@ -9,7 +9,14 @@ export function sanitizePostHtml(html: string): string {
       a: ["href", "name", "target", "rel"],
     },
     transformTags: {
-      a: sanitizeHtml.simpleTransform("a", { rel: "noopener noreferrer", target: "_blank" }),
+      // External links open in a new tab; internal (relative) links stay in-app.
+      a: (tagName, attribs) => {
+        const href = attribs.href ?? "";
+        if (/^https?:\/\//i.test(href)) {
+          return { tagName: "a", attribs: { ...attribs, rel: "noopener noreferrer", target: "_blank" } };
+        }
+        return { tagName: "a", attribs };
+      },
     },
   });
 }

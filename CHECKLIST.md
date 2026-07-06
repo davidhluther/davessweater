@@ -560,6 +560,31 @@ via subagent-driven TDD + per-task + final adversarial review (READY_TO_MERGE), 
 - [ ] Weekly summary workflow + graphic.
 - [ ] "Woolcam": JideTech 4K 8MP PoE bullet camera (built-in RTMP → YouTube). Not set up.
 
+## SEO content — native posts + first wave (PR `seo-content`, 2026-07-06)
+Built the corpay-method content engine and the first four posts. Spec: `planning/specs/2026-07-02-seo-aio-program-design.md`.
+GSC baseline is a cold start (2 queries / ~10 clicks / 28 days) → content coverage is the growth lever.
+Keyword research (Ahrefs, read-only): "boone nc weather" 5,131/mo KD 0 is a knowledge-card/forecast-page
+SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the accuracy cluster
+("how accurate is a 10 day forecast" KD 6 vol 300) + Ray's branded universe (~2k/mo combined).
+- [x] **Native-post mechanism** — `src/content/posts/*.md` (frontmatter + markdown → `marked` → existing
+      sanitizer), merged into `getBlogPosts()`. `BlogPost` gains `slug`/`category`/`metaTitle`/`metaDescription`;
+      `postSlug()`/`postCategoryOf()` prefer explicit fields, fall back to the Substack derivation; all call
+      sites switched (detail/category/hub/sitemap). Per-post SEO meta in `generateMetadata`; leading H1 stripped;
+      table + hr styling; internal links stay in-app, external open a new tab. 117 vitest / lint / build green;
+      preview-verified (200s, canonical + BlogPosting/Breadcrumb schema, single H1, table renders, wrong-cat 404,
+      sitemap updated).
+- [x] **Wave 1 — 4 posts live under `/resources/articles/`** (corpay method: Ahrefs → brief → draft →
+      adversarial fact-check vs `scores.json` + style validate → revise): `is-rays-weather-accurate` (C1
+      beachhead), `rays-weather-report-card-june-2026`, `how-accurate-is-a-10-day-forecast` (C6), and
+      `12-dollars-a-year-weather-site` (C7). Briefs committed at `planning/seo/briefs/`; draft docx were owner-reviewed.
+- [ ] **Post #5 — fireworks postmortem** (`boone-fireworks-2026-observed-vs-computed`) held: needs the **observed
+      July 4 first-shell times** (owner clocks them; July 4 has now passed). Draft + brief staged in `planning/seo/`;
+      fill the PENDING cells + one self-grade line, then publish via the same native-post mechanism.
+- [ ] **Report Card franchise route** — v1 ships the June card under Articles for speed. The tracker's intended
+      home is `/report-card/{yyyy-mm}` (recurring franchise); build that route + 301 the Articles URL when ready.
+- [ ] **Post detail date format** — the detail route renders `post.date` raw (ISO); site standard is
+      "Month D, YYYY" (`lib/dates.ts`). Pre-existing (affects Substack posts too); format when convenient.
+
 ## SEO / performance / accessibility (audited 2026-07-01)
 Multi-agent audit + Lighthouse (production, mobile). **SEO = 100** (the promotion-readiness metadata/JSON-LD/
 sitemap work nailed it — nothing to do). **Best Practices 96.**

@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { getBlogPosts, slugFromLink } from "@/lib/data";
+import { getBlogPosts, postCategoryOf } from "@/lib/data";
 import { getVideos } from "@/lib/feeds";
-import { CATEGORIES, REPORTS, postCategory } from "@/content/resources";
+import { CATEGORIES, REPORTS } from "@/content/resources";
 import { breadcrumbs, collectionPage } from "@/lib/schema";
 import SectionBand from "@/components/SectionBand";
 import JsonLd from "@/components/JsonLd";
@@ -23,7 +23,7 @@ function countLine(count: number, noun: string): string {
 export default async function Page() {
   const [posts, videos] = await Promise.all([getBlogPosts(), getVideos()]);
   const byCategory = (cat: string) =>
-    posts.filter((p) => postCategory(slugFromLink(p.link, p.title)) === cat);
+    posts.filter((p) => postCategoryOf(p) === cat);
 
   const stats: Record<string, { count: string; latest?: string }> = {
     articles: (() => {

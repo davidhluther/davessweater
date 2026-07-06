@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
-import { getBlogPosts, slugFromLink } from "@/lib/data";
-import { CATEGORIES, postCategory } from "@/content/resources";
+import { getBlogPosts, postSlug, postCategoryOf } from "@/lib/data";
+import { CATEGORIES } from "@/content/resources";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = "https://davessweater.com";
@@ -18,9 +18,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/reports/fireworks-fourth-july-2026`, lastModified: new Date(), changeFrequency: "daily" as const, priority: 0.8 },
   ];
   const postRoutes = posts.map((p) => {
-    const slug = slugFromLink(p.link, p.title);
+    const slug = postSlug(p);
     return {
-      url: `${base}/resources/${postCategory(slug)}/${slug}`, lastModified: new Date(),
+      url: `${base}/resources/${postCategoryOf(p)}/${slug}`, lastModified: new Date(),
       changeFrequency: "monthly" as const, priority: 0.6,
     };
   });
