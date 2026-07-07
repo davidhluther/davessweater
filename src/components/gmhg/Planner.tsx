@@ -432,7 +432,10 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
         <div className="flex flex-wrap items-baseline justify-between gap-x-3">
           <h2 className="font-display text-xl font-bold">Your plan</h2>
           {planDays.length > 0 && (
-            <a href="#save-print" className="text-sm font-medium text-teal underline underline-offset-2">Jump to save &amp; print ↓</a>
+            <span className="flex flex-wrap gap-x-4 text-sm font-medium">
+              <a href="#pick" className="text-teal underline underline-offset-2">↑ Add another day</a>
+              <a href="#save-print" className="text-teal underline underline-offset-2">Jump to save &amp; print ↓</a>
+            </span>
           )}
         </div>
         {planDays.length === 0 ? (
