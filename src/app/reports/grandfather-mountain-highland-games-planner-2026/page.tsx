@@ -1,4 +1,4 @@
-// /reports/grandfather-mountain-highland-games-2026 — the planner. The printed
+// /reports/grandfather-mountain-highland-games-planner-2026 — the planner. The printed
 // GMHG schedule tells you WHAT is happening and WHEN; it will not tell you when
 // to leave, which lot runs that day, how much cash the shuttle needs, or whether
 // two things you want sit on opposite ends of a field you cannot cut across.
@@ -13,21 +13,22 @@ import FieldMap from "@/components/gmhg/FieldMap";
 import { getGmhgData } from "@/lib/data";
 import { breadcrumbs } from "@/lib/schema";
 
-const SLUG = "/reports/grandfather-mountain-highland-games-2026";
+const SLUG = "/reports/grandfather-mountain-highland-games-planner-2026";
 const PAGE_URL = `https://davessweater.com${SLUG}`;
 
 export const metadata = {
-  title: "Grandfather Mountain Highland Games 2026: Plan Your Days (Schedule, Parking, Shuttle, Weather)",
+  title: "Grandfather Mountain Highland Games 2026: Plan Your Days (Free Interactive Planner)",
   description:
-    "A real planner for the 70th Grandfather Mountain Highland Games, July 9–12, 2026 at MacRae Meadows. Pick events and it builds what the schedule won't: When to leave, which lot runs that day, cash for the shuttle, a forecast packing list, and calendar export, with live walk-time warnings so you don't book two things across a field you can't cut across.",
+    "The free planner the official schedule isn't: Filter events across all four days, then get a downloadable, printable per-day itinerary, a field map with your stops pinned, arrive-by and between-event walk times, the right lot and shuttle cash, a live mountain forecast with packing list, and a calendar export. For the 70th Games at MacRae Meadows, July 9–12, 2026.",
   alternates: { canonical: SLUG },
   openGraph: {
-    title: "Grandfather Mountain Highland Games 2026 planner: schedule, parking, shuttle, weather",
+    title: "Grandfather Mountain Highland Games 2026: Plan Your Days",
     description:
-      "Pick your events; get arrive-by times, the correct lot for each day, the cash you need, a mountain packing list, live walk-time conflict warnings, and a calendar export.",
+      "Filter events, then get a printable per-day itinerary, a field map with your stops pinned, arrive-by and between-event walk times, the right lot and shuttle cash, a live forecast with packing list, and a calendar export.",
     url: PAGE_URL,
     type: "website",
   },
+  twitter: { card: "summary_large_image" as const },
 };
 
 interface Faq { id: string; q: string; a: string }
@@ -83,6 +84,15 @@ function buildJsonLd() {
       { name: "Reports", path: "/resources/reports" },
       { name: "Grandfather Mountain Highland Games 2026 planner", path: SLUG },
     ]),
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: "Grandfather Mountain Highland Games 2026: Plan Your Days",
+      url: PAGE_URL,
+      description: "A free interactive planner for the 70th Grandfather Mountain Highland Games. Filter events, then get a downloadable per-day itinerary, a field map with your stops pinned, arrive-by and between-event walk times, the right lot and shuttle cash, a live forecast with packing list, and a calendar export.",
+      isPartOf: { "@type": "WebSite", name: "Dave's Sweater", url: "https://davessweater.com" },
+      about: { "@type": "Event", name: "70th Grandfather Mountain Highland Games" },
+    },
     {
       "@context": "https://schema.org",
       "@type": "Event",
@@ -148,10 +158,12 @@ export default async function Page() {
             Grandfather Mountain Highland Games 2026: Plan Your Days
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-white/80">
-            The official schedule tells you what is happening and when. It does not tell you when to
-            leave, which lot runs that day, how much cash the shuttle needs, or whether the two things
-            you want sit on opposite ends of a field you cannot cut across. Pick your events below and
-            this builds the rest, with a live warning the moment a day stops fitting together.
+            The official schedule is a wall of times. This turns it into a plan. Filter the events by
+            type, pick the ones you want, and get it back the way you actually need it: A downloadable,
+            printable per-day itinerary, a field map with your stops pinned, arrive-by and between-event
+            walk times (so you never book two things across a field you cannot cut across), the right lot
+            and cash for the shuttle, and a live mountain forecast with a packing list. Free, no app, no
+            sign-up.
           </p>
           <p className="mt-4 flex flex-wrap gap-3 text-xs text-white/70">
             <a href="#planner" className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-bold text-white hover:bg-[#9a3412]">Start planning ↓</a>

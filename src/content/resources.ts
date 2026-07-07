@@ -27,10 +27,10 @@ export interface ReportEntry {
 export const REPORTS: ReportEntry[] = [
   {
     title: "Grandfather Mountain Highland Games 2026: Plan Your Days",
-    href: "/reports/grandfather-mountain-highland-games-2026",
+    href: "/reports/grandfather-mountain-highland-games-planner-2026",
     date: "2026-07-06",
     summary:
-      "A real planner for the 70th Games (July 9–12): Pick your events and get arrive-by times, the correct lot for each day, the cash the shuttle needs, a field map with your stops pinned, and calendar export, with live walk-time warnings so you don't book two things across a field you can't cut across.",
+      "A free, genuinely useful planner for the 70th Games (July 9–12): Filter the schedule, then get it back the way you need it — a downloadable, printable per-day itinerary, a field map with your stops pinned, arrive-by and between-event walk times, the right lot and shuttle cash, a live mountain forecast with packing list, and a calendar export. Everything the official schedule leaves you to figure out.",
     image: "/assets/gmhg-torch-lighting-photo-by-skip-sickler-courtesy-grandfather-mountain-stewardship-foundation-sm.webp",
     imageAlt: "Clan members holding lit torches at dusk during the Grandfather Mountain Highland Games torch-lighting ceremony. Photo by Skip Sickler, courtesy of the Grandfather Mountain Stewardship Foundation.",
   },

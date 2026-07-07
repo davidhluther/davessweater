@@ -76,8 +76,9 @@ export default function Page() {
         </p>
         <h2 className="mt-1 font-display text-lg font-bold text-foreground">Plan your days at the Games</h2>
         <p className="mt-1 mb-3 max-w-2xl text-sm text-muted">
-          Pick your events and it builds the plan the schedule won&apos;t: When to leave, which lot runs that
-          day, the cash the shuttle needs, a field map with your stops pinned, and a mountain packing list.
+          Filter the events and get it back the way you need it: A downloadable, printable per-day itinerary,
+          a field map with your stops pinned, arrive-by and between-event walk times, the right lot and shuttle
+          cash, and a live forecast with a packing list. Free, no app, no sign-up.
         </p>
         <GmhgPlannerTeaser />
       </div>

@@ -4,7 +4,7 @@
 // which reads those params on mount and sets itself up. No planning logic here.
 import { useRouter } from "next/navigation";
 
-const SLUG = "/reports/grandfather-mountain-highland-games-2026";
+const SLUG = "/reports/grandfather-mountain-highland-games-planner-2026";
 const DAYS: [string, string][] = [
   ["thu", "Thursday"],
   ["fri", "Friday"],
