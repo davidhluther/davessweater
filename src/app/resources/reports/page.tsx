@@ -64,25 +64,17 @@ export default function Page() {
                   {r.summary && <p className="mt-1 text-sm text-muted">{r.summary}</p>}
                 </div>
               </div>
+              {r.href === "/reports/grandfather-mountain-highland-games-planner-2026" && (
+                <div className="mt-4 rounded-xl border border-border bg-surface p-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-orange-600">Jump straight into the planner</p>
+                  <p className="mt-1 mb-3 text-sm text-muted">Pick a day, or start with the marquee events.</p>
+                  <GmhgPlannerTeaser />
+                </div>
+              )}
             </li>
           ))}
         </ul>
       )}
-      {/* Teaser for the Highland Games planner: pick a day or the highlights and
-          it hands off to the planner, which reads the params and sets up. */}
-      <div className="mt-8 rounded-2xl border border-border bg-surface p-5">
-        <p className="text-xs font-bold uppercase tracking-wider text-orange-600">
-          Try the Highland Games planner
-        </p>
-        <h2 className="mt-1 font-display text-lg font-bold text-foreground">Plan your days at the Games</h2>
-        <p className="mt-1 mb-3 max-w-2xl text-sm text-muted">
-          Filter the events and get it back the way you need it: A downloadable, printable per-day itinerary,
-          a field map with your stops pinned, arrive-by and between-event walk times, the right lot and shuttle
-          cash, and a live forecast with a packing list. Free, no app, no sign-up.
-        </p>
-        <GmhgPlannerTeaser />
-      </div>
-
       {/* Live teaser from the fireworks report: same input module as the
           on-page checker; Check hands off to /fireworks, which auto-runs it.
           Retire (or generalize) when the season's report rotates out. */}
