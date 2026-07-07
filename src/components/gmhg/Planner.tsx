@@ -4,7 +4,7 @@
 // whole trip assembles as one consolidated plan that stacks Thursday to Sunday.
 // The forecast is fetched client-side at MacRae's own coordinates. The save and
 // print outputs are the same consolidated plan, so nothing is a surprise.
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { GmhgCluster, GmhgEvent, GmhgLogistics, GmhgMeta } from "@/lib/types";
 import { transitionVerdict, type Transition, type TransitionStatus } from "@/lib/gmhg/walk";
 import { buildDayPlan, shuttleCost, ORIGIN_LABELS, type DayPlan } from "@/lib/gmhg/plan";
@@ -89,6 +89,21 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
   const [fcStatus, setFcStatus] = useState<"loading" | "ready" | "error">("loading");
   const [fetchedAt, setFetchedAt] = useState<Date | null>(null);
   const [imgUrl, setImgUrl] = useState<string | null>(null);
+
+  // Purpose-built GA4 event for this tool: the sitewide click tracker only
+  // catches a/button/summary/[role=button], so the select/checkbox/number
+  // controls below need their own calls, and "did they actually build a
+  // plan" is a cleaner signal than raw click counts on the event buttons.
+  const trackGmhg = useCallback((action: string, extra?: Record<string, string | number>) => {
+    window.gtag?.("event", "gmhg_engagement", { action, ...extra });
+  }, []);
+  const startedPlanFired = useRef(false);
+  useEffect(() => {
+    if (selected.size > 0 && !startedPlanFired.current) {
+      startedPlanFired.current = true;
+      trackGmhg("started_plan");
+    }
+  }, [selected.size, trackGmhg]);
 
   // Live forecast at MacRae's own coordinates (not Boone's), for the four days.
   useEffect(() => {
@@ -222,6 +237,7 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
+    trackGmhg("added_to_calendar", { day_count: planDays.length });
   };
 
   const makeImage = async () => {
@@ -230,10 +246,12 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
       originLabel: ORIGIN_LABELS[origin], lastShuttleByDay: Object.fromEntries(DAY_ORDER.map((d) => [d, lastShuttle(d, meta.logistics)])),
     });
     setImgUrl(url);
+    trackGmhg("saved_image", { day_count: planDays.length });
   };
 
   const selectHighlights = () => {
     setSelected(new Set(events.filter((e) => e.highlight && e.selectable).map(eventId)));
+    trackGmhg("used_highlights_shortcut");
   };
 
   const dayEvents = useMemo(() => {
@@ -274,7 +292,7 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
       <div className="print:hidden flex flex-wrap items-end gap-x-4 gap-y-3 rounded-xl border border-border bg-surface p-4">
         <label className="flex flex-col text-xs font-semibold text-muted">
           Coming from
-          <select value={origin} onChange={(e) => setOrigin(e.target.value as OriginKey)}
+          <select value={origin} onChange={(e) => { setOrigin(e.target.value as OriginKey); trackGmhg("changed_filter", { filter_name: "origin" }); }}
             className="mt-1 rounded-md border border-border bg-background px-2 py-1.5 text-sm text-foreground">
             {ORIGINS.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
           </select>
@@ -282,12 +300,12 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
         <label className="flex flex-col text-xs font-semibold text-muted">
           Party size
           <input type="number" min={1} max={20} value={partySize}
-            onChange={(e) => setPartySize(Math.max(1, Number(e.target.value) || 1))}
+            onChange={(e) => { setPartySize(Math.max(1, Number(e.target.value) || 1)); trackGmhg("changed_filter", { filter_name: "party_size" }); }}
             className="mt-1 w-20 rounded-md border border-border bg-background px-2 py-1.5 text-sm text-foreground" />
         </label>
         <label className="flex flex-col text-xs font-semibold text-muted">
           Filter by type
-          <select value={filter} onChange={(e) => setFilter(e.target.value)}
+          <select value={filter} onChange={(e) => { setFilter(e.target.value); trackGmhg("changed_filter", { filter_name: "event_type" }); }}
             className="mt-1 rounded-md border border-border bg-background px-2 py-1.5 text-sm text-foreground">
             <option value="all">All events</option>
             <option value="highlights">Highlights only</option>
@@ -295,7 +313,7 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
           </select>
         </label>
         <label className="flex items-center gap-2 pb-1.5 text-sm font-medium text-foreground">
-          <input type="checkbox" checked={accessible} onChange={(e) => setAccessible(e.target.checked)} />
+          <input type="checkbox" checked={accessible} onChange={(e) => { setAccessible(e.target.checked); trackGmhg("changed_filter", { filter_name: "accessible_transport" }); }} />
           Accessible transport
         </label>
         <div className="ml-auto flex gap-2 pb-0.5">
@@ -527,7 +545,7 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
                     className="flex-1 rounded-lg bg-teal-700 px-3 py-2 text-sm font-bold text-white hover:bg-teal-800">
                     Add to calendar
                   </button>
-                  <button onClick={() => window.print()}
+                  <button onClick={() => { trackGmhg("printed", { day_count: planDays.length }); window.print(); }}
                     className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium text-foreground hover:border-teal">
                     Print
                   </button>
