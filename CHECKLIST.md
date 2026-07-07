@@ -720,16 +720,17 @@ sitemap work nailed it — nothing to do). **Best Practices 96.**
 GSC baseline is a cold start (2 queries / ~10 clicks over 28 days, both navigational) — indexation + content
 coverage are the levers. Owner: GSC indexing requested + Bing WMT added 2026-07-02; llms.txt declined.
 SEO/AIO program spec: `planning/specs/2026-07-02-seo-aio-program-design.md` (blog-post wave pending owner picks).
-- [ ] **🔴 CRITICAL, owner, Vercel dashboard: flip the primary domain to the apex.** The platform currently
-      307-redirects `davessweater.com/*` → `www.davessweater.com/*` while every canonical, the sitemap,
-      `metadataBase`, and all JSON-LD say the apex — Google gets contradictory host signals sitewide, and
-      sitemap URLs all bounce through a *temporary* redirect. **GSC now flags this (confirmed 2026-07-07):**
-      *Duplicate without user-selected canonical* on `https://www.davessweater.com/` (Google served www, whose
-      canonical points to apex, which 307s back to www — a signal loop). Fix: Project → Settings → Domains → set
-      `davessweater.com` as primary; `www` → 308 to apex. No code change needed (an app-level redirect would loop
-      with the edge redirect). Re-verify: `curl -sI https://davessweater.com/` shows 200; `www` shows 308 → apex.
-      Then in GSC → **Validate Fix** on the "Duplicate without user-selected canonical" issue. (The "Page with
-      redirect" entries for the two `http://` URLs are the normal http→https redirect — benign, not a bug to fix.)
+- [x] **🟢 DONE 2026-07-07 (owner) — apex is now the primary domain.** Was: Vercel 307-redirected
+      `davessweater.com/*` → `www` while every canonical/sitemap/`metadataBase`/JSON-LD said apex, so GSC flagged
+      *Duplicate without user-selected canonical* on `https://www.davessweater.com/` (signal loop). Owner flipped it
+      in Project → Settings → Domains: `davessweater.com` = Connect to environment (serves); `www` = 308 Permanent
+      Redirect → apex. **Verified live:** apex 200, `www` 308 → apex, served post canonical self-referential
+      (apex). No code change. **Owner to-do in GSC: hit Validate Fix** on the "Duplicate without user-selected
+      canonical" issue + optionally Request Indexing for the apex homepage. (The two `http://` "Page with redirect"
+      entries are the benign http→https redirect — not a bug.)
+  - [ ] **Nice-to-have: explicit homepage self-canonical.** `/` has no `<link rel="canonical">` (relies on
+        `metadataBase`); the homepage was the exact URL GSC flagged. Add `alternates: { canonical: "/" }` (+ og:url)
+        to `src/app/page.tsx` metadata to make the apex homepage signal explicit. Low-risk one-liner.
 - [x] **/right-wrong-ray full metadata** — was title-only; now description + canonical + OG/Twitter
       (`summary_large_image`).
 - [x] **/right-wrong-ray OG/Twitter share card** — build-time `opengraph-image.tsx` from the same
