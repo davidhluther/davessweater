@@ -1,5 +1,6 @@
 "use client";
 import Script from "next/script";
+import Clarity from "@microsoft/clarity";
 import { useEffect, useState } from "react";
 import ClickTracker from "@/components/ClickTracker";
 
@@ -18,6 +19,17 @@ export default function AnalyticsScripts({ clarityId }: { clarityId?: string }) 
     setEnabled(!document.cookie.split("; ").includes("ds_track=off"));
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
+
+  // The npm package initializes Clarity directly (Clarity.init) instead of
+  // the classic inline bootstrap, which defines window.clarity as a stub
+  // function and hopes nothing clobbers it before the real script calls it —
+  // that pattern was throwing "a[c] is not a function" in testing, 100%
+  // reproducibly, independent of network conditions. The module-based init
+  // has no such global-poisoning window.
+  useEffect(() => {
+    if (enabled && clarityId) Clarity.init(clarityId);
+  }, [enabled, clarityId]);
+
   if (!enabled) return null;
   return (
     <>
@@ -29,15 +41,6 @@ export default function AnalyticsScripts({ clarityId }: { clarityId?: string }) 
         gtag('config', 'G-7XL0TZ4GSS');
       `}</Script>
       <ClickTracker />
-      {clarityId && (
-        <Script id="clarity" strategy="afterInteractive">{`
-          (function(c,l,a,r,i,t,y){
-              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=next";
-              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-          })(window, document, "clarity", "script", "${clarityId}");
-        `}</Script>
-      )}
     </>
   );
 }
