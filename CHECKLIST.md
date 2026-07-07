@@ -674,6 +674,14 @@ via subagent-driven TDD + per-task + final adversarial review (READY_TO_MERGE), 
 - [ ] Update `README.md` — still describes the old GitHub-Pages / `build_site.py` setup; rewrite for Next.js + Vercel.
 - [ ] Fourthwall: contact support about the Storefront API 403; if fixed, switch back from the
       Merchant Center RSS feed for richer product data.
+- [x] **Shop products were unclickable — ✅ FIXED (PR #118, merged 2026-07-07).** Clicking a product opened a
+      modal iframing the Fourthwall product page, which always rendered a permanent grey box: Fourthwall sends
+      `X-Frame-Options: SAMEORIGIN` on every page (storefront root + every product), so the browser refuses to
+      render the frame — confirmed via `curl -sI`, not product-specific. Traced to the original M1 migration;
+      never worked, not a regression. `FOURTHWALL_TOKEN` was a red herring (unreferenced in the current app —
+      leftover from the retired `build_site.py`). Fix: product tiles now link straight to Fourthwall in a new
+      tab (`target="_blank" rel="noopener noreferrer"`), same pattern as the page's own fallback link;
+      `ShopGrid` dropped `Dialog`/`iframe`/client state, back to a plain server component.
 
 ## To do — content / distribution
 - [ ] Instagram automation (Graph API posting).
@@ -712,23 +720,25 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
 - [ ] **Post detail date format** — the detail route renders `post.date` raw (ISO); site standard is
       "Month D, YYYY" (`lib/dates.ts`). Pre-existing (affects Substack posts too); format when convenient.
 
-## Click tracking (PR `analytics-click-tracking`, 2026-07-07)
+## Click tracking (PR #117 `analytics-click-tracking` — ✅ MERGED 2026-07-07)
 Owner chose both tools, sitewide: Microsoft Clarity (heatmaps/recordings) + GA4 custom click events.
-- [x] **GA4 `element_click` custom event, sitewide — DONE.** One delegated `document` click listener
+- [x] **GA4 `element_click` custom event, sitewide — DONE + LIVE.** One delegated `document` click listener
       (`ClickTracker`, mounted once in `layout.tsx`) instead of an `onClick` per component; fires for any
       `a[href]` / `button` / `summary` (covers the on-page TOC + FAQ `<details>` toggles) / `[role=button]`.
       Label priority: `data-track-label` &gt; `aria-label` &gt; visible text &gt; href (escape hatch for icon-only
       buttons). Params: `element_type` (link/button/toggle), `link_text` (≤100 chars), `link_url`, `outbound`
       (relative = internal per the site's own convention; absolute http(s)/mailto/tel = outbound), `page_path`.
-      Logic lives in `lib/clickTracking.ts` (pure, unit-tested) so the DOM wiring stays thin. 13 new vitest.
-- [ ] **Microsoft Clarity — owner action needed to activate.** Script is wired in `layout.tsx`, gated on
-      `NEXT_PUBLIC_CLARITY_PROJECT_ID` (fail-closed: omitted entirely if unset, same house rule as the data
-      pipeline) — **nothing renders until the owner completes this one-time signup:**
-      1. Sign up free at clarity.microsoft.com, add a project for `davessweater.com`.
-      2. Copy the Project ID from the tracking snippet it gives you.
-      3. Set `NEXT_PUBLIC_CLARITY_PROJECT_ID` in Vercel → Settings → Environment Variables (Production +
-         Preview) and in local `.env.local` (see `.env.example`).
-      No further code/deploy needed — it activates on the next build once the var is set.
+      Logic lives in `lib/clickTracking.ts` (pure, unit-tested) so the DOM wiring stays thin. 12 new vitest.
+- [x] **Microsoft Clarity — env var configured 2026-07-07 (owner signup + `NEXT_PUBLIC_CLARITY_PROJECT_ID`
+      set for Production + Preview).** Script (`layout.tsx`) is fail-closed: omitted entirely if unset, same
+      house rule as the data pipeline. **Lesson learned, worth knowing for next time:** the var was created as
+      Vercel's **"Sensitive"** type (not "Encrypted") — `vercel env pull`/API always returns `""` for Sensitive
+      vars by design (write-only, unreadable after creation, even by the owner). Two dashboard save attempts
+      *looked* like they failed because of this — they may well have worked; `pull` simply can't confirm a
+      Sensitive value either way. Re-set via `vercel env rm` + `vercel env add ... <production/preview` to be
+      certain the exact ID landed. **Final proof it's live:** check the deployed homepage for the
+      `clarity.ms/tag/` script (with the real ID) and watch for session data in the Clarity dashboard within a
+      few minutes of real traffic — `pull` cannot be used to verify this var going forward.
 
 ## SEO / performance / accessibility (audited 2026-07-01)
 Multi-agent audit + Lighthouse (production, mobile). **SEO = 100** (the promotion-readiness metadata/JSON-LD/
