@@ -739,6 +739,26 @@ Owner chose both tools, sitewide: Microsoft Clarity (heatmaps/recordings) + GA4 
       certain the exact ID landed. **Final proof it's live:** check the deployed homepage for the
       `clarity.ms/tag/` script (with the real ID) and watch for session data in the Clarity dashboard within a
       few minutes of real traffic — `pull` cannot be used to verify this var going forward.
+- [x] **GMHG planner engagement tracking — PR #119, ✅ MERGED + LIVE-VERIFIED 2026-07-07.** The sitewide
+      `element_click` listener only catches `a`/`button`/`summary`/`[role=button]`, so the planner's
+      `<select>`/checkbox/number-input controls (origin, party size, event-type filter, accessible transport)
+      were completely untracked. Added a purpose-built `gmhg_engagement` event (`Planner.tsx`) with an `action`
+      param: `started_plan` (fires once, first event a visitor selects — the real "did they engage" signal),
+      `used_highlights_shortcut`, `changed_filter` (+ `filter_name`), `saved_image`/`added_to_calendar`/`printed`
+      (+ `day_count`). Deliberately not tracking every event-toggle or day-tab switch — too high-volume to be a
+      meaningful engagement signal. **Verified live** via a real browser against production (`window.dataLayer`
+      inspection, not just network/console — see note below): clicking "Just the highlights" correctly queued
+      both `used_highlights_shortcut` and `started_plan`; changing party size correctly queued `changed_filter`
+      with `filter_name: "party_size"`. Exact expected payloads, both previously-untracked paths confirmed.
+      **Verification note for next time:** this site's `gtag` shim (`layout.tsx`) does `dataLayer.push(arguments)`
+      — `arguments` is array-*like*, not a real `Array`, so `Array.isArray(entry)` on `window.dataLayer` items is
+      always false and silently filters out every event if used as a a guard. Check `entry && entry[0] === 'event'`
+      instead. Also independently reproduced the automation-environment friction seen with Clarity (0034c/#117
+      note above): every `google-analytics.com/g/collect` POST returned `503` in the same automated browser
+      session (even the plain `page_view` ping), while `dataLayer` still showed the correct, correctly-shaped
+      events queued client-side — strong evidence this is an automation/bot-detection artifact on the delivery
+      side, not a code or config problem. `dataLayer` inspection, not network status codes, is the reliable way
+      to verify gtag-based tracking code from an automated browser.
 
 ## SEO / performance / accessibility (audited 2026-07-01)
 Multi-agent audit + Lighthouse (production, mobile). **SEO = 100** (the promotion-readiness metadata/JSON-LD/
