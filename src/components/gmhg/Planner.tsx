@@ -260,6 +260,16 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8">
+      {/* How to use this */}
+      <div className="print:hidden mb-5 rounded-lg border border-border bg-surface p-4 text-sm">
+        <p className="font-display font-bold text-foreground">How to use this</p>
+        <ol className="mt-1.5 ml-4 list-decimal space-y-1 text-muted">
+          <li>Filter by type if you like, then tap the events you want, one day at a time.</li>
+          <li>Your picks assemble under <a href="#your-plan" className="font-medium text-teal underline underline-offset-2">Your plan</a> below, with an arrive-by time, a field map with your stops pinned, and an itinerary for each day.</li>
+          <li>When it looks right, <a href="#save-print" className="font-medium text-teal underline underline-offset-2">save it as an image, add it to your calendar, or print it</a> so you have it offline at the field.</li>
+        </ol>
+      </div>
+
       {/* Controls */}
       <div className="print:hidden flex flex-wrap items-end gap-x-4 gap-y-3 rounded-xl border border-border bg-surface p-4">
         <label className="flex flex-col text-xs font-semibold text-muted">
@@ -303,7 +313,7 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
       </div>
 
       {/* Day tabs (day selection) */}
-      <div className="print:hidden mt-5 flex flex-wrap items-center gap-2" role="tablist" aria-label="Days">
+      <div id="pick" className="print:hidden mt-5 scroll-mt-20 flex flex-wrap items-center gap-2" role="tablist" aria-label="Days">
         {DAY_ORDER.map((day) => {
           const n = selectedForDay(day).length;
           const active = day === activeDay;
@@ -418,8 +428,13 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
       </div>
 
       {/* Consolidated plan: every selected day, stacked Thursday to Sunday */}
-      <div className="print:hidden mt-8">
-        <h2 className="font-display text-xl font-bold">Your plan</h2>
+      <div id="your-plan" className="print:hidden mt-8 scroll-mt-20">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+          <h2 className="font-display text-xl font-bold">Your plan</h2>
+          {planDays.length > 0 && (
+            <a href="#save-print" className="text-sm font-medium text-teal underline underline-offset-2">Jump to save &amp; print ↓</a>
+          )}
+        </div>
         {planDays.length === 0 ? (
           <p className="mt-2 text-sm text-muted">Pick events above and your trip assembles here: Arrive-by times, the right lot, walk warnings, a map, and a packing list for each day.</p>
         ) : (
@@ -484,6 +499,9 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
                         Last shuttle back leaves {last}. Do not get stranded on the mountain.
                       </p>
                     )}
+                    <p className="mt-2 text-right">
+                      <a href="#pick" className="text-xs font-medium text-teal underline underline-offset-2">↑ Back to top to add another day</a>
+                    </p>
                   </section>
                 );
               })}
@@ -495,7 +513,8 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
                 </div>
               )}
 
-              <div className="space-y-2">
+              <div id="save-print" className="scroll-mt-20 space-y-2">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted">Save or print your plan</p>
                 <button onClick={makeImage}
                   className="w-full rounded-lg bg-orange-600 px-3 py-2.5 text-sm font-bold text-white hover:bg-[#9a3412]">
                   Save my plan as an image
