@@ -4,7 +4,7 @@ import parse from "html-react-parser";
 import { getBlogPosts, getBlogPost, postSlug, postCategoryOf } from "@/lib/data";
 import { sanitizePostHtml } from "@/lib/html";
 import { CATEGORIES } from "@/content/resources";
-import { SITE_BASE, breadcrumbs } from "@/lib/schema";
+import { SITE_BASE, breadcrumbs, faqPage } from "@/lib/schema";
 import SectionBand from "@/components/SectionBand";
 import JsonLd from "@/components/JsonLd";
 
@@ -58,6 +58,9 @@ export default async function Page({ params }: { params: Promise<{ category: str
       author: { "@type": "Organization", name: "Dave's Sweater" },
       publisher: { "@type": "Organization", name: "Dave's Sweater", url: SITE_BASE },
     },
+    // FAQPage for the post's "Frequently asked questions" section — the AEO
+    // answer-engine signal (checklist #6). Only native posts carry parsed FAQs.
+    ...(post.faqs && post.faqs.length ? [faqPage(post.faqs)] : []),
   ];
   return (
     <SectionBand>

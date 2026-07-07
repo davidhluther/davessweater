@@ -18,6 +18,22 @@ export function breadcrumbs(items: { name: string; path: string }[]) {
   };
 }
 
+// FAQPage from a post's parsed Q&A pairs — the answer-engine signal. Raw "&"
+// is rewritten to "and" (the JsonLd component escapes text, but valid schema
+// text reads cleaner without entities); other angle brackets are stripped.
+export function faqPage(faqs: { q: string; a: string }[]) {
+  const clean = (s: string) => s.replace(/&/g, "and").replace(/[<>]/g, "").trim();
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: clean(f.q),
+      acceptedAnswer: { "@type": "Answer", text: clean(f.a) },
+    })),
+  };
+}
+
 export function collectionPage(opts: {
   name: string;
   path: string;

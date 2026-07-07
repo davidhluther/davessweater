@@ -1,7 +1,7 @@
 import { readFile, readdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import type { Comparison, Scores, BlogPost, LatestForecasts } from "@/lib/types";
+import type { Comparison, Scores, BlogPost, LatestForecasts, GmhgData } from "@/lib/types";
 import type { FireworksForecastFile } from "@/lib/fireworks";
 import type { TerrainFile } from "@/lib/sightline";
 import { marked } from "marked";
@@ -50,6 +50,10 @@ export async function getTerrain(): Promise<TerrainFile | null> {
   return readJson<TerrainFile>(join(DATA, "terrain.json"));
 }
 
+export async function getGmhgData(): Promise<GmhgData | null> {
+  return readJson<GmhgData>(join(DATA, "gmhg_events.json"));
+}
+
 const POSTS_DIR = join(process.cwd(), "src", "content", "posts");
 
 function parseFrontmatter(raw: string): { data: Record<string, string>; body: string } {
@@ -75,6 +79,42 @@ function stripLeadingH1(md: string): string {
   return md.replace(/^\s*#\s+.*(?:\r?\n)+/, "");
 }
 
+// Flatten inline markdown (links, emphasis, code) to plain text for schema text.
+function mdToText(s: string): string {
+  return s
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/[*_`]+/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Pull question/answer pairs out of a post's "Frequently asked questions"
+// section (## heading, then ### question + following paragraph) so the detail
+// route can emit FAQPage JSON-LD. Answers are flattened to plain text.
+function parseFaqs(md: string): { q: string; a: string }[] {
+  const faqs: { q: string; a: string }[] = [];
+  let inFaq = false;
+  let q: string | null = null;
+  let buf: string[] = [];
+  const flush = () => {
+    if (q && buf.length) faqs.push({ q: mdToText(q), a: mdToText(buf.join(" ")) });
+    q = null; buf = [];
+  };
+  for (const raw of md.split(/\r?\n/)) {
+    const line = raw.trim();
+    const h3 = line.match(/^###\s+(.*)/);
+    const h2 = line.match(/^##\s+(.*)/);
+    if (h3) { if (inFaq) flush(); q = h3[1]; continue; }
+    if (h2) { flush(); inFaq = /frequently asked questions/i.test(h2[1]); continue; }
+    if (!inFaq) continue;
+    if (line === "" ) continue;
+    if (line === "---") { flush(); inFaq = false; continue; }
+    if (q) buf.push(line);
+  }
+  flush();
+  return faqs;
+}
+
 // Native posts authored as markdown in src/content/posts/. Unlike Substack
 // feed posts they carry an explicit slug + category; the body renders to HTML
 // and then flows through the same sanitizer as feed content.
@@ -96,6 +136,7 @@ async function getNativePosts(): Promise<BlogPost[]> {
       metaDescription: data.metaDescription,
       link: `/resources/${category}/${data.slug}`,
       content: marked.parse(stripLeadingH1(body), { async: false }) as string,
+      faqs: parseFaqs(body),
     });
   }
   return out;
