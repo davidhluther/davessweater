@@ -408,7 +408,16 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       pin + legend, on screen/print/image. (5) **AP colon capitalization** applied across GMHG copy + the
       reports/fireworks card + category descriptions. 39 gmhg vitest / lint / build green; browser-verified
       report card, hero, teaser deep-link, off-site pin, accessible-shuttle gate.
-- [ ] **Owner:** merge + request GSC indexing; the games start Thu Jul 9 (evergreen for 2027 regardless).
+- [x] **Promotion + SEO/social pass (2026-07-07, committed b63356c).** Slug moved to
+      **`/reports/grandfather-mountain-highland-games-planner-2026`** (canonical/sitemap/JSON-LD/teaser/REPORTS
+      all updated). Route-scoped **OG + Twitter share card** (`opengraph-image.tsx` + `twitter-image.tsx`,
+      next/og; `twitter: summary_large_image`). **Homepage `GmhgBanner`** (mirrors FireworksBanner; torch photo,
+      date-gated to retire after Jul 12). Copy rewritten to **sell the deliverables** (filter events, downloadable/
+      printable per-day itinerary, field map with stops pinned, arrive-by + between-event walk times, lot + shuttle
+      cash, live forecast + packing list, calendar export) across meta title/description, OG, hero dek, REPORTS
+      card, and the reports-page teaser; added a `WebPage` JSON-LD node. Verified: OG PNG renders 1200×630, page
+      200 with og:image + twitter card + canonical, banner links to the new slug. 160 vitest / lint / build green.
+- [ ] **Owner:** merge + request GSC indexing (new slug **…-planner-2026**); games start Thu Jul 9 (evergreen for 2027).
       For 2027 reuse, re-verify all logistics (lots/prices/hours drift), and give real numbers for the
       cross-cluster walk estimates if you have them (currently hand-tuned: center↔south 11, ↔north 12,
       north↔south 20). Keep `src/lib/gmhg/` engines event-agnostic (they already are) for Woolly Worm /
