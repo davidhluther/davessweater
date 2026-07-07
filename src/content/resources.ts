@@ -26,11 +26,20 @@ export interface ReportEntry {
 
 export const REPORTS: ReportEntry[] = [
   {
-    title: "2026 Fourth of July fireworks in Boone and the High Country: exact times, computed",
+    title: "Grandfather Mountain Highland Games 2026: Plan Your Days",
+    href: "/reports/grandfather-mountain-highland-games-2026",
+    date: "2026-07-06",
+    summary:
+      "A real planner for the 70th Games (July 9–12): Pick your events and get arrive-by times, the correct lot for each day, the cash the shuttle needs, a field map with your stops pinned, and calendar export, with live walk-time warnings so you don't book two things across a field you can't cut across.",
+    image: "/assets/gmhg-torch-lighting-photo-by-skip-sickler-courtesy-grandfather-mountain-stewardship-foundation-sm.webp",
+    imageAlt: "Clan members holding lit torches at dusk during the Grandfather Mountain Highland Games torch-lighting ceremony. Photo by Skip Sickler, courtesy of the Grandfather Mountain Stewardship Foundation.",
+  },
+  {
+    title: "2026 Fourth of July fireworks in Boone and the High Country: Exact times, computed",
     href: "/reports/fireworks-fourth-july-2026",
     date: "2026-07-02",
     summary:
-      "What you get: fireworks-specific weather for each show (clouds, wind, fog), start times projected from dusk math and mountain terrain, verified event details, and a sightline check from any address.",
+      "What you get: Fireworks-specific weather for each show (clouds, wind, fog), start times projected from dusk math and mountain terrain, verified event details, and a sightline check from any address.",
     // CC0 1.0, owner-supplied ("Feuerwerk_1"); generic fireworks, not a local shot.
     image: "/assets/fireworks-photo.webp",
     imageAlt: "Fireworks bursting against a night sky",
@@ -48,7 +57,7 @@ export const CATEGORIES = [
   {
     key: "news", label: "News & Updates", schemaName: "News and Updates", href: "/resources/news",
     blurb: "What's new on Dave's Sweater — features, fixes, and announcements.",
-    description: "News and updates from Dave's Sweater: new features, scoring changes, and announcements.",
+    description: "News and updates from Dave's Sweater: New features, scoring changes, and announcements.",
   },
   {
     key: "videos", label: "Videos", schemaName: "Videos", href: "/resources/videos",
@@ -58,7 +67,7 @@ export const CATEGORIES = [
   {
     key: "reports", label: "Reports", schemaName: "Reports", href: "/resources/reports",
     blurb: "Data deep-dives with charts and receipts.",
-    description: "Data reports from Dave's Sweater: deep dives into Boone, NC forecast accuracy, with charts and receipts.",
+    description: "Data reports from Dave's Sweater: Deep dives into Boone, NC forecast accuracy, with charts and receipts.",
   },
 ] as const;
 
