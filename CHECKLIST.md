@@ -712,6 +712,24 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
 - [ ] **Post detail date format** — the detail route renders `post.date` raw (ISO); site standard is
       "Month D, YYYY" (`lib/dates.ts`). Pre-existing (affects Substack posts too); format when convenient.
 
+## Click tracking (PR `analytics-click-tracking`, 2026-07-07)
+Owner chose both tools, sitewide: Microsoft Clarity (heatmaps/recordings) + GA4 custom click events.
+- [x] **GA4 `element_click` custom event, sitewide — DONE.** One delegated `document` click listener
+      (`ClickTracker`, mounted once in `layout.tsx`) instead of an `onClick` per component; fires for any
+      `a[href]` / `button` / `summary` (covers the on-page TOC + FAQ `<details>` toggles) / `[role=button]`.
+      Label priority: `data-track-label` &gt; `aria-label` &gt; visible text &gt; href (escape hatch for icon-only
+      buttons). Params: `element_type` (link/button/toggle), `link_text` (≤100 chars), `link_url`, `outbound`
+      (relative = internal per the site's own convention; absolute http(s)/mailto/tel = outbound), `page_path`.
+      Logic lives in `lib/clickTracking.ts` (pure, unit-tested) so the DOM wiring stays thin. 13 new vitest.
+- [ ] **Microsoft Clarity — owner action needed to activate.** Script is wired in `layout.tsx`, gated on
+      `NEXT_PUBLIC_CLARITY_PROJECT_ID` (fail-closed: omitted entirely if unset, same house rule as the data
+      pipeline) — **nothing renders until the owner completes this one-time signup:**
+      1. Sign up free at clarity.microsoft.com, add a project for `davessweater.com`.
+      2. Copy the Project ID from the tracking snippet it gives you.
+      3. Set `NEXT_PUBLIC_CLARITY_PROJECT_ID` in Vercel → Settings → Environment Variables (Production +
+         Preview) and in local `.env.local` (see `.env.example`).
+      No further code/deploy needed — it activates on the next build once the var is set.
+
 ## SEO / performance / accessibility (audited 2026-07-01)
 Multi-agent audit + Lighthouse (production, mobile). **SEO = 100** (the promotion-readiness metadata/JSON-LD/
 sitemap work nailed it — nothing to do). **Best Practices 96.**
