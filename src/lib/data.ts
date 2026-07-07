@@ -1,11 +1,16 @@
 import { readFile, readdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import type { Comparison, Scores, BlogPost, LatestForecasts, GmhgData } from "@/lib/types";
+import type { Comparison, Scores, BlogPost, LatestForecasts, GmhgData, TocItem } from "@/lib/types";
 import type { FireworksForecastFile } from "@/lib/fireworks";
 import type { TerrainFile } from "@/lib/sightline";
 import { marked } from "marked";
+import { markedSmartypants } from "marked-smartypants";
 import { ARTICLE_SLUGS, type PostCategory } from "@/content/resources";
+
+// Typographic quotes/dashes at render time — source stays straight-quoted (so
+// the writing validator is happy); the rendered post gets correct curly quotes.
+marked.use(markedSmartypants());
 
 const DATA = join(process.cwd(), "data");
 
@@ -79,6 +84,49 @@ function stripLeadingH1(md: string): string {
   return md.replace(/^\s*#\s+.*(?:\r?\n)+/, "");
 }
 
+function slugify(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+// Parse the body's H2/H3 headings (in document order) into anchor ids, deduping
+// collisions. Ids are derived from the plain source text so they match whether
+// or not smartypants has curled the rendered heading's quotes.
+function parseHeadings(md: string): { depth: number; text: string; id: string }[] {
+  const items: { depth: number; text: string; id: string }[] = [];
+  const seen = new Map<string, number>();
+  for (const raw of md.split(/\r?\n/)) {
+    const m = raw.trim().match(/^(###|##)\s+(.*)/);
+    if (!m) continue;
+    const text = m[2].replace(/\s+#*\s*$/, "").trim();
+    let id = slugify(text) || "section";
+    const n = seen.get(id) ?? 0;
+    seen.set(id, n + 1);
+    if (n) id = `${id}-${n}`;
+    items.push({ depth: m[1].length, text, id });
+  }
+  return items;
+}
+
+// Nest H3s under their preceding H2 for a two-level table of contents.
+function buildToc(headings: { depth: number; text: string; id: string }[]): TocItem[] {
+  const toc: TocItem[] = [];
+  for (const h of headings) {
+    if (h.depth === 2 || toc.length === 0) toc.push({ id: h.id, text: h.text, children: [] });
+    else toc[toc.length - 1].children.push({ id: h.id, text: h.text });
+  }
+  return toc;
+}
+
+// Assign the precomputed ids to the rendered HTML's heading tags in order
+// (marked emits headings in source order, so the sequence lines up).
+function injectHeadingIds(html: string, headings: { id: string }[]): string {
+  let i = 0;
+  return html.replace(/<h([23])>/g, (_m, d) => {
+    const h = headings[i++];
+    return h ? `<h${d} id="${h.id}">` : `<h${d}>`;
+  });
+}
+
 // Flatten inline markdown (links, emphasis, code) to plain text for schema text.
 function mdToText(s: string): string {
   return s
@@ -126,6 +174,9 @@ async function getNativePosts(): Promise<BlogPost[]> {
     const { data, body } = parseFrontmatter(await readFile(join(POSTS_DIR, f), "utf8"));
     if (!data.slug || !data.title) continue;
     const category = data.category === "news" ? "news" : "articles";
+    const bodyNoH1 = stripLeadingH1(body);
+    const headings = parseHeadings(bodyNoH1);
+    const rendered = marked.parse(bodyNoH1, { async: false }) as string;
     out.push({
       title: data.title,
       slug: data.slug,
@@ -135,7 +186,8 @@ async function getNativePosts(): Promise<BlogPost[]> {
       metaTitle: data.metaTitle,
       metaDescription: data.metaDescription,
       link: `/resources/${category}/${data.slug}`,
-      content: marked.parse(stripLeadingH1(body), { async: false }) as string,
+      content: injectHeadingIds(rendered, headings),
+      toc: buildToc(headings),
       faqs: parseFaqs(body),
     });
   }

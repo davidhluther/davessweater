@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { getLatestComparison, getScores, getBlogPosts, getBlogPost, slugFromLink, postSlug, postCategoryOf, getComparisonWindow } from "@/lib/data";
 import { faqPage } from "@/lib/schema";
+import { sanitizePostHtml } from "@/lib/html";
 
 describe("data readers", () => {
   it("reads the latest comparison with actuals", async () => {
@@ -63,6 +64,22 @@ describe("native markdown posts", () => {
     expect(first.a.length).toBeGreaterThan(20);
     // Answers are flattened to plain text — no markdown link syntax leaks into schema.
     expect(post!.faqs!.some((f) => /\]\(/.test(f.a))).toBe(false);
+  });
+  it("builds a table of contents with heading anchors that match the content", async () => {
+    const post = await getBlogPost("is-rays-weather-accurate");
+    expect(post!.toc?.length ?? 0).toBeGreaterThan(1);
+    // At least one H2 has nested H3 children.
+    expect(post!.toc!.some((h2) => h2.children.length > 0)).toBe(true);
+    // Every TOC id has a matching id in the content — and it must SURVIVE
+    // sanitization (the route sanitizes before rendering), else anchors break.
+    const html = sanitizePostHtml(post!.content ?? "");
+    const ids = post!.toc!.flatMap((h2) => [h2.id, ...h2.children.map((h3) => h3.id)]);
+    for (const id of ids) expect(html).toContain(`id="${id}"`);
+  });
+  it("renders typographic (curly) quotes and apostrophes in post content", async () => {
+    const post = await getBlogPost("is-rays-weather-accurate");
+    // "Ray's" → curly apostrophe (&#8217;); straight ASCII apostrophes should be gone from prose.
+    expect(post!.content ?? "").toContain("&#8217;");
   });
   it("builds valid FAQPage JSON-LD from parsed FAQs", async () => {
     const post = await getBlogPost("is-rays-weather-accurate");

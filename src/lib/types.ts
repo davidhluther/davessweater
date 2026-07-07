@@ -75,7 +75,10 @@ export interface BlogPost {
   slug?: string; category?: "articles" | "news"; metaTitle?: string; metaDescription?: string;
   // Extracted from a native post's "Frequently asked questions" section → FAQPage JSON-LD.
   faqs?: { q: string; a: string }[];
+  // Two-level table of contents (H2s with nested H3s) for the on-page TOC.
+  toc?: TocItem[];
 }
+export interface TocItem { id: string; text: string; children: { id: string; text: string }[]; }
 export interface Video { title: string; link: string; date: string; thumb?: string; }
 export interface Product { name: string; link: string; image?: string; price?: string; id?: string; }
 
