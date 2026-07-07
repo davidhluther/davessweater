@@ -261,12 +261,12 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8">
       {/* How to use this */}
-      <div className="print:hidden mb-5 rounded-lg border border-border bg-surface p-4 text-sm">
-        <p className="font-display font-bold text-foreground">How to use this</p>
-        <ol className="mt-1.5 ml-4 list-decimal space-y-1 text-muted">
+      <div className="print:hidden mb-5 rounded-lg border border-teal-700/20 bg-teal-50 p-4 text-sm">
+        <p className="font-display font-bold text-teal-900">How to use this</p>
+        <ol className="mt-1.5 ml-4 list-decimal space-y-1 text-teal-800">
           <li>Filter by type if you like, then tap the events you want, one day at a time.</li>
-          <li>Your picks assemble under <a href="#your-plan" className="font-medium text-teal underline underline-offset-2">Your plan</a> below, with an arrive-by time, a field map with your stops pinned, and an itinerary for each day.</li>
-          <li>When it looks right, <a href="#save-print" className="font-medium text-teal underline underline-offset-2">save it as an image, add it to your calendar, or print it</a> so you have it offline at the field.</li>
+          <li>Your picks assemble under <a href="#your-plan" className="font-semibold text-orange-600 underline underline-offset-2">Your plan</a> below, with an arrive-by time, a field map with your stops pinned, and an itinerary for each day.</li>
+          <li>When it looks right, <a href="#save-print" className="font-semibold text-orange-600 underline underline-offset-2">save it as an image, add it to your calendar, or print it</a> so you have it offline at the field.</li>
         </ol>
       </div>
 
@@ -432,9 +432,9 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
         <div className="flex flex-wrap items-baseline justify-between gap-x-3">
           <h2 className="font-display text-xl font-bold">Your plan</h2>
           {planDays.length > 0 && (
-            <span className="flex flex-wrap gap-x-4 text-sm font-medium">
-              <a href="#pick" className="text-teal underline underline-offset-2">↑ Add another day</a>
-              <a href="#save-print" className="text-teal underline underline-offset-2">Jump to save &amp; print ↓</a>
+            <span className="flex flex-wrap gap-2 text-sm font-medium">
+              <a href="#pick" className="rounded-full border border-teal-700/30 bg-teal-50 px-2.5 py-1 text-teal-900 hover:bg-teal-100">↑ Add another day</a>
+              <a href="#save-print" className="rounded-full border border-orange-600/30 bg-orange-600/10 px-2.5 py-1 text-orange-600 hover:bg-orange-600/20">Jump to save &amp; print ↓</a>
             </span>
           )}
         </div>
@@ -503,7 +503,7 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
                       </p>
                     )}
                     <p className="mt-2 text-right">
-                      <a href="#pick" className="text-xs font-medium text-teal underline underline-offset-2">↑ Back to top to add another day</a>
+                      <a href="#pick" className="inline-block rounded-full border border-teal-700/30 bg-teal-50 px-2.5 py-1 text-xs font-medium text-teal-900 hover:bg-teal-100">↑ Back to top to add another day</a>
                     </p>
                   </section>
                 );
