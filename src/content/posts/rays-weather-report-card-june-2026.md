@@ -13,27 +13,27 @@ We scored 29 days of Boone forecasts in June 2026. Open-Meteo led at 92.3, Apple
 
 ## Key takeaways
 
-- Ray's Weather averaged 73.3 in June 2026 — a passing grade, but 19.0 points behind free Open-Meteo's 92.3
+- Ray's Weather averaged 73.3 in June 2026, a passing grade, but 19.0 points behind free Open-Meteo's 92.3
 - Open-Meteo went Right on 28 of 29 days and never once graded Wrong; Apple Weather never graded Wrong either
-- Ray's logged 4 Wrong days in June, including a 26.1 on June 2 — the month's low across every source we track
+- Ray's logged 4 Wrong days in June, including a 26.1 on June 2, the month's low across every source we track
 - The paid forecast still beat its own worst reputation on June 24, scoring 90.7
-- Every free source we track finished June ahead of the paid one — same pattern as the full 118-day window
+- Every free source we track finished June ahead of the paid one, the same pattern as the full 118-day window
 
 ## How did Ray's Weather score in June 2026?
 
-Ray's Weather averaged 73.3 across 29 scored days in June 2026, landing in "Meh" territory — a passing month, but not a strong one. He posted 14 Right days, 11 Meh days, and 4 Wrong days. The free apps most people ignore did better: Open-Meteo averaged 92.3 and Apple Weather 88.0, neither dipping into Wrong even once.
+Ray's Weather averaged 73.3 across 29 scored days in June 2026, landing in "Meh" territory: a passing month, but not a strong one. He posted 14 Right days, 11 Meh days, and 4 Wrong days. The free apps most people ignore did better: Open-Meteo averaged 92.3 and Apple Weather 88.0, neither dipping into Wrong even once.
 
 Every day around midday we capture what each source predicts, then score it the next day against verified actuals from the Open-Meteo historical archive. June gave us 29 clean days to grade. The headline is the gap: 19.0 points a day between the best free forecast and the paid one, on the same weather, in the same town.
 
 ### June 2026 at a glance
 
-June ran warm and unremarkable in Boone — the kind of month where a good forecaster should coast. Open-Meteo did exactly that, missing "Right" on a single day. Ray's Weather had a rougher time of it, with a handful of days that dragged the average down more than a quiet mountain June should allow.
+June ran warm and unremarkable in Boone, the kind of month where a good forecaster should coast. Open-Meteo did exactly that, missing "Right" on a single day. Ray's Weather had a rougher time of it, with a handful of days that dragged the average down more than a quiet mountain June should allow.
 
 ## Which Boone forecast was most accurate in June 2026?
 
-Open-Meteo was the most accurate Boone forecast in June 2026 at 92.3, followed by Apple Weather at 88.0 and Ray's Weather at 73.3. Both free sources cleared the "Right" threshold for the month; Ray's sat in "Meh." The ranking held every week — this was not one bad day dragging an otherwise-tied race apart.
+Open-Meteo was the most accurate Boone forecast in June 2026 at 92.3, followed by Apple Weather at 88.0 and Ray's Weather at 73.3. Both free sources cleared the "Right" threshold for the month; Ray's sat in "Meh." The ranking held every week. This was not one bad day dragging an otherwise-tied race apart.
 
-### The June scoreboard, ranked
+### How did each forecaster rank in June?
 
 | Source | June avg | R-M-W |
 |---|---|---|
@@ -43,21 +43,21 @@ Open-Meteo was the most accurate Boone forecast in June 2026 at 92.3, followed b
 
 Scores are the mean of each day's 0–100 grade | R-M-W is the count of days graded Right, Meh, and Wrong.
 
-### Reading the R-M-W column
+### What does the R-M-W column mean?
 
-The R-M-W column is the shape behind the average. Right means 75 or above, Meh is 60–74, and Wrong is anything under 60. Open-Meteo's 28-1-0 says it was Right nearly every day. Ray's 14-11-4 says half his month was solid and the other half wobbled — 11 middling days and 4 outright misses are what pull 73.3 down from the 90s the free sources posted.
+The R-M-W column is the shape behind the average. Right means 75 or above, Meh is 60–74, and Wrong is anything under 60. Open-Meteo's 28-1-0 says it was Right nearly every day. Ray's 14-11-4 says half his month was solid and the other half wobbled: 11 middling days and 4 outright misses are what pull 73.3 down from the 90s the free sources posted.
 
 ## What were Ray's best and worst days in June?
 
-Ray's Weather ranged from 26.1 on June 2, 2026 to 90.7 on June 24, 2026 — a 64.6-point swing across a single month. The low is the worst single-source day we recorded anywhere in June; the high is a genuinely strong forecast that shows the ceiling is there when the day cooperates.
+Ray's Weather ranged from 26.1 on June 2, 2026 to 90.7 on June 24, 2026, a 64.6-point swing across a single month. The low is the worst single-source day we recorded anywhere in June; the high is a genuinely strong forecast that shows the ceiling is there when the day cooperates.
 
-### The worst: June 2 at 26.1
+### What was Ray's worst June day?
 
-June 2, 2026 was Ray's worst day of the month at 26.1 — deep in Wrong territory, and the lowest score any source posted in June. A day like that usually means the temperature call missed badly, since high and low temp are worth 60 of the 100 points. No free source came anywhere near that floor.
+June 2, 2026 was Ray's worst day of the month at 26.1, deep in Wrong territory and the lowest score any source posted in June. A day like that usually means the temperature call missed badly, since high and low temp are worth 60 of the 100 points. No free source came anywhere near that floor.
 
-### The best: June 24 at 90.7
+### What was Ray's best June day?
 
-June 24, 2026 was Ray's best day at 90.7 — a clean, five-ray forecast that would look at home on any source's scoreboard. It is worth saying plainly: Ray's Weather can absolutely nail a day. The issue the tracker keeps surfacing is not that he never gets it right, it is that the misses run deeper and more often than the free alternatives.
+June 24, 2026 was Ray's best day at 90.7, a clean five-ray forecast that would look at home on any source's scoreboard. It is worth saying plainly: Ray's Weather can absolutely nail a day. The issue the tracker keeps surfacing is not that he never gets it right, it is that the misses run deeper and more often than the free alternatives.
 
 ## Why did the free apps beat the paid one again?
 
@@ -65,15 +65,23 @@ The free apps win on consistency and on the precip-amount field. Temperature acc
 
 ### Where the points go
 
-Each forecast is graded out of 100 — high temp 30, low temp 30, wind 20, precip type 10, precip amount 10. Sixty of those points are temperature, so a source that reads daily highs and lows cleanly starts most days near a passing grade. The free sources pull their numbers straight from model output; that consistency is most of the story behind a 92.3 versus a 73.3.
+Each forecast is graded out of 100, split across five fields:
+
+- High temp: 30
+- Low temp: 30
+- Wind: 20
+- Precip type: 10
+- Precip amount: 10
+
+Sixty of those points are temperature, so a source that reads daily highs and lows cleanly starts most days near a passing grade. The free sources pull their numbers straight from model output; that consistency is most of the story behind a 92.3 versus a 73.3.
 
 ### The precip-amount rule
 
-Ray's Weather never gives a numeric precip total, and our rule handles that evenly. On a dry-forecast day, "no precip" is scored as a zero-inch forecast, so Ray's earns the amount points he's owed. On a wet-forecast day, a rain or snow call with no stated total forfeits the amount field — a source can't gain by leaving the hard number blank. It cuts both ways; it just happens to cost Ray's on the days he calls for rain. See [how the 100-point scoring works](/methodology) for the full model.
+Ray's Weather never gives a numeric precip total, and our rule handles that evenly. On a dry-forecast day, "no precip" is scored as a zero-inch forecast, so Ray's earns the amount points he's owed. On a wet-forecast day, a rain or snow call with no stated total forfeits the amount field: a source can't gain by leaving the hard number blank. It cuts both ways; it just happens to cost Ray's on the days he calls for rain. See [how the 100-point scoring works](/methodology) for the full model.
 
 ## What does a 19-point monthly gap actually mean?
 
-A 19.0-point monthly gap means the paid forecast landed a grade band below the free one, every day on average, for a whole month. In classroom terms, Open-Meteo turned in a low-A month and Ray's turned in a C. That gap is not a fluke of June — it tracks the full 118-day record, where Open-Meteo averages 92.0 and Ray's 71.0, about 21 points a day.
+A 19.0-point monthly gap means the paid forecast landed a grade band below the free one, every day on average, for a whole month. In classroom terms, Open-Meteo turned in a low-A month and Ray's turned in a C. That gap is not a fluke of June. It tracks the full 118-day record, where Open-Meteo averages 92.0 and Ray's 71.0, about 21 points a day.
 
 Worth keeping in scope: this is a short-range measurement. We capture each forecast around midday and score it against the next day's actuals, so what we're grading is one-day-out accuracy, not seven- or ten-day lead time. If you want the full methodology and its limits, the [live scoreboard, updated daily](/right-wrong-ray) shows every source scored, every day, and links back to the receipts. For the longer argument, see [is Ray's Weather accurate?](/resources/articles/is-rays-weather-accurate).
 

@@ -303,6 +303,126 @@ renders. Three date states built + build-tested (preview / tonight Jul 3–4 / a
 - [ ] **Phase 2 (deferred by design):** terrain-adjusted `/sunset` page (DEM horizon profiles on top of
       `solar.ts`), golden-hour tables, overlook viewing claims, NYE/Tweetsie-nights reuse of the module.
 
+## Done: GMHG 2026 planner — /reports/grandfather-mountain-highland-games-2026 (2026-07-06, PR pending)
+Franchise instance **#2** after /fireworks: a genuinely-useful, self-contained planner for the 70th Grandfather
+Mountain Highland Games (Jul 9–12, MacRae Meadows). Owner worked up the authoritative dataset + spec in Claude
+Browser (`gmhg-2026-events.json` = 171 events, 15 zones, walk-time matrix + congestion factors, full logistics).
+Built STRAIGHT where people rely on it (schedule/arrive-by/lot/cash/walk warnings), fireworks-voice humor in the
+intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
+- [x] **Data + types + loader** — `data/gmhg_events.json` (verbatim), `Gmhg*` types in `src/lib/types.ts`,
+      `getGmhgData()` in `src/lib/data.ts`.
+- [x] **Pure engines (`src/lib/gmhg/`, vitest-tested, 31 tests)** — `walk.ts` (one `transitionVerdict` driving
+      BOTH timeline badges and path-map leg colors; matrix base + 1.5× peak tax; reproduces the dataset's
+      caber→Gaelic ≈21-min worked example → won't-fit); `plan.ts` (lot-per-day rules, nearest-to-origin pick,
+      concert-only drive-up mode, accessibility override, arrive-by, $10×party×shuttle-days cash); `ics.ts`
+      (RFC 5545 w/ explicit America/New_York VTIMEZONE + night-before CASH VALARM + morning leave-by VALARM +
+      Google-Calendar URL); `packing.ts` (forecast→items, fail-closed to static). Constants/tunables +
+      MacRae coords centralized in `constants.ts`; `schedule.ts` day/time helpers.
+- [x] **Client island (`src/components/gmhg/Planner.tsx` + `PathMap.tsx`)** — day tabs, proportional
+      time-axis timeline, cluster-colored cards, live overlap/walk badges, running "your day" panel
+      (arrive-by/lot/cash/packing), highlights on-ramp, numbered SVG path map (bows around the oval, honesty
+      label), ICS download + print. Live Open-Meteo fetch at **MacRae's own coords** (verified live: 42% rain /
+      UV 8 for the field), NOT Boone's pipeline coords.
+- [x] **Route + SEO + registration** — server page with metadata + Event/FAQPage/BreadcrumbList JSON-LD +
+      server-rendered logistics answer-blocks (parking-by-day table from data, cash, 5 PM concert cutover,
+      accessibility, pets) + 8 FAQs; `REPORTS[]` entry (Resources → Reports hub) + `sitemap.ts`.
+- [x] **Print one-pager** (`@media print`) — full itinerary/day, lot, leave-by, cash, packing, key info; hides
+      interactive chrome. Verified: 148 vitest pass, lint clean, `next build` green, browser-verified end-to-end
+      (conflict detection, arrive-by, cash, live forecast, path map, valid ICS, mobile no-overflow).
+- [x] **Owner-feedback refinement pass (2026-07-06)** — (1) **co-visibility**: the dance platforms +
+      review stand are field-adjacent (bleachers), so they + center-field are one "field/bleachers area" —
+      short hops between them, and simultaneous picks there read "watch both" (teal) not a red conflict
+      (`inFieldArea`/`coVisible` in `walk.ts`, `FIELD_AREA_WALK`); (2) **walk recalibration**: dance↔field
+      was mis-read as 12–18 min → now a ~5-min field hop; cultural-village↔field dialed 14→11 (owner
+      flagged both as too high — still framed as generous estimates, tunable in one file); (3) dropped the
+      2 redundant "Celtic Groves entertainment begins" umbrella rows (duplicated the specific act cards);
+      (4) **path map rebuilt** — stops sharing a zone now fan into a ring so no number hides another (the
+      "can't see #2" bug), gentler bows; (5) **print fixed** — hero/logistics/FAQ/methodology now
+      `print:hidden` so only the plan sheet prints, the sheet gained the per-day map, and a serif print
+      font (`.gmhg-print`) so lowercase "l" stops reading as a bar; (6) **"Save my plan as an image"** —
+      canvas-rendered PNG shown inline with press-and-hold-to-save (`planImage.ts`), far friendlier than
+      PDF/print for the older crowd. 152 vitest (+4) / lint / build green; browser-verified all six.
+- [x] **Owner-feedback pass #2 (2026-07-06)** — (1) **consolidated multi-day plan**: the browser "Your
+      plan" now stacks every selected day Thu→Sun (was active-day only); the save-image + print produce
+      that same single consolidated file; mobile-first single column, verified no-overflow at 375px.
+      (2) **4-day forecast section** on the page (hi/lo, rain%, UV per day) with a "checked {time}" stamp
+      and a "forecasts change, check again the morning you go" note; the **downloaded image + print carry
+      the timestamp** and a Weather row. (3) **Filter by type**: one dropdown (All events / Highlights /
+      each category). (4) **Map rebuilt again** per owner: dropped the abstract route curves, now numbered
+      pins labeled with the start time, faint dotted sequence only, honest "approximate positions" label;
+      the numbered event list beside it is the legend. (5) **No emojis anywhere** (removed the phone glyph
+      and the highlight star; highlights now a left orange rule). (6) **Em-dashes limited** across page copy,
+      packing, ICS alarms, and image/print. 152 vitest / lint / build green; browser-verified all six.
+- [x] **Owner-feedback pass #3 (2026-07-06)** — (1) **map rebuilt as a real field diagram** (`PathMap.tsx`):
+      modeled on the GMHG field map (oval track + East Meadow inside, Review Stand/Bleachers/Highland Dancing
+      along the top, Groves/Alex Beaton/Bagpiping east, merchant + culture tents west/south, West Meadow
+      parking, First Aid/EMS, compass); each zone has hand-placed coordinates matching the real layout, and
+      selected events drop as numbered, time-labeled pins on the actual area (replaces the "circle + dots").
+      (2) **hourly rain chart** (`HourlyRain.tsx`) for the active day, from a new Open-Meteo hourly fetch.
+      (3) **separators are pipes now**, capitalized after, everywhere incl. the saved image + print.
+      (4) **"Last shuttle back leaves 5:00 PM (10:30 PM Thu). Do not get stranded."** on every daily plan
+      (parsed from the schedule; verified against the owner's shuttle PDF). (5) **"Leave by" clarified**:
+      reads "Leave Boone by …" (the chosen origin) with a one-line explanation of what it includes.
+      (6) **co-visibility note above the schedule** (watch a dance + field event from the hillside/bleachers).
+      (7) **"Good to know" section** (EMS tent, card readers common but shuttle cash-only, little rain shelter,
+      coolers welcome, expect mud, grassy hillside for chairs) on the page + saved image. (8) **per-day
+      forecast** in each daily plan + image + print. (9) **packing rewritten as flowing prose**, not choppy
+      fragments. 153 vitest / lint / build green; browser-verified desktop + mobile.
+- [x] **Owner-feedback pass #4 — the real field map (2026-07-06).** Replaced the hand-drawn SVG entirely:
+      the official GMHG field map is now a raster asset (`public/assets/gmhg-field-map.webp`, from the owner's
+      `IMG_1612.PNG` via sharp), and selected events drop on it as numbered, time-labeled **pins** positioned
+      by per-zone image fractions (`FieldMap.tsx`, `MAP_XY` tuned to the asset; co-located pins fan out).
+      Retired `PathMap.tsx`. Added a **Field Map section** on the page above Parking/Shuttle (reference map,
+      no pins, with gmhg.org attribution) + a **"Field map" jump link** in the hero. The per-day pinned map
+      renders in the on-screen plan, the **print sheet**, and the **saved image** (canvas now async: it
+      rasterizes the same-origin map with drawImage and draws the numbered pins on top). 36 gmhg vitest /
+      lint / build green; verified desktop + mobile + saved image + print structure.
+      ⚠️ **Pin coordinates are estimates** tuned to `IMG_1612.PNG` (a cropped screenshot). If the owner drops
+      a clean full-res map, swap `gmhg-field-map.webp` and re-tune `MAP_XY` in `FieldMap.tsx` (a few fractions).
+- [x] **Owner-feedback pass #5 (2026-07-06).** (1) Swapped in the **full clean 2026 map** (owner's
+      `670420317…n.jpg` → `gmhg-field-map.webp`, 1700×1220) and re-tuned every `MAP_XY` fraction + `MAP_ASPECT`
+      in `FieldMap.tsx`. (2) **Shuttle is always the final pin** on each day's map (Gate 1 drop-off), added to
+      the legend, screen + print + saved image (skipped on concert-only drive-up days). (3) **Forecast moved
+      under the day tabs and compacted** (small clickable day cards that also switch the active day, shorter
+      hourly chart, trimmed notes). (4) **Reference field-map section moved to just above the FAQ** (order:
+      logistics → good-to-know → field-map → faq); "Field map" hero link still targets it. (5) **Print/saved
+      pins smaller with higher contrast** — print pins are white with a black border and black number; canvas
+      pins shrank and gained a dark outer ring + bordered white time chips. 36 gmhg vitest / lint / build
+      green; verified desktop + mobile + saved image.
+      ⚠️ Pin coords are eyeball estimates on the new map; fine-tune `MAP_XY` in `FieldMap.tsx` if any read
+      wrong on the field.
+- [x] **Grove split (2026-07-06).** Grove I / Grove II / Alex Beaton Stage share the `music_groves` zone but
+      sit far apart, so they now key off `venue` to three separate map pins (`VENUE_XY`/`pinXY` in
+      `FieldMap.tsx`) AND three distinct **effective zones** in the walk engine (`effectiveZone` +
+      `SYNTHETIC_CLUSTER`, all north) — so two different groves at the same time correctly read "same time"
+      (a conflict) instead of "watch both", and inter-grove walk uses north-north, not a same-zone 3-min hop.
+      3 new walk tests (39 total); lint/build green; browser-verified three separate pins + correct badges.
+- [x] **Promotion pass + location refinements (2026-07-07).** (1) **Torch-lighting photo** (Skip Sickler,
+      courtesy Grandfather Mountain Stewardship Foundation; credit in the filename + alt + on-page caption)
+      → `public/assets/gmhg-torch-lighting-photo-by-skip-sickler-…-foundation{,-sm}.webp`; used as the
+      **Reports-hub card image** and the **page hero backdrop** (dark teal gradient keeps text AA).
+      (2) **Reports-page teaser** (`GmhgPlannerTeaser`) — day pills + "Just the highlights" that **deep-link**
+      into the planner (`?day=` / `?start=highlights`, read on mount, static prerender preserved).
+      (3) **Off-site events** (Best Western) now render a muted slate "off-site" pin instead of a false field
+      spot. (4) **Accessible shuttle** drops at **Gate 3** (vs Gate 1) when the accessibility toggle is on —
+      pin + legend, on screen/print/image. (5) **AP colon capitalization** applied across GMHG copy + the
+      reports/fireworks card + category descriptions. 39 gmhg vitest / lint / build green; browser-verified
+      report card, hero, teaser deep-link, off-site pin, accessible-shuttle gate.
+- [x] **Promotion + SEO/social pass (2026-07-07, committed b63356c).** Slug moved to
+      **`/reports/grandfather-mountain-highland-games-planner-2026`** (canonical/sitemap/JSON-LD/teaser/REPORTS
+      all updated). Route-scoped **OG + Twitter share card** (`opengraph-image.tsx` + `twitter-image.tsx`,
+      next/og; `twitter: summary_large_image`). **Homepage `GmhgBanner`** (mirrors FireworksBanner; torch photo,
+      date-gated to retire after Jul 12). Copy rewritten to **sell the deliverables** (filter events, downloadable/
+      printable per-day itinerary, field map with stops pinned, arrive-by + between-event walk times, lot + shuttle
+      cash, live forecast + packing list, calendar export) across meta title/description, OG, hero dek, REPORTS
+      card, and the reports-page teaser; added a `WebPage` JSON-LD node. Verified: OG PNG renders 1200×630, page
+      200 with og:image + twitter card + canonical, banner links to the new slug. 160 vitest / lint / build green.
+- [ ] **Owner:** merge + request GSC indexing (new slug **…-planner-2026**); games start Thu Jul 9 (evergreen for 2027).
+      For 2027 reuse, re-verify all logistics (lots/prices/hours drift), and give real numbers for the
+      cross-cluster walk estimates if you have them (currently hand-tuned: center↔south 11, ↔north 12,
+      north↔south 20). Keep `src/lib/gmhg/` engines event-agnostic (they already are) for Woolly Worm /
+      gamedays.
+
 ## Done: Right/Wrong Ray visual break-up + polish (PR #104 — merged + live 2026-07-02)
 - [x] **A+C plane split + rank rails (owner's pick from the heavy-blue proposals):** the Season Scoreboard
       sits on the teal-900 dot-grid plane (header stays teal-700); every row carries a 3px standing-colored
@@ -607,7 +727,8 @@ SEO/AIO program spec: `planning/specs/2026-07-02-seo-aio-program-design.md` (blo
 - [x] **/resources OG share card** — hub card from the same `CATEGORIES` config the hub renders.
 - [x] **/shop metadata + BreadcrumbList** — was title-only, zero schema.
 - [ ] Franchise landing template doc (fireworks = instance #1, answer-block-first for the next franchise) —
-      write with the blog/pipeline work.
+      write with the blog/pipeline work. **Instance #2 shipped 2026-07-06: the GMHG planner** (event-agnostic
+      planner+ICS+print engines now live in `src/lib/gmhg/` — the reusable core the template doc should describe).
 - [ ] Homepage "All reports →" link to `/resources/reports` — deferred, homepage owned by the redesign pass.
 - [x] **Perf — hero LCP fixed (PR #87, merged + live).** Lighthouse was Performance **70** with **LCP 19.7s**
       (CLS 0, TBT 30ms otherwise great). Cause: the hero iPhone screenshot was a **2.8MB** PNG shown at 150px;

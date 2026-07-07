@@ -5,6 +5,8 @@ export function sanitizePostHtml(html: string): string {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "figure", "figcaption", "h1", "h2"]),
     allowedAttributes: {
       ...sanitizeHtml.defaults.allowedAttributes,
+      // Heading anchor ids drive the on-page table of contents.
+      "*": ["id"],
       img: ["src", "srcset", "alt", "title", "width", "height", "loading"],
       a: ["href", "name", "target", "rel"],
     },

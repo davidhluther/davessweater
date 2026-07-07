@@ -11,21 +11,21 @@ metaDescription: "One person, free weather APIs, and a nightly GitHub Actions jo
 
 Dave's Sweater runs on one cost — a $12/year domain. Free APIs, a daily GitHub Actions job, and Vercel's free tier handle the rest, and free forecasts beat the paid service by about 21 points a day over 118 days.
 
-## Key takeaways
+## The takeaways
 
-- The only bill that clears is a $12/year domain — everything else runs on free tiers or genuinely free, no-key APIs
+- The only bill that clears is a $12/year domain. Everything else runs on free tiers or genuinely free, no-sign-up APIs
 - Over 118 days, the best free source (Open-Meteo, 92.0 avg) beat the paid regional forecaster (Ray's Weather, 71.0 avg) by about 21 points a day
 - The stack is roughly eight free forecast APIs, one daily GitHub Actions job, a Python-stdlib pipeline, and Next.js on Vercel — no servers, no database, no employees
 - Every score is public as CSV and JSON, so you can check the bill and the receipts yourself
-- The honest caveats: this measures short-range accuracy, and "actuals" come from the Open-Meteo archive — both disclosed on the methodology page
+- The honest caveats: this measures short-range accuracy, and "actuals" come from the Open-Meteo archive, both disclosed on the methodology page
 
 ## What does it actually cost to run this weather site?
 
 One line: $12 a year for the domain. That's the whole hard cost. The weather data comes from free APIs, the daily automation runs inside GitHub's free Actions minutes, and the site itself is hosted on Vercel's free Hobby tier. No servers to rent, no database to pay for, no salaries. If you want to know how much it costs to run a website like this, the answer fits on one receipt.
 
-### The bill of materials, line by line
+### What's on the bill?
 
-Here's the entire spend, itemized. No footnotes hiding a surprise.
+Here's the entire spend, itemized, line by line. No footnotes hiding a surprise.
 
 | Cost line | Amount |
 | --- | --- |
@@ -37,13 +37,13 @@ Here's the entire spend, itemized. No footnotes hiding a surprise.
 | Employees | $0 (there aren't any) |
 | **Total per year** | **$12** |
 
-### Genuinely free versus a free tier
+### What's the difference between free and a free tier?
 
-Two of those zeros are different kinds of zero, and a technical reader will want the distinction. Open-Meteo is genuinely free for non-commercial use — no API key, no sign-up, no credit card. Vercel's Hobby plan is a free tier: free for personal, non-commercial projects, with the usual caveat that a project can be paused if it blows past the included limits. This site sits nowhere near either ceiling, so both stay at $0 — but "free forever, no strings" and "free until you get big" are not the same promise, and it's worth saying which is which.
+Two of those zeros are different kinds of zero, and a technical reader will want the distinction. Open-Meteo is genuinely free for non-commercial use: no API key, no sign-up, no credit card. Vercel's Hobby plan is a free tier, free for personal, non-commercial projects, with the usual caveat that a project can be paused if it blows past the included limits. This site sits nowhere near either ceiling, so both stay at $0. But "free forever, no strings" and "free until you get big" are not the same promise, and it's worth saying which is which.
 
 ## How can free weather APIs beat a paid service?
 
-They already do, measured daily. Over the 118-day tracking window, Open-Meteo (free) averages 92.0 on a 100-point scale and Ray's Weather (paid) averages 71.0 — a gap of about 21 points a day. Apple Weather, also free, sits at 88.3. The free forecasts most people ignore have been quietly outscoring the one the region pays attention to, and the scoreboard runs every day.
+They already do, measured daily. Over the 118-day tracking window, Open-Meteo (free) averages 92.0 on a 100-point scale and Ray's Weather (paid) averages 71.0, a gap of about 21 points a day. Apple Weather, also free, sits at 88.3. The free forecasts most people ignore have been quietly outscoring the one the region pays attention to, and the scoreboard runs every day.
 
 ### The 118-day scoreboard
 
@@ -55,23 +55,23 @@ Every forecaster gets the same test: capture the forecast, then grade it against
 | Apple Weather | Free | 88.3 | 1 |
 | Ray's Weather | Paid | 71.0 | 23 |
 
-Seven other free sources have short samples so far — nine scored days each, so treat them as provisional — but every one currently beats Ray's 71.0: Met.no 95.6, Google 94.0, Visual Crossing 93.7, Tomorrow.io 91.5, OpenWeatherMap 87.2, WeatherAPI 86.3, and NWS 84.1. Small samples, same direction.
+Seven other free sources have short samples so far (nine scored days each, so treat them as provisional), yet every one currently beats Ray's 71.0: Met.no 95.6, Google 94.0, Visual Crossing 93.7, Tomorrow.io 91.5, OpenWeatherMap 87.2, WeatherAPI 86.3, and NWS 84.1. Small samples, same direction.
 
 ### Why the gap holds: about 21 points a day
 
-The gap isn't a one-week fluke. June 2026 alone ran 29 scored days: Open-Meteo 92.3, Apple 88.0, Ray's 73.3 — a 19.0-point June gap. Ray's best June day landed at 90.7 on June 24; his worst hit 26.1 on June 2. Part of the spread is structural: Ray's Weather never publishes a numeric precip amount, so under the implied-zero rule he forfeits the precip-amount field on wet-forecast days and earns it on dry ones. If you want the fuller version, the [content hub](/resources) collects the deeper breakdowns.
+The gap isn't a one-week fluke. June 2026 alone ran 29 scored days: Open-Meteo 92.3, Apple 88.0, Ray's 73.3, a 19.0-point June gap. Ray's best June day landed at 90.7 on June 24; his worst hit 26.1 on June 2. Part of the spread is structural: Ray's Weather never publishes a numeric precip amount, so under the implied-zero rule he forfeits the precip-amount field on wet-forecast days and earns it on dry ones. If you want the fuller version, the [content hub](/resources) collects the deeper breakdowns.
 
-## What's the whole stack — and why is it this cheap?
+## What's the whole stack, and why is it this cheap?
 
-The stack is deliberately boring: roughly eight free forecast APIs feeding one Python-stdlib pipeline, which writes JSON that a Next.js site reads at build time, deployed on Vercel. Cheap follows from having no moving parts that charge rent — no application server running around the clock, no managed database, no queue. The forecasts are the only external dependency, and they're free.
+The stack is deliberately boring: roughly eight free forecast APIs feeding one Python-stdlib pipeline, which writes JSON that a Next.js site reads at build time, deployed on Vercel. Cheap follows from having no moving parts that charge rent, no application server running around the clock, no managed database, no queue. The forecasts are the only external dependency, and they're free.
 
 ### Roughly eight free forecast APIs, one source of truth
 
-Open-Meteo is the anchor. It's free for non-commercial use and blends numerical weather prediction models from several national weather services. Around it sit the other free sources — Apple Weather, Met.no, Google, Visual Crossing, Tomorrow.io, OpenWeatherMap, WeatherAPI, NWS — each captured and scored the same way. One source of truth ("actuals") settles who was right, and it's the same yardstick for everyone.
+Open-Meteo is the anchor. It's free for non-commercial use and blends numerical weather prediction models from several national weather services. Around it sit the other free sources (Apple Weather, Met.no, Google, Visual Crossing, Tomorrow.io, OpenWeatherMap, WeatherAPI, NWS), each captured and scored the same way. One source of truth ("actuals") settles who was right, and it's the same yardstick for everyone.
 
 ### Python stdlib pipeline plus Next.js on Vercel
 
-The capture-and-score pipeline is Python standard library only — no pip install, no dependency tree to patch. It writes plain JSON files into the repo. The site is Next.js, and Vercel rebuilds it on every commit to the data. Because the site is built from committed JSON rather than querying a live database, there's nothing to keep warm and nothing to bill hourly. The repo is the database.
+The capture-and-score pipeline is Python standard library only: no pip install, no dependency tree to patch. It writes plain JSON files into the repo. Next.js renders the site, and Vercel rebuilds it on every commit to the data. Because the site is built from committed JSON rather than querying a live database, there's nothing to keep warm and nothing to bill hourly. The repo is the database.
 
 ## What does the daily GitHub Actions job actually do?
 
@@ -79,19 +79,25 @@ One daily cron job does the whole loop: capture today's forecast from each sourc
 
 ### Capture at midday, score against tomorrow's actuals
 
-The timing matters for honesty. Each forecast is captured around midday and graded against the next day's verified actuals — so what the scoreboard measures is short-range accuracy, roughly a one-day lead time. That's a real, repeatable test, and it's the one we run. It is not a claim about 7- or 10-day forecasts; forecast skill decays with lead time, and the shape of that decay is published meteorology — see NOAA's [Forecast Verification](https://www.weather.gov/about/verification) materials — not something this site has measured. When you see our numbers, read them as a short-range local data point.
+The timing matters for honesty. Each forecast is captured around midday and graded against the next day's verified actuals, so what the scoreboard measures is short-range accuracy, roughly a one-day lead time. That's a real, repeatable test, and it's the one we run. It is not a claim about 7- or 10-day forecasts; forecast skill decays with lead time, and the shape of that decay is published meteorology (see NOAA's [Forecast Verification](https://www.weather.gov/about/verification) materials), not something this site has measured. When you see our numbers, read them as a short-range local data point.
 
 ### No servers, no employees, no database bill
 
-Because the work happens inside a scheduled Actions run and the output is committed files, the always-on cost is zero. Nothing listens for traffic on our side between builds. There's no ops rotation, no one on call, no employees — one person maintains it. The recurring invoice is still just the domain.
+Because the work happens inside a scheduled Actions run and the output is committed files, the always-on cost is zero. Nothing listens for traffic on our side between builds. There's no ops rotation, no one on call, no employees. One person maintains it. The recurring invoice is still just the domain.
 
 ## Is the data public, and could you replicate this yourself?
 
-Yes on both counts. Every score is published as open CSV and JSON, so you can pull the numbers and re-run the math yourself instead of taking our word for it. The stack is ordinary enough — free APIs, GitHub Actions, a static-ish Next.js build — that a motivated developer could stand up their own version for the price of a domain. The parts that take judgment are the scoring rules and the honesty about their limits.
+Yes on both counts. Every score is published as open CSV and JSON, so you can pull the numbers and re-run the math yourself instead of taking our word for it. The stack is ordinary enough that a motivated developer could stand up their own version for the price of a domain:
+
+- Free weather APIs for the forecasts
+- A daily GitHub Actions job to capture and score them
+- A static-ish Next.js build on Vercel to publish the results
+
+The parts that take judgment are the scoring rules and the honesty about their limits.
 
 ### Open CSV and JSON, and the honest caveats
 
-The data is public, and so are the caveats. Two matter most. First, this is short-range accuracy — a capture-day forecast graded against the next day's actuals — so no horizon or lead-time decay claim rides on our numbers alone. Second, our "actuals" come from the Open-Meteo historical archive, which means Open-Meteo is, in part, being graded against its own house's record; that circularity is disclosed on [how the 100-point scoring works](/methodology), not buried. The point of publishing the raw files is that you don't have to trust the summary — you can audit it.
+The data is public, and so are the caveats. Two matter most. First, this is short-range accuracy (a capture-day forecast graded against the next day's actuals), so no horizon or lead-time decay claim rides on our numbers alone. Second, our "actuals" come from the Open-Meteo historical archive, which means Open-Meteo is, in part, being graded against its own house's record; that circularity is disclosed on [how the 100-point scoring works](/methodology), not buried. The point of publishing the raw files is that you don't have to trust the summary — you can audit it.
 
 ## See the receipts on the live tracker
 

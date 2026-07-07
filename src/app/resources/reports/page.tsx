@@ -4,6 +4,7 @@ import { fmtLongDate } from "@/lib/dates";
 import { breadcrumbs, collectionPage } from "@/lib/schema";
 import SectionBand from "@/components/SectionBand";
 import SightlineTeaser from "@/components/SightlineTeaser";
+import GmhgPlannerTeaser from "@/components/gmhg/GmhgPlannerTeaser";
 import JsonLd from "@/components/JsonLd";
 
 const DEF = CATEGORIES.find((c) => c.key === "reports")!;
@@ -63,6 +64,13 @@ export default function Page() {
                   {r.summary && <p className="mt-1 text-sm text-muted">{r.summary}</p>}
                 </div>
               </div>
+              {r.href === "/reports/grandfather-mountain-highland-games-planner-2026" && (
+                <div className="mt-4 rounded-xl border border-border bg-surface p-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-orange-600">Jump straight into the planner</p>
+                  <p className="mt-1 mb-3 text-sm text-muted">Pick a day, or start with the marquee events.</p>
+                  <GmhgPlannerTeaser />
+                </div>
+              )}
             </li>
           ))}
         </ul>
@@ -70,7 +78,7 @@ export default function Page() {
       {/* Live teaser from the fireworks report: same input module as the
           on-page checker; Check hands off to /fireworks, which auto-runs it.
           Retire (or generalize) when the season's report rotates out. */}
-      <div className="mt-8 rounded-2xl border border-border bg-surface p-5">
+      <div className="mt-6 rounded-2xl border border-border bg-surface p-5">
         <p className="text-xs font-bold uppercase tracking-wider text-orange-600">
           Try the fireworks report
         </p>

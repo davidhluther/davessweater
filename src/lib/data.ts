@@ -1,11 +1,16 @@
 import { readFile, readdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import type { Comparison, Scores, BlogPost, LatestForecasts } from "@/lib/types";
+import type { Comparison, Scores, BlogPost, LatestForecasts, GmhgData, TocItem } from "@/lib/types";
 import type { FireworksForecastFile } from "@/lib/fireworks";
 import type { TerrainFile } from "@/lib/sightline";
 import { marked } from "marked";
+import { markedSmartypants } from "marked-smartypants";
 import { ARTICLE_SLUGS, type PostCategory } from "@/content/resources";
+
+// Typographic quotes/dashes at render time — source stays straight-quoted (so
+// the writing validator is happy); the rendered post gets correct curly quotes.
+marked.use(markedSmartypants());
 
 const DATA = join(process.cwd(), "data");
 
@@ -50,6 +55,10 @@ export async function getTerrain(): Promise<TerrainFile | null> {
   return readJson<TerrainFile>(join(DATA, "terrain.json"));
 }
 
+export async function getGmhgData(): Promise<GmhgData | null> {
+  return readJson<GmhgData>(join(DATA, "gmhg_events.json"));
+}
+
 const POSTS_DIR = join(process.cwd(), "src", "content", "posts");
 
 function parseFrontmatter(raw: string): { data: Record<string, string>; body: string } {
@@ -75,6 +84,85 @@ function stripLeadingH1(md: string): string {
   return md.replace(/^\s*#\s+.*(?:\r?\n)+/, "");
 }
 
+function slugify(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
+// Parse the body's H2/H3 headings (in document order) into anchor ids, deduping
+// collisions. Ids are derived from the plain source text so they match whether
+// or not smartypants has curled the rendered heading's quotes.
+function parseHeadings(md: string): { depth: number; text: string; id: string }[] {
+  const items: { depth: number; text: string; id: string }[] = [];
+  const seen = new Map<string, number>();
+  for (const raw of md.split(/\r?\n/)) {
+    const m = raw.trim().match(/^(###|##)\s+(.*)/);
+    if (!m) continue;
+    const text = m[2].replace(/\s+#*\s*$/, "").trim();
+    let id = slugify(text) || "section";
+    const n = seen.get(id) ?? 0;
+    seen.set(id, n + 1);
+    if (n) id = `${id}-${n}`;
+    items.push({ depth: m[1].length, text, id });
+  }
+  return items;
+}
+
+// Nest H3s under their preceding H2 for a two-level table of contents.
+function buildToc(headings: { depth: number; text: string; id: string }[]): TocItem[] {
+  const toc: TocItem[] = [];
+  for (const h of headings) {
+    if (h.depth === 2 || toc.length === 0) toc.push({ id: h.id, text: h.text, children: [] });
+    else toc[toc.length - 1].children.push({ id: h.id, text: h.text });
+  }
+  return toc;
+}
+
+// Assign the precomputed ids to the rendered HTML's heading tags in order
+// (marked emits headings in source order, so the sequence lines up).
+function injectHeadingIds(html: string, headings: { id: string }[]): string {
+  let i = 0;
+  return html.replace(/<h([23])>/g, (_m, d) => {
+    const h = headings[i++];
+    return h ? `<h${d} id="${h.id}">` : `<h${d}>`;
+  });
+}
+
+// Flatten inline markdown (links, emphasis, code) to plain text for schema text.
+function mdToText(s: string): string {
+  return s
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/[*_`]+/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Pull question/answer pairs out of a post's "Frequently asked questions"
+// section (## heading, then ### question + following paragraph) so the detail
+// route can emit FAQPage JSON-LD. Answers are flattened to plain text.
+function parseFaqs(md: string): { q: string; a: string }[] {
+  const faqs: { q: string; a: string }[] = [];
+  let inFaq = false;
+  let q: string | null = null;
+  let buf: string[] = [];
+  const flush = () => {
+    if (q && buf.length) faqs.push({ q: mdToText(q), a: mdToText(buf.join(" ")) });
+    q = null; buf = [];
+  };
+  for (const raw of md.split(/\r?\n/)) {
+    const line = raw.trim();
+    const h3 = line.match(/^###\s+(.*)/);
+    const h2 = line.match(/^##\s+(.*)/);
+    if (h3) { if (inFaq) flush(); q = h3[1]; continue; }
+    if (h2) { flush(); inFaq = /frequently asked questions/i.test(h2[1]); continue; }
+    if (!inFaq) continue;
+    if (line === "" ) continue;
+    if (line === "---") { flush(); inFaq = false; continue; }
+    if (q) buf.push(line);
+  }
+  flush();
+  return faqs;
+}
+
 // Native posts authored as markdown in src/content/posts/. Unlike Substack
 // feed posts they carry an explicit slug + category; the body renders to HTML
 // and then flows through the same sanitizer as feed content.
@@ -86,6 +174,9 @@ async function getNativePosts(): Promise<BlogPost[]> {
     const { data, body } = parseFrontmatter(await readFile(join(POSTS_DIR, f), "utf8"));
     if (!data.slug || !data.title) continue;
     const category = data.category === "news" ? "news" : "articles";
+    const bodyNoH1 = stripLeadingH1(body);
+    const headings = parseHeadings(bodyNoH1);
+    const rendered = marked.parse(bodyNoH1, { async: false }) as string;
     out.push({
       title: data.title,
       slug: data.slug,
@@ -95,7 +186,9 @@ async function getNativePosts(): Promise<BlogPost[]> {
       metaTitle: data.metaTitle,
       metaDescription: data.metaDescription,
       link: `/resources/${category}/${data.slug}`,
-      content: marked.parse(stripLeadingH1(body), { async: false }) as string,
+      content: injectHeadingIds(rendered, headings),
+      toc: buildToc(headings),
+      faqs: parseFaqs(body),
     });
   }
   return out;
