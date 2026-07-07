@@ -17,9 +17,9 @@ const SLUG = "/reports/grandfather-mountain-highland-games-planner-2026";
 const PAGE_URL = `https://davessweater.com${SLUG}`;
 
 export const metadata = {
-  title: "Grandfather Mountain Highland Games 2026: Plan Your Days (Free Interactive Planner)",
+  title: "Grandfather Mountain Highland Games 2026: Plan Your Days",
   description:
-    "The free planner the official schedule isn't: Filter events across all four days, then get a downloadable, printable per-day itinerary, a field map with your stops pinned, arrive-by and between-event walk times, the right lot and shuttle cash, a live mountain forecast with packing list, and a calendar export. For the 70th Games at MacRae Meadows, July 9–12, 2026.",
+    "The free planner the official schedule isn't. Filter events, get a printable itinerary, field map, and packing list. MacRae Meadows, July 9–12, 2026.",
   alternates: { canonical: SLUG },
   openGraph: {
     title: "Grandfather Mountain Highland Games 2026: Plan Your Days",
@@ -60,6 +60,16 @@ const FAQS: Faq[] = [
     a: "No. Pets are not allowed on the Meadow. It is a lease restriction with the Grandfather Mountain Stewardship Foundation, and only certified ADA service animals are allowed. Leave the good boy at home.",
   },
   {
+    id: "faq-tickets",
+    q: "Do I need a ticket, and how much does it cost?",
+    a: "Yes. Admission is sold per day, as a 4-day pass, and with camping as an add-on. Buy online at gmhg.org, at the GMHG office in Linville (cash, check, money order, or card), or at the gate the day of. Prices vary by day and change year to year, so check gmhg.org's current Prices page rather than trust an old number here.",
+  },
+  {
+    id: "faq-camping",
+    q: "Can I camp at the Games?",
+    a: "Yes, but it is festival camping, not a traditional campground: No assigned sites, no full hookups, gravel roads, and rough terrain in spots, in a wooded area next to the field. Roughly three-quarters of the sites have electric and water access. Campers check in at Camping Registration on arrival and need their own camper 4-day ticket. Parking for camping sits apart from the tent area; attendants there will point you the right way.",
+  },
+  {
     id: "faq-conflict",
     q: "Can I see the caber toss and still make a show at the Gaelic tent?",
     a: "This is exactly the trap the planner exists to catch. The Professional Caber Toss (center field, 1:15 Saturday) and a 1:30 Gaelic Tent event sit on opposite ends of the meadow, and you route around the track oval, not across the live infield, so allow the better part of 20 minutes at that post-caber crowd peak. A 15-minute gap does not work, and the tool flags it red the moment you pick both. It does the same for every pair you select.",
@@ -68,6 +78,11 @@ const FAQS: Faq[] = [
     id: "faq-weather",
     q: "What should I pack for the weather?",
     a: "MacRae Meadows sits at about 4,300 feet, so it runs cooler and windier than the valley and the weather changes fast. Layers always; a raincoat or poncho (umbrellas are hopeless in the wind); sunscreen and a hat at that elevation. The planner pulls the live forecast for the field itself and turns it into a per-day packing list, and it falls back to the always-true version if the forecast is unreachable. Forecasts change, so check again the morning you go.",
+  },
+  {
+    id: "faq-rain",
+    q: "Does the event happen rain or shine?",
+    a: "Yes. The Games run rain or shine, and events pause only for lightning, not for rain itself. Layers and a raincoat are the standing recommendation no matter what the forecast says, since mountain weather at 4,300 feet turns fast. Field and camping conditions can get muddy after a wet stretch, so plan your footwear accordingly.",
   },
   {
     id: "faq-marquee",
