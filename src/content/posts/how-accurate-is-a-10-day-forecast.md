@@ -9,7 +9,7 @@ metaDescription: "A 10-day forecast is right about half the time, per NOAA. Here
 ---
 # How accurate is a 10-day forecast? Depends who's counting
 
-A 10-day forecast is right only about half the time, per NOAA's NESDIS — near 90% at five days, about 80% at seven, roughly 50% by day 10. Trust the near term, treat day 10 as a trend.
+A 10-day forecast is right only about half the time, per NOAA's NESDIS: near 90% at five days, about 80% at seven, roughly 50% by day 10. Trust the near term, treat day 10 as a trend.
 
 ## Key takeaways
 
@@ -37,12 +37,12 @@ It decays with distance, and not gently. NOAA's published curve runs from ~90% a
 
 | Forecast horizon | Rough skill (NOAA/NESDIS) | What to trust it for |
 |---|---|---|
-| 1–2 days | Very high | Plans — commute, outdoor work, whether you need the sweater |
-| 3–5 days | ~90% | Real decisions — travel, events, when to mow |
-| 6–7 days | ~80% | Soft planning — pack for the trend, keep checking |
-| 8–10 days | ~50% | Direction only — warmer or colder, wetter or drier |
-| 11–14 days | Below 50%, near the limit | Vibes — a hunch, not a forecast |
-| 15+ days | Not reliably possible | Nothing specific — see the two-week limit below |
+| 1–2 days | Very high | Plans: commute, outdoor work, whether you need the sweater |
+| 3–5 days | ~90% | Real decisions: travel, events, when to mow |
+| 6–7 days | ~80% | Soft planning: pack for the trend, keep checking |
+| 8–10 days | ~50% | Direction only: warmer or colder, wetter or drier |
+| 11–14 days | Below 50%, near the limit | Vibes: a hunch, not a forecast |
+| 15+ days | Not reliably possible | Nothing specific: see the two-week limit below |
 
 Figures in the table are NOAA/NESDIS published skill estimates. The "what to trust it for" column is our plain-language read of them.
 
@@ -112,11 +112,11 @@ Two places to start. The homepage carries [today's Dave's Sweater Index and the 
 
 ### Why is the 10-day forecast always wrong?
 
-It isn't always wrong — it's right about half the time, per NOAA's NESDIS, which feels like "always wrong" when you're checking day 10 for a specific plan. Small errors in today's data compound over 10 simulated days until only the broad trend survives. Read it as direction, not detail.
+It isn't always wrong. It's right about half the time, per NOAA's NESDIS, which feels like "always wrong" when you're checking day 10 for a specific plan. Small errors in today's data compound over 10 simulated days until only the broad trend survives. Read it as direction, not detail.
 
 ### How far out can a weather forecast be trusted?
 
-About five to seven days for planning, per NOAA's published skill figures — roughly 90% accurate at five days and 80% at seven. Beyond that, reliability drops toward a coin flip by day 10, and the atmosphere's hard predictability limit sits near two weeks.
+About five to seven days for planning, per NOAA's published skill figures: roughly 90% accurate at five days and 80% at seven. Beyond that, reliability drops toward a coin flip by day 10, and the atmosphere's hard predictability limit sits near two weeks.
 
 ### Is a 5-day or 7-day forecast more reliable than a 10-day?
 
@@ -132,12 +132,12 @@ Not in our data. Over 118 scored days the best free source beat the paid local i
 
 ### Can any forecast reliably predict weather more than two weeks out?
 
-No — not specific weather. The atmosphere has a predictability limit of roughly two weeks, so "forecasts" past that range are really climatology and long-range trend estimates, not day-by-day predictions. A confident, specific 30-day forecast is a red flag, not a feature.
+No, not specific weather. The atmosphere has a predictability limit of roughly two weeks, so "forecasts" past that range are really climatology and long-range trend estimates, not day-by-day predictions. A confident, specific 30-day forecast is a red flag, not a feature.
 
 ### Does a 10-day forecast still tell you anything useful?
 
-Yes, at the level of trend. A 10-day outlook reliably signals whether a warm, cold, wet, or dry pattern is coming, which is enough to sense next week's mood — sweater or shorts. Just don't plan a specific outdoor event around day 10; wait for the 5-day to firm up.
+Yes, at the level of trend. A 10-day outlook reliably signals whether a warm, cold, wet, or dry pattern is coming, which is enough to sense next week's mood: sweater or shorts. Just don't plan a specific outdoor event around day 10; wait for the 5-day to firm up.
 
 ---
 
-Curious how your favorite forecast actually stacks up? [The daily scoreboard, every forecaster graded](/right-wrong-ray) grades every source against verified actuals, every day, and [how we score every forecast on a 100-point scale](/methodology) shows exactly how the points get assigned — public data, checkable math, no black box.
+Curious how your favorite forecast actually stacks up? [The daily scoreboard, every forecaster graded](/right-wrong-ray) grades every source against verified actuals, every day, and [how we score every forecast on a 100-point scale](/methodology) shows exactly how the points get assigned: public data, checkable math, no black box.

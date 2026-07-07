@@ -9,7 +9,7 @@ metaDescription: "June 2026 scored: Ray's Weather averaged 73.3 while free Open-
 ---
 # Ray's Weather report card: June 2026
 
-We scored 29 days of Boone forecasts in June 2026. Open-Meteo led at 92.3, Apple Weather 88.0, and Ray's Weather 73.3 — a 19.0-point gap. Ray's went Wrong on 4 days; the free sources on zero.
+We scored 29 days of Boone forecasts in June 2026. Open-Meteo led at 92.3, Apple Weather 88.0, and Ray's Weather 73.3: a 19.0-point gap. Ray's went Wrong on 4 days; the free sources on zero.
 
 ## Key takeaways
 
@@ -87,7 +87,7 @@ Worth keeping in scope: this is a short-range measurement. We capture each forec
 
 ## See the live scoreboard
 
-June is one month in a record that keeps growing. The pattern in the monthly numbers is the same pattern in the season-long numbers: the free forecasts most people ignore keep pace with, and usually beat, the paid one everybody trusts. We keep the receipts, and they're public — CSV and JSON, scored the same way every day.
+June is one month in a record that keeps growing. The pattern in the monthly numbers is the same pattern in the season-long numbers: the free forecasts most people ignore keep pace with, and usually beat, the paid one everybody trusts. We keep the receipts, and they're public: CSV and JSON, scored the same way every day.
 
 Check [today's Dave's Sweater Index](/) for the current sweater verdict, or open [the live scoreboard, updated daily](/right-wrong-ray) to watch July's report card build itself one day at a time.
 
@@ -95,7 +95,7 @@ Check [today's Dave's Sweater Index](/) for the current sweater verdict, or open
 
 ### Was Ray's Weather accurate in June 2026?
 
-Ray's Weather was moderately accurate in June 2026, averaging 73.3 out of 100 across 29 scored days — a passing "Meh" grade. He posted 14 Right days and 4 Wrong days. Free Open-Meteo (92.3) and Apple Weather (88.0) both scored higher and never graded Wrong.
+Ray's Weather was moderately accurate in June 2026, averaging 73.3 out of 100 across 29 scored days: a passing "Meh" grade. He posted 14 Right days and 4 Wrong days. Free Open-Meteo (92.3) and Apple Weather (88.0) both scored higher and never graded Wrong.
 
 ### What was the most accurate Boone forecast in June 2026?
 
@@ -107,11 +107,11 @@ Each forecast is graded out of 100 points: high temp 30, low temp 30, wind 20, p
 
 ### Why did Ray's Weather score lower than the free apps?
 
-Ray's scored lower on temperature misses — 60 of the 100 points are high and low temp — and on deeper, worse days. He also forfeits the precip-amount field on wet-forecast days because he never publishes a numeric rain or snow total, while the free sources report one.
+Ray's scored lower on temperature misses (60 of the 100 points are high and low temp) and on deeper, worse days. He also forfeits the precip-amount field on wet-forecast days because he never publishes a numeric rain or snow total, while the free sources report one.
 
 ### What was Ray's worst forecast day in June 2026?
 
-Ray's worst forecast day in June 2026 was June 2, scoring 26.1 out of 100 — deep in Wrong territory and the lowest single-day score any source posted all month. His best day was June 24 at 90.7, so the range within one month spanned 64.6 points.
+Ray's worst forecast day in June 2026 was June 2, scoring 26.1 out of 100: deep in Wrong territory and the lowest single-day score any source posted all month. His best day was June 24 at 90.7, so the range within one month spanned 64.6 points.
 
 ### Is Open-Meteo more accurate than Ray's Weather?
 
@@ -123,4 +123,4 @@ A new report card is published once a month, scoring every Boone forecaster agai
 
 ---
 
-Want the current numbers instead of last month's? Open [the live scoreboard, updated daily](/right-wrong-ray) to see every Boone forecaster graded today, or read [how the 100-point scoring works](/methodology) to check our math. We kept the receipts — they're public, and they're scored the same way every single day.
+Want the current numbers instead of last month's? Open [the live scoreboard, updated daily](/right-wrong-ray) to see every Boone forecaster graded today, or read [how the 100-point scoring works](/methodology) to check our math. We kept the receipts: they're public, and they're scored the same way every single day.

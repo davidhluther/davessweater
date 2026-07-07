@@ -3,19 +3,19 @@ title: "This weather site costs $12 a year to run"
 slug: 12-dollars-a-year-weather-site
 category: articles
 date: 2026-07-02
-summary: "How Dave's Sweater runs on a $12/year domain and free APIs — and still shows free forecasts beating the paid one."
+summary: "How Dave's Sweater runs on a $12/year domain and free APIs, and still shows free forecasts beating the paid one."
 metaTitle: "This weather site runs on $12 a year"
 metaDescription: "One person, free weather APIs, and a nightly GitHub Actions job beat a paid regional forecaster by about 21 points a day. Total cost: a $12 domain. Here's the stack."
 ---
 # This weather site costs $12 a year to run
 
-Dave's Sweater runs on one cost — a $12/year domain. Free APIs, a daily GitHub Actions job, and Vercel's free tier handle the rest, and free forecasts beat the paid service by about 21 points a day over 118 days.
+Dave's Sweater runs on one cost: a $12/year domain. Free APIs, a daily GitHub Actions job, and Vercel's free tier handle the rest, and free forecasts beat the paid service by about 21 points a day over 118 days.
 
 ## The takeaways
 
 - The only bill that clears is a $12/year domain. Everything else runs on free tiers or genuinely free, no-sign-up APIs
 - Over 118 days, the best free source (Open-Meteo, 92.0 avg) beat the paid regional forecaster (Ray's Weather, 71.0 avg) by about 21 points a day
-- The stack is roughly eight free forecast APIs, one daily GitHub Actions job, a Python-stdlib pipeline, and Next.js on Vercel — no servers, no database, no employees
+- The stack is roughly eight free forecast APIs, one daily GitHub Actions job, a Python-stdlib pipeline, and Next.js on Vercel: no servers, no database, no employees
 - Every score is public as CSV and JSON, so you can check the bill and the receipts yourself
 - The honest caveats: this measures short-range accuracy, and "actuals" come from the Open-Meteo archive, both disclosed on the methodology page
 
@@ -97,7 +97,7 @@ The parts that take judgment are the scoring rules and the honesty about their l
 
 ### Open CSV and JSON, and the honest caveats
 
-The data is public, and so are the caveats. Two matter most. First, this is short-range accuracy (a capture-day forecast graded against the next day's actuals), so no horizon or lead-time decay claim rides on our numbers alone. Second, our "actuals" come from the Open-Meteo historical archive, which means Open-Meteo is, in part, being graded against its own house's record; that circularity is disclosed on [how the 100-point scoring works](/methodology), not buried. The point of publishing the raw files is that you don't have to trust the summary — you can audit it.
+The data is public, and so are the caveats. Two matter most. First, this is short-range accuracy (a capture-day forecast graded against the next day's actuals), so no horizon or lead-time decay claim rides on our numbers alone. Second, our "actuals" come from the Open-Meteo historical archive, which means Open-Meteo is, in part, being graded against its own house's record; that circularity is disclosed on [how the 100-point scoring works](/methodology), not buried. The point of publishing the raw files is that you don't have to trust the summary. You can audit it.
 
 ## See the receipts on the live tracker
 
@@ -107,15 +107,15 @@ Bookmark [today's Dave's Sweater Index and the headline accuracy stat](/) if you
 
 ### How much does it cost to run a website like this?
 
-For this one, $12 a year — a single domain registration. Free weather APIs supply the data, a daily GitHub Actions job does the work, and Vercel's free Hobby tier hosts the site. There's no database, no server rental, and no staff, so nothing else recurs.
+For this one, $12 a year: a single domain registration. Free weather APIs supply the data, a daily GitHub Actions job does the work, and Vercel's free Hobby tier hosts the site. There's no database, no server rental, and no staff, so nothing else recurs.
 
 ### Is Open-Meteo really free to use?
 
-For non-commercial use, yes — no API key, no sign-up, and no credit card. It's the free anchor of the stack. Commercial use has separate paid terms, so read Open-Meteo's own license before you build a business on it. This site stays well inside the non-commercial terms.
+For non-commercial use, yes: no API key, no sign-up, and no credit card. It's the free anchor of the stack. Commercial use has separate paid terms, so read Open-Meteo's own license before you build a business on it. This site stays well inside the non-commercial terms.
 
 ### Can free weather APIs beat a paid weather service?
 
-By our tracker, yes. Over 118 days, Open-Meteo (free) averaged 92.0 and Ray's Weather (paid) averaged 71.0 — about 21 points a day. Apple Weather, also free, averaged 88.3. Seven other free sources lead Ray's too, though on smaller, provisional samples.
+By our tracker, yes. Over 118 days, Open-Meteo (free) averaged 92.0 and Ray's Weather (paid) averaged 71.0, about 21 points a day. Apple Weather, also free, averaged 88.3. Seven other free sources lead Ray's too, though on smaller, provisional samples.
 
 ### What does the GitHub Actions job actually do each day?
 
@@ -123,7 +123,7 @@ One daily cron run captures the day's forecast from each source around midday, f
 
 ### Do you pay for Vercel hosting?
 
-No. The site runs on Vercel's free Hobby tier, which suits a personal, non-commercial project like this one. The free tier does include limits, and a project that exceeds them can be paused — but this site's traffic and build volume sit well under them, so the hosting cost stays at $0.
+No. The site runs on Vercel's free Hobby tier, which suits a personal, non-commercial project like this one. The free tier does include limits, and a project that exceeds them can be paused. But this site's traffic and build volume sit well under them, so the hosting cost stays at $0.
 
 ### Is the accuracy data public and can I check it myself?
 
@@ -131,8 +131,8 @@ Yes. Every score is published as open CSV and JSON, so you can download the raw 
 
 ### Why does the paid forecaster score lower than the free ones?
 
-Two reasons, both measured. Ray's Weather runs a lower average across the scored fields in the window, and he never publishes a numeric precip amount — so under the implied-zero rule he forfeits the precip-amount field on wet-forecast days. It's tracked scoring against verified actuals, not opinion.
+Two reasons, both measured. Ray's Weather runs a lower average across the scored fields in the window, and he never publishes a numeric precip amount, so under the implied-zero rule he forfeits the precip-amount field on wet-forecast days. It's tracked scoring against verified actuals, not opinion.
 
 ---
 
-Want the live version instead of a snapshot? Open [the daily scoreboard where every forecaster gets graded](/right-wrong-ray) to watch every source get scored each day, and read [how the 100-point scoring works](/methodology) to see exactly how the math lands. The receipts update every day — check them yourself.
+Want the live version instead of a snapshot? Open [the daily scoreboard where every forecaster gets graded](/right-wrong-ray) to watch every source get scored each day, and read [how the 100-point scoring works](/methodology) to see exactly how the math lands. The receipts update every day. Check them yourself.
