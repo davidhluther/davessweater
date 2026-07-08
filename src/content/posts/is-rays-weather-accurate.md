@@ -59,7 +59,7 @@ Ray's Weather never publishes a numeric precip amount. Under our rule, a "no pre
 
 ## Ray's Weather vs the free apps: who is more accurate?
 
-The free apps are more accurate over the 118-day window. Open-Meteo leads at 92.0 with zero Wrong days, Apple Weather follows at 88.3 with one, and Ray's trails at 71.0 with 23. The paid forecast does not beat the free ones in Boone on this record. It trails the best free option by about 21 points a day.
+The free apps are more accurate over the 118-day window. Open-Meteo leads at 92.0 with zero Wrong days, Apple Weather follows at 88.3 with one, and Ray's trails at 71.0 with 23. The paid forecast does not beat the free ones in Boone on this record. It trails the best free option by about 21 points a day. And free here is genuinely free: [the whole tracker runs on a $12-a-year domain](/resources/articles/12-dollars-a-year-weather-site).
 
 ### What does the 118-day leaderboard show?
 

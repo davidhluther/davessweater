@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getScores, getLatestComparison, getComparisonWindow, getLatestForecasts } from "@/lib/data";
 import { heroStats, trendSeries, headToHead, whyStats } from "@/lib/homeStats";
 import { compositeForecast } from "@/lib/composite";
@@ -55,6 +56,16 @@ export default async function HomePage() {
         <SectionBand tone="surface">
           <h2 className="mb-3 font-display text-lg font-bold sm:text-xl">Yesterday in Boone | {fmtLongDate(h2h.date)}</h2>
           <HeadToHeadCard h={h2h} />
+          <p className="mt-3 text-xs text-muted">
+            The longer story:{" "}
+            <Link href="/resources/articles/is-rays-weather-accurate" className="text-teal underline underline-offset-2">
+              Is Ray&apos;s Weather accurate? 118 days scored
+            </Link>
+            {" | "}
+            <Link href="/resources/articles/rays-weather-report-card-june-2026" className="text-teal underline underline-offset-2">
+              Ray&apos;s Weather report card: June 2026
+            </Link>
+          </p>
         </SectionBand>
       )}
     </>

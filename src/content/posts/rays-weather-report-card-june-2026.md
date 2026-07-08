@@ -83,7 +83,7 @@ Ray's Weather never gives a numeric precip total, and our rule handles that even
 
 A 19.0-point monthly gap means the paid forecast landed a grade band below the free one, every day on average, for a whole month. In classroom terms, Open-Meteo turned in a low-A month and Ray's turned in a C. That gap is not a fluke of June. It tracks the full 118-day record, where Open-Meteo averages 92.0 and Ray's 71.0, about 21 points a day.
 
-Worth keeping in scope: this is a short-range measurement. We capture each forecast around midday and score it against the next day's actuals, so what we're grading is one-day-out accuracy, not seven- or ten-day lead time. If you want the full methodology and its limits, the [live scoreboard, updated daily](/right-wrong-ray) shows every source scored, every day, and links back to the receipts. For the longer argument, see [is Ray's Weather accurate?](/resources/articles/is-rays-weather-accurate).
+Worth keeping in scope: this is a short-range measurement. We capture each forecast around midday and score it against the next day's actuals, so what we're grading is one-day-out accuracy, not [seven- or ten-day lead time](/resources/articles/how-accurate-is-a-10-day-forecast). If you want the full methodology and its limits, the [live scoreboard, updated daily](/right-wrong-ray) shows every source scored, every day, and links back to the receipts. For the longer argument, see [is Ray's Weather accurate?](/resources/articles/is-rays-weather-accurate).
 
 ## See the live scoreboard
 

@@ -90,7 +90,7 @@ Ray's landed in Wrong on 23 of 118 days; the two free sources managed one Wrong 
 
 ### Is free or paid more accurate one day out?
 
-Paid didn't buy accuracy here. Ray's Weather has been the High Country's forecast of record for two decades, and "trusted" turns out not to be the same word as "accurate." One structural note in fairness: Ray's never publishes a numeric precipitation amount, so under [how we score every forecast on a 100-point scale](/methodology) he forfeits the amount field on wet-forecast days and earns it on dry ones. Even with that accounted for, the free apps most people ignore have been quietly beating the one everybody pays attention to. Want the deeper cut on that specific question? See [is Ray's Weather actually accurate?](/resources/articles/is-rays-weather-accurate)
+Paid didn't buy accuracy here. Ray's Weather has been the High Country's forecast of record for two decades, and "trusted" turns out not to be the same word as "accurate." One structural note in fairness: Ray's never publishes a numeric precipitation amount, so under [how we score every forecast on a 100-point scale](/methodology) he forfeits the amount field on wet-forecast days and earns it on dry ones. Even with that accounted for, the free apps most people ignore have been quietly beating the one everybody pays attention to. And the tracker keeping score [costs $12 a year to run](/resources/articles/12-dollars-a-year-weather-site), so nobody's accuracy here was bought. Want the deeper cut on that specific question? See [is Ray's Weather actually accurate?](/resources/articles/is-rays-weather-accurate)
 
 ## What should you actually trust a 10-day forecast for?
 

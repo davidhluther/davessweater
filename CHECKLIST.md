@@ -417,8 +417,24 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       cash, live forecast + packing list, calendar export) across meta title/description, OG, hero dek, REPORTS
       card, and the reports-page teaser; added a `WebPage` JSON-LD node. Verified: OG PNG renders 1200×630, page
       200 with og:image + twitter card + canonical, banner links to the new slug. 160 vitest / lint / build green.
-- [ ] **Owner:** merge + request GSC indexing (new slug **…-planner-2026**); games start Thu Jul 9 (evergreen for 2027).
-      For 2027 reuse, re-verify all logistics (lots/prices/hours drift), and give real numbers for the
+- [x] **Owner GSC round — ✅ DONE 2026-07-07 (morning of):** merged, requested indexing for the planner slug,
+      **submitted sitemap.xml to GSC for the first time** (it had never been submitted; robots.txt was the only
+      discovery path), and started Validate Fix on the duplicate-canonical issue. Context: a GSC inspection that
+      evening showed the planner URL "unknown to Google" pre-request while the fireworks report (which got the
+      same treatment 07-02) was indexed with rich results PASS and 904 impressions / 36 clicks in 11 days —
+      the franchise playbook works, the planner just needed the same push.
+- [x] **Pre-games SEO/internal-linking pass — 2026-07-07 evening (PR pending).** (1) GMHG title/meta/h1/WebPage
+      JSON-LD/REPORTS-card title now lead with query language: "…2026: Schedule, Parking & Day Planner" +
+      description names parking-by-day and shuttle cash (fireworks query data shows event + logistics-modifier
+      searches; OG card art keeps "Plan Your Days" as display copy). (2) Report cross-links: fireworks report
+      (most-crawled page) → planner callout band; planner → fireworks + /resources/reports footer line.
+      (3) Article mesh completed — every missing edge added contextually: 12-dollars → report-card + is-rays +
+      10-day; report-card → 10-day; 10-day → 12-dollars; is-rays → 12-dollars (the 4 posts previously had
+      partial linking, and "12 dollars" linked no siblings). (4) Main pages now link the articles (were
+      orphaned outside the nav dropdown): homepage head-to-head band, /right-wrong-ray scoring footnote, and
+      /methodology coverage section each carry "longer story" links. All links verified present in prerendered
+      HTML; 172 vitest / lint / build green.
+- [ ] **2027 reuse:** re-verify all logistics (lots/prices/hours drift), and give real numbers for the
       cross-cluster walk estimates if you have them (currently hand-tuned: center↔south 11, ↔north 12,
       north↔south 20). Keep `src/lib/gmhg/` engines event-agnostic (they already are) for Woolly Worm /
       gamedays.
@@ -806,12 +822,11 @@ SEO/AIO program spec: `planning/specs/2026-07-02-seo-aio-program-design.md` (blo
       *Duplicate without user-selected canonical* on `https://www.davessweater.com/` (signal loop). Owner flipped it
       in Project → Settings → Domains: `davessweater.com` = Connect to environment (serves); `www` = 308 Permanent
       Redirect → apex. **Verified live:** apex 200, `www` 308 → apex, served post canonical self-referential
-      (apex). No code change. **Owner to-do in GSC: hit Validate Fix** on the "Duplicate without user-selected
-      canonical" issue + optionally Request Indexing for the apex homepage. (The two `http://` "Page with redirect"
-      entries are the benign http→https redirect — not a bug.)
-  - [ ] **Nice-to-have: explicit homepage self-canonical.** `/` has no `<link rel="canonical">` (relies on
-        `metadataBase`); the homepage was the exact URL GSC flagged. Add `alternates: { canonical: "/" }` (+ og:url)
-        to `src/app/page.tsx` metadata to make the apex homepage signal explicit. Low-risk one-liner.
+      (apex). No code change. **Validate Fix started by owner 2026-07-07** on the "Duplicate without user-selected
+      canonical" issue — watch GSC for the validation verdict (typically days–2 weeks). (The two `http://` "Page
+      with redirect" entries are the benign http→https redirect — not a bug.)
+  - [x] **Explicit homepage self-canonical — ✅ DONE (PR #116, merged 2026-07-07).** `alternates: { canonical: "/" }`
+        in `src/app/page.tsx`.
 - [x] **/right-wrong-ray full metadata** — was title-only; now description + canonical + OG/Twitter
       (`summary_large_image`).
 - [x] **/right-wrong-ray OG/Twitter share card** — build-time `opengraph-image.tsx` from the same
