@@ -195,6 +195,21 @@ export default async function Page() {
           question went unanswered, not that they got it wrong.
         </p>
         <CoverageMatrix scores={scores} />
+        <p className="mt-6 max-w-2xl text-sm text-muted">
+          To see the model applied, read{" "}
+          <Link href="/resources/articles/is-rays-weather-accurate" className="text-teal underline underline-offset-2">
+            the 118-day review of Ray&apos;s Weather
+          </Link>
+          ,{" "}
+          <Link href="/resources/articles/rays-weather-report-card-june-2026" className="text-teal underline underline-offset-2">
+            the June 2026 report card
+          </Link>
+          , or{" "}
+          <Link href="/resources/articles/how-accurate-is-a-10-day-forecast" className="text-teal underline underline-offset-2">
+            what a 10-day forecast is actually good for
+          </Link>
+          .
+        </p>
       </SectionBand>
     </>
   );

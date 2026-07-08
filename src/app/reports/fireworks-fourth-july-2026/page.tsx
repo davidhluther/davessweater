@@ -363,6 +363,22 @@ export default async function Page() {
         </div>
       </section>
 
+      {/* Cross-link to the current events-desk report; not date-gated (the linked planner
+          carries its own year and the annual re-verify sweep covers both pages). */}
+      <SectionBand tone="surface" className="max-w-4xl">
+        <p className="text-sm">
+          <span className="font-bold">Also from the events desk:</span> the{" "}
+          <Link
+            href="/reports/grandfather-mountain-highland-games-planner-2026"
+            className="text-teal underline underline-offset-2"
+          >
+            Grandfather Mountain Highland Games 2026 planner
+          </Link>{" "}
+          (July 9–12, MacRae Meadows). Filter the schedule, then get parking by day, shuttle cash,
+          between-event walk times, and a printable per-day itinerary.
+        </p>
+      </SectionBand>
+
       <SectionBand tone="light" id="checker" className="max-w-4xl">
         <h2 className="font-display text-2xl font-bold">Where Should You Watch From?</h2>
         <p className="mt-1 max-w-2xl text-sm text-muted">

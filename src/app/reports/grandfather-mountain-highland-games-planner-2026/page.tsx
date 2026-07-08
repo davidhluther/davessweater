@@ -6,6 +6,7 @@
 // lot, cash, walk warnings); the site's dry humor rides in the framing and the
 // packing list. Franchise instance #2 after /fireworks. Data + walk math are
 // 2026-verified from gmhg.org — re-verify logistics before any 2027 reuse.
+import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import SectionBand from "@/components/SectionBand";
 import Planner from "@/components/gmhg/Planner";
@@ -17,12 +18,12 @@ const SLUG = "/reports/grandfather-mountain-highland-games-planner-2026";
 const PAGE_URL = `https://davessweater.com${SLUG}`;
 
 export const metadata = {
-  title: "Grandfather Mountain Highland Games 2026: Plan Your Days",
+  title: "Grandfather Mountain Highland Games 2026: Schedule, Parking & Day Planner",
   description:
-    "The free planner the official schedule isn't. Filter events, get a printable itinerary, field map, and packing list. MacRae Meadows, July 9–12, 2026.",
+    "Filter the full 2026 schedule, see which parking lot runs each day and the shuttle cash you need, and get a printable itinerary, field map, and packing list. MacRae Meadows, July 9–12.",
   alternates: { canonical: SLUG },
   openGraph: {
-    title: "Grandfather Mountain Highland Games 2026: Plan Your Days",
+    title: "Grandfather Mountain Highland Games 2026: Schedule, Parking & Day Planner",
     description:
       "Filter events, then get a printable per-day itinerary, a field map with your stops pinned, arrive-by and between-event walk times, the right lot and shuttle cash, a live forecast with packing list, and a calendar export.",
     url: PAGE_URL,
@@ -102,7 +103,7 @@ function buildJsonLd() {
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
-      name: "Grandfather Mountain Highland Games 2026: Plan Your Days",
+      name: "Grandfather Mountain Highland Games 2026: Schedule, Parking & Day Planner",
       url: PAGE_URL,
       description: "A free interactive planner for the 70th Grandfather Mountain Highland Games. Filter events, then get a downloadable per-day itinerary, a field map with your stops pinned, arrive-by and between-event walk times, the right lot and shuttle cash, a live forecast with packing list, and a calendar export.",
       isPartOf: { "@type": "WebSite", name: "Dave's Sweater", url: "https://davessweater.com" },
@@ -170,7 +171,7 @@ export default async function Page() {
             The High Country events desk | July 9–12, 2026
           </p>
           <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-            Grandfather Mountain Highland Games 2026: Plan Your Days
+            Grandfather Mountain Highland Games 2026: Schedule, Parking & Day Planner
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-white/80">
             The official schedule is a wall of times. This turns it into a plan. Filter the events by
@@ -288,6 +289,16 @@ export default async function Page() {
           competition infield is a route you cannot actually walk, so we never draw one. The forecast is
           pulled live for MacRae Meadows’ own coordinates at about 4,300 feet, so treat the temperatures as
           directional, since the model smooths the terrain. And Grandfather, reliably, makes its own weather.
+        </p>
+        <p className="mt-4 text-xs text-muted">
+          More from the events desk:{" "}
+          <Link href="/reports/fireworks-fourth-july-2026" className="text-teal underline underline-offset-2">
+            the Boone Fourth of July fireworks report
+          </Link>
+          {" | "}
+          <Link href="/resources/reports" className="text-teal underline underline-offset-2">
+            all reports
+          </Link>
         </p>
       </SectionBand>
       </div>

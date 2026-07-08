@@ -276,6 +276,16 @@ export default async function Page() {
         <p className="mt-2 text-xs">
           <Link href="/methodology" className="text-teal underline underline-offset-2">Full methodology &rarr;</Link>
         </p>
+        <p className="mt-2 text-xs text-muted">
+          The longer story:{" "}
+          <Link href="/resources/articles/is-rays-weather-accurate" className="text-teal underline underline-offset-2">
+            Is Ray&apos;s Weather accurate? 118 days scored
+          </Link>
+          {" | "}
+          <Link href="/resources/articles/rays-weather-report-card-june-2026" className="text-teal underline underline-offset-2">
+            Ray&apos;s Weather report card: June 2026
+          </Link>
+        </p>
       </SectionBand>
 
       <SectionBand tone="light">

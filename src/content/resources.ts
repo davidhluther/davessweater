@@ -26,7 +26,7 @@ export interface ReportEntry {
 
 export const REPORTS: ReportEntry[] = [
   {
-    title: "Grandfather Mountain Highland Games 2026: Plan Your Days",
+    title: "Grandfather Mountain Highland Games 2026: Schedule, Parking & Day Planner",
     href: "/reports/grandfather-mountain-highland-games-planner-2026",
     date: "2026-07-06",
     summary:
