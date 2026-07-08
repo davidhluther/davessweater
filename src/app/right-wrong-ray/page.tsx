@@ -1,4 +1,5 @@
 import { getLatestComparison, getScores, getLatestForecasts } from "@/lib/data";
+import { getLeadtimeScores, decayChartSeries } from "@/lib/leadtime";
 import { scoreboardRows } from "@/lib/scoreboard";
 import { HEADLINE_SOURCES, isProvisional } from "@/lib/gating";
 import { sparkSeries, rollingMean } from "@/lib/sparkline";
@@ -10,6 +11,7 @@ import VerdictScale from "@/components/VerdictScale";
 import SectionBand from "@/components/SectionBand";
 import SortableScoreTable, { type ScoreRow } from "@/components/SortableScoreTable";
 import ScoreBreakdown from "@/components/ScoreBreakdown";
+import AccuracyDecayChart from "@/components/AccuracyDecayChart";
 import UpcomingForecasts from "@/components/UpcomingForecasts";
 import type { SourceEntry } from "@/lib/types";
 import Link from "next/link";
@@ -78,8 +80,13 @@ const datasetJsonLd = {
 };
 
 export default async function Page() {
-  const [comp, scores, forecasts] = await Promise.all([getLatestComparison(), getScores(), getLatestForecasts()]);
+  const [comp, scores, forecasts, leadtime] = await Promise.all([
+    getLatestComparison(), getScores(), getLatestForecasts(), getLeadtimeScores(),
+  ]);
   const trackingDays = heroStats(scores).trackingDays;
+  // Accuracy-decay section gates on usable data (2+ sources with 2+ charted
+  // points) — the whole section renders nothing otherwise.
+  const decay = decayChartSeries(leadtime);
 
   // Season scoreboard: every source we track, sparklines included.
   const allRows = scoreboardRows(scores);
@@ -170,6 +177,27 @@ export default async function Page() {
             <p className="mt-3 text-xs text-white/70">R = graded Right (75+) | M = Meh (60&ndash;74) | W = graded Wrong (under 60). Trend = 7-day rolling average on the 0&ndash;100 scale.</p>
           </div>
         </section>
+      )}
+
+      {/* Accuracy by lead time — how each source's score decays as the
+          forecast reaches further out. Gated: renders only when the artifact
+          holds enough data to draw a comparison. */}
+      {decay && (
+        <SectionBand tone="dark">
+          <h2 className="font-display mb-1 text-2xl font-bold">How far out can you trust a forecast?</h2>
+          <p className="mb-4 max-w-2xl text-sm text-white/70">
+            The same 100-point grading, applied to the forecast each source published up to five days
+            ahead. The free forecasts win at every horizon, and the gap widens at days 3 and 4: Ray&apos;s
+            extended days publish fewer scoreable fields, and under the published rules a blank earns
+            nothing.
+          </p>
+          <AccuracyDecayChart series={decay} />
+          <p className="mt-2 text-xs">
+            <Link href="/methodology" className="font-medium text-white/85 underline underline-offset-2">
+              How lead-time scoring works &rarr;
+            </Link>
+          </p>
+        </SectionBand>
       )}
 
       <SectionBand tone="surface">

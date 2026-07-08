@@ -201,3 +201,18 @@ def build_leadtime_scores():
     out = {"location": LOCATION, "max_lead": MAX_LEAD, "by_source": _aggregate_rows(all_rows)}
     (DATA_DIR / "leadtime_scores.json").write_text(json.dumps(out, indent=2))
     return out
+
+
+if __name__ == "__main__":
+    # Daily entrypoint (wired into daily_compare.yml after the comparison):
+    # score the just-compared date — yesterday, NY time, same default as
+    # compare.py — then rebuild the aggregate the site reads.
+    import sys
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+
+    target = sys.argv[1] if len(sys.argv) > 1 else (
+        datetime.now(ZoneInfo("America/New_York")) - timedelta(days=1)).strftime("%Y-%m-%d")
+    build_leadtime(target)
+    build_leadtime_scores()
+    print(f"leadtime updated for {target}")

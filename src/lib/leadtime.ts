@@ -35,6 +35,39 @@ export function toChartSeries(
   }));
 }
 
+// Series for the /right-wrong-ray accuracy-decay chart. minN 10: the real
+// data has a raysweather lead-5 cell with n=1 that must not chart. Sources
+// left with zero surviving points are dropped entirely — an empty series
+// would still put a ghost entry in the chart legend. Returns null (render
+// nothing) unless at least 2 sources have at least 2 charted points: a decay
+// line needs 2 points, and a decay COMPARISON needs 2 lines.
+export function decayChartSeries(scores: LeadtimeScores | null): ChartSeries[] | null {
+  if (!scores) return null;
+  const series = toChartSeries(scores, "avg_score", { minN: 10 }).filter((s) => s.points.length > 0);
+  return series.filter((s) => s.points.length >= 2).length >= 2 ? series : null;
+}
+
+// Leads the /methodology bias disclosure reads. Lead 5 is deliberately
+// outside the window: Ray's lead-5 sample is a single day (the same reason
+// decayChartSeries floors it).
+const BIAS_LEADS = [0, 1, 2, 3, 4];
+
+// Min…max of a source's high-temp bias across leads 0-4, for the live
+// "+X.X to +Y.Y°F warm at every horizon" sentence on /methodology. The
+// sentence claims warm-at-every-horizon, so this returns null — omit the
+// sentence — unless every populated lead is warm-positive, and unless 2+
+// leads have data ("every horizon" needs more than one).
+export function warmBiasRange(
+  scores: LeadtimeScores | null, source: string,
+): { min: number; max: number } | null {
+  const byLead = scores?.by_source?.[source];
+  if (!byLead) return null;
+  const vals = BIAS_LEADS.map((l) => byLead[String(l)]?.high_bias)
+    .filter((v): v is number => typeof v === "number");
+  if (vals.length < 2 || vals.some((v) => v <= 0)) return null;
+  return { min: Math.min(...vals), max: Math.max(...vals) };
+}
+
 // Mean high-MAE across the free composite members at a given lead — powers the
 // consumer strip's honesty footer. EXCLUDE mirrors src/lib/composite.ts
 // (raysweather is the graded forecaster; apple_weather mirrors the Open-Meteo

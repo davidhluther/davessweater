@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
-  toChartSeries, compositeMemberMae, compositeMemberMaePair, getLeadtimeScores, type LeadtimeScores,
+  toChartSeries, compositeMemberMae, compositeMemberMaePair, decayChartSeries, warmBiasRange,
+  getLeadtimeScores, type LeadtimeScores,
 } from "@/lib/leadtime";
 
 // Contract-legal fixture: cells only exist where n > 0 (Python never emits
@@ -69,6 +70,95 @@ describe("compositeMemberMaePair", () => {
   it("returns null when the intersection is empty", () => {
     // The base fixture has no lead-5 member cells at all.
     expect(compositeMemberMaePair(scores, 0, 5)).toBeNull();
+  });
+});
+
+describe("decayChartSeries", () => {
+  const decayScores: LeadtimeScores = {
+    location: "Boone", max_lead: 5,
+    by_source: {
+      openmeteo: { "0": { n: 30, avg_score: 92 }, "1": { n: 30, avg_score: 88 }, "2": { n: 30, avg_score: 85 } },
+      raysweather: { "0": { n: 30, avg_score: 71 }, "1": { n: 30, avg_score: 70 }, "5": { n: 1, avg_score: 30 } },
+      // Every cell under the n>=10 floor: the source must vanish from the
+      // series list entirely, not linger as an empty ghost legend entry.
+      newsource: { "0": { n: 3, avg_score: 99 }, "1": { n: 2, avg_score: 99 } },
+    },
+  };
+
+  it("floors thin cells and drops all-thin sources entirely", () => {
+    const series = decayChartSeries(decayScores)!;
+    expect(series.map((s) => s.source).sort()).toEqual(["openmeteo", "raysweather"]);
+    expect(series.find((s) => s.source === "raysweather")!.points).toEqual([
+      { lead: 0, value: 71 }, { lead: 1, value: 70 }, // the n=1 lead-5 cell floored
+    ]);
+  });
+
+  it("returns null when fewer than 2 sources have 2+ charted points", () => {
+    const thin: LeadtimeScores = {
+      location: "Boone", max_lead: 5,
+      by_source: {
+        openmeteo: { "0": { n: 30, avg_score: 92 }, "1": { n: 30, avg_score: 88 } },
+        raysweather: { "0": { n: 30, avg_score: 71 } }, // 1 point: no decay line
+      },
+    };
+    expect(decayChartSeries(thin)).toBeNull();
+    expect(decayChartSeries(null)).toBeNull();
+  });
+
+  it("charts the real artifact: 2+ sources, no empty series, ray stops before lead 5", () => {
+    return getLeadtimeScores().then((real) => {
+      const series = decayChartSeries(real)!;
+      expect(series).not.toBeNull();
+      expect(series.length).toBeGreaterThanOrEqual(2);
+      for (const s of series) expect(s.points.length).toBeGreaterThan(0);
+      const ray = series.find((s) => s.source === "raysweather")!;
+      expect(ray.points.length).toBeGreaterThanOrEqual(2);
+      expect(ray.points.some((p) => p.lead === 5)).toBe(false);
+    });
+  });
+});
+
+describe("warmBiasRange", () => {
+  it("returns min…max of high_bias across leads 0-4 when every populated lead runs warm", () => {
+    const s: LeadtimeScores = {
+      location: "Boone", max_lead: 5,
+      by_source: {
+        raysweather: {
+          "0": { n: 20, high_bias: 3.5 }, "1": { n: 20, high_bias: 3.02 },
+          "2": { n: 20, high_bias: 3.63 }, "3": { n: 20, high_bias: 3.4 },
+          // Lead 5 must NOT widen the range: it sits outside the disclosed
+          // 0-4 window (Ray's lead-5 sample is a single day).
+          "5": { n: 1, high_bias: 99 },
+        },
+      },
+    };
+    expect(warmBiasRange(s, "raysweather")).toEqual({ min: 3.02, max: 3.63 });
+  });
+
+  it("omits gracefully: null for mixed-sign bias, missing source, or too few leads", () => {
+    const mixed: LeadtimeScores = {
+      location: "Boone", max_lead: 5,
+      by_source: { raysweather: { "0": { n: 20, high_bias: 3.5 }, "1": { n: 20, high_bias: -0.2 } } },
+    };
+    // The sentence claims "warm at every horizon" — mixed-sign data must
+    // suppress it rather than mislabel.
+    expect(warmBiasRange(mixed, "raysweather")).toBeNull();
+    expect(warmBiasRange(mixed, "nope")).toBeNull();
+    expect(warmBiasRange(null, "raysweather")).toBeNull();
+    const one: LeadtimeScores = {
+      location: "Boone", max_lead: 5,
+      by_source: { raysweather: { "0": { n: 20, high_bias: 3.5 } } },
+    };
+    expect(warmBiasRange(one, "raysweather")).toBeNull();
+  });
+
+  it("real artifact: Ray's warm bias is a plausible +2…+5°F band", async () => {
+    const r = warmBiasRange(await getLeadtimeScores(), "raysweather")!;
+    expect(r).not.toBeNull();
+    // ≈ +3.0…+3.6 as of 2026-07; bands not pins, since the daily run shifts it.
+    expect(r.min).toBeGreaterThan(2);
+    expect(r.max).toBeLessThan(5);
+    expect(r.min).toBeLessThanOrEqual(r.max);
   });
 });
 

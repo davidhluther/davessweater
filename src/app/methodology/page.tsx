@@ -3,6 +3,7 @@ import SectionBand from "@/components/SectionBand";
 import JsonLd from "@/components/JsonLd";
 import CoverageMatrix from "@/components/CoverageMatrix";
 import { getScores } from "@/lib/data";
+import { getLeadtimeScores, warmBiasRange } from "@/lib/leadtime";
 
 export const metadata = {
   title: "How we score weather forecast accuracy",
@@ -43,7 +44,11 @@ const jsonLd = [
 ];
 
 export default async function Page() {
-  const scores = await getScores();
+  const [scores, leadtime] = await Promise.all([getScores(), getLeadtimeScores()]);
+  // Ray's warm-bias disclosure, computed at build from the lead-time artifact
+  // (never hardcoded — the daily run moves it). Null (sentence omitted) when
+  // the data is absent or no longer warm at every horizon.
+  const rayBias = warmBiasRange(leadtime, "raysweather");
   return (
     <>
       <JsonLd data={jsonLd} />
@@ -189,6 +194,37 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="surface">
+        <h2 className="font-display text-xl font-bold">Grading forecasts by lead time</h2>
+        <p className="mt-1 max-w-2xl text-sm text-muted">
+          The daily scoreboard grades each morning&apos;s same-day forecast. We also grade every forecast at
+          longer range: for a given day, the forecast each source published one to five days earlier, scored
+          with the same 100-point model. Nothing about the rubric changes with distance, only the difficulty.
+          Lead 0 is the same-day forecast; lead 3 is what a source said three days out.
+        </p>
+        <p className="mt-3 max-w-2xl text-sm text-muted">
+          We stop at five days, the longest horizon our sources publish consistently. Ray&apos;s rows reliably
+          reach about four to five days out, but his five-day sample is a single scored day so far, so the
+          charts floor it out: a lead is not charted until it holds at least 10 scored days.
+          {rayBias && (
+            <>
+              {" "}One pattern already holds at every horizon we track: Ray&apos;s highs have averaged
+              +{rayBias.min.toFixed(1)} to +{rayBias.max.toFixed(1)}&deg;F warm.
+            </>
+          )}
+        </p>
+        <p className="mt-3 max-w-2xl text-sm text-muted">
+          Two honesty notes. The comparison is at matched elevation: his Boone station sits at 3,240 feet, our
+          grading point at 3,242. And on the high temperature alone, Open-Meteo beats Ray&apos;s at every
+          horizon, but by days 3 and 4 that gap narrows to a few tenths of a degree. The score gap is the
+          meaningful one: it prices the fields Ray&apos;s extended days leave unanswered.
+        </p>
+        <p className="mt-3 max-w-2xl text-sm text-muted">
+          The actuals behind every lead are the same Open-Meteo archive described above, and the caveat there
+          applies to lead-time scoring too.
+        </p>
+      </SectionBand>
+
+      <SectionBand tone="light">
         <h2 className="font-display text-xl font-bold">What each service reports</h2>
         <p className="mb-4 mt-1 max-w-2xl text-sm text-muted">
           Not every forecaster publishes every field. Here is what each one gives us to score. A blank means the

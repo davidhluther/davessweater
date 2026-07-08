@@ -79,11 +79,13 @@ edge is largest at 1 day and narrows by day 4 as OM decays while Ray stays flat 
 than the single 1-day gap ("free's lead is biggest exactly when you're planning tomorrow").
 MAE °F (Ray high / OM high) by lead: 0→7.1/1.9, 1→6.9/2.8, 2→6.7/3.5, 3→6.7/3.8, 4→4.4*/3.7 (*n=9).
 Two SPEC MUST-FIXES before publishing:
-- [ ] **Systematic-offset guard**: Ray's high error is FLAT ~7° across leads (not skill decay → a
-      systematic station/elevation offset vs our grading lat/lon). Grade against a station-appropriate
-      baseline or disclose/neutralize the bias, else "you graded me at the wrong spot" is his counter.
-- [ ] **Honest horizon ceiling**: our archive reliably scores Ray to ~4 days out (sample cliffs 121→9
-      at lead 4), even though he publishes 7. Call it 5-day scoring max, disclose the thinning.
+- [x] **Systematic-offset guard** — shipped 2026-07-08 (`feat/leadtime-scoring`): `/methodology` discloses
+      the bias as a LIVE number computed at build from `leadtime_scores.json` (`warmBiasRange`; renders
+      "+3.0 to +3.6°F warm" across leads 0–4 as of 2026-07-08, self-omits if the data stops backing the
+      claim) plus the matched-elevation note (his Boone station 3,240 ft, our grading point 3,242 ft).
+- [x] **Honest horizon ceiling** — shipped 2026-07-08: 5-day ceiling (leads 0–5); charts floor any cell
+      with n<10 (Ray's single lead-5 day sits out), and both the chart caption and `/methodology`
+      disclose the thinning past lead 3.
 - [x] **Spec written:** `planning/specs/2026-07-07-multi-day-scoring-design.md`.
 - [x] **Scope resolved (owner, 2026-07-08):** scoreboard shows full 100-pt score + decay chart plots high/low
       MAE/bias; chart on `/right-wrong-ray` (homepage teaser later); disclose the bias NUMBER on `/methodology`
@@ -93,8 +95,13 @@ Two SPEC MUST-FIXES before publishing:
       per-date builder + MAE/bias aggregate → backfill → TS loader + visx decay chart → surface on
       /right-wrong-ray + methodology + daily wiring). Additive, no scoreboard regression (guarded by a
       lead-0-equivalence test). **RECOMMENDED FIRST BUILD — execution-ready.**
-- [ ] **[NEXT]** Execute the multi-day scoring plan (owner greenlight). Executor must verify `SOURCE_FILES`
-      keys against real `data/predictions/<recent>/` filenames before backfill.
+- [x] **Executed 2026-07-08 on `feat/leadtime-scoring` (all 7 tasks + reviewer ride-alongs)**: scoring core
+      (lead-0 ≡ daily comparison, test-pinned) → per-date builder + aggregate → backfill (491/491 dates) →
+      TS loader/series helpers → server-rendered visx decay chart ("How far out can you trust a forecast?"
+      on `/right-wrong-ray`, gated on usable data) → `/methodology` "Grading forecasts by lead time" →
+      `daily_compare.yml` runs `scripts/leadtime.py` after compare/health, before the data commit.
+      `SOURCE_FILES` keys verified against real capture filenames (guarded by
+      `test_source_files_matches_sources_registry`). **Pending: merge to main + live verification.**
 
 ### "How sure was Ray?" audit — golfballs + snowman-o-mometer (owner-requested 2026-07-07)
 His per-day `golfballs` (1–5 self-rated confidence) and `snowmanometer` (snow-likelihood) are published
