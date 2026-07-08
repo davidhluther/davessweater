@@ -113,6 +113,9 @@ export default function AccuracyDecayChart({ series }: { series: ChartSeries[] }
         </Group>
       </svg>
 
+      {/* data-dependent claim — re-verify against leadtime_scores when editing
+          ("single day-5 row" = raysweather lead-5 n; the n>=10 floor test
+          fails loudly if it ever accumulates past the floor) */}
       <p className="mt-3 text-xs text-white/60">
         Lines stop where the data does: not every source publishes five days out, samples thin past
         day 3, and a lead is only charted once it holds at least 10 scored days. Ray&apos;s single

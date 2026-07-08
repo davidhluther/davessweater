@@ -43,28 +43,32 @@ describe("compositeMemberMae", () => {
 });
 
 describe("compositeMemberMaePair", () => {
-  // The honesty property the strip footer needs: both sides of the day-1 vs
-  // day-5 comparison are computed over the SAME member set, so a source that
-  // exists at one lead but not the other can't skew either side.
+  // Two honesty properties the strip footer needs: (1) both sides of the
+  // day-1 vs day-5 comparison are computed over the SAME member set, so a
+  // source that exists at one lead but not the other can't skew either side;
+  // (2) each member's cell is weighted by its n (day-pooled MAE), so a
+  // 30-day member outweighs a 10-day newcomer instead of counting the same.
+  // Member n's are deliberately unequal: an unweighted mean would give
+  // a = 4.0 and b = 6.5, so these pins are value-exact against regression.
   const pairScores: LeadtimeScores = {
     location: "Boone", max_lead: 5,
     by_source: {
-      openmeteo: { "1": { n: 5, high_mae: 2.0 }, "5": { n: 4, high_mae: 4.0 } },
-      metno: { "1": { n: 5, high_mae: 3.0 }, "5": { n: 4, high_mae: 5.0 } },
+      openmeteo: { "1": { n: 30, high_mae: 2.0 }, "5": { n: 20, high_mae: 4.0 } },
+      metno: { "1": { n: 10, high_mae: 6.0 }, "5": { n: 5, high_mae: 9.0 } },
       // Has a lead-1 cell but NO lead-5 cell — must be excluded from BOTH
-      // sides. If it leaked into side a, a.mae would be mean(2, 3, 9) = 4.7.
+      // sides (weighted-in it would push side a to (60+60+45)/45 = 3.7).
       weatherapi: { "1": { n: 5, high_mae: 9.0 } },
       // Non-members stay out even when present at both leads.
       raysweather: { "1": { n: 5, high_mae: 1.0 }, "5": { n: 5, high_mae: 1.0 } },
     },
   };
 
-  it("intersects the member set: a source missing either lead is dropped from both sides", () => {
+  it("intersects the member set and n-weights each side (day-pooled MAE)", () => {
     const r = compositeMemberMaePair(pairScores, 1, 5)!;
     expect(r).not.toBeNull();
     expect(r.members).toBe(2); // openmeteo + metno only
-    expect(r.a).toEqual({ mae: 2.5, n: 5 }); // mean(2, 3); min n at lead 1
-    expect(r.b).toEqual({ mae: 4.5, n: 4 }); // mean(4, 5); min n at lead 5
+    expect(r.a).toEqual({ mae: 3.0, n: 40 }); // (2*30 + 6*10) / 40; n = pooled days
+    expect(r.b).toEqual({ mae: 5.0, n: 25 }); // (4*20 + 9*5) / 25
   });
 
   it("returns null when the intersection is empty", () => {
@@ -210,13 +214,19 @@ describe("real data/leadtime_scores.json artifact", () => {
     const real = (await getLeadtimeScores())!;
     const r = compositeMemberMaePair(real, 1, 5)!;
     expect(r).not.toBeNull();
-    // As of 2026-07: a ≈ 2.9, b ≈ 2.8 over 6 common members (weatherapi and
-    // googleweather stop at lead 2, so they sit out of BOTH sides).
+    // As of 2026-07: a ≈ 2.9, b ≈ 3.5 (n-weighted) over 6 common members
+    // (weatherapi and googleweather stop at lead 2, so they sit out of BOTH
+    // sides).
     expect(r.members).toBeGreaterThanOrEqual(4);
     expect(r.a.mae).toBeGreaterThan(2);
     expect(r.a.mae).toBeLessThan(4);
-    expect(r.b.mae).toBeGreaterThan(2);
-    expect(r.b.mae).toBeLessThan(4.5);
+    expect(r.b.mae).toBeGreaterThan(3);
+    expect(r.b.mae).toBeLessThan(4.2);
+    // The rendered footer pair must show decay (day-5 misses bigger than
+    // day-1) — the feature's premise, and what the decay chart one click away
+    // shows. This pins the CURRENT artifact; if the data ever honestly stops
+    // decaying, revisit this assertion AND the footer copy together.
+    expect(r.b.mae).toBeGreaterThan(r.a.mae);
     expect(r.a.n).toBeGreaterThan(0);
     expect(r.b.n).toBeGreaterThan(0);
   });

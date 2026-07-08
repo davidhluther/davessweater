@@ -95,6 +95,12 @@ export function compositeMemberMae(scores: LeadtimeScores, lead: number): { mae:
 // compositeMemberMae calls) would let the set drift — e.g. weatherapi and
 // googleweather stop at lead 2, so they'd inflate the lead-1 side while
 // sitting out of lead 5. One call guarantees set consistency.
+//
+// Each side is n-WEIGHTED: cell high_mae values are simple means over the
+// cell's n days, so sum(mae_i × n_i) / sum(n_i) is exactly the MAE over all
+// pooled member-days. An unweighted mean would let a ~10-day newcomer count
+// the same as openmeteo's 120+ days and flatten the day-1 → day-5 decay the
+// footer exists to report. `n` is the pooled day count backing each side.
 export function compositeMemberMaePair(
   scores: LeadtimeScores, leadA: number, leadB: number,
 ): { a: { mae: number; n: number }; b: { mae: number; n: number }; members: number } | null {
@@ -103,9 +109,12 @@ export function compositeMemberMaePair(
     .map(([, byLead]) => ({ a: byLead[String(leadA)], b: byLead[String(leadB)] }))
     .filter((p): p is { a: LeadCell; b: LeadCell } => usable(p.a) && usable(p.b));
   if (!pairs.length) return null;
-  const side = (cells: LeadCell[]) => ({
-    mae: Math.round((cells.reduce((s, c) => s + (c.high_mae as number), 0) / cells.length) * 10) / 10,
-    n: Math.min(...cells.map((c) => c.n)),
-  });
+  const side = (cells: LeadCell[]) => {
+    const days = cells.reduce((s, c) => s + c.n, 0);
+    return {
+      mae: Math.round((cells.reduce((s, c) => s + (c.high_mae as number) * c.n, 0) / days) * 10) / 10,
+      n: days,
+    };
+  };
   return { a: side(pairs.map((p) => p.a)), b: side(pairs.map((p) => p.b)), members: pairs.length };
 }

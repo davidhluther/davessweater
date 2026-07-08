@@ -201,6 +201,9 @@ export default async function Page() {
           with the same 100-point model. Nothing about the rubric changes with distance, only the difficulty.
           Lead 0 is the same-day forecast; lead 3 is what a source said three days out.
         </p>
+        {/* data-dependent claim — re-verify against leadtime_scores when editing
+            ("a single scored day" = raysweather lead-5 n; the n>=10 floor test
+            fails loudly if it ever accumulates past the floor) */}
         <p className="mt-3 max-w-2xl text-sm text-muted">
           We stop at five days, the longest horizon we can score consistently across sources. Ray&apos;s rows reliably
           reach about four to five days out, but his five-day sample is a single scored day so far, so the

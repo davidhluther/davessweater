@@ -11,6 +11,10 @@ fetches its now-available actuals, and scores it.
 Idempotent: a day that already has a comparison, or whose actuals still aren't
 posted, is left alone (and retried on a later run until it ages out of the window).
 
+A recovered day also gets its lead-time file rebuilt (data/leadtime/{date}.json,
+plus one aggregate re-roll at the end) — otherwise every archive-lag day would be
+present in comparisons/ but a permanent hole in the lead-time record.
+
 Usage: python scripts/backfill_missing.py [--window N]  (default 14 days)
 """
 import subprocess
@@ -18,6 +22,8 @@ import sys
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from pathlib import Path
+
+from leadtime import build_leadtime, build_leadtime_scores
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
@@ -71,6 +77,12 @@ def main():
         if (DATA_DIR / "comparisons" / f"{d}.json").exists():
             recovered.append(d)
             print(f"  {d}: recovered")
+            # Rebuild the day's lead-time file too, so the recovered date
+            # doesn't stay a hole in data/leadtime/ (its actuals now exist).
+            if build_leadtime(d):
+                print(f"  {d}: leadtime rebuilt")
+    if recovered:
+        build_leadtime_scores()
     print(f"Backfill sweep: recovered {len(recovered)}/{len(todo)} — {', '.join(recovered) or 'none'}")
 
 
