@@ -38,6 +38,43 @@ earlier plumbing.
 - **v3 — Our own camera-CV ground truth.** Instrument the chokepoints with edge vehicle-recognition to
   produce an independent congestion "actual" (the Ecowitt arc — stop grading against a competitor's API).
   Doubles as the backlink/webcam play.
+- **v4 — Parking indicators.** See §2a.
+
+## 2a. Parking indicators (v4 pillar — owner idea, 2026-07-08)
+
+Same predict-and-score move, pointed at Boone's other documented pain: "**is downtown / this lot full right
+now — and will it be?**" Game-day, move-in, and leaf-season parking scarcity is well-documented (200 smart
+meters capped at 2 hr on game days; the county pays App State $10k/yr for overflow lots). Nobody forecasts
+it; nobody scores it.
+
+**Data sources — RESEARCHED 2026-07-08. Bottom line: no real-time parking-occupancy feed exists for Boone or
+App State today — live occupancy is a build-it-yourself (camera) problem; the meter/ticket data is
+owner-pursued.**
+- **Cameras (readily buildable — the recommended primary):** point the SAME edge-CV (Pi 5 + Hailo) at a lot →
+  occupancy % → full / filling / open. No new stack. Direct precedent: Edge Impulse FOMO on the Pi AI Kit
+  does parking-lot car-counting at ~28 fps. Aggregate occupancy only, never plates. Occupancy % for a
+  red/yellow/green indicator needs no per-space precision.
+- **Static inventory (readily available):** 200 smart meters + 150 pre-pay + 220 permit, rates/hours
+  (townofboone.net/337). Meter vendor = **IPS Group**; enforcement/citations = **McLaurin Parking Co.**
+  New Watauga County deck (~138 spaces, opened Jan 2025, currently free/ungated).
+- **Parking citations (the best REAL dataset — owner-pursued):** obtainable via NC public-records request
+  (G.S. §132) to the **Town Clerk** (form: townofboone.net/327) + **Boone PD Records 828-268-6906** — these
+  are local civil penalties, not court traffic tickets. Ticket density by location/time = a demand proxy.
+- **Meter transaction data (owner-pursued):** the Town reports meter revenue in aggregate; granular logs sit
+  in IPS's backend — ask the Town whether it has occupancy *sensors* (likely meters-only) or will share the API.
+- **App State lots:** the "Parking Finder" (appstate.modii.co) is **static, no live counts**; visitor pay =
+  ParkMobile. No public deck-count feed — App State P&T (828-262-2878) could confirm gate-count data.
+- **Precedent to copy:** **NC State publishes a fully public live deck-occupancy JSON feed**
+  (`transportation.ncsu.edu/wp-json/ncsu-transportation-parking-view/v1/get-parking-data`: total/free spaces +
+  occupancy % per deck). That's the target shape if App State/the county ever wire up gate counts.
+- **Demand signals reused for free:** the App State schedule + festival/leaf/ski calendar that drive the
+  traffic forecast *also* predict parking scarcity — no new ingest.
+
+**Product:** a combined "downtown parking: likely full" index (camera occupancy + meter payment rate +
+event/historical pattern) and a forecast ("lots full by ~11 a.m. Saturday"), graded like everything else.
+**Sequencing:** v4, after v1–v3 — but the camera-occupancy half rides for free on the v3 cameras (site one
+at a downtown lot with a view of spaces). The meter/ticket/tow data is an **owner-pursued** track (contact
+Town + a records request); the design absorbs it whenever it lands.
 
 ## 3. Data sources — have-it-free vs. must-build
 
@@ -138,13 +175,10 @@ investment is engineering time.
   `/right-wrong-ray`. Live-conditions island reusing the existing client-island pattern.
 - Demand-signal ingest: subscribe the App State football ICS; encode the fixed festival/leaf/ski calendar.
 
-## 10. Open questions for owner
+## 10. Decisions (owner, 2026-07-08)
 
-1. **Confirm v1-first phasing** (road-condition forecast before traffic-volume forecast). Recommended.
-2. **v1 scope:** road-condition forecast as its own `/roads` product, or fold into the existing weather
-   pages first and split out later?
-3. **How aggressive on v3 cameras** — build 2–3 now (they double as backlink cams, so arguably yes), or
-   stay data-only through v2 and revisit?
-4. **Live-traffic vendor:** start on TomTom free tier (recommended) vs. Google (better rural, paid past 5k)?
-5. **Geographic expansion trigger:** what proof from the Boone pilot greenlights the ski-town / Ashe /
-   arteries expansion you're open to?
+- ✅ **v1-first phasing confirmed** — road-condition forecast ships before traffic-volume forecast.
+- ✅ **`/roads` is its own product** (not folded into the weather pages).
+- ✅ **Build the v3 cameras** — 2–3 at the top chokepoints, doubling as backlink cams.
+- Still open (not blocking the plan): live-traffic vendor (default TomTom free tier) and the geographic
+  expansion trigger from the Boone pilot.

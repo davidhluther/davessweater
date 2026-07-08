@@ -216,9 +216,22 @@ template for a congestion sensor). Two data-source paths to weigh in a real brai
     Demand signal = **App State football ICS (free, auto-updating)** + fixed festival/leaf/ski calendar.
     Two free keys to get first: DriveNC + NPS. v1 & v2 are ~$0/mo within free tiers; v3 cams ~$560–840 one-time.
   - **▶ FULL DESIGN written: `planning/specs/2026-07-08-traffic-road-forecast-design.md`** — product, phasing
-    (v1 road-condition → v2 traffic → v3 camera-CV), data have-vs-build table, grading model, camera
-    placement/count/cost, CV approach, full phased cost, privacy/honesty, repo integration, 5 open questions
-    for owner. **Awaiting owner review → then implementation plan.**
+    (v1 road-condition → v2 traffic → v3 camera-CV → v4 parking), data have-vs-build table, grading model,
+    camera placement/count/cost, CV approach, full phased cost, privacy/honesty, repo integration.
+  - ✅ **OWNER DECISIONS (2026-07-08):** v1-first · own `/roads` product · build the v3 cameras. (Open, non-
+    blocking: live-traffic vendor = default TomTom free; geographic-expansion trigger.)
+  - ▶ **v1 IMPLEMENTATION PLAN written: `planning/plans/2026-07-08-roads-forecast-v1.md`** — 8 TDD tasks
+    (rubric → scorer → forecast writer → DriveNC/NPS capture → compare → TS loaders → `/roads` page →
+    pipeline+methodology). Execution-ready (subagent-driven or inline). ⚠️ executor must request free DriveNC +
+    NPS keys and verify DriveNC field names against the live keyed API.
+  - **v4 parking indicators** folded into the design (§2a). Parking-data RESEARCHED 2026-07-08: **no live
+    occupancy feed exists for Boone/App State** → cameras are the buildable path (same Pi5+Hailo; Edge Impulse
+    FOMO precedent; NC State's public deck-occupancy JSON feed = the target shape). Best REAL dataset =
+    parking citations (demand proxy) via records request. **OWNER ACTIONS (require calls/requests under your
+    name):** (1) file NC public-records request for citations/tows — Town Clerk form townofboone.net/327 + PD
+    Records 828-268-6906; (2) ask Town/IPS if Boone has occupancy sensors or will share the meter API;
+    (3) ask App State P&T (828-262-2878) re deck gate-counts; (4) confirm the new county deck's future gating.
+  - [ ] **[NEXT]** Execute the v1 roads plan (owner to greenlight when ready) + request DriveNC & NPS keys.
 
 ### Disavow list (running 2026-07-07, background agent)
 Building `planning/seo/davessweater-disavow.txt` (+ notes) — the ~239 spam-net RDs pointing at
