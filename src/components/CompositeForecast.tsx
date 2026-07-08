@@ -18,6 +18,7 @@ export default async function CompositeForecast() {
         High {c.high}° <span className="text-muted/60">|</span> Low {c.low}° <span className="text-muted/60">|</span> {c.precipLabel}
       </div>
       <div className="mt-1 text-xs text-muted">{copy.index.footnote(c.count)}</div>
+      <div className="mt-1 text-xs italic text-muted">{copy.index.tagline}</div>
       <ForecasterLogos sources={c.sources} />
     </div>
   );

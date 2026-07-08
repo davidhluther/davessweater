@@ -1,13 +1,13 @@
 ---
-title: "How accurate is a 10-day forecast? Depends who's counting"
+title: "How Accurate Is a 10-Day Forecast? Depends Who's Counting"
 slug: how-accurate-is-a-10-day-forecast
 category: articles
 date: 2026-07-02
 summary: "How far out a forecast can be trusted, from the published skill curve to what our own 118-day Boone tracker shows one day out."
-metaTitle: "How accurate is a 10-day forecast? An honest answer"
+metaTitle: "How Accurate Is a 10-Day Forecast? An Honest Answer"
 metaDescription: "A 10-day forecast is right about half the time, per NOAA. Here's how accuracy decays by lead time, which forecast to trust, and what our data shows."
 ---
-# How accurate is a 10-day forecast? Depends who's counting
+# How Accurate Is a 10-Day Forecast? Depends Who's Counting
 
 A 10-day forecast is right only about half the time, per NOAA's NESDIS: near 90% at five days, about 80% at seven, roughly 50% by day 10. Trust the near term, treat day 10 as a trend.
 

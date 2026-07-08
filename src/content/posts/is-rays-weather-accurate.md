@@ -1,13 +1,13 @@
 ---
-title: "Is Ray's Weather accurate? We scored it for 118 days"
+title: "Is Ray's Weather Accurate? We Scored It for 118 Days"
 slug: is-rays-weather-accurate
 category: articles
 date: 2026-07-02
 summary: "An evidence-backed review of Ray's Weather: 118 scored days against verified actuals, and how it stacks up against the free forecasts."
-metaTitle: "Is Ray's Weather accurate? 118 days scored"
+metaTitle: "Is Ray's Weather Accurate? 118 Days Scored"
 metaDescription: "We scored Ray's Weather against verified actuals for 118 days. It averages 71.0 of 100, while two free apps beat it by about 21 points a day. See the receipts."
 ---
-# Is Ray's Weather accurate? We scored it for 118 days
+# Is Ray's Weather Accurate? We Scored It for 118 Days
 
 Mostly, but it trails the free apps. Over 118 scored days, Ray's Weather averages 71.0 of 100 against verified actuals, while Open-Meteo, which is free, averages 92.0. That is a gap of about 21 points a day.
 

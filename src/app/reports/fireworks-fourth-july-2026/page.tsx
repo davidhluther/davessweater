@@ -298,7 +298,7 @@ export default async function Page() {
         </div>
         <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:py-12">
           <p className="text-xs font-bold uppercase tracking-wider text-orange-300">
-            The High Country fireworks page | updated every morning
+            The High Country fireworks page | Updated every morning
           </p>
           <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">
             {`${SEASON.year} Fourth of July fireworks in Boone & the High Country`}

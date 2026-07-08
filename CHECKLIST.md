@@ -668,6 +668,25 @@ vetted, handed over free — weather, fireworks dusk math, the Games planner all
       articles (~11 and ~15 body-colon restructures; remaining validator counts are frontmatter/heading
       artifacts); fixed one negative-parallelism construction in the June report card.
 
+## Done: Ownership thesis above the fold + /about (2026-07-08, PR pending)
+Follow-on to the voice repositioning, owner-directed: land the message immediately, restore the sweater
+joke's connective tissue, make service-not-business explicit. NOTE: the satire's political dimension stays
+OUT of the public repo per the standing contributor rule — the copy targets the gated-expertise business
+model only.
+- [x] **Hero dek (above the fold):** "Scored daily, published free, because nobody owns the weather.
+      A sweater, you can own." — the sweater clause links to /about. Lands data democracy +
+      service-not-business + the name joke in one line. In `copy.ts` (hero.dekLead/dekLink).
+- [x] **Sweater Index tagline:** "The forecast belongs to everybody. The sweater call is yours." —
+      ownership made personal (the index answers the one forecast question that's about YOU). In `copy.ts`.
+- [x] **/about page** — consolidates the thesis: A service, not a business (h1); the short version; the
+      name (sweater earns its place; links the Realest Quarter-Zip as "the only thing around here with a
+      price on it" — the shop closes the ownership joke); why it's free ($12/yr, public data); held to the
+      same standard (our station joins the same rubric); beyond the weather (fireworks + Games as the same
+      habit; invites reader suggestions). AboutPage + BreadcrumbList JSON-LD, canonical, sitemap entry,
+      footer "What this is" link. Satire disclosure: "Satire, with receipts."
+- [x] 172 vitest / lint / build green (31 routes); hero dek, tagline, and /about all verified in
+      prerendered HTML.
+
 ## To do — site (pre-station, outstanding)
 
 - [ ] **Scoring recalibration — the big one (owner-flagged 2026-07-02).** Clustered 90s = weak
@@ -754,6 +773,11 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
       fill the PENDING cells + one self-grade line, then publish via the same native-post mechanism.
 - [ ] **Report Card franchise route** — v1 ships the June card under Articles for speed. The tracker's intended
       home is `/report-card/{yyyy-mm}` (recurring franchise); build that route + 301 the Articles URL when ready.
+- [ ] **STANDING MONTHLY: publish the report card for each completed month** (owner directive 2026-07-08).
+      July 2026 card due ~Aug 1; same corpay-method pipeline as the June card (brief → draft → adversarial
+      fact-check vs scores.json → style validate). **Report-card titles are Title Case** ("Ray's Weather
+      Report Card: July 2026") — as are ALL blog-post titles now (the four live posts were retitled
+      2026-07-08; H2/H3 stay sentence case).
 - [ ] **Post detail date format** — the detail route renders `post.date` raw (ISO); site standard is
       "Month D, YYYY" (`lib/dates.ts`). Pre-existing (affects Substack posts too); format when convenient.
 

@@ -43,7 +43,7 @@ export default function GmhgBanner() {
           Plan your days: Filter the schedule, print a per-day itinerary, and get a field map with your stops pinned.
         </span>
         <span className="ml-auto text-sm font-bold text-orange-300 group-hover:underline">
-          Open the free planner &rarr;
+          Open the free planner
         </span>
       </span>
     </Link>
