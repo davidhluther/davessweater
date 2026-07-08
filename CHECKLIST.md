@@ -135,6 +135,12 @@ his economics). Backlink crux: expose ONE public snapshot JPG URL first; then su
 not now. Detail in `planning/seo/2026-07-07-rays-competitive-research.md`.
 - [ ] **[FUTURE MILESTONE]** Stand up one cheap snapshot cam + submit to Windy/Opentopia/etc. for links;
       decide siting + privacy first. Lower leverage than widget/locations — sequence after those.
+      **Field playbook ready: `planning/seo/webcam-pitch-playbook.md`** — pilot-first path, scoping checklist
+      (what to confirm from the business), siting checklist, hardware "make it better than his" menu, cost
+      table (~$130–180/snapshot cam, ~$500–900 for 3–4 + $12/mo vs his ~$1–2k/yr EACH), and the pitch
+      positioning that beats him beyond price (own-asset embed on the sponsor's site + they keep the SEO +
+      timelapse/night/heater quality + "part of the accountability story" + directory reach; honesty
+      guardrail: never claim we out-draw him). Pitch one-liner lives in §5.
 
 ### Disavow list (running 2026-07-07, background agent)
 Building `planning/seo/davessweater-disavow.txt` (+ notes) — the ~239 spam-net RDs pointing at
