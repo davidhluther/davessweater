@@ -138,6 +138,11 @@ Uses Fourthwall for merch. The Storefront API has a persistent 403 issue (unreso
 
 ## Development
 
+**Mobile check is mandatory (owner rule, 2026-07-08):** every UI change gets verified at iPhone width
+before it ships — 390x844 viewport (via Chrome device emulation or `next start` + devtools), checking for
+horizontal overflow, wrapping, and layout of the changed elements. The owner can't easily preview mobile;
+the verifier is responsible for confirming it renders well on phones.
+
 ```bash
 # Run the site (Next.js)
 npm install && npm run dev   # http://localhost:3000  (build: npm run build · test: npm test)

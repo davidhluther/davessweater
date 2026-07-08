@@ -59,11 +59,11 @@ export default async function HomePage() {
           <p className="mt-3 text-xs text-muted">
             The longer story:{" "}
             <Link href="/resources/articles/is-rays-weather-accurate" className="text-teal underline underline-offset-2">
-              Is Ray&apos;s Weather accurate? 118 days scored
+              Is Ray&apos;s Weather Accurate? 118 Days Scored
             </Link>
             {" | "}
             <Link href="/resources/articles/rays-weather-report-card-june-2026" className="text-teal underline underline-offset-2">
-              Ray&apos;s Weather report card: June 2026
+              Ray&apos;s Weather Report Card: June 2026
             </Link>
           </p>
         </SectionBand>
