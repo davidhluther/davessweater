@@ -141,6 +141,7 @@ def test_rays_strip_governs_day0_and_rows_govern_beyond(tmp_path, monkeypatch):
     day0 = by_date["2026-07-08"]["raysweather"]
     assert day0["high_f"] == 81.0 and day0["low_f"] == 64.0  # strip, not the 90/60 row
     assert day0["wind"] == "0–7 mph"                         # interval carried from the row
+    assert day0["precip_type"] == "rain"                     # non-temp fields still flow from the row
     assert day0["label"] == "Ray's Weather"
     day1 = by_date["2026-07-09"]["raysweather"]
     assert day1["high_f"] == 82.0 and day1["low_f"] == 63.0  # the row, not the strip

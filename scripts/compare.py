@@ -604,11 +604,12 @@ def _forecast_display(contract):
     }
 
 
-def build_latest_forecasts():
-    """Emit data/latest_forecasts.json — each source's newest *unscored* forecast
-    (the upcoming day, before its actuals exist), so the site can show "here's what
-    each predicts; come back and check." Reuses the same per-source parsing as the
-    daily comparison so nothing is duplicated. No scoring (no actuals yet)."""
+def _newest_unscored_capture():
+    """The newest predictions/{date} capture folder with no comparison yet (the
+    current upcoming day), or None. BOTH unscored-forecast builders anchor here:
+    latest_forecasts.json and forecast_5day.json must agree on the capture
+    folder or the site contradicts itself (the day panel shows one date, the
+    5-day strip starts on another)."""
     import re
     pred_root = DATA_DIR / "predictions"
     if not pred_root.exists():
@@ -617,10 +618,18 @@ def build_latest_forecasts():
     dirs = sorted(d.name for d in pred_root.iterdir()
                   if d.is_dir() and re.match(r"^\d{4}-\d{2}-\d{2}$", d.name)
                   and not (comp_dir / f"{d.name}.json").exists())
-    if not dirs:
+    return dirs[-1] if dirs else None
+
+
+def build_latest_forecasts():
+    """Emit data/latest_forecasts.json — each source's newest *unscored* forecast
+    (the upcoming day, before its actuals exist), so the site can show "here's what
+    each predicts; come back and check." Reuses the same per-source parsing as the
+    daily comparison so nothing is duplicated. No scoring (no actuals yet)."""
+    date = _newest_unscored_capture()
+    if date is None:
         return None
-    date = dirs[-1]
-    pred_dir = pred_root / date
+    pred_dir = DATA_DIR / "predictions" / date
     sources = {}
 
     om = pred_dir / "openmeteo_forecast.json"
@@ -697,18 +706,10 @@ def build_forecast_5day():
     which also owns the Ray's/Apple EXCLUDE set, so both are included here just
     like the daily file. Missing or corrupt capture files skip that source
     (same tolerance idiom as the source loop above)."""
-    import re
-    pred_root = DATA_DIR / "predictions"
-    if not pred_root.exists():
+    date = _newest_unscored_capture()
+    if date is None:
         return None
-    comp_dir = DATA_DIR / "comparisons"
-    dirs = sorted(d.name for d in pred_root.iterdir()
-                  if d.is_dir() and re.match(r"^\d{4}-\d{2}-\d{2}$", d.name)
-                  and not (comp_dir / f"{d.name}.json").exists())
-    if not dirs:
-        return None
-    date = dirs[-1]
-    pred_dir = pred_root / date
+    pred_dir = DATA_DIR / "predictions" / date
     start = datetime.strptime(date, "%Y-%m-%d")
     window = [(start + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(6)]
     days = {}  # date -> {source_key: display dict}
@@ -727,7 +728,7 @@ def build_forecast_5day():
 
     om = _load(pred_dir / "openmeteo_forecast.json")
     if om:
-        for day in om.get("daily", []):
+        for day in (om.get("daily") or []):
             if day.get("date") in window:
                 _put(day["date"], "openmeteo", day)
 
@@ -782,7 +783,7 @@ def build_forecast_5day():
         data = _load(pred_dir / f"{key}_forecast.json")
         if not data:
             continue
-        for day in data.get("daily", []):
+        for day in (data.get("daily") or []):
             d = day.get("date")
             if d not in window or key in days.get(d, {}):
                 continue
