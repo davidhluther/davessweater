@@ -785,6 +785,13 @@ Owner chose both tools, sitewide: Microsoft Clarity (heatmaps/recordings) + GA4 
       multiple independent environments (owner's real device AND an unrelated automated browser), suspect a
       blocked sub-resource domain before assuming a bug in the vendor's script or in the integration code —
       check ALL the domains a multi-stage tag loader depends on, not just the one that returns 200.
+- [x] **Meta Pixel added 2026-07-07 (pre-GMHG, for the Meta social/ads push).** Pixel ID 4659969744289221,
+      hardcoded in `AnalyticsScripts.tsx` beside GA4 (pixel IDs are public in page source; env-var
+      indirection buys nothing here). Sits inside the same `ds_track=off` gate, so the owner opt-out covers
+      it; no `<noscript>` fallback (the component only mounts when JS runs, so it would be dead code).
+      fbevents.js auto-refires PageView on history pushes, so client-side navs are covered. Verify in Meta
+      Events Manager against real traffic, NOT an automated browser (tracker endpoints commonly blocked
+      there — same artifact as the GA 503s/Clarity notes above).
 
 ## SEO / performance / accessibility (audited 2026-07-01)
 Multi-agent audit + Lighthouse (production, mobile). **SEO = 100** (the promotion-readiness metadata/JSON-LD/
