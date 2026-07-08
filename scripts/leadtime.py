@@ -62,6 +62,12 @@ def _rays_row(capture_dir: Path, target_date: str, lead: int):
     else:
         pred = next((d for d in (data.get("daily") or [])
                      if d.get("date") == target_date), None)
+        # Drop the scraped precip_in: Ray never publishes a numeric amount
+        # (_best_rays_prediction whitelists fields for the same reason —
+        # compare.py:157), so the amount stays forfeited at every lead. Old
+        # raw captures carry a 0.0 artifact that would otherwise score as an
+        # explicit "no rain" forecast.
+        pred = {k: v for k, v in pred.items() if k != "precip_in"} if pred else None
     # Mirror compare.py's guard: Ray's is only scored when a high or low
     # exists; otherwise the daily comparison records no score for the day.
     if pred is None or (compare._get_high(pred) is None
