@@ -4,6 +4,10 @@ This file is the durable single source of truth for outstanding work. Read it at
 start of each session and keep it current — check items off, add new ones, and update it
 in the same change that completes a task. Do not rely on chat memory; this file wins.
 
+> **📋 2026-07-08 morning:** start with `planning/2026-07-07-overnight-brief.md` — the scope-expansion
+> session summary (multi-day scoring spec ready for review, disavow file ready to upload, 2 held blog
+> posts, 3 things that need you). Then the "Scope expansion" section below.
+
 ## Decisions made
 - **Migrating presentation to Next.js** (owner's standard stack) and growing DS from a low-effort
   joke into a substantive, Ray's-Weather-class local weather site; the **Right/Wrong Ray accuracy
@@ -20,6 +24,121 @@ in the same change that completes a task. Do not rely on chat memory; this file 
   one-station daily/hourly accuracy tracker needs, and it adds a real maintenance tax. Add
   the Pi later only if local resilience or sub-minute multi-station data is genuinely needed;
   it can be added without changing anything upstream.
+
+## Scope expansion — brainstorm open (2026-07-07)
+Owner kicked off scoping: multi-day (5-day) forecast scoring, multi-location coverage, and going after
+Ray's backlink strategy. Research pass DONE (two agents: live raysweather.com API/bundle dig + Ahrefs
+teardown) → **`planning/seo/2026-07-07-rays-competitive-research.md`** (read it before touching any of
+this). Headlines: all 125 Ray-era capture days already store every source's full multi-day arrays (incl.
+Ray's 7-day) so lead-time scoring is scoring-layer + backfill only; Ray's has an unauthenticated tRPC API
+(66 stations, one call); magnets are free iframe widgets (ToU mandates the backlink; ExploreBoone carries
+one sitewide, dofollow, DR 60); redirect domains are his own legacy regional brands 301'd in (equity
+decaying, not a strategy to copy); webcams are third-party-sponsored, aggregated by Ray's; four of his
+town /Forecast pages 404 with 100+ RDs each (Hendersonville, Wilkesboro, Burnsville, Mount Airy); a
+broken-backlink reclamation list is in the doc. ⚠️ A spam link network hit the whole *weather.com family
+incl. davessweater.com (~all 239 of our RDs) — never trust headline RD counts.
+- [ ] Design + spec the picks with the owner (multi-day scoring is the recommended first move; no
+      implementation until a spec is approved).
+- [ ] **Blog post: Ray's widget/magnet link strategy** (owner-requested 2026-07-07). The "Magnets" are
+      free embeddable iframe badges (current conditions + 48-hr forecast) whose Terms of Use *require*
+      keeping the backlink and forbid `rel="noreferrer"` — i.e., the price of the free widget is a link.
+      3 per account, domain-registered, click/impression tracking (IP + pseudonymous visitor id).
+      Recommended angle: pair the post with LAUNCHING OUR OWN widget — explain how the free-widget-for-
+      backlinks trade works (quote the ToU briefly, commentary/criticism), then offer ours: real `<a>`
+      link, works without JS, unlimited, accuracy-audited, "no strings — well, one string, and we tell
+      you what it is." Voice guardrail: dry and factual, not bitter; every claim sourced to the ToU text
+      or Ahrefs data (research doc has both).
+- [ ] **Decide the Ray's-subscription capture policy** (owner subscribed 2026-07-07): what we capture
+      from the paid tier, at what cadence, facts-only vs. quoted excerpts. See discussion in session +
+      research doc; default posture = gentle daily facts capture + screenshots as evidence, criticism/
+      review quotes only, no republication, no hammering authenticated endpoints.
+
+### Compliance guardrails (agreed 2026-07-07 — "bulletproof in daylight")
+The whole program routes around these lines (owner asked them defined; not legal advice):
+1. **Facts vs. expression** — his numbers (highs/lows/wind/golfballs/snowman/dates) are uncopyrightable
+   facts, free to record/score/archive/chart. His prose narratives, Fearless Forecast essays, and photos
+   are protected expression — quote only briefly as criticism w/ attribution; never republish or clone-
+   paraphrase.
+2. **His ToU blesses the tracker IF non-commercial** — his terms explicitly permit sharing "forecasts
+   data, analysis, quotes… for non-commercial use" with "RaysWeather.Com" cited as source. So everything
+   hinges on the **commercial** question → the shop-as-charity-fundraiser positioning must be made
+   watertight (DEFERRED discussion, owner flagged). Always attribute.
+3. **"No archiving" clause** — can't override the fact/expression line and is contradicted by his own
+   non-commercial-sharing grant; we store facts + attribute + stay non-commercial, not his prose/images.
+4. **Automate only the PUBLIC unauthenticated tRPC endpoints**; use the paid login as a human for
+   verification + scoring premium claims — never point a scraper at the authenticated session (subscriber
+   ToS bars credential-sharing beyond immediate family + almost certainly bars paid-tier scraping).
+5. **Parody/trademark** — keep "Not affiliated" prominent, no logo/trade-dress use (already clean).
+6. **Defamation limit on marketing** — only truthful facts + labeled opinion. "Written once and stamped
+   across N locations" is a checkable FACT (safe); "an AI wrote it" is unfalsifiable (unsafe) — do NOT
+   assert AI-authorship as fact. Consumer AI-detection is unreliable.
+
+### Multi-day scoring — gate check RAN 2026-07-07 (spike on existing archive, high/low MAE by lead)
+Result: **multi-day does NOT hand Ray a win.** Open-Meteo beats Ray at every measurable horizon; free's
+edge is largest at 1 day and narrows by day 4 as OM decays while Ray stays flat — a MORE credible story
+than the single 1-day gap ("free's lead is biggest exactly when you're planning tomorrow").
+MAE °F (Ray high / OM high) by lead: 0→7.1/1.9, 1→6.9/2.8, 2→6.7/3.5, 3→6.7/3.8, 4→4.4*/3.7 (*n=9).
+Two SPEC MUST-FIXES before publishing:
+- [ ] **Systematic-offset guard**: Ray's high error is FLAT ~7° across leads (not skill decay → a
+      systematic station/elevation offset vs our grading lat/lon). Grade against a station-appropriate
+      baseline or disclose/neutralize the bias, else "you graded me at the wrong spot" is his counter.
+- [ ] **Honest horizon ceiling**: our archive reliably scores Ray to ~4 days out (sample cliffs 121→9
+      at lead 4), even though he publishes 7. Call it 5-day scoring max, disclose the thinning.
+- [ ] Spec multi-day scoring (lead dimension in comparisons/, backfill script, per-field fairness at
+      extended leads since Ray gives no wind/QPF past day 0). RECOMMENDED FIRST BUILD.
+
+### "How sure was Ray?" audit — golfballs + snowman-o-mometer (owner-requested 2026-07-07)
+His per-day `golfballs` (1–5 self-rated confidence) and `snowmanometer` (snow-likelihood) are published
+FACTS via the public API — nobody has ever audited whether his stated confidence tracks his actual
+accuracy. Killer factual piece: "when Ray says 5 golfballs, is he actually right more often?"
+- [ ] **Capture golfballs + snowmanometer** — NOT currently in `rays_boone.json` (confirmed 2026-07-07);
+      add to the Ray capture (public API or scrape) so it accrues going forward; backfill from Wayback/
+      raw_text where possible.
+- [ ] Build the confidence-calibration analysis once enough days accrue (reliability curve: stated
+      golfballs vs measured accuracy). Fold into the multi-day / audit milestone.
+
+### Narrative audit — ✅ DONE 2026-07-07 (finding in research doc)
+**"66 locations, 3 forecasts."** On 2026-07-07 all 66 stations collapsed to exactly 3 distinct narrative
+texts (same author, `fujiwhara@gmail.com`); Mt. Mitchell (6,600 ft) and Boone valley read BYTE-IDENTICAL
+prose — only the numbers differ. Reproducible by anyone via his public API. This is the provable dagger.
+**Drop the AI-authorship angle** (human-signed, unfalsifiable, unsafe per guardrail #6); "written once,
+stamped across 66 locations" is far stronger and needs no hedging. History: regional-stamp model ~18 yrs
+old, roster scaled ~31→66 since 2008 (can't date the prose dilution — Wayback didn't capture JS-rendered
+text). Full detail in `planning/seo/2026-07-07-rays-competitive-research.md`.
+- [ ] Candidate article/section: "Ray's Weather has 66 locations and 3 forecasts" — a live, checkable
+      teardown. Pairs naturally with the multi-location build (OUR per-town pages ARE genuinely per-town).
+      Hold publish alignment same as widget post (don't tip the hand before our locations are live).
+
+### Legacy / expansion domains — PARKED as a FUTURE MILESTONE (owner call 2026-07-07)
+Owner: park domain research in the next-phase list, alongside the Ecowitt station and other down-the-road
+work — not an immediate action. Ray's live legacy brands are defended anyway (booneweather.com renewed
+Jan 2026 exp 2027, unlocked; ashevilleweather.com exp Jun 2027; asheweather exp Oct 2026 + averyweather
+exp Sep 2026 both unlocked but he'll likely renew; wataugaweather.com fully lock-flagged exp 2028). Don't
+chase live ones (backorder is a lottery + 301'd equity is stapled to raysweather).
+- [ ] **[FUTURE MILESTONE]** When multi-location content is ready to front them, revisit registering the
+      then-available real-town names. UNREGISTERED as of 2026-07-07 (~$12 each): blowingrockweather.com,
+      linvilleweather.com, newlandweather.com, deepgapweather.com, vallecrucisweather.com,
+      foscoeweather.com, sevendevilsweather.com, grandfatherweather.com. Rule: only buy a name once real
+      per-town content will front it (a keyword domain with no content is worthless). Re-check availability
+      at that time — these may get taken. beechmountainweather / sugarmountainweather are TAKEN (exp Oct 2026).
+- [ ] **[FUTURE MILESTONE]** Optional low-priority drop-watch on asheweather/averyweather (exp fall 2026).
+
+### Webcam as a backlink asset — FUTURE MILESTONE (with Ecowitt; researched 2026-07-07)
+Webcams earn Ray ~380 referring domains; a live/snapshot Boone cam is a proven link magnet. **Ray charges**
+for cam sponsorship (~$75/mo ad floor; cam est. **~$1,200–2,400/yr**) → his host businesses pay him, a wedge
+for our free-widget/cheap-cam pitch. Our cost: cheapest viable ≈ **$130 one-time / ~$0–5-mo** (Reolink
+RLC-810A ~$90 + PoE/mount ~$40 snapshot cam, JPG every few min, hosted ~free — what ~23 of Ray's 36 "cams"
+are); nice live cam ≈ $400 + $6–12/mo self-hosting MediaMTX (vs Ray's one Wowza box ~$195/mo — we can beat
+his economics). Backlink crux: expose ONE public snapshot JPG URL first; then submit to **Windy** +
+**Ventusky** (both confirmed dofollow), WebcamGalore, EarthCam. ⛔ not Insecam. Real constraint is SITING
+(power+internet+view); owner's fireworks-LOS vantage is unique but privacy-sensitive → deliberate decision,
+not now. Detail in `planning/seo/2026-07-07-rays-competitive-research.md`.
+- [ ] **[FUTURE MILESTONE]** Stand up one cheap snapshot cam + submit to Windy/Opentopia/etc. for links;
+      decide siting + privacy first. Lower leverage than widget/locations — sequence after those.
+
+### Disavow list (running 2026-07-07, background agent)
+Building `planning/seo/davessweater-disavow.txt` (+ notes) — the ~239 spam-net RDs pointing at
+davessweater.com, Google-disavow format, DRAFT for owner GSC review. ⚠️ conservative: never disavow a real link.
 
 ## Done: Next.js migration (M1)
 Migrated presentation to Next.js 16 (App Router); Python data pipeline + scoring unchanged.
