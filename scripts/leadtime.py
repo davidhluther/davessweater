@@ -124,3 +124,80 @@ def score_lead(target_date: str, source: str, lead: int, norm_actual: dict):
         "high_bias": (ph - ah) if ph is not None and ah is not None else None,
         "low_bias": (pl - al) if pl is not None and al is not None else None,
     }
+
+
+def _norm_actual_for(target_date: str):
+    """Normalized actuals for target_date from data/actuals, or None.
+
+    Same load + _normalize_actual path as compare.run_daily_comparison."""
+    p = DATA_DIR / "actuals" / f"{target_date}.json"
+    if not p.exists():
+        return None
+    data = _load_json(p)
+    return compare._normalize_actual(data) if data else None
+
+
+def _leadtime_dir() -> Path:
+    """Per-date lead-time results directory. Factored out so tests can
+    redirect writes (and the rollup's reads) without touching the DATA_DIR
+    that predictions/actuals are read from."""
+    return DATA_DIR / "leadtime"
+
+
+def build_leadtime(target_date: str):
+    """Score every source x lead for target_date -> data/leadtime/{date}.json."""
+    norm_actual = _norm_actual_for(target_date)
+    if norm_actual is None:
+        return None
+    rows = []
+    # Iterate the mapping's keys (not free-typed strings): score_lead returns
+    # None for unknown sources, so a typo would silently drop a source.
+    for source in list(SOURCE_FILES) + ["raysweather"]:
+        for lead in range(MAX_LEAD + 1):
+            r = score_lead(target_date, source, lead, norm_actual)
+            if r:
+                rows.append({"source": source, "lead": lead, **r})
+    out = {"date": target_date, "location": LOCATION, "rows": rows}
+    d = _leadtime_dir()
+    d.mkdir(parents=True, exist_ok=True)
+    (d / f"{target_date}.json").write_text(json.dumps(out, indent=2))
+    return out
+
+
+def _mean(xs):
+    xs = [x for x in xs if x is not None]
+    return round(sum(xs) / len(xs), 2) if xs else None
+
+
+def _aggregate_rows(rows):
+    """rows -> {source: {lead(str): {n, avg_score, high_mae, low_mae, high_bias, low_bias}}}.
+
+    Cell keys and the str(lead) keying are a contract with the site's
+    LeadCell/LeadtimeScores TypeScript types — do not rename."""
+    agg = {}
+    keyed = {}
+    for r in rows:
+        keyed.setdefault((r["source"], r["lead"]), []).append(r)
+    for (source, lead), group in keyed.items():
+        cell = {
+            "n": len(group),
+            "avg_score": _mean([g["score"] for g in group]),
+            "high_mae": _mean([g["high_err"] for g in group]),
+            "low_mae": _mean([g["low_err"] for g in group]),
+            "high_bias": _mean([g["high_bias"] for g in group]),
+            "low_bias": _mean([g["low_bias"] for g in group]),
+        }
+        agg.setdefault(source, {})[str(lead)] = cell
+    return agg
+
+
+def build_leadtime_scores():
+    """Roll up all data/leadtime/*.json -> data/leadtime_scores.json."""
+    all_rows = []
+    for f in sorted(_leadtime_dir().glob("*.json")):
+        data = _load_json(f)
+        if data:
+            all_rows += data.get("rows", [])
+    out = {"location": LOCATION, "max_lead": MAX_LEAD, "by_source": _aggregate_rows(all_rows)}
+    (DATA_DIR / "leadtime_scores.json").write_text(json.dumps(out, indent=2))
+    return out

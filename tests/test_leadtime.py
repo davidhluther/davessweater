@@ -6,6 +6,7 @@ capture-day-low recovery, same contract + scoring). If leadtime.py ever drifts
 from compare.py's pipeline, the lead-0 tests fail against the committed
 comparison JSON.
 """
+import datetime
 import json
 import pathlib
 
@@ -92,3 +93,77 @@ def test_rays_lead3_uses_daily_row_not_capture_day_strip(tmp_path, monkeypatch):
 
     # 2026-07-09 has no row in the 07-04 capture -> no forecast at lead 5.
     assert leadtime.score_lead("2026-07-09", "raysweather", 5, norm_actual) is None
+
+
+def test_aggregate_mae_and_bias():
+    rows = [
+        {"source": "openmeteo", "lead": 1, "score": 90, "high_err": 2.0, "high_bias": 2.0, "low_err": 1.0, "low_bias": -1.0},
+        {"source": "openmeteo", "lead": 1, "score": 80, "high_err": 4.0, "high_bias": -4.0, "low_err": 3.0, "low_bias": 3.0},
+    ]
+    agg = leadtime._aggregate_rows(rows)
+    cell = agg["openmeteo"]["1"]
+    assert cell["n"] == 2
+    assert cell["avg_score"] == 85.0
+    assert cell["high_mae"] == 3.0          # (2+4)/2
+    assert cell["high_bias"] == -1.0        # (2 + -4)/2
+
+
+def _openmeteo_row_exists(capture_day, target_date):
+    p = DATA / "predictions" / capture_day / "openmeteo_forecast.json"
+    if not p.exists():
+        return False
+    data = json.load(open(p))
+    return any(day.get("date") == target_date for day in data.get("daily", []))
+
+
+def _a_date_with_lead1_openmeteo():
+    """Most recent date with committed actuals plus an openmeteo row for it in
+    both its own capture (lead 0) and the prior day's capture (lead 1)."""
+    for f in sorted(DATA.glob("actuals/*.json"), reverse=True):
+        d = f.stem
+        prev = (datetime.date.fromisoformat(d) - datetime.timedelta(days=1)).isoformat()
+        if _openmeteo_row_exists(d, d) and _openmeteo_row_exists(prev, d):
+            return d
+    raise AssertionError("no date with openmeteo captures at lead 0 and 1")
+
+
+def test_build_leadtime_and_rollup_on_real_data(tmp_path, monkeypatch):
+    """Integration against the real committed data (read-only), like the
+    lead-0 parity tests.
+
+    Hermeticity choice: redirect ONLY the outputs. Reads must keep going
+    through the real tree — score_lead's lead-0 path (_fix_bucket_low) and
+    _best_rays_prediction read via compare.DATA_DIR, so neither DATA_DIR may
+    point at tmp during the build. _leadtime_dir() is monkeypatched to
+    tmp_path for the per-date write; leadtime.DATA_DIR is switched to
+    tmp_path only AFTER build_leadtime, for build_leadtime_scores'
+    leadtime_scores.json write (that function reads no predictions/actuals).
+    Nothing under the repo's data/ is created, and pytest cleans tmp_path."""
+    out_dir = tmp_path / "leadtime"
+    monkeypatch.setattr(leadtime, "_leadtime_dir", lambda: out_dir)
+    date = _a_date_with_lead1_openmeteo()
+    result = leadtime.build_leadtime(date)
+
+    assert result is not None
+    om_leads = {r["lead"] for r in result["rows"] if r["source"] == "openmeteo"}
+    assert 0 in om_leads
+    assert any(lead >= 1 for lead in om_leads)
+
+    written = out_dir / f"{date}.json"
+    assert written.exists()
+    assert json.load(open(written)) == result
+
+    # Roll the per-date file up and check the envelope + cell keys the
+    # TypeScript side (LeadCell/LeadtimeScores) depends on.
+    monkeypatch.setattr(leadtime, "DATA_DIR", tmp_path)
+    scores = leadtime.build_leadtime_scores()
+    assert scores["location"] == leadtime.LOCATION
+    assert scores["max_lead"] == leadtime.MAX_LEAD
+    cell = scores["by_source"]["openmeteo"]["0"]
+    assert set(cell) == {"n", "avg_score", "high_mae", "low_mae",
+                         "high_bias", "low_bias"}
+    assert cell["n"] == 1  # one built date -> one row per (source, lead)
+    row0 = next(r for r in result["rows"]
+                if r["source"] == "openmeteo" and r["lead"] == 0)
+    assert cell["avg_score"] == row0["score"]
+    assert (tmp_path / "leadtime_scores.json").exists()
