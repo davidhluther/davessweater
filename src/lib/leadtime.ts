@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 const DATA = join(process.cwd(), "data");
 
-// Shapes mirror scripts/build_leadtime.py's data/leadtime_scores.json artifact.
+// Shapes mirror scripts/leadtime.py's data/leadtime_scores.json artifact.
 // Key names are a contract with the Python side — do not rename. Cells only
 // exist where n > 0, and metrics can be null when every group value was null.
 export type LeadCell = { n: number; avg_score?: number | null; high_mae?: number | null;
@@ -22,14 +22,14 @@ export type ChartSeries = { source: string; points: { lead: number; value: numbe
 // metric, null cells dropped, sorted by lead. minN floors out thin cells (the
 // real data has a raysweather lead-5 cell with n=1 that must not chart).
 export function toChartSeries(
-  scores: LeadtimeScores, metric: keyof LeadCell, opts?: { minN?: number },
+  scores: LeadtimeScores, metric: Exclude<keyof LeadCell, "n">, opts?: { minN?: number },
 ): ChartSeries[] {
   const minN = opts?.minN ?? 0;
   return Object.entries(scores.by_source).map(([source, byLead]) => ({
     source,
     points: Object.entries(byLead)
       .filter(([, cell]) => cell.n >= minN)
-      .map(([lead, cell]) => ({ lead: Number(lead), value: cell[metric] as number | null | undefined }))
+      .map(([lead, cell]) => ({ lead: Number(lead), value: cell[metric] }))
       .filter((p): p is { lead: number; value: number } => typeof p.value === "number")
       .sort((a, b) => a.lead - b.lead),
   }));
