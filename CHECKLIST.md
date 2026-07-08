@@ -84,8 +84,17 @@ Two SPEC MUST-FIXES before publishing:
       baseline or disclose/neutralize the bias, else "you graded me at the wrong spot" is his counter.
 - [ ] **Honest horizon ceiling**: our archive reliably scores Ray to ~4 days out (sample cliffs 121→9
       at lead 4), even though he publishes 7. Call it 5-day scoring max, disclose the thinning.
-- [ ] Spec multi-day scoring (lead dimension in comparisons/, backfill script, per-field fairness at
-      extended leads since Ray gives no wind/QPF past day 0). RECOMMENDED FIRST BUILD.
+- [x] **Spec written:** `planning/specs/2026-07-07-multi-day-scoring-design.md`.
+- [x] **Scope resolved (owner, 2026-07-08):** scoreboard shows full 100-pt score + decay chart plots high/low
+      MAE/bias; chart on `/right-wrong-ray` (homepage teaser later); disclose the bias NUMBER on `/methodology`
+      (Ray +3.5° warm, graded at his own 3,240 ft); 5-day ceiling (leads 0–5), disclose thinning past lead 3.
+- [x] **▶ IMPLEMENTATION PLAN written: `planning/plans/2026-07-08-multi-day-scoring.md`** — 5 TDD tasks
+      (lead-time scoring core reusing `_to_contract`/`score_prediction` so lead-0 ≡ existing comparison →
+      per-date builder + MAE/bias aggregate → backfill → TS loader + visx decay chart → surface on
+      /right-wrong-ray + methodology + daily wiring). Additive, no scoreboard regression (guarded by a
+      lead-0-equivalence test). **RECOMMENDED FIRST BUILD — execution-ready.**
+- [ ] **[NEXT]** Execute the multi-day scoring plan (owner greenlight). Executor must verify `SOURCE_FILES`
+      keys against real `data/predictions/<recent>/` filenames before backfill.
 
 ### "How sure was Ray?" audit — golfballs + snowman-o-mometer (owner-requested 2026-07-07)
 His per-day `golfballs` (1–5 self-rated confidence) and `snowmanometer` (snow-likelihood) are published
