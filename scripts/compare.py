@@ -530,6 +530,7 @@ def run_daily_comparison(target_date=None):
 
     # Emit the newest unscored forecasts for the "what they're predicting now" section
     build_latest_forecasts()
+    build_forecast_5day()
 
     return comparison
 
@@ -686,16 +687,139 @@ def build_latest_forecasts():
     return out
 
 
+def build_forecast_5day():
+    """Emit data/forecast_5day.json — every source's outlook for the next six
+    days (capture day + 5), read from the same newest-unscored capture folder
+    build_latest_forecasts anchors on. Each days[] entry carries the exact
+    per-source shape of latest_forecasts.json ({high_f, low_f, wind,
+    precip_type[, precip_prob], label}) so the TS compositeForecast() consumes
+    each day unchanged — the composite itself stays in TS (src/lib/composite.ts),
+    which also owns the Ray's/Apple EXCLUDE set, so both are included here just
+    like the daily file. Missing or corrupt capture files skip that source
+    (same tolerance idiom as the source loop above)."""
+    import re
+    pred_root = DATA_DIR / "predictions"
+    if not pred_root.exists():
+        return None
+    comp_dir = DATA_DIR / "comparisons"
+    dirs = sorted(d.name for d in pred_root.iterdir()
+                  if d.is_dir() and re.match(r"^\d{4}-\d{2}-\d{2}$", d.name)
+                  and not (comp_dir / f"{d.name}.json").exists())
+    if not dirs:
+        return None
+    date = dirs[-1]
+    pred_dir = pred_root / date
+    start = datetime.strptime(date, "%Y-%m-%d")
+    window = [(start + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(6)]
+    days = {}  # date -> {source_key: display dict}
+
+    def _load(path):
+        try:
+            return json.load(open(path))
+        except (json.JSONDecodeError, OSError):
+            return None
+
+    def _put(d, key, pred):
+        entry = _forecast_display(_to_contract(pred))
+        if pred.get("precip_prob") is not None:
+            entry["precip_prob"] = pred["precip_prob"]
+        days.setdefault(d, {})[key] = entry
+
+    om = _load(pred_dir / "openmeteo_forecast.json")
+    if om:
+        for day in om.get("daily", []):
+            if day.get("date") in window:
+                _put(day["date"], "openmeteo", day)
+
+    rays_rebuilt = pred_dir / "rays_boone.rebuilt.json"
+    rays = _load(rays_rebuilt if rays_rebuilt.exists() else pred_dir / "rays_boone.json")
+    if rays:
+        rows = {r.get("date"): r for r in (rays.get("daily") or [])}
+        for d in window:
+            # Day 0 mirrors build_latest_forecasts: _best_rays_prediction merges
+            # the capture-day strip over daily[]. Beyond day 0 the strip
+            # describes the capture day, not d, so only an exact daily[] row
+            # counts — fed through the same helper one row at a time so its
+            # field whitelist (which never carries precip_in) still applies.
+            # Same rule as leadtime._rays_row.
+            if d == date:
+                pred = _best_rays_prediction(rays, d)
+            elif d in rows:
+                pred = _best_rays_prediction({"daily": [rows[d]]}, d)
+            else:
+                continue
+            if pred and (_get_high(pred) is not None or _get_low(pred) is not None):
+                _put(d, "raysweather", pred)
+
+    # Apple is a flat single-day capture (the real Shortcut file, or the
+    # fallback's nested `forecast` dict), so it only ever contributes day 0 —
+    # same parse as build_latest_forecasts, same reason leadtime.py skips it.
+    apple_data = None
+    try:
+        apple_path = pred_dir / "iphone_forecast_apple.json"
+        if apple_path.exists():
+            apple_data = _parse_apple_forecast(apple_path)
+        elif (pred_dir / "iphone_forecast.json").exists():
+            apple_data = _parse_apple_forecast(pred_dir / "iphone_forecast.json")
+            if isinstance(apple_data, dict) and isinstance(apple_data.get("forecast"), dict):
+                apple_data = dict(apple_data["forecast"])
+    except (json.JSONDecodeError, OSError):
+        apple_data = None
+    if apple_data:
+        if apple_data.get("conditions") and not apple_data.get("category"):
+            apple_data["category"] = _apple_condition_to_category(apple_data["conditions"])
+        if "precip_in" not in apple_data and apple_data.get("category"):
+            cat = apple_data["category"]
+            if cat in ("rain", "drizzle", "storm", "snow"):
+                apple_data["precip_in"] = 0.01
+            elif cat != "unknown":
+                apple_data["precip_in"] = 0.0
+        if _get_high(apple_data) is not None or _get_low(apple_data) is not None:
+            _put(date, "apple_weather", apple_data)
+
+    for s in SOURCES:
+        key = s["key"]
+        data = _load(pred_dir / f"{key}_forecast.json")
+        if not data:
+            continue
+        for day in data.get("daily", []):
+            d = day.get("date")
+            if d not in window or key in days.get(d, {}):
+                continue
+            if d == date:
+                # The capture-day low recovery only applies to day 0 (the
+                # midday-capture problem); later rows already span their full
+                # day and must keep their own lows (leadtime.score_lead's rule).
+                day = _fix_bucket_low(key, d, dict(day))
+            _put(d, key, day)
+
+    labels = dict(SOURCE_LABELS)
+    for s in SOURCES:
+        labels[s["key"]] = s["label"]
+    for srcs in days.values():
+        for k, v in srcs.items():
+            v["label"] = labels.get(k, k)
+
+    out = {"generated_at": datetime.now(EST).isoformat(), "location": "Boone",
+           "days": [{"date": d, "sources": days[d]} for d in sorted(days)]}
+    with open(DATA_DIR / "forecast_5day.json", "w") as f:
+        json.dump(out, f, indent=2)
+    print(f"  Wrote 5-day forecasts: {len(days)} days from {date}")
+    return out
+
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Dave's Sweater daily comparison")
     parser.add_argument("--date", type=str, help="Date to compare (YYYY-MM-DD, default: yesterday)")
     parser.add_argument("--sweater-only", action="store_true", help="Just check sweater weather for today")
-    parser.add_argument("--forecasts-only", action="store_true", help="Just rebuild data/latest_forecasts.json")
+    parser.add_argument("--forecasts-only", action="store_true",
+                        help="Just rebuild data/latest_forecasts.json + data/forecast_5day.json")
     args = parser.parse_args()
 
     if args.forecasts_only:
         build_latest_forecasts()
+        build_forecast_5day()
     elif args.sweater_only:
         # Quick sweater check using current Open-Meteo data
         from capture_openmeteo import fetch_json, FORECAST_URL
