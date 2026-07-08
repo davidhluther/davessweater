@@ -125,8 +125,9 @@ chase live ones (backorder is a lottery + 301'd equity is stapled to raysweather
 
 ### Webcam as a backlink asset — FUTURE MILESTONE (with Ecowitt; researched 2026-07-07)
 Webcams earn Ray ~380 referring domains; a live/snapshot Boone cam is a proven link magnet. **Ray charges**
-for cam sponsorship (~$75/mo ad floor; cam est. **~$1,200–2,400/yr**) → his host businesses pay him, a wedge
-for our free-widget/cheap-cam pitch. Our cost: cheapest viable ≈ **$130 one-time / ~$0–5-mo** (Reolink
+(advertising from a **reported ~$75/mo**, per Ashvegas quoting his pitch — covers text/banner/station
+sponsorship, NOT webcam-specific; no published cam rate. The ~$1.2–2.4k/yr cam figure is OUR estimate, not
+his number — don't cite as fact). Host businesses clearly pay him → wedge for our free-widget/cheap-cam pitch. Our cost: cheapest viable ≈ **$130 one-time / ~$0–5-mo** (Reolink
 RLC-810A ~$90 + PoE/mount ~$40 snapshot cam, JPG every few min, hosted ~free — what ~23 of Ray's 36 "cams"
 are); nice live cam ≈ $400 + $6–12/mo self-hosting MediaMTX (vs Ray's one Wowza box ~$195/mo — we can beat
 his economics). Backlink crux: expose ONE public snapshot JPG URL first; then submit to **Windy** +
@@ -141,6 +142,30 @@ not now. Detail in `planning/seo/2026-07-07-rays-competitive-research.md`.
       positioning that beats him beyond price (own-asset embed on the sponsor's site + they keep the SEO +
       timelapse/night/heater quality + "part of the accountability story" + directory reach; honesty
       guardrail: never claim we out-draw him). Pitch one-liner lives in §5.
+- [ ] **⏸️ Leave-behind DEFERRED (owner, 2026-07-08):** don't build the customer-facing one-page pitch sheet
+      until (a) pricing is ironed out (only ~$75/mo is sourced; the cam $/yr is our estimate) and (b) the
+      quality story is locked. Ray's night cam grid (dark/fuzzy/obstructed/duplicative) is real before/after
+      ammo — grab screenshots when we build ours.
+
+### Traffic forecast — NEW long-term idea (owner, 2026-07-08; deeper, own milestone)
+Owner wants to pursue a **Boone traffic forecast** — the accuracy bit extended to a universal local pain
+(the 321/421 bypass, King St, App State game days / move-in, leaf + ski season, downtown events). Traffic
+here is heavily **calendar/event/weather-driven → genuinely forecastable**, which is exactly what makes a
+*forecast* (not just a live cam) winnable, and nobody local does it. **Cameras CAN double as the sensor**
+(owner's insight: Ray's "Wendy's cam" is really 4 cams covering each approach of the intersection — the
+template for a congestion sensor). Two data-source paths to weigh in a real brainstorm/spec:
+  - **(a) Our own cams + computer vision** — vehicle-count/speed via a detection model on the snapshot feed →
+    build a congestion "actuals" dataset → forecast AND score it (on-brand; owns the data; heavier lift;
+    privacy = aggregate counts only, no plates/faces; night/weather robustness is the hard part). One
+    multi-angle install per chokepoint (the Wendy's 4-way pattern).
+  - **(b) Existing traffic data** — Google/TomTom/HERE traffic APIs or NCDOT DriveNC/511 cams+incidents →
+    faster to a forecast, less "ours," proven data.
+  - **Likely winning hybrid:** forecast from calendar + events + **weather (we already have it!)**, validate
+    against a traffic API now and camera-CV later (mirrors the Ecowitt "own ground truth" arc). Weather→traffic
+    (snow/rain/leaf-sun) is a natural bridge nobody local connects.
+- [ ] **[FUTURE MILESTONE / brainstorm]** Scope the traffic forecast as its own project (data source a vs b vs
+      hybrid, chokepoint list, CV feasibility, privacy, scoring model). Synergy: if we site backlink cams at
+      chokepoints (bypass, King St), they do double duty as traffic sensors — site with that in mind.
 
 ### Disavow list (running 2026-07-07, background agent)
 Building `planning/seo/davessweater-disavow.txt` (+ notes) — the ~239 spam-net RDs pointing at

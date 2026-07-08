@@ -58,10 +58,14 @@ Merch via RaysMarketplace.com.
 
 **Cost to sponsor his (does he charge?) + DIY to match him (researched 2026-07-07, 3 sub-agents):**
 
-*He DOES charge.* No cam-specific public rate, but Ray's advertising starts ~**$75/mo** (the only hard
-public number; ashvegas.com sourced) and a webcam/"weather station" sponsorship is estimated
-**~$1,200–2,400/yr** (contact-for-quote, ray@raysweather.com / 828-264-2030). So his cam-hosting businesses
-PAY him ~$1–2k/yr — a wedge for the free-widget / cheap-cam-listing pitch.
+*He DOES charge — but sourcing is thin, be precise.* The ONLY sourced number is "advertising options
+starting at **$75 a month**," covering "text ads, banner advertising and weather station sponsorship"
+(Ashvegas, quoting Ray's own pitch; he claims 200–300k monthly uniques). That's a starting floor across ALL
+ad types, **not webcam-specific**, and no published webcam rate exists (contact-for-quote,
+ray@raysweather.com / 828-264-2030). The **~$1,200–2,400/yr cam figure is OUR estimate** (extrapolated from
+the $75 floor + comparable weather-site sponsorships) — do NOT cite it as a Ray's number. What's defensible:
+"Ray sells sponsorships from a reported ~$75/mo" and "host businesses clearly pay him" — the wedge (free
+widget / cheap cam) holds regardless of the exact figure.
 
 *DIY, our cost:*
 - **Cheapest viable ≈ $130 one-time / ~$0–5-mo:** Reolink RLC-810A (4K PoE IP67, ~$90) + PoE injector/mount

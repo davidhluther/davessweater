@@ -101,12 +101,13 @@ snowmanometer). Guardrail: automate only these public endpoints, never your paid
 **Domains** (parked to a future milestone per your call): 8 real High-Country town `*weather.com` names are
 unregistered today (~$12 each) — revisit when multi-location content is ready to front them.
 
-**Webcams.** **Ray DOES charge** — his advertising starts at ~**$75/month**, and a webcam/"weather station"
-sponsorship is estimated at **~$1,200–2,400/yr** (no public cam-specific rate — it's contact-for-quote at
-ray@raysweather.com / 828-264-2030; the $75/mo floor is the only hard public number). So the businesses
-hosting his cams are *paying* him ~$1–2k/yr for the privilege — which is itself a wedge: the same "we'll
-give you a free weather widget / cheap cam listing" pitch that beats his magnet program also undercuts a
-paid cam sponsorship. The important part is what a cam would cost US:
+**Webcams.** **Ray DOES charge** — advertising from a **reported ~$75/month** (Ashvegas quoting his pitch;
+covers text/banner/station sponsorship, NOT webcam-specific; he claims 200–300k monthly uniques). That $75
+floor is the only *sourced* number; there's no published webcam rate (contact-for-quote,
+ray@raysweather.com / 828-264-2030), and the **~$1,200–2,400/yr cam figure is OUR estimate, not his** —
+don't cite it as fact. Still, host businesses clearly pay him, which is itself a wedge: the same "free
+weather widget / cheap cam listing" pitch that beats his magnet program also undercuts a paid cam
+sponsorship. The important part is what a cam would cost US:
 - **Cheapest viable ≈ $130 one-time, ~$0–5/mo:** weatherproof Reolink RLC-810A (4K PoE, IP67, ~$90) +
   PoE injector/mount (~$40), run as a **snapshot cam** — a cron `curl`s the camera's snapshot URL to a
   JPG every few minutes; hosting one overwritten ~200 KB still is ~$0 (Vercel/R2/B2). This is what most

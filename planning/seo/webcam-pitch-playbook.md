@@ -20,7 +20,11 @@ You can't sell a cam you've never built. Minimum viable proof:
    <name>/latest.jpg`) → hosted ~free. This one URL is what every directory and every sponsor embed uses.
 3. **A branded cam page template** on the site: the live view + current conditions + the accuracy tie-in
    ("what's the sky doing vs. what was forecast") + a sponsor slot.
-4. **This playbook + a one-page leave-behind** for the pitch (offer to make the leave-behind an Artifact).
+4. **This playbook** + (LATER) a one-page customer-facing leave-behind. ⏸️ **The leave-behind is a
+   deferred to-do** (owner, 2026-07-08) — don't build the pitch one-pager until the pricing is ironed out
+   (only the ~$75/mo floor is sourced) and the quality story is nailed. Note: Ray's own cam grid, viewed at
+   night, is full of dark/fuzzy/obstructed/duplicative feeds — that's live ammunition for the "sharper,
+   reliable, night-usable" half of the pitch; capture screenshots as before/after proof when we build ours.
 
 Once the pilot exists, every pitch becomes "here's ours, live, already ranking — want one for your place?"
 
@@ -111,9 +115,11 @@ basically free off the snapshot archive) and **a heater** (so you're the cam tha
 | Cellular uplink (only for an off-grid site with no host internet) | — | ~$4–20 (snapshot) / ~$30–70 (live) |
 
 **Scoping 3–4 spots:** budget ~$130–180 each for snapshot cams + one ~$400 hero cam for your flagship view →
-**~$500–900 one-time + ~$12/mo** infra if you go live at all. Compare: each sponsor pays *Ray* ~$1,200–2,400
-**per year**. Your whole network costs less than one of his annual sponsorships. The real cost is your time
-(install + pipeline), not dollars.
+**~$500–900 one-time + ~$12/mo** infra if you go live at all. Compare: Ray sells sponsorships from a
+**reported ~$75/mo (~$900/yr floor)** — that's the only sourced figure and it's not webcam-specific; a cam
+plausibly costs a sponsor more, but the ~$1,200–2,400/yr number is OUR estimate, not a published Ray's rate
+(⚠️ don't cite it as fact in a pitch — use the $75/mo floor). Either way, your whole multi-cam network costs
+less than one sponsor's single year with him. The real cost is your time (install + pipeline), not dollars.
 
 ---
 
@@ -145,12 +151,15 @@ larger than Ray's, plus it seeds the travel-site re-embed cascade. So "he has th
 three ways: the cam is how you *build* an audience; the sponsor's own embed generates discovery independent
 of both sites; and the directories out-reach him.
 
-**6. Free / cheap + no lock-in.** Ray charges ~$1–2k/yr and reserves the right to switch you off "at his
-sole discretion" (his own ToU). Ours: free or nominal, you own the embed, no revocation-at-whim.
+**6. Free / cheap + no lock-in.** Ray charges for this (advertising from a reported ~$75/mo; no published
+cam rate) and reserves the right to switch you off "at his sole discretion" (his own ToU). Ours: free or
+nominal, you own the embed, no revocation-at-whim.
 
 **Honesty guardrail (bulletproof in daylight applies to sales too):** don't claim we out-draw Ray — we
 don't, yet. The pitch is "your own asset + a superior cam + you're part of the story + directory reach + you
-keep the SEO," not "more eyeballs than Ray." Overpromising audience is the one way this pitch backfires.
+keep the SEO," not "more eyeballs than Ray." Overpromising audience is the one way this pitch backfires. And
+don't quote a specific Ray price — only "advertising from a reported ~$75/mo" is sourced; the ~$1–2k/yr cam
+figure is our estimate, not his number.
 
 **One-line version:** *"Ray rents you a slot on his site and keeps the traffic. We give you a sharper camera,
 put the live view on your own website, help your search ranking instead of his, and make your view part of
