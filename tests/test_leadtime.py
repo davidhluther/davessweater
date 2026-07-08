@@ -116,15 +116,26 @@ def _openmeteo_row_exists(capture_day, target_date):
     return any(day.get("date") == target_date for day in data.get("daily", []))
 
 
-def _a_date_with_lead1_openmeteo():
-    """Most recent date with committed actuals plus an openmeteo row for it in
-    both its own capture (lead 0) and the prior day's capture (lead 1)."""
+def _rays_scoreable(capture_day, target_date):
+    """True when the capture-day folder holds a Ray's capture that _rays_row
+    scores for target_date (a high or low survives the strip+daily merge)."""
+    cap = DATA / "predictions" / capture_day
+    return leadtime._rays_row(cap, target_date, 0) is not None
+
+
+def _a_date_with_lead1_openmeteo_and_rays():
+    """Most recent date with committed actuals, an openmeteo row for it in
+    both its own capture (lead 0) and the prior day's capture (lead 1), plus
+    a scoreable Ray's capture — so the build exercises both the SOURCE_FILES
+    loop and the free-typed "raysweather" branch."""
     for f in sorted(DATA.glob("actuals/*.json"), reverse=True):
         d = f.stem
         prev = (datetime.date.fromisoformat(d) - datetime.timedelta(days=1)).isoformat()
-        if _openmeteo_row_exists(d, d) and _openmeteo_row_exists(prev, d):
+        if (_openmeteo_row_exists(d, d) and _openmeteo_row_exists(prev, d)
+                and _rays_scoreable(d, d)):
             return d
-    raise AssertionError("no date with openmeteo captures at lead 0 and 1")
+    raise AssertionError(
+        "no date with openmeteo captures at lead 0 and 1 and a Ray's capture")
 
 
 def test_build_leadtime_and_rollup_on_real_data(tmp_path, monkeypatch):
@@ -141,13 +152,16 @@ def test_build_leadtime_and_rollup_on_real_data(tmp_path, monkeypatch):
     Nothing under the repo's data/ is created, and pytest cleans tmp_path."""
     out_dir = tmp_path / "leadtime"
     monkeypatch.setattr(leadtime, "_leadtime_dir", lambda: out_dir)
-    date = _a_date_with_lead1_openmeteo()
+    date = _a_date_with_lead1_openmeteo_and_rays()
     result = leadtime.build_leadtime(date)
 
     assert result is not None
     om_leads = {r["lead"] for r in result["rows"] if r["source"] == "openmeteo"}
     assert 0 in om_leads
     assert any(lead >= 1 for lead in om_leads)
+    # Pins the free-typed "raysweather" in build_leadtime's source loop — it
+    # is not in SOURCE_FILES, so no other test would notice its removal.
+    assert any(r["source"] == "raysweather" for r in result["rows"])
 
     written = out_dir / f"{date}.json"
     assert written.exists()
