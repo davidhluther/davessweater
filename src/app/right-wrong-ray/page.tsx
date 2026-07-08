@@ -138,8 +138,8 @@ export default async function Page() {
           </div>
           <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">Right Ray / Wrong Ray</h1>
           <p className="mt-2 max-w-2xl text-sm text-white/70">
-            When you trust us to tell you how many rays of sunshine, golfballs, or snowmen you can expect,
-            we need to be held to account. Here&apos;s the scoreboard comparing each forecast to the actual weather.
+            Every forecast is a claim about tomorrow. This scoreboard grades every one we track — free
+            and paid alike — against what the sky actually did. Same rubric for everybody.
           </p>
           <p className="mt-5 flex flex-wrap gap-3">
             {hasRay && (
