@@ -166,6 +166,59 @@ template for a congestion sensor). Two data-source paths to weigh in a real brai
 - [ ] **[FUTURE MILESTONE / brainstorm]** Scope the traffic forecast as its own project (data source a vs b vs
       hybrid, chokepoint list, CV feasibility, privacy, scoring model). Synergy: if we site backlink cams at
       chokepoints (bypass, King St), they do double duty as traffic sensors — site with that in mind.
+  - **Brainstorm IN PROGRESS (2026-07-08). Scope locked by owner:** (1) PRODUCT = **hybrid** — scored
+    predictive forecast (the differentiator) + live-conditions hook + winter road conditions as a first-class
+    pillar; (2) GEOGRAPHY = **Boone chokepoints first** (~2-6 cams: US-321/421 bypass, King St, US-321↔Blowing
+    Rock, NC-105/321 split), prove then expand; (3) DATA = **hybrid buy-now-build-later** — ship a forecast on
+    NCDOT + a traffic API, add our own cameras + vehicle-recognition as independent ground truth later (the
+    Ecowitt arc). Owner willing to expand further out once proven. Research running (data sources+pricing, CV
+    cost, competitive whitespace) → spec when it lands.
+  - **Killer on-brand angle (design):** we grade OTHERS' traffic predictions too — Google's "typical traffic"/
+    predicted ETAs are a forecast we can score. Google's generic curve doesn't know about the App State game or
+    tomorrow's snow; ours does. A traffic "Right/Wrong Ray" that beats Google on event/weather days, proven with
+    a public scoreboard, is the differentiator.
+  - **CV cost — RESEARCHED 2026-07-08 (big de-risk):** vehicle-recognition "actuals" run on the EDGE for ~$0/mo.
+    Sweet spot = **Raspberry Pi 5 + Hailo AI HAT+ 13 TOPS (~$70 hat, ~$150/site)**; NOT cloud vision APIs
+    (~$43–194/cam/mo, linear forever + worse) and NOT rented GPU (~$200–430/mo). **Target CONGESTION LEVEL
+    (free-flow/heavy/stopped, ~94%+), not precise counts** (85–95% and fragile at night/snow) — which is also
+    the honest, defensible metric for the bit (headline the level, footnote any count). Turnkey stack, ~nothing
+    bespoke: **Frigate** (ingest + car detection, runs on Pi5+Hailo) → **supervision/ByteTrack** (track/count) →
+    density rule → bucket. Cheapest viable **~$130–150 one-time/site, ~$0/mo**; does-it-well **~$500–900 for
+    2–4 sites**. Slots into the existing `scripts/capture_*.py` → `data/actuals/{date}.json` pattern (greenfield;
+    no traffic code yet). Honesty caveat: one cam = one segment sample — scope the claim per instrumented segment.
+  - **Competitive whitespace — RESEARCHED 2026-07-08 (verdict: OPEN + on-brand):** nobody — local or national —
+    publishes a *scored, event+weather-driven local* traffic forecast. Google/TomTom/INRIX do generic typical-day
+    prediction (not event-aware in advance for a small town); DriveNC/511 + Ray do current-state cameras/conditions
+    only (**Ray does NO road conditions/forecast — cameras+weather only**; his Wendy's cam sits at NC-105/US-321).
+    **The scoring layer is the moat** ("we grade weather forecasts — now traffic too"). ⚠️ **WataugaOnline.com is
+    a respected local incumbent** (ad-hoc predictive "allow extra time" alerts + beloved FB community) — position as
+    systematic/complementary, do NOT attack.
+  - **Grading (research-confirmed, maps onto `scripts/scoring.py`):** travel-time **MAE per corridor** (like temp
+    tolerance) + **Brier score** for the binary "will it be jammed?" (the "chance of rain" lineage — on-brand) +
+    **Brier Skill Score vs. a naive typical-day baseline** (same "free beats the baseline" story). Score per
+    condition (game day / leaf Sat / ordinary Tue), not one blended number. Actuals = a traffic API now → camera-CV
+    later (Ecowitt arc). We grade Google's predicted ETAs alongside ours.
+  - **⭐ PHASING INSIGHT (reorders the build): the WINTER ROAD-CONDITION FORECAST is the sharpest, cheapest v1.**
+    "Will roads be bad tomorrow AM?" reuses snow/ice/temp data the pipeline ALREADY forecasts — **no cameras, no
+    traffic API needed for v1** — fills a gap every local channel leaves open (all report the present; nobody
+    forecasts road surface), and is gradable against DriveNC's snow/ice layer. Ship this BEFORE full traffic-volume
+    forecasting. Proposed phases: **v1 road-condition forecast (existing data) → v2 traffic forecast (traffic API
+    actuals) → v3 camera-CV ground truth (Pi5+Hailo).**
+  - **Demand + corridors (documented):** App State game days (Thu-night games worst), move-in, leaf season
+    (mid–late Oct), winter closures — along **US-321 (Boone↔Blowing Rock), NC-105 bypass, US-421/Boone Mtn,
+    King St**. NC-105/US-321 (the Wendy's-cam intersection) = natural first congestion-sensor site.
+  - **Data sources — RESEARCHED 2026-07-08 (govt stack is FREE + covers our roads):** DriveNC v2 API (free
+    key: `event`, `snowandice`, `cameras`, `messagesign`; 10/60s), WZDx work zones (no key), **AADT counts
+    fully open — verified 186 Watauga segments up to 44k/day**, NPS Blue Ridge Parkway alerts (free key),
+    NWS (api.weather.gov). Live congestion = paid/limited: **TomTom 2,500/day free (commercial OK)** best free
+    pick, Google best rural coverage but paid past 5k/mo; Waze unavailable (public-sector only); NO DOT cams
+    in Boone (Ray's are the de-facto road cams → reinforces v3 own-cameras); no public RWIS/plow feeds.
+    Demand signal = **App State football ICS (free, auto-updating)** + fixed festival/leaf/ski calendar.
+    Two free keys to get first: DriveNC + NPS. v1 & v2 are ~$0/mo within free tiers; v3 cams ~$560–840 one-time.
+  - **▶ FULL DESIGN written: `planning/specs/2026-07-08-traffic-road-forecast-design.md`** — product, phasing
+    (v1 road-condition → v2 traffic → v3 camera-CV), data have-vs-build table, grading model, camera
+    placement/count/cost, CV approach, full phased cost, privacy/honesty, repo integration, 5 open questions
+    for owner. **Awaiting owner review → then implementation plan.**
 
 ### Disavow list (running 2026-07-07, background agent)
 Building `planning/seo/davessweater-disavow.txt` (+ notes) — the ~239 spam-net RDs pointing at
