@@ -47,11 +47,24 @@ export interface StripDay {
   count: number;
 }
 
-export function stripDays(f5: Forecast5Day | null, opts?: { max?: number }): StripDay[] {
-  if (!f5?.days) return [];
+export function stripDays(f5: Forecast5Day | null, opts?: { max?: number; today?: string }): StripDay[] {
+  // Array.isArray closes the one throw path: a malformed data commit (days as
+  // a non-array) would otherwise crash the production build — Vercel builds
+  // don't run vitest, so this must degrade to an empty strip, not a throw.
+  if (!f5 || !Array.isArray(f5.days)) return [];
   const max = opts?.max ?? 6;
+  // The artifact is written by the morning pipeline, so when the site builds
+  // from data captured yesterday its leading day is already in the past. Skip
+  // days before today (America/New_York, the site's clock) so the first card
+  // is always today. Accepted caveat: this fixes artifact lag at build time
+  // only — the midnight-to-morning-rebuild staleness window is inherent to
+  // the static daily-build architecture, and every surface shares it.
+  const today = opts?.today
+    ?? new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" }); // en-CA = YYYY-MM-DD
   const out: StripDay[] = [];
   for (const day of f5.days) {
+    // Before the cap check: a dropped past day must not consume a cap slot.
+    if (day.date < today) continue;
     if (out.length >= max) break;
     // Days where fewer than 2 free sources contribute have no consensus — drop
     // them rather than render a one-source "composite".

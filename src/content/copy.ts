@@ -26,4 +26,12 @@ export const copy = {
     // `n` is the number of forecasters averaged together.
     footnote: (n: number) => `the average of ${n} independent (and free) forecasters`,
   },
+
+  // The 5-day strip in the Today module.
+  fiveDay: {
+    // Header tooltip. `n` is the number of forecasters contributing to the
+    // leading day's consensus — derived at render (same count the Dave's
+    // Sweater Index shows), so it tracks roster changes on its own.
+    tooltip: (n: number) => `The consensus of ${n} free forecasts, graded against reality every morning.`,
+  },
 } as const;

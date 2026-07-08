@@ -41,13 +41,37 @@ export function toChartSeries(
 // fallback and would double-weight it).
 const EXCLUDE = new Set(["raysweather", "apple_weather"]);
 
+const usable = (c: LeadCell | undefined): c is LeadCell =>
+  !!c && typeof c.high_mae === "number" && c.n > 0;
+
 export function compositeMemberMae(scores: LeadtimeScores, lead: number): { mae: number; n: number } | null {
   const cells = Object.entries(scores.by_source)
     .filter(([k]) => !EXCLUDE.has(k))
     .map(([, byLead]) => byLead[String(lead)])
-    .filter((c): c is LeadCell => !!c && typeof c.high_mae === "number" && c.n > 0);
+    .filter(usable);
   if (!cells.length) return null;
   const mae = cells.reduce((a, c) => a + (c.high_mae as number), 0) / cells.length;
   const n = Math.min(...cells.map((c) => c.n));
   return { mae: Math.round(mae * 10) / 10, n };
+}
+
+// Same statistic at two leads over the INTERSECTED member set: only sources
+// with a usable cell at BOTH leads count, so the "day 1 vs day 5" footer
+// compares like with like. Computing each side independently (two
+// compositeMemberMae calls) would let the set drift — e.g. weatherapi and
+// googleweather stop at lead 2, so they'd inflate the lead-1 side while
+// sitting out of lead 5. One call guarantees set consistency.
+export function compositeMemberMaePair(
+  scores: LeadtimeScores, leadA: number, leadB: number,
+): { a: { mae: number; n: number }; b: { mae: number; n: number }; members: number } | null {
+  const pairs = Object.entries(scores.by_source)
+    .filter(([k]) => !EXCLUDE.has(k))
+    .map(([, byLead]) => ({ a: byLead[String(leadA)], b: byLead[String(leadB)] }))
+    .filter((p): p is { a: LeadCell; b: LeadCell } => usable(p.a) && usable(p.b));
+  if (!pairs.length) return null;
+  const side = (cells: LeadCell[]) => ({
+    mae: Math.round((cells.reduce((s, c) => s + (c.high_mae as number), 0) / cells.length) * 10) / 10,
+    n: Math.min(...cells.map((c) => c.n)),
+  });
+  return { a: side(pairs.map((p) => p.a)), b: side(pairs.map((p) => p.b)), members: pairs.length };
 }

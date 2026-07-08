@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { toChartSeries, compositeMemberMae, getLeadtimeScores, type LeadtimeScores } from "@/lib/leadtime";
+import {
+  toChartSeries, compositeMemberMae, compositeMemberMaePair, getLeadtimeScores, type LeadtimeScores,
+} from "@/lib/leadtime";
 
 // Contract-legal fixture: cells only exist where n > 0 (Python never emits
 // n=0 cells); metrics may be null when every group value was null.
@@ -39,6 +41,37 @@ describe("compositeMemberMae", () => {
   });
 });
 
+describe("compositeMemberMaePair", () => {
+  // The honesty property the strip footer needs: both sides of the day-1 vs
+  // day-5 comparison are computed over the SAME member set, so a source that
+  // exists at one lead but not the other can't skew either side.
+  const pairScores: LeadtimeScores = {
+    location: "Boone", max_lead: 5,
+    by_source: {
+      openmeteo: { "1": { n: 5, high_mae: 2.0 }, "5": { n: 4, high_mae: 4.0 } },
+      metno: { "1": { n: 5, high_mae: 3.0 }, "5": { n: 4, high_mae: 5.0 } },
+      // Has a lead-1 cell but NO lead-5 cell — must be excluded from BOTH
+      // sides. If it leaked into side a, a.mae would be mean(2, 3, 9) = 4.7.
+      weatherapi: { "1": { n: 5, high_mae: 9.0 } },
+      // Non-members stay out even when present at both leads.
+      raysweather: { "1": { n: 5, high_mae: 1.0 }, "5": { n: 5, high_mae: 1.0 } },
+    },
+  };
+
+  it("intersects the member set: a source missing either lead is dropped from both sides", () => {
+    const r = compositeMemberMaePair(pairScores, 1, 5)!;
+    expect(r).not.toBeNull();
+    expect(r.members).toBe(2); // openmeteo + metno only
+    expect(r.a).toEqual({ mae: 2.5, n: 5 }); // mean(2, 3); min n at lead 1
+    expect(r.b).toEqual({ mae: 4.5, n: 4 }); // mean(4, 5); min n at lead 5
+  });
+
+  it("returns null when the intersection is empty", () => {
+    // The base fixture has no lead-5 member cells at all.
+    expect(compositeMemberMaePair(scores, 0, 5)).toBeNull();
+  });
+});
+
 // Pin the TS types against the real committed artifact so schema drift on the
 // Python side fails loudly here rather than silently mis-rendering the site.
 describe("real data/leadtime_scores.json artifact", () => {
@@ -67,5 +100,20 @@ describe("real data/leadtime_scores.json artifact", () => {
     expect(r!.mae).toBeGreaterThan(2);
     expect(r!.mae).toBeLessThan(4);
     expect(r!.n).toBeGreaterThan(0);
+  });
+
+  it("compositeMemberMaePair(1, 5) yields plausible same-member bands (n grows daily — no exact pins)", async () => {
+    const real = (await getLeadtimeScores())!;
+    const r = compositeMemberMaePair(real, 1, 5)!;
+    expect(r).not.toBeNull();
+    // As of 2026-07: a ≈ 2.9, b ≈ 2.8 over 6 common members (weatherapi and
+    // googleweather stop at lead 2, so they sit out of BOTH sides).
+    expect(r.members).toBeGreaterThanOrEqual(4);
+    expect(r.a.mae).toBeGreaterThan(2);
+    expect(r.a.mae).toBeLessThan(4);
+    expect(r.b.mae).toBeGreaterThan(2);
+    expect(r.b.mae).toBeLessThan(4.5);
+    expect(r.a.n).toBeGreaterThan(0);
+    expect(r.b.n).toBeGreaterThan(0);
   });
 });

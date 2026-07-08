@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { copy } from "@/content/copy";
 import { getForecast5Day, stripDays } from "@/lib/forecast5";
-import { getLeadtimeScores, compositeMemberMae } from "@/lib/leadtime";
+import { getLeadtimeScores, compositeMemberMaePair } from "@/lib/leadtime";
 
 // The consumer half of the Today module: the week ahead for a person who just
 // wants Friday's forecast. It states ONE forecast per day — the same
@@ -35,8 +36,14 @@ export default async function FiveDayStrip() {
   // Fewer than 2 consensus days is not a strip — render nothing (including no
   // divider) rather than a broken half-strip.
   if (!f5 || days.length < 2) return null;
-  const d1 = scores ? compositeMemberMae(scores, 1) : null;
-  const d5 = scores ? compositeMemberMae(scores, 5) : null;
+  // Day-1 vs day-5 miss over the SAME member set (sources scored at both
+  // leads), so the two numbers are comparable — not an artifact of short-
+  // horizon sources dropping out of one side.
+  const maePair = scores ? compositeMemberMaePair(scores, 1, 5) : null;
+  // Tooltip count = forecasters contributing to the leading day's consensus,
+  // the same derivation (compositeForecast().count) behind the Dave's Sweater
+  // Index footnote just above the strip.
+  const tooltip = copy.fiveDay.tooltip(days[0].count);
 
   return (
     <>
@@ -45,8 +52,8 @@ export default async function FiveDayStrip() {
         <div className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted">
           The 5-day <span className="text-muted/60">|</span> {f5.location}
           <span
-            title="The consensus of 8 free forecasts, graded against reality every morning."
-            aria-label="The consensus of 8 free forecasts, graded against reality every morning."
+            title={tooltip}
+            aria-label={tooltip}
             className="ml-1.5 inline-flex h-3.5 w-3.5 cursor-help items-center justify-center rounded-full border border-border align-[-2px] text-[0.55rem] font-bold normal-case leading-none text-muted"
           >
             i
@@ -83,10 +90,10 @@ export default async function FiveDayStrip() {
           ))}
         </div>
 
-        {d1 && d5 ? (
+        {maePair ? (
           <p className="mt-3 text-xs text-muted">
-            Measured: the forecasts behind this consensus have missed the next-day high by ±{d1.mae}°F on
-            average; day 5 runs ±{d5.mae}°F. <span className="text-muted/60">|</span>{" "}
+            Measured: the forecasts behind this consensus have missed the next-day high by ±{maePair.a.mae}°F on
+            average; day 5 runs ±{maePair.b.mae}°F. <span className="text-muted/60">|</span>{" "}
             <Link href="/methodology" className="text-teal underline underline-offset-2">How we grade &rarr;</Link>
           </p>
         ) : null}
