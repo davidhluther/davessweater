@@ -1,13 +1,13 @@
 ---
-title: "This weather site costs $12 a year to run"
+title: "This Weather Site Costs $12 a Year to Run"
 slug: 12-dollars-a-year-weather-site
 category: articles
 date: 2026-07-02
 summary: "How Dave's Sweater runs on a $12/year domain and free APIs, and still shows free forecasts beating the paid one."
-metaTitle: "This weather site runs on $12 a year"
+metaTitle: "This Weather Site Runs on $12 a Year"
 metaDescription: "One person, free weather APIs, and a nightly GitHub Actions job beat a paid regional forecaster by about 21 points a day. Total cost: a $12 domain. Here's the stack."
 ---
-# This weather site costs $12 a year to run
+# This Weather Site Costs $12 a Year to Run
 
 Dave's Sweater runs on one cost: a $12/year domain. Free APIs, a daily GitHub Actions job, and Vercel's free tier handle the rest, and free forecasts beat the paid service by about 21 points a day over 118 days.
 

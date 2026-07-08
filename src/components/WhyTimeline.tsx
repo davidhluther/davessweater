@@ -83,8 +83,8 @@ export default function WhyTimeline({
   return (
     <section className="w-full bg-teal-900 text-white [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px]">
       <div ref={ref} className="relative mx-auto w-full max-w-3xl px-4 py-10 sm:py-14">
-        <div className="mb-1 text-xs font-bold uppercase tracking-wider text-orange">{copy.why.kicker}</div>
-        <p className="mb-8 text-sm text-white/60">{copy.why.subline}</p>
+        <div className="mb-1 text-sm font-bold uppercase tracking-wider text-orange">{copy.why.kicker}</div>
+        <p className="mb-8 text-base text-white/70">{copy.why.subline}</p>
 
         <div aria-hidden className="absolute left-[11px] top-[5.5rem] bottom-10 w-0.5 bg-white/15">
           <motion.div
@@ -109,7 +109,8 @@ export default function WhyTimeline({
           </Beat>
 
           <Beat reduce={reduce}>
-            <h3 className="mb-3 font-display text-lg font-bold sm:text-xl">{copy.why.beat3Head}</h3>
+            <h3 className="font-display text-lg font-bold sm:text-xl">{copy.why.beat3Head}</h3>
+            <p className="mb-3 mt-1 text-sm text-white/70">{copy.why.beat3Body}</p>
             <TrendChartInteractive points={points} tooltip={tooltip} />
             <div className="mt-3 grid grid-cols-3 gap-2">
               <Stat label={stats.freeLabel} value={stats.freeAvg} tone="free" />
@@ -122,8 +123,8 @@ export default function WhyTimeline({
             <h3 className="font-display text-lg font-bold sm:text-xl">{copy.why.beat4Head}</h3>
             <p className="mt-1 text-sm text-white/70">
               {copy.why.beat4Body}
-              <strong className="text-white">{stats.raysPrecipProvided}</strong> of{" "}
-              <NumberTicker value={stats.raysPrecipDays} className="font-display font-bold text-white" /> days.
+              (missing <strong className="text-white">{stats.raysPrecipDays - stats.raysPrecipProvided}</strong> of{" "}
+              <NumberTicker value={stats.raysPrecipDays} className="font-display font-bold text-white" /> days).
             </p>
           </Beat>
 
@@ -143,7 +144,7 @@ export default function WhyTimeline({
         <p className="mt-10 border-t border-white/10 pt-4 text-center text-xs text-white/60">
           Every score here comes from one transparent rubric, applied to all forecasters alike.{" "}
           <Link href="/methodology" className="font-medium text-white/85 underline underline-offset-2">
-            See exactly how we score each forecast &rarr;
+            See exactly how we score each forecast
           </Link>
         </p>
       </div>

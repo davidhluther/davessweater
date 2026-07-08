@@ -103,7 +103,7 @@ export default function TrendChartInteractive({ points, tooltip }:
             <span aria-hidden="true" className="inline-block w-4 border-t-2 border-dashed border-slate-400" /> Ray&apos;s Weather
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <span aria-hidden="true" className="inline-block h-2.5 w-4 rounded-sm bg-emerald-300/25" /> the gap
+            <span aria-hidden="true" className="inline-block h-2.5 w-4 rounded-sm bg-emerald-300/25" /> The gap
           </span>
         </div>
         <div role="group" aria-label="Chart smoothing" className="flex overflow-hidden rounded-md border border-white/15">

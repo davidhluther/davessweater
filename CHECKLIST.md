@@ -773,6 +773,11 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
       fill the PENDING cells + one self-grade line, then publish via the same native-post mechanism.
 - [ ] **Report Card franchise route** — v1 ships the June card under Articles for speed. The tracker's intended
       home is `/report-card/{yyyy-mm}` (recurring franchise); build that route + 301 the Articles URL when ready.
+- [ ] **STANDING MONTHLY: publish the report card for each completed month** (owner directive 2026-07-08).
+      July 2026 card due ~Aug 1; same corpay-method pipeline as the June card (brief → draft → adversarial
+      fact-check vs scores.json → style validate). **Report-card titles are Title Case** ("Ray's Weather
+      Report Card: July 2026") — as are ALL blog-post titles now (the four live posts were retitled
+      2026-07-08; H2/H3 stay sentence case).
 - [ ] **Post detail date format** — the detail route renders `post.date` raw (ISO); site standard is
       "Month D, YYYY" (`lib/dates.ts`). Pre-existing (affects Substack posts too); format when convenient.
 

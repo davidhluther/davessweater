@@ -1,13 +1,13 @@
 ---
-title: "Ray's Weather report card: June 2026"
+title: "Ray's Weather Report Card: June 2026"
 slug: rays-weather-report-card-june-2026
 category: articles
 date: 2026-07-02
 summary: "June 2026 scored: Open-Meteo 92.3, Apple 88.0, Ray's 73.3. The monthly forecast-accuracy report card for Boone, NC."
-metaTitle: "Ray's Weather report card: June 2026"
+metaTitle: "Ray's Weather Report Card: June 2026"
 metaDescription: "June 2026 scored: Ray's Weather averaged 73.3 while free Open-Meteo hit 92.3. See every Boone forecaster's grade and the month's best and worst days."
 ---
-# Ray's Weather report card: June 2026
+# Ray's Weather Report Card: June 2026
 
 We scored 29 days of Boone forecasts in June 2026. Open-Meteo led at 92.3, Apple Weather 88.0, and Ray's Weather 73.3, a 19.0-point gap. Ray's went Wrong on 4 days; the free sources on zero.
 

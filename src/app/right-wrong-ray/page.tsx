@@ -150,7 +150,7 @@ export default async function Page() {
             )}
             <Link href="/methodology"
               className="inline-flex min-h-10 items-center rounded-lg border border-white/30 px-4 text-sm font-bold text-white transition-colors hover:bg-white/10">
-              How we score it &rarr;
+              How we score it
             </Link>
           </p>
         </div>
@@ -274,7 +274,7 @@ export default async function Page() {
           &ldquo;day&apos;s best&rdquo; and the larger takes &ldquo;day&apos;s worst.&rdquo;
         </p>
         <p className="mt-2 text-xs">
-          <Link href="/methodology" className="text-teal underline underline-offset-2">Full methodology &rarr;</Link>
+          <Link href="/methodology" className="text-teal underline underline-offset-2">Full methodology</Link>
         </p>
         <p className="mt-2 text-xs text-muted">
           The longer story:{" "}

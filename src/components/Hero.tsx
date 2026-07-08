@@ -37,6 +37,10 @@ export default function Hero({ stats }: { stats: HeroStats }) {
               className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/30 px-5 font-bold text-white transition-colors hover:bg-white/10">
               {copy.hero.ctaSecondary}
             </Link>
+            <Link href="/about"
+              className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/30 px-5 font-bold text-white transition-colors hover:bg-white/10">
+              {copy.hero.ctaTertiary}
+            </Link>
           </div>
         </div>
         <div className="hidden md:block">
