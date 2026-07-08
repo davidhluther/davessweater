@@ -647,6 +647,27 @@ via subagent-driven TDD + per-task + final adversarial review (READY_TO_MERGE), 
       surfaces snow coverage/columns against real winter data.
 - [ ] Then: M4 radar/maps + Woolcam + photo-of-the-day, M5 multi-location, M6 Ecowitt station ground-truth.
 
+## Done: Voice repositioning + data-democracy thesis (2026-07-07, PR pending)
+Owner call: the site has moved from pure parody/hostility to "complex and subversive" — credible alternative
+positioning for expansion to other domains. Ray's stays the named symbol of gated expertise (pointed at, never
+bitter); the data is the knife, the copy stays gracious. New throughline in CLAUDE.md: "Every forecast is a
+claim about tomorrow. We check them all — including ours," framed as **data democracy** (public data, found,
+vetted, handed over free — weather, fireworks dusk math, the Games planner all being the same move).
+- [x] Homepage "Why this exists" timeline reworked to six beats carrying the thesis: bill+credentials setup →
+      "so somebody started checking" → gap chart → rain-total fact (depersonalized, "he won't even" cut) →
+      NEW "The weather was never his" (data-democracy beat) → "So we publish the receipts" close that names
+      fireworks + the Games (expansion posture; replaced the gloating "The old way is out" triplet).
+      Timeline copy migrated to `src/content/copy.ts` so the owner can tune wording in the GitHub editor.
+- [x] Softened: hero iPhone aside ("A better forecast may already be in your pocket"), footer ("We just check
+      the math" replaces "not on speaking terms"), OG description (no longer names Ray's in share cards),
+      /right-wrong-ray header (fixed the muddled "trust us…held to account" line; now "Same rubric for
+      everybody"). KEPT deliberately: hero headline, BrandMark strikethrough, "most mostly reliable",
+      the Right Ray / Wrong Ray name, timeline beats 1–3 (accountability register, not hostility).
+- [x] AI-voice pass per the new universal styleguide (`shared-skills/writing-styleguide.md`): killed the
+      "Better data is free. Good design is cheap. This site is the proof." triplet; colon pass on the two Ray
+      articles (~11 and ~15 body-colon restructures; remaining validator counts are frontmatter/heading
+      artifacts); fixed one negative-parallelism construction in the June report card.
+
 ## To do — site (pre-station, outstanding)
 
 - [ ] **Scoring recalibration — the big one (owner-flagged 2026-07-02).** Clustered 90s = weak

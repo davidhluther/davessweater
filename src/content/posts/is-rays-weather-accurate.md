@@ -39,7 +39,7 @@ We capture each forecast around midday, then score it against the next day's ver
 
 ### How does the 100-point model work?
 
-Points break down like this: high temp 30, low temp 30, wind 20, precip type 10, precip amount 10. Temperature dominates because it is what people plan around, and it is where forecasts most visibly succeed or fail.
+Points break down as high temp 30, low temp 30, wind 20, precip type 10, and precip amount 10. Temperature dominates because it is what people plan around, and it is where forecasts most visibly succeed or fail.
 
 | Category | Max points | Full credit within |
 |---|---|---|
@@ -51,7 +51,7 @@ Points break down like this: high temp 30, low temp 30, wind 20, precip type 10,
 
 ### Where do the actuals come from?
 
-Actuals come from the Open-Meteo historical archive, disclosed openly on our methodology page. That creates one honest wrinkle: Open-Meteo grading against an Open-Meteo archive is a form of self-grading, so treat its number as a strong short-range benchmark rather than a perfectly independent one. Ray's and Apple Weather have no such advantage: they are scored against the same archive from the outside.
+Actuals come from the Open-Meteo historical archive, disclosed openly on our methodology page. That creates one honest wrinkle. Open-Meteo graded against an Open-Meteo archive is a form of self-grading, so treat its number as a strong short-range benchmark rather than a perfectly independent one. Ray's and Apple Weather have no such advantage, since they are scored against the same archive from the outside.
 
 ### How does the implied-zero rule for precip amounts work?
 
@@ -59,7 +59,7 @@ Ray's Weather never publishes a numeric precip amount. Under our rule, a "no pre
 
 ## Ray's Weather vs the free apps: who is more accurate?
 
-The free apps are more accurate over the 118-day window. Open-Meteo leads at 92.0 with zero Wrong days, Apple Weather follows at 88.3 with one, and Ray's trails at 71.0 with 23. The paid forecast does not beat the free ones in Boone on this record. It trails the best free option by about 21 points a day. And free here is genuinely free: [the whole tracker runs on a $12-a-year domain](/resources/articles/12-dollars-a-year-weather-site).
+The free apps are more accurate over the 118-day window. Open-Meteo leads at 92.0 with zero Wrong days, Apple Weather follows at 88.3 with one, and Ray's trails at 71.0 with 23. The paid forecast does not beat the free ones in Boone on this record. It trails the best free option by about 21 points a day. And free here is genuinely free. [The whole tracker runs on a $12-a-year domain](/resources/articles/12-dollars-a-year-weather-site).
 
 ### What does the 118-day leaderboard show?
 
@@ -87,7 +87,7 @@ Most of the margin is temperature. The free models nail highs and lows inside th
 
 ## When is Ray's Weather right, and when does it miss?
 
-Ray's is right often enough to earn its reputation, and its best days are genuinely excellent. In June 2026 it posted a 90.7: a five-ray, Right-band forecast. The misses cluster on volatile mountain days, where a blown overnight low or an over-called snow total drags the score down. The spread between his best and worst days is wide.
+Ray's is right often enough to earn its reputation, and its best days are genuinely excellent. In June 2026 it posted a 90.7, a five-ray Right-band forecast. The misses cluster on volatile mountain days, where a blown overnight low or an over-called snow total drags the score down. The spread between his best and worst days is wide.
 
 ### Ray's best June day: June 24, 2026 (90.7)
 
@@ -95,7 +95,7 @@ Ray's best June day was June 24, 2026, at 90.7, a top-tier score by any forecast
 
 ### Ray's worst stretches and the 23 Wrong days
 
-The other side of the ledger: 23 of 118 days graded Wrong (under 60). Ray's worst June day was June 2, 2026, at 26.1, the kind of day that pulls a monthly average down hard. Across June's 29 scored days, Ray's averaged 73.3 (Right-Meh-Wrong 14-11-4) against Open-Meteo's 92.3 and Apple's 88.0, a June gap of 19.0 points. The month-by-month detail is in [Ray's Weather report card for June 2026](/resources/articles/rays-weather-report-card-june-2026).
+The other side of the ledger is the 23 of 118 days graded Wrong (under 60). Ray's worst June day was June 2, 2026, at 26.1, the kind of day that pulls a monthly average down hard. Across June's 29 scored days, Ray's averaged 73.3 (Right-Meh-Wrong 14-11-4) against Open-Meteo's 92.3 and Apple's 88.0, a June gap of 19.0 points. The month-by-month detail is in [Ray's Weather report card for June 2026](/resources/articles/rays-weather-report-card-june-2026).
 
 ## What is the most accurate forecast for Boone, NC?
 
@@ -103,15 +103,15 @@ For short-range Boone forecasts, Open-Meteo is the most accurate source we track
 
 ### Which forecast wins short-range?
 
-Open-Meteo wins the window and holds up over the long haul: 91.8 across 484 days. It is free, its API is open, and its numbers are reproducible from the public data. For a Boone resident who just wants the most accurate next-day read, it is the pick on this record.
+Open-Meteo wins the window and holds up over the long haul at 91.8 across 484 days. It is free, its API is open, and its numbers are reproducible from the public data. For a Boone resident who just wants the most accurate next-day read, it is the pick on this record.
 
 ### A fair word on lead time (short-range only)
 
-One honest limit: everything here is short-range. We capture each forecast around midday and score it against the next day's actuals, so this measures next-day accuracy, not seven- or ten-day accuracy. Forecast skill decays with lead time for every source. That is settled meteorology, not something we measured. For that longer view, see [how accurate a 10-day forecast really is](/resources/articles/how-accurate-is-a-10-day-forecast).
+One honest limit is that everything here is short-range. We capture each forecast around midday and score it against the next day's actuals, so this measures next-day accuracy, not seven- or ten-day accuracy. Forecast skill decays with lead time for every source. That is settled meteorology, not something we measured. For that longer view, see [how accurate a 10-day forecast really is](/resources/articles/how-accurate-is-a-10-day-forecast).
 
 ## So should you still use Ray's Weather?
 
-Use whatever you like. But if next-day accuracy is the goal, the free apps have the edge on this record. Ray's Weather still offers hyperlocal color, storm-by-storm narrative, and a mountain read that longtime users value, and none of that shows up in a single accuracy number. What the tracker shows is narrow and specific: on the four fields we score, a free app beats the paid one by about 21 points a day. Both things can be true at once.
+Use whatever you like. But if next-day accuracy is the goal, the free apps have the edge on this record. Ray's Weather still offers hyperlocal color, storm-by-storm narrative, and a mountain read that longtime users value, and none of that shows up in a single accuracy number. What the tracker shows is narrow and specific. On the four fields we score, a free app beats the paid one by about 21 points a day. Both things can be true at once.
 
 ## See every forecast scored, daily
 
@@ -125,7 +125,7 @@ Reasonably, but it trails free forecasts. Over 118 scored days, Ray's Weather Bo
 
 ### What is the most accurate weather forecast for Boone?
 
-Open-Meteo, on our record: 92.0 of 100 across 118 short-range days with no Wrong days, free and open. Apple Weather is a close second at 88.3. Several other free sources score higher on small nine-day samples, so we label those provisional until the record grows.
+Open-Meteo, by our record, at 92.0 of 100 across 118 short-range days with no Wrong days, free and open. Apple Weather is a close second at 88.3. Several other free sources score higher on small nine-day samples, so we label those provisional until the record grows.
 
 ### Is Ray's Weather better than AccuWeather or the National Weather Service?
 
@@ -141,7 +141,7 @@ Yes, Ray's has strong days. Its best June 2026 forecast scored 90.7 on June 24, 
 
 ### How do you score Ray's Weather accuracy?
 
-We capture each forecast around midday and score it against the next day's verified actuals on a 100-point model: high temp 30, low temp 30, wind 20, precip type 10, precip amount 10. Actuals come from the Open-Meteo historical archive, which we disclose on our methodology page.
+We capture each forecast around midday and score it against the next day's verified actuals on a 100-point model that gives high temp 30, low temp 30, wind 20, precip type 10, and precip amount 10. Actuals come from the Open-Meteo historical archive, which we disclose on our methodology page.
 
 ### Is Ray's Weather worth it if free apps are more accurate?
 
