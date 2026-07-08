@@ -37,14 +37,15 @@ export function toChartSeries(
 
 // Series for the /right-wrong-ray accuracy-decay chart. minN 10: the real
 // data has a raysweather lead-5 cell with n=1 that must not chart. Sources
-// left with zero surviving points are dropped entirely — an empty series
-// would still put a ghost entry in the chart legend. Returns null (render
-// nothing) unless at least 2 sources have at least 2 charted points: a decay
-// line needs 2 points, and a decay COMPARISON needs 2 lines.
+// left with fewer than 2 surviving points are dropped entirely — a decay line
+// needs 2 points, and anything less would still render a lone dot and a ghost
+// legend entry claiming a story the source doesn't have (this also subsumes
+// the empty-series case). Returns null (render nothing) unless at least 2
+// such lines remain: a decay COMPARISON needs 2 lines.
 export function decayChartSeries(scores: LeadtimeScores | null): ChartSeries[] | null {
   if (!scores) return null;
-  const series = toChartSeries(scores, "avg_score", { minN: 10 }).filter((s) => s.points.length > 0);
-  return series.filter((s) => s.points.length >= 2).length >= 2 ? series : null;
+  const series = toChartSeries(scores, "avg_score", { minN: 10 }).filter((s) => s.points.length >= 2);
+  return series.length >= 2 ? series : null;
 }
 
 // Leads the /methodology bias disclosure reads. Lead 5 is deliberately

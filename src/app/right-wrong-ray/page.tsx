@@ -185,6 +185,7 @@ export default async function Page() {
       {decay && (
         <SectionBand tone="dark">
           <h2 className="font-display mb-1 text-2xl font-bold">How far out can you trust a forecast?</h2>
+          {/* data-dependent claim — re-verify against leadtime_scores when editing */}
           <p className="mb-4 max-w-2xl text-sm text-white/70">
             The same 100-point grading, applied to the forecast each source published up to five days
             ahead. The free forecasts win at every horizon, and the gap widens at days 3 and 4: Ray&apos;s

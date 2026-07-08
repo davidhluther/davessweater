@@ -213,6 +213,10 @@ if __name__ == "__main__":
 
     target = sys.argv[1] if len(sys.argv) > 1 else (
         datetime.now(ZoneInfo("America/New_York")) - timedelta(days=1)).strftime("%Y-%m-%d")
-    build_leadtime(target)
+    # build_leadtime returns None when the date has no actuals yet (archive
+    # lag) — say so honestly instead of claiming an update that didn't happen.
+    if build_leadtime(target) is None:
+        print(f"skipped {target}: no actuals yet (aggregate still rebuilt)")
+    else:
+        print(f"leadtime updated for {target}")
     build_leadtime_scores()
-    print(f"leadtime updated for {target}")

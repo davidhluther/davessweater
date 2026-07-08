@@ -202,7 +202,7 @@ export default async function Page() {
           Lead 0 is the same-day forecast; lead 3 is what a source said three days out.
         </p>
         <p className="mt-3 max-w-2xl text-sm text-muted">
-          We stop at five days, the longest horizon our sources publish consistently. Ray&apos;s rows reliably
+          We stop at five days, the longest horizon we can score consistently across sources. Ray&apos;s rows reliably
           reach about four to five days out, but his five-day sample is a single scored day so far, so the
           charts floor it out: a lead is not charted until it holds at least 10 scored days.
           {rayBias && (
@@ -212,6 +212,7 @@ export default async function Page() {
             </>
           )}
         </p>
+        {/* data-dependent claim — re-verify against leadtime_scores when editing */}
         <p className="mt-3 max-w-2xl text-sm text-muted">
           Two honesty notes. The comparison is at matched elevation: his Boone station sits at 3,240 feet, our
           grading point at 3,242. And on the high temperature alone, Open-Meteo beats Ray&apos;s at every

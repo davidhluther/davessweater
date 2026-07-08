@@ -93,6 +93,20 @@ describe("decayChartSeries", () => {
     ]);
   });
 
+  it("drops sources left with a single charted point (a lone dot is not a decay line)", () => {
+    const onePointer: LeadtimeScores = {
+      location: "Boone", max_lead: 5,
+      by_source: {
+        ...decayScores.by_source,
+        // One thick cell, the rest floored: would render as a lone dot plus a
+        // legend entry claiming a decay story the source doesn't have.
+        stubsource: { "0": { n: 30, avg_score: 90 }, "1": { n: 4, avg_score: 90 } },
+      },
+    };
+    const series = decayChartSeries(onePointer)!;
+    expect(series.map((s) => s.source).sort()).toEqual(["openmeteo", "raysweather"]);
+  });
+
   it("returns null when fewer than 2 sources have 2+ charted points", () => {
     const thin: LeadtimeScores = {
       location: "Boone", max_lead: 5,
@@ -105,12 +119,12 @@ describe("decayChartSeries", () => {
     expect(decayChartSeries(null)).toBeNull();
   });
 
-  it("charts the real artifact: 2+ sources, no empty series, ray stops before lead 5", () => {
+  it("charts the real artifact: 2+ sources, every series a real line, ray stops before lead 5", () => {
     return getLeadtimeScores().then((real) => {
       const series = decayChartSeries(real)!;
       expect(series).not.toBeNull();
       expect(series.length).toBeGreaterThanOrEqual(2);
-      for (const s of series) expect(s.points.length).toBeGreaterThan(0);
+      for (const s of series) expect(s.points.length).toBeGreaterThanOrEqual(2);
       const ray = series.find((s) => s.source === "raysweather")!;
       expect(ray.points.length).toBeGreaterThanOrEqual(2);
       expect(ray.points.some((p) => p.lead === 5)).toBe(false);

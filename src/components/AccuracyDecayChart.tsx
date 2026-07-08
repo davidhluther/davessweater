@@ -20,7 +20,9 @@ const IH = H - M.top - M.bottom;
 // splits between the data-green family and slate, with dash variation so
 // neighbors in the same family stay tellable in the legend.
 const STYLE: Record<string, { color: string; width?: number; dash?: string }> = {
-  raysweather: { color: "var(--orange)", width: 2.6 },
+  // orange-300 is globals.css's designated orange for dark teal grounds
+  // (5.6:1 on teal-700) — still brand orange, readable on this band.
+  raysweather: { color: "var(--orange-300)", width: 2.6 },
   openmeteo: { color: "var(--green)", width: 2.4 },
   metno: { color: "#6ee7b7" },
   visualcrossing: { color: "#34d399", dash: "5 4" },
@@ -53,7 +55,9 @@ export default function AccuracyDecayChart({ series }: { series: ChartSeries[] }
   const leads = Array.from({ length: maxLead + 1 }, (_, i) => i);
 
   return (
-    <div>
+    // Capped width: in-viewBox text is sized for phone legibility (~10px
+    // effective at 375px), so an uncapped desktop render would balloon it.
+    <div className="mx-auto max-w-[600px]">
       <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.7rem] text-white/70">
         {legend.map(({ source }) => {
           const st = STYLE[source] ?? FALLBACK_STYLE;
@@ -69,17 +73,19 @@ export default function AccuracyDecayChart({ series }: { series: ChartSeries[] }
         })}
       </div>
 
+      {/* aria-label stays structural-descriptive; the editorial claim lives
+          in the visible prose, where it's kept in sync with the data. */}
       <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img"
-        aria-label={`Average accuracy score by forecast lead time, same day through ${maxLead} days ahead, one line per source; the free forecasts score above Ray's Weather at every lead`}>
+        aria-label={`Line chart of average accuracy score by forecast lead time, zero to ${maxLead} days, one line per forecaster`}>
         <Group left={M.left} top={M.top}>
           {[60, 75].map((v) => (
             <line key={v} x1={0} x2={IW} y1={y(v)} y2={y(v)}
               stroke="var(--color-border, #ffffff22)" strokeDasharray="3 4" />
           ))}
-          <text x={IW - 4} y={y(75) - 5} textAnchor="end" fontSize={11} fill="#ffffff80">graded Right &#8805; 75</text>
-          <text x={IW - 4} y={y(60) - 5} textAnchor="end" fontSize={11} fill="#ffffff80">Meh &#8805; 60</text>
+          <text x={IW - 4} y={y(75) - 5} textAnchor="end" fontSize={14} fill="#ffffff80">graded Right &#8805; 75</text>
+          <text x={IW - 4} y={y(60) - 5} textAnchor="end" fontSize={14} fill="#ffffff80">Meh &#8805; 60</text>
           {[yMin, 100].map((v) => (
-            <text key={v} x={-8} y={y(v) + 4} textAnchor="end" fontSize={13} fill="#ffffffb3">{v}</text>
+            <text key={v} x={-8} y={y(v) + 5} textAnchor="end" fontSize={17} fill="#ffffffb3">{v}</text>
           ))}
 
           {drawn.map(({ source, points }) => {
@@ -96,12 +102,12 @@ export default function AccuracyDecayChart({ series }: { series: ChartSeries[] }
           })}
 
           {leads.map((l) => (
-            <text key={l} x={x(l)} y={IH + 18} textAnchor={l === 0 ? "start" : "middle"}
-              fontSize={13} fill="#ffffffb3">
+            <text key={l} x={x(l)} y={IH + 19} textAnchor={l === 0 ? "start" : "middle"}
+              fontSize={17} fill="#ffffffb3">
               {l === 0 ? "same day" : l}
             </text>
           ))}
-          <text x={IW / 2} y={IH + 34} textAnchor="middle" fontSize={11} fill="#ffffff80">
+          <text x={IW / 2} y={IH + 36} textAnchor="middle" fontSize={14} fill="#ffffff80">
             days ahead the forecast was published
           </text>
         </Group>
@@ -117,13 +123,16 @@ export default function AccuracyDecayChart({ series }: { series: ChartSeries[] }
         <table>
           <caption>Average accuracy score by forecast lead time</caption>
           <thead>
-            <tr><th>Source</th>{leads.map((l) => <th key={l}>{l === 0 ? "Same day" : `${l} days out`}</th>)}</tr>
+            <tr>
+              <th scope="col">Source</th>
+              {leads.map((l) => <th key={l} scope="col">{l === 0 ? "Same day" : `${l} days out`}</th>)}
+            </tr>
           </thead>
           <tbody>
             {legend.map(({ source, points }) => (
               <tr key={source}>
-                <td>{label(source)}</td>
-                {leads.map((l) => <td key={l}>{points.find((p) => p.lead === l)?.value ?? ""}</td>)}
+                <th scope="row">{label(source)}</th>
+                {leads.map((l) => <td key={l}>{points.find((p) => p.lead === l)?.value ?? "—"}</td>)}
               </tr>
             ))}
           </tbody>
