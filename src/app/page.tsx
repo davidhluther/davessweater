@@ -8,6 +8,7 @@ import GmhgBanner from "@/components/GmhgBanner";
 import FireworksBanner from "@/components/FireworksBanner";
 import SectionBand from "@/components/SectionBand";
 import CompositeForecast from "@/components/CompositeForecast";
+import FiveDayStrip from "@/components/FiveDayStrip";
 import WhyTimeline from "@/components/WhyTimeline";
 import HeadToHeadCard from "@/components/HeadToHeadCard";
 import LiveConditions from "@/components/LiveConditions";
@@ -46,6 +47,9 @@ export default async function HomePage() {
             initialTemp={temp}
             consensusHigh={composite?.high ?? null}
           />
+          {/* Renders its own leading border-t divider (matching the one above)
+              so a data-less day leaves no dangling rule. */}
+          <FiveDayStrip />
         </div>
       </SectionBand>
 
