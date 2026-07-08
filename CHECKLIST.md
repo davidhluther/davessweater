@@ -807,7 +807,23 @@ Owner chose both tools, sitewide: Microsoft Clarity (heatmaps/recordings) + GA4 
       it; no `<noscript>` fallback (the component only mounts when JS runs, so it would be dead code).
       fbevents.js auto-refires PageView on history pushes, so client-side navs are covered. Verify in Meta
       Events Manager against real traffic, NOT an automated browser (tracker endpoints commonly blocked
-      there — same artifact as the GA 503s/Clarity notes above).
+      there — same artifact as the GA 503s/Clarity notes above). **Live-verified on prod 2026-07-07:**
+      config fetched for the right ID on davessweater.com + the PageView beacon fired to facebook.com/tr.
+- [x] **GA4 admin config round — DONE 2026-07-07 (via the owner's browser; lives in GA, not the repo).**
+      (1) Derived event `gmhg_started_plan` created (Custom configurations → Custom events; the simplified
+      "Create event" wizard only offers page_view/form_submit as triggers — the full condition builder is
+      behind "View more options" / Custom events): `event_name equals gmhg_engagement` AND `action equals
+      started_plan`, copy-params ON, marked as key event at creation (no default value, once per event).
+      ⚠️ Verify the key-event flag once data flows — the Key events tab only lists names with 28-day data,
+      so it can't confirm the flag yet; if `gmhg_started_plan` shows unstarred tomorrow, star it.
+      (2) Five event-scoped custom dimensions registered (were ZERO — params were invisible in standard
+      reports): GMHG action (`action`), GMHG filter name (`filter_name`), Click element type
+      (`element_type`), Click link text (`link_text`), Click link URL (`link_url`). Dimensions + derived
+      event only populate going forward (created ~10 PM EDT, before games traffic).
+      **Why "only page_view and form_submit" showed in GA:** element_click/gmhg_engagement shipped only
+      hours earlier (new event names take 24-48h to reach standard reports + the Admin events list), and
+      the owner's own devices are ds_track=off since #120 — verified the code fires on prod via dataLayer
+      (element_click with correct payload). Realtime → "Event count by Event name" is the no-lag view.
 
 ## SEO / performance / accessibility (audited 2026-07-01)
 Multi-agent audit + Lighthouse (production, mobile). **SEO = 100** (the promotion-readiness metadata/JSON-LD/
