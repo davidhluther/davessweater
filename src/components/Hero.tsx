@@ -18,6 +18,12 @@ export default function Hero({ stats }: { stats: HeroStats }) {
           <h1 className="font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
             {copy.hero.headlineLead}<span className="whitespace-nowrap text-orange">{copy.hero.headlineEmphasis}</span>
           </h1>
+          <p className="mt-2 text-sm text-white/75">
+            {copy.hero.dekLead}
+            <Link href="/about" className="underline decoration-white/40 underline-offset-2 hover:decoration-white">
+              {copy.hero.dekLink}
+            </Link>
+          </p>
           <IphoneShot className="my-5 md:hidden" />
           <div className="mt-5 max-w-md">
             <Scoreboard sources={stats.trackingSources} />

@@ -17,6 +17,9 @@ export const copy = {
     headlineLead: "The free forecasts keep beating the one ",
     headlineEmphasis: "you pay for.",
     iphoneAside: "A better forecast may already be in your pocket.",
+    // The one-line thesis under the headline. `dekLink` renders as a link to /about.
+    dekLead: "Scored daily, published free, because nobody owns the weather. ",
+    dekLink: "A sweater, you can own.",
     ctaPrimary: "See the full scoreboard",
     ctaSecondary: "How we score it",
   },
@@ -26,6 +29,7 @@ export const copy = {
     title: "Dave's Sweater Index",
     // `n` is the number of forecasters averaged together.
     footnote: (n: number) => `the average of ${n} independent (and free) forecasters`,
+    tagline: "The forecast belongs to everybody. The sweater call is yours.",
   },
 
   // The homepage "Why this exists" timeline. Beats with live numbers keep
