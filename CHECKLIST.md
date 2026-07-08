@@ -760,6 +760,32 @@ Owner chose both tools, sitewide: Microsoft Clarity (heatmaps/recordings) + GA4 
       side, not a code or config problem. `dataLayer` inspection, not network status codes, is the reliable way
       to verify gtag-based tracking code from an automated browser.
 
+## Owner traffic opt-out + Clarity root cause resolved (PR #120, ✅ MERGED + LIVE-VERIFIED 2026-07-07)
+- [x] **`/?ds_track=off` / `/?ds_track=on` — owner traffic exclusion, LIVE-VERIFIED both directions on
+      production.** `TrackingOptOut.tsx` sets/clears a 5-year `ds_track=off` cookie from a URL param on any
+      page, then reloads clean; `AnalyticsScripts.tsx` reads it client-side (NOT via `next/headers` `cookies()`
+      in the server layout — that would force the whole site off static rendering) and skips GA4/Clarity/
+      ClickTracker entirely when set. Confirmed via real browser: `?ds_track=off` on `/methodology` → cookie
+      set, `window.gtag` undefined (GA never loaded); `?ds_track=on` on `/right-wrong-ray` → cookie cleared,
+      `window.gtag` present again. Both directions work exactly as designed.
+- [x] **Clarity "a[c] is not a function" — ROOT CAUSE FOUND, was Pi-hole (owner's network), not our code.**
+      Corrects the earlier theory. Clarity's tag script depends on more than the main loader
+      (`www.clarity.ms`, which always returned 200): also `c.clarity.ms` (a sync pixel) and `i.clarity.ms`
+      (the actual data-upload endpoint, per the fetched script's own config: `"upload":"https://i.clarity.ms/
+      collect"`). Owner's Pi-hole was blocking one of those while letting the main loader through — script
+      downloads fine, then throws when it hits logic depending on a domain it can't reach. **Owner confirmed:
+      allowlisting Clarity's domains on Pi-hole resolved it — Clarity dashboard cleared "Almost there."**
+      This also explains why the identical error reproduced in Claude's own browser-automation test
+      environment: cloud/sandboxed browser infra commonly blocks known tracker domains by default, for
+      unrelated reasons, producing the same symptom independently. **The `@microsoft/clarity` npm package
+      swap (below) did NOT fix this** — verified live on an unmerged preview deployment first (byte-identical
+      error, same URL, same `?ref=next` marker) before concluding it wasn't a fix; merged anyway afterward
+      since it's still a legitimate code-quality improvement over the hand-rolled inline snippet, just not
+      the actual fix for this bug. **Lesson for next time:** if a third-party script errors identically across
+      multiple independent environments (owner's real device AND an unrelated automated browser), suspect a
+      blocked sub-resource domain before assuming a bug in the vendor's script or in the integration code —
+      check ALL the domains a multi-stage tag loader depends on, not just the one that returns 200.
+
 ## SEO / performance / accessibility (audited 2026-07-01)
 Multi-agent audit + Lighthouse (production, mobile). **SEO = 100** (the promotion-readiness metadata/JSON-LD/
 sitemap work nailed it — nothing to do). **Best Practices 96.**
