@@ -2,9 +2,9 @@ import { describe, it, expect } from "vitest";
 import { getForecast5Day, stripDays, type Forecast5Day } from "@/lib/forecast5";
 import { sweaterFromEffective } from "@/lib/sweater";
 
-function src(high: number | null, low: number | null, precip: string | null = "none", prob?: number) {
+function src(high: number | null, low: number | null, precip: string | null = "none", prob?: number, wind: string | null = null) {
   return {
-    label: "x", high_f: high, low_f: low, wind: null, precip_type: precip,
+    label: "x", high_f: high, low_f: low, wind, precip_type: precip,
     ...(prob !== undefined ? { precip_prob: prob } : {}),
   };
 }
@@ -112,6 +112,54 @@ describe("stripDays", () => {
     // today=07-11: 07-10 is past, 07-11 has one source (no consensus) — only
     // 07-12 survives.
     expect(stripDays(f5, { today: "2026-07-11" }).map((d) => d.date)).toEqual(["2026-07-12"]);
+  });
+
+  it("summary is a non-empty string that reflects the composite temp band", () => {
+    const out = stripDays(f5, T0);
+    for (const d of out) expect(typeof d.summary).toBe("string");
+    for (const d of out) expect(d.summary.length).toBeGreaterThan(0);
+    // 82° high, no sky in fixture → "Dry, warm"
+    expect(out[0].summary).toContain("warm");
+  });
+
+  it("confidence tracks how tightly the sources' highs cluster", () => {
+    const day = (date: string, a: number, b: number) => ({
+      date, sources: { openmeteo: src(a, 60), nws: src(b, 60) },
+    });
+    const f: Forecast5Day = {
+      generated_at: "", location: "Boone",
+      days: [
+        day("2026-07-10", 80, 82), // spread 2 → high
+        day("2026-07-11", 80, 90), // spread 10 → low
+      ],
+    };
+    const out = stripDays(f, T0);
+    expect(out[0].confidence).toBe("high");
+    expect(out[1].confidence).toBe("low");
+  });
+
+  it("median wind is carried when sources publish one, omitted otherwise", () => {
+    const windy: Forecast5Day = {
+      generated_at: "", location: "Boone",
+      days: [{
+        date: "2026-07-10",
+        sources: { openmeteo: src(80, 60, "none", undefined, "10 mph"), nws: src(84, 64, "none", undefined, "14 mph") },
+      }],
+    };
+    expect(stripDays(windy, T0)[0].wind).toBe("14 mph"); // median of [10, 14]
+    expect(stripDays(f5, T0)[0].wind).toBeUndefined();    // fixture has no wind
+  });
+
+  it("a low-prob clear day reads as 'Mostly sunny'", () => {
+    const clear: Forecast5Day = {
+      generated_at: "", location: "Boone",
+      days: [{
+        date: "2026-07-10",
+        sky: "clear",
+        sources: { openmeteo: src(80, 60, "rain", 20), nws: src(84, 64, "rain") },
+      }],
+    };
+    expect(stripDays(clear, T0)[0].summary).toContain("Mostly sunny");
   });
 
   it("today undefined defaults to the current America/New_York date", () => {

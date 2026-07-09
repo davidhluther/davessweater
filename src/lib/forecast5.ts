@@ -15,7 +15,11 @@ const DATA = join(process.cwd(), "data");
 export interface Forecast5Day {
   generated_at: string;
   location: string;
-  days: { date: string; sources: Record<string, ForecastDisplay & { precip_prob?: number }> }[];
+  days: {
+    date: string;
+    sky?: string | null;
+    sources: Record<string, ForecastDisplay & { precip_prob?: number }>;
+  }[];
 }
 
 export async function getForecast5Day(): Promise<Forecast5Day | null> {
@@ -41,10 +45,52 @@ export interface StripDay {
   precipLabel: string;
   /** Highest precip chance among the contributing free forecasts, when any publishes one. */
   precipProb?: number;
+  /** Short character line leading with sky + temp, qualifying precip (e.g. "Mostly sunny, warm"). */
+  summary: string;
+  /** Median wind across contributing sources, e.g. "12 mph". Omitted when no source publishes one. */
+  wind?: string;
+  /** How tightly the sources' highs cluster that day — "high" | "medium" | "low". */
+  confidence: "high" | "medium" | "low";
   /** 0–5 sweater verdict from the composite high. */
   sweaters: number;
   /** Number of forecasters contributing to the day's consensus. */
   count: number;
+}
+
+function tempWord(h: number) {
+  return h >= 88 ? "hot" : h >= 78 ? "warm" : h >= 68 ? "mild" : h >= 58 ? "cool" : h >= 48 ? "chilly" : "cold";
+}
+function skyWord(sky?: string | null) {                 // dry-day sky word
+  if (!sky) return null;
+  if (sky === "clear") return "Sunny";
+  if (sky === "fog") return "Foggy";
+  return "Cloudy";                                       // cloudy/rain/snow/storm all read "Cloudy" as a sky word
+}
+function precipNoun(precip: string) {
+  return precip === "snow" ? "snow" : precip === "mixed" ? "wintry mix" : "showers";
+}
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+function summarize(sky: string | null | undefined, high: number, precip: string, precipProb?: number): string {
+  const temp = tempWord(high);
+  if (precip === "none" || precipProb == null) return `${skyWord(sky) ?? "Dry"}, ${temp}`;
+  const noun = precipNoun(precip);
+  if (precipProb >= 65) return `${cap(noun)} likely, ${temp}`;
+  if (precipProb < 35 && sky === "clear") return `Mostly sunny, slight chance of ${noun}`;
+  const qual = precipProb < 35 ? "slight chance of" : "a chance of";
+  return `${cap(qual)} ${noun}, ${temp}`;
+}
+function medianWind(sources: Record<string, { wind?: string | null }>, keys: string[]): string | undefined {
+  const nums = keys.map((k) => sources[k]?.wind).map((w) => (typeof w === "string" ? parseInt(w, 10) : NaN))
+    .filter((n) => Number.isFinite(n)) as number[];
+  if (!nums.length) return undefined;
+  nums.sort((a, b) => a - b);
+  return `${nums[Math.floor(nums.length / 2)]} mph`;
+}
+function confidenceTier(sources: Record<string, { high_f?: number | null }>, keys: string[]): "high" | "medium" | "low" {
+  const highs = keys.map((k) => sources[k]?.high_f).filter((n): n is number => typeof n === "number");
+  if (highs.length < 2) return "medium";
+  const spread = Math.max(...highs) - Math.min(...highs);
+  return spread <= 3 ? "high" : spread <= 6 ? "medium" : "low";
 }
 
 export function stripDays(f5: Forecast5Day | null, opts?: { max?: number; today?: string }): StripDay[] {
@@ -88,6 +134,9 @@ export function stripDays(f5: Forecast5Day | null, opts?: { max?: number; today?
       precip: c.precip,
       precipLabel: c.precipLabel,
       ...(probs.length ? { precipProb: Math.max(...probs) } : {}),
+      summary: summarize(day.sky, c.high, c.precip, probs.length ? Math.max(...probs) : undefined),
+      ...(medianWind(day.sources, c.sources) ? { wind: medianWind(day.sources, c.sources) } : {}),
+      confidence: confidenceTier(day.sources, c.sources),
       // A forecast day has no "current temp" to blend, so the effective temp
       // IS the high (effectiveTemp(h, h) === h) — the published bands applied
       // straight to the consensus high.

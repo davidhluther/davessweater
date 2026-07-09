@@ -713,6 +713,7 @@ def build_forecast_5day():
     start = datetime.strptime(date, "%Y-%m-%d")
     window = [(start + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(6)]
     days = {}  # date -> {source_key: display dict}
+    sky = {}  # date -> Open-Meteo sky category (the only source that carries one)
 
     def _load(path):
         try:
@@ -731,6 +732,7 @@ def build_forecast_5day():
         for day in (om.get("daily") or []):
             if day.get("date") in window:
                 _put(day["date"], "openmeteo", day)
+                sky[day["date"]] = day.get("category")
 
     rays_rebuilt = pred_dir / "rays_boone.rebuilt.json"
     rays = _load(rays_rebuilt if rays_rebuilt.exists() else pred_dir / "rays_boone.json")
@@ -802,7 +804,7 @@ def build_forecast_5day():
             v["label"] = labels.get(k, k)
 
     out = {"generated_at": datetime.now(EST).isoformat(), "location": "Boone",
-           "days": [{"date": d, "sources": days[d]} for d in sorted(days)]}
+           "days": [{"date": d, "sky": sky.get(d), "sources": days[d]} for d in sorted(days)]}
     with open(DATA_DIR / "forecast_5day.json", "w") as f:
         json.dump(out, f, indent=2)
     print(f"  Wrote 5-day forecasts: {len(days)} days from {date}")

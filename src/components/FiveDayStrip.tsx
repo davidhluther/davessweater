@@ -29,6 +29,24 @@ function sweaterIcons(score: number) {
   ));
 }
 
+// Source-agreement meter: confidence = how tightly the contributing sources'
+// highs cluster that day (spread ≤3°F → high, ≤6°F → medium, else low).
+// 3 segments, fill 3/2/1 for high/medium/low; filled = teal, empty = border.
+const CONF_FILL: Record<string, number> = { high: 3, medium: 2, low: 1 };
+function confidenceMeter(confidence: "high" | "medium" | "low") {
+  const filled = CONF_FILL[confidence];
+  return (
+    <div className="flex items-center gap-1" role="img" aria-label={`agreement: ${confidence}`}>
+      <div className="flex gap-0.5">
+        {Array.from({ length: 3 }, (_, i) => (
+          <span key={i} className={cn("h-1 w-2 rounded-[1px]", i < filled ? "bg-teal" : "bg-border")} />
+        ))}
+      </div>
+      <span className="text-[0.55rem] uppercase tracking-wide text-muted/70">agreement</span>
+    </div>
+  );
+}
+
 export default async function FiveDayStrip() {
   const [f5, scores] = await Promise.all([getForecast5Day(), getLeadtimeScores()]);
   const days = stripDays(f5);
@@ -57,7 +75,12 @@ export default async function FiveDayStrip() {
                 <div className="text-xs font-semibold uppercase tracking-wide text-muted sm:text-[0.65rem]">{d.weekday}</div>
                 <div className="text-[0.6rem] text-muted">{d.dayLabel}</div>
               </div>
-              <div className="flex-1 text-sm font-medium text-foreground sm:mt-1 sm:flex-none sm:text-[0.7rem]">{d.precipLabel}</div>
+              <div className="flex-1 sm:mt-1 sm:flex-none">
+                <div className="text-sm font-medium text-foreground sm:text-[0.7rem]">{d.summary}</div>
+                {d.wind ? (
+                  <div className="text-[0.6rem] text-muted">{d.wind}</div>
+                ) : null}
+              </div>
               <div className="shrink-0 text-right sm:mt-0.5 sm:text-center">
                 <div className="font-display text-lg font-bold leading-tight text-teal">
                   {d.high}° <span className="align-middle font-sans text-xs font-normal text-muted">{d.low}°</span>
@@ -70,6 +93,9 @@ export default async function FiveDayStrip() {
               </div>
               <div className="flex shrink-0 justify-end gap-0.5 sm:mt-1.5 sm:justify-center" role="img" aria-label={`${d.sweaters} of 5 sweaters`}>
                 {sweaterIcons(d.sweaters)}
+              </div>
+              <div className="flex shrink-0 justify-end sm:mt-1.5 sm:justify-center">
+                {confidenceMeter(d.confidence)}
               </div>
             </div>
           ))}
