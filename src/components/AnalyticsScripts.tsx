@@ -54,6 +54,12 @@ export default function AnalyticsScripts({ clarityId }: { clarityId?: string }) 
         fbq('init', '4659969744289221');
         fbq('track', 'PageView');
       `}</Script>
+      {/* Ahrefs Web Analytics — cookieless. data-key is a public site key (it
+          ships in the page HTML), so it lives in the source, not a secret.
+          Gated with the rest behind ds_track=off so the owner's own visits
+          don't inflate the numbers. */}
+      <Script src="https://analytics.ahrefs.com/analytics.js"
+        data-key="edi/nQMB6ojgqiFOKFqb8g" strategy="afterInteractive" />
       <ClickTracker />
     </>
   );
