@@ -46,9 +46,7 @@ export default async function FiveDayStrip() {
   const tooltip = copy.fiveDay.tooltip(days[0].count);
 
   return (
-    <>
-      <div className="my-6 border-t border-border" />
-      <div className="text-center">
+    <div className="text-center">
         <div className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted">
           The 5-day <span className="text-muted/60">|</span> {f5.location}
           <span
@@ -100,7 +98,6 @@ export default async function FiveDayStrip() {
         <p className="mt-1.5 text-xs">
           <Link href="/right-wrong-ray" className="text-teal underline underline-offset-2">See the scoreboard &rarr;</Link>
         </p>
-      </div>
-    </>
+    </div>
   );
 }

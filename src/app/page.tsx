@@ -35,6 +35,14 @@ export default async function HomePage() {
       <GmhgBanner />
       <FireworksBanner />
 
+      {/* The week ahead — featured directly under the hero. FiveDayStrip renders
+          null on a data-less day, leaving an empty card only in that rare case. */}
+      <SectionBand>
+        <div className="mx-auto max-w-2xl rounded-2xl border border-border bg-surface px-4 py-6 sm:px-8 sm:py-8">
+          <FiveDayStrip />
+        </div>
+      </SectionBand>
+
       {/* Today module: the Dave's Sweater Index consensus + the sweater verdict, one card */}
       <SectionBand>
         <div className="mx-auto max-w-2xl rounded-2xl border border-border bg-surface px-4 py-6 sm:px-8 sm:py-8">
@@ -48,9 +56,6 @@ export default async function HomePage() {
             initialTemp={temp}
             consensusHigh={composite?.high ?? null}
           />
-          {/* Renders its own leading border-t divider (matching the one above)
-              so a data-less day leaves no dangling rule. */}
-          <FiveDayStrip />
         </div>
       </SectionBand>
 

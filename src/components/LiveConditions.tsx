@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { sweaterFromEffective, effectiveTemp } from "@/lib/sweater";
-import Outlook, { type OutlookDay } from "@/components/Outlook";
 
 function icons(score: number) {
   return Array.from({ length: 5 }, (_, i) => (
@@ -14,19 +13,17 @@ function icons(score: number) {
 // The page states ONE number for today's high: the Dave's Sweater Index
 // consensus (passed in as `consensusHigh`), the same figure printed above in
 // the Today module. The live Open-Meteo fetch still drives the current
-// temperature, the sweater verdict, and the outlook strip — but it no longer
-// gets to disagree with the index about today's high, and the outlook starts
-// tomorrow so today's number appears exactly once.
+// temperature and the sweater verdict, but it no longer gets to disagree with
+// the index about today's high.
 export default function LiveConditions({
   initialScore, initialVerdict, initialLayers, initialTemp, consensusHigh,
 }: { initialScore: number; initialVerdict: string; initialLayers: string; initialTemp: string; consensusHigh?: number | null }) {
   const [s, setS] = useState({ score: initialScore, verdict: initialVerdict, layers: initialLayers, temp: initialTemp, high: "" });
-  const [outlook, setOutlook] = useState<OutlookDay[]>([]);
 
   useEffect(() => {
     const url = "https://api.open-meteo.com/v1/forecast?latitude=36.2168&longitude=-81.6746"
       + "&current=temperature_2m"
-      + "&daily=temperature_2m_max&forecast_days=6&temperature_unit=fahrenheit&timezone=America/New_York";
+      + "&daily=temperature_2m_max&forecast_days=1&temperature_unit=fahrenheit&timezone=America/New_York";
     fetch(url).then((r) => r.json()).then((d) => {
       const cur = d?.current?.temperature_2m;
       if (cur == null) return;
@@ -34,10 +31,6 @@ export default function LiveConditions({
       const v = sweaterFromEffective(effectiveTemp(high, cur));
       setS({ score: v.score, verdict: v.verdict, layers: v.layers,
         temp: `${Math.round(cur * 10) / 10}°F`, high: `High of ${Math.round(high)}°F today` });
-      const maxes: number[] = d?.daily?.temperature_2m_max ?? [];
-      const times: string[] = d?.daily?.time ?? [];
-      const labels = times.map((t) => new Date(t + "T12:00:00").toLocaleDateString("en-US", { weekday: "short" }));
-      setOutlook(maxes.slice(1, 6).map((hi, i) => ({ label: labels[i + 1] ?? `D${i + 2}`, hi })));
     }).catch(() => {});
   }, []);
 
@@ -50,7 +43,6 @@ export default function LiveConditions({
       {highLine ? <div className="mt-0.5 text-xs text-muted">{highLine}</div> : null}
       <p className="mt-2.5 text-lg font-semibold">{s.verdict}</p>
       {s.layers ? <p className="mt-0.5 text-sm text-muted"><strong>Recommended layers:</strong> {s.layers}</p> : null}
-      <Outlook days={outlook} />
     </div>
   );
 }
