@@ -195,7 +195,7 @@ export default async function Page() {
           <AccuracyDecayChart series={decay} />
           <p className="mt-2 text-xs">
             <Link href="/methodology" className="font-medium text-white/85 underline underline-offset-2">
-              How lead-time scoring works &rarr;
+              How lead-time scoring works
             </Link>
           </p>
         </SectionBand>
