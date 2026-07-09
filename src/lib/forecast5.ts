@@ -52,7 +52,7 @@ export function stripDays(f5: Forecast5Day | null, opts?: { max?: number; today?
   // a non-array) would otherwise crash the production build — Vercel builds
   // don't run vitest, so this must degrade to an empty strip, not a throw.
   if (!f5 || !Array.isArray(f5.days)) return [];
-  const max = opts?.max ?? 6;
+  const max = opts?.max ?? 5;
   // The artifact is written by the morning pipeline, so when the site builds
   // from data captured yesterday its leading day is already in the past. Skip
   // days before today (America/New_York, the site's clock) so the first card

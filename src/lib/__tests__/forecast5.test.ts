@@ -89,10 +89,10 @@ describe("stripDays", () => {
     for (const d of out) expect(d.sweaters).toBe(sweaterFromEffective(d.high).score);
   });
 
-  it("caps the strip at opts.max, defaulting to 6 days", () => {
+  it("caps the strip at opts.max, defaulting to 5 days", () => {
     expect(stripDays(f5, { max: 1, ...T0 }).map((d) => d.date)).toEqual(["2026-07-10"]);
     const wide: Forecast5Day = { generated_at: "", location: "Boone", days: days(8) };
-    expect(stripDays(wide, T0)).toHaveLength(6);
+    expect(stripDays(wide, T0)).toHaveLength(5);
     expect(stripDays(wide, { max: 3, ...T0 })).toHaveLength(3);
   });
 
@@ -102,9 +102,9 @@ describe("stripDays", () => {
     const wide: Forecast5Day = { generated_at: "", location: "Boone", days: days(8) };
     const out = stripDays(wide, { today: "2026-07-11" });
     expect(out[0].date).toBe("2026-07-11");
-    // Dropped past days must not consume cap slots: a full 6 remain.
+    // Dropped past days must not consume cap slots: a full 5 remain.
     expect(out.map((d) => d.date)).toEqual([
-      "2026-07-11", "2026-07-12", "2026-07-13", "2026-07-14", "2026-07-15", "2026-07-16",
+      "2026-07-11", "2026-07-12", "2026-07-13", "2026-07-14", "2026-07-15",
     ]);
   });
 

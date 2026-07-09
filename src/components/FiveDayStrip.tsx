@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { copy } from "@/content/copy";
 import { getForecast5Day, stripDays } from "@/lib/forecast5";
 import { getLeadtimeScores, compositeMemberMaePair } from "@/lib/leadtime";
 
@@ -40,48 +39,36 @@ export default async function FiveDayStrip() {
   // leads), so the two numbers are comparable — not an artifact of short-
   // horizon sources dropping out of one side.
   const maePair = scores ? compositeMemberMaePair(scores, 1, 5) : null;
-  // Tooltip count = forecasters contributing to the leading day's consensus,
-  // the same derivation (compositeForecast().count) behind the Dave's Sweater
-  // Index footnote just above the strip.
-  const tooltip = copy.fiveDay.tooltip(days[0].count);
-
   return (
     <div className="text-center">
         <div className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted">
           The 5-day <span className="text-muted/60">|</span> {f5.location}
-          <span
-            title={tooltip}
-            aria-label={tooltip}
-            className="ml-1.5 inline-flex h-3.5 w-3.5 cursor-help items-center justify-center rounded-full border border-border align-[-2px] text-[0.55rem] font-bold normal-case leading-none text-muted"
-          >
-            i
-          </span>
         </div>
 
-        <div
-          className={cn(
-            "mt-3 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1 sm:grid sm:overflow-visible sm:pb-0",
-            GRID_COLS[days.length] ?? "sm:grid-cols-6",
-          )}
-        >
+        {/* Mobile: a vertical list of day rows — every day visible, no swipe.
+            sm+: an even grid of cards, one column per day. */}
+        <div className={cn("mt-3 flex flex-col gap-1.5 sm:grid sm:gap-2", GRID_COLS[days.length] ?? "sm:grid-cols-5")}>
           {days.map((d) => (
             <div
               key={d.date}
-              className="min-w-[6.5rem] shrink-0 snap-start rounded-lg border border-border bg-background px-1.5 py-2.5 text-center sm:min-w-0 sm:shrink"
+              className="flex items-center gap-3 rounded-lg border border-border bg-background px-3 py-2 text-left sm:flex-col sm:items-stretch sm:gap-0 sm:px-1.5 sm:py-2.5 sm:text-center"
             >
-              <div className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted">{d.weekday}</div>
-              <div className="text-[0.6rem] text-muted">{d.dayLabel}</div>
-              <div className="mt-1 text-[0.7rem] font-medium text-foreground">{d.precipLabel}</div>
-              <div className="mt-0.5 font-display text-lg font-bold text-teal">
-                {d.high}° <span className="align-middle font-sans text-xs font-normal text-muted/60">|</span>{" "}
-                <span className="align-middle font-sans text-xs font-normal text-muted">{d.low}°</span>
+              <div className="w-11 shrink-0 sm:w-auto">
+                <div className="text-xs font-semibold uppercase tracking-wide text-muted sm:text-[0.65rem]">{d.weekday}</div>
+                <div className="text-[0.6rem] text-muted">{d.dayLabel}</div>
               </div>
-              {d.precip !== "none" && d.precipProb != null ? (
-                <div className="mt-0.5 text-[0.65rem] text-muted">
-                  {CHANCE_WORD[d.precip] ?? d.precipLabel} · {d.precipProb}%
+              <div className="flex-1 text-sm font-medium text-foreground sm:mt-1 sm:flex-none sm:text-[0.7rem]">{d.precipLabel}</div>
+              <div className="shrink-0 text-right sm:mt-0.5 sm:text-center">
+                <div className="font-display text-lg font-bold leading-tight text-teal">
+                  {d.high}° <span className="align-middle font-sans text-xs font-normal text-muted">{d.low}°</span>
                 </div>
-              ) : null}
-              <div className="mt-1.5 flex justify-center gap-0.5" role="img" aria-label={`${d.sweaters} of 5 sweaters`}>
+                {d.precip !== "none" && d.precipProb != null ? (
+                  <div className="text-[0.6rem] text-muted">
+                    <span className="hidden sm:inline">{CHANCE_WORD[d.precip] ?? d.precipLabel} · </span>{d.precipProb}%
+                  </div>
+                ) : null}
+              </div>
+              <div className="flex shrink-0 justify-end gap-0.5 sm:mt-1.5 sm:justify-center" role="img" aria-label={`${d.sweaters} of 5 sweaters`}>
                 {sweaterIcons(d.sweaters)}
               </div>
             </div>
