@@ -1,13 +1,13 @@
 ---
-title: "How accurate is a 10-day forecast? Depends who's counting"
+title: "How Accurate Is a 10-Day Forecast? Depends Who's Counting"
 slug: how-accurate-is-a-10-day-forecast
 category: articles
 date: 2026-07-02
 summary: "How far out a forecast can be trusted, from the published skill curve to what our own 118-day Boone tracker shows one day out."
-metaTitle: "How accurate is a 10-day forecast? An honest answer"
+metaTitle: "How Accurate Is a 10-Day Forecast? An Honest Answer"
 metaDescription: "A 10-day forecast is right about half the time, per NOAA. Here's how accuracy decays by lead time, which forecast to trust, and what our data shows."
 ---
-# How accurate is a 10-day forecast? Depends who's counting
+# How Accurate Is a 10-Day Forecast? Depends Who's Counting
 
 A 10-day forecast is right only about half the time, per NOAA's NESDIS: near 90% at five days, about 80% at seven, roughly 50% by day 10. Trust the near term, treat day 10 as a trend.
 
@@ -90,7 +90,7 @@ Ray's landed in Wrong on 23 of 118 days; the two free sources managed one Wrong 
 
 ### Is free or paid more accurate one day out?
 
-Paid didn't buy accuracy here. Ray's Weather has been the High Country's forecast of record for two decades, and "trusted" turns out not to be the same word as "accurate." One structural note in fairness: Ray's never publishes a numeric precipitation amount, so under [how we score every forecast on a 100-point scale](/methodology) he forfeits the amount field on wet-forecast days and earns it on dry ones. Even with that accounted for, the free apps most people ignore have been quietly beating the one everybody pays attention to. Want the deeper cut on that specific question? See [is Ray's Weather actually accurate?](/resources/articles/is-rays-weather-accurate)
+Paid didn't buy accuracy here. Ray's Weather has been the High Country's forecast of record for two decades, and "trusted" turns out not to be the same word as "accurate." One structural note in fairness: Ray's never publishes a numeric precipitation amount, so under [how we score every forecast on a 100-point scale](/methodology) he forfeits the amount field on wet-forecast days and earns it on dry ones. Even with that accounted for, the free apps most people ignore have been quietly beating the one everybody pays attention to. And the tracker keeping score [costs $12 a year to run](/resources/articles/12-dollars-a-year-weather-site), so nobody's accuracy here was bought. Want the deeper cut on that specific question? See [is Ray's Weather actually accurate?](/resources/articles/is-rays-weather-accurate)
 
 ## What should you actually trust a 10-day forecast for?
 

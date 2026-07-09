@@ -1,13 +1,13 @@
 ---
-title: "This weather site costs $12 a year to run"
+title: "This Weather Site Costs $12 a Year to Run"
 slug: 12-dollars-a-year-weather-site
 category: articles
 date: 2026-07-02
 summary: "How Dave's Sweater runs on a $12/year domain and free APIs, and still shows free forecasts beating the paid one."
-metaTitle: "This weather site runs on $12 a year"
+metaTitle: "This Weather Site Runs on $12 a Year"
 metaDescription: "One person, free weather APIs, and a nightly GitHub Actions job beat a paid regional forecaster by about 21 points a day. Total cost: a $12 domain. Here's the stack."
 ---
-# This weather site costs $12 a year to run
+# This Weather Site Costs $12 a Year to Run
 
 Dave's Sweater runs on one cost: a $12/year domain. Free APIs, a daily GitHub Actions job, and Vercel's free tier handle the rest, and free forecasts beat the paid service by about 21 points a day over 118 days.
 
@@ -59,7 +59,7 @@ Seven other free sources have short samples so far (nine scored days each, so tr
 
 ### Why the gap holds: about 21 points a day
 
-The gap isn't a one-week fluke. June 2026 alone ran 29 scored days: Open-Meteo 92.3, Apple 88.0, Ray's 73.3, a 19.0-point June gap. Ray's best June day landed at 90.7 on June 24; his worst hit 26.1 on June 2. Part of the spread is structural: Ray's Weather never publishes a numeric precip amount, so under the implied-zero rule he forfeits the precip-amount field on wet-forecast days and earns it on dry ones. If you want the fuller version, the [content hub](/resources) collects the deeper breakdowns.
+The gap isn't a one-week fluke. [June 2026 alone ran 29 scored days](/resources/articles/rays-weather-report-card-june-2026): Open-Meteo 92.3, Apple 88.0, Ray's 73.3, a 19.0-point June gap. Ray's best June day landed at 90.7 on June 24; his worst hit 26.1 on June 2. Part of the spread is structural: Ray's Weather never publishes a numeric precip amount, so under the implied-zero rule he forfeits the precip-amount field on wet-forecast days and earns it on dry ones. If you want the fuller version, [the full 118-day review of Ray's Weather](/resources/articles/is-rays-weather-accurate) has the deeper breakdown.
 
 ## What's the whole stack, and why is it this cheap?
 
@@ -79,7 +79,7 @@ One daily cron job does the whole loop: capture today's forecast from each sourc
 
 ### Capture at midday, score against tomorrow's actuals
 
-The timing matters for honesty. Each forecast is captured around midday and graded against the next day's verified actuals, so what the scoreboard measures is short-range accuracy, roughly a one-day lead time. That's a real, repeatable test, and it's the one we run. It is not a claim about 7- or 10-day forecasts; forecast skill decays with lead time, and the shape of that decay is published meteorology (see NOAA's [Forecast Verification](https://www.weather.gov/about/verification) materials), not something this site has measured. When you see our numbers, read them as a short-range local data point.
+The timing matters for honesty. Each forecast is captured around midday and graded against the next day's verified actuals, so what the scoreboard measures is short-range accuracy, roughly a one-day lead time. That's a real, repeatable test, and it's the one we run. It is not a claim about 7- or 10-day forecasts; forecast skill decays with lead time, and the shape of that decay is published meteorology (see NOAA's [Forecast Verification](https://www.weather.gov/about/verification) materials), not something this site has measured. When you see our numbers, read them as a short-range local data point. For the longer-horizon question, see [how accurate a 10-day forecast really is](/resources/articles/how-accurate-is-a-10-day-forecast).
 
 ### No servers, no employees, no database bill
 

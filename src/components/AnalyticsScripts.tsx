@@ -4,7 +4,7 @@ import Clarity from "@microsoft/clarity";
 import { useEffect, useState } from "react";
 import ClickTracker from "@/components/ClickTracker";
 
-// GA4 + Clarity + the click tracker, gated behind the ds_track=off cookie
+// GA4 + Clarity + Meta Pixel + the click tracker, gated behind the ds_track=off cookie
 // (see TrackingOptOut.tsx) so the owner's own browsing doesn't get counted.
 // Starts as "undecided" (renders nothing) rather than assuming enabled, so
 // the scripts never mount even for a split second before the cookie check
@@ -39,6 +39,20 @@ export default function AnalyticsScripts({ clarityId }: { clarityId?: string }) 
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-7XL0TZ4GSS');
+      `}</Script>
+      {/* Meta Pixel — Meta's standard bootstrap verbatim. No <noscript> fallback:
+          this component only mounts when JS runs, so one would be dead code. */}
+      <Script id="meta-pixel" strategy="afterInteractive">{`
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window,document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '4659969744289221');
+        fbq('track', 'PageView');
       `}</Script>
       <ClickTracker />
     </>

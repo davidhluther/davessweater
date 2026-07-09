@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Dave's Sweater — Boone's #1 weather (service) tracker",
-    description: "Free forecasts beat Ray's, tracked daily. Boone's most mostly reliable weather resource.",
+    description: "Every Boone forecast, graded daily against what actually happened. Boone's most mostly reliable weather resource.",
     url: "https://davessweater.com", type: "website",
   },
   twitter: {

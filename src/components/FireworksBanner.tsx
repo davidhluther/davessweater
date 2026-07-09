@@ -45,7 +45,7 @@ export default function FireworksBanner() {
           Every High Country show: start times, computed. Dark enough in Boone at {dark}.
         </span>
         <span className="ml-auto text-sm font-bold text-orange-300 group-hover:underline">
-          See the fireworks report &rarr;
+          See the fireworks report
         </span>
       </span>
     </Link>

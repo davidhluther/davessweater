@@ -9,6 +9,7 @@ import type { TooltipEntry } from "@/lib/trendTooltip";
 import TrendChartInteractive from "@/components/TrendChartInteractive";
 import { NumberTicker } from "@/components/ui/number-ticker";
 import { PointerHighlight } from "@/components/ui/pointer-highlight";
+import { copy } from "@/content/copy";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 const REVEAL = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } };
@@ -82,8 +83,8 @@ export default function WhyTimeline({
   return (
     <section className="w-full bg-teal-900 text-white [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px]">
       <div ref={ref} className="relative mx-auto w-full max-w-3xl px-4 py-10 sm:py-14">
-        <div className="mb-1 text-xs font-bold uppercase tracking-wider text-orange">Why this exists</div>
-        <p className="mb-8 text-sm text-white/60">Boone&apos;s outlook, fact-checked daily.</p>
+        <div className="mb-1 text-sm font-bold uppercase tracking-wider text-orange">{copy.why.kicker}</div>
+        <p className="mb-8 text-base text-white/70">{copy.why.subline}</p>
 
         <div aria-hidden className="absolute left-[11px] top-[5.5rem] bottom-10 w-0.5 bg-white/15">
           <motion.div
@@ -94,12 +95,12 @@ export default function WhyTimeline({
 
         <div className="relative space-y-8">
           <Beat reduce={reduce}>
-            <h3 className="font-display text-lg font-bold sm:text-xl">One forecast. One bill.</h3>
-            <p className="mt-1 text-sm text-white/70">You paid for the only outlook in town.</p>
+            <h3 className="font-display text-lg font-bold sm:text-xl">{copy.why.beat1Head}</h3>
+            <p className="mt-1 text-sm text-white/70">{copy.why.beat1Body}</p>
           </Beat>
 
           <Beat reduce={reduce}>
-            <h3 className="font-display text-lg font-bold sm:text-xl">So somebody started checking.</h3>
+            <h3 className="font-display text-lg font-bold sm:text-xl">{copy.why.beat2Head}</h3>
             <p className="mt-1 text-sm text-white/70">
               Every prediction, scored against what actually happened —{" "}
               <NumberTicker value={stats.trackedDays} className="font-display font-bold text-white" /> days
@@ -108,7 +109,8 @@ export default function WhyTimeline({
           </Beat>
 
           <Beat reduce={reduce}>
-            <h3 className="mb-3 font-display text-lg font-bold sm:text-xl">The gap isn&apos;t close.</h3>
+            <h3 className="font-display text-lg font-bold sm:text-xl">{copy.why.beat3Head}</h3>
+            <p className="mb-3 mt-1 text-sm text-white/70">{copy.why.beat3Body}</p>
             <TrendChartInteractive points={points} tooltip={tooltip} />
             <div className="mt-3 grid grid-cols-3 gap-2">
               <Stat label={stats.freeLabel} value={stats.freeAvg} tone="free" />
@@ -118,26 +120,31 @@ export default function WhyTimeline({
           </Beat>
 
           <Beat reduce={reduce}>
-            <h3 className="font-display text-lg font-bold sm:text-xl">It was never better weather.</h3>
+            <h3 className="font-display text-lg font-bold sm:text-xl">{copy.why.beat4Head}</h3>
             <p className="mt-1 text-sm text-white/70">
-              It&apos;s open data anyone can pull. The bill bought the habit — he won&apos;t even commit to a
-              rain total: <strong className="text-white">{stats.raysPrecipProvided}</strong> of{" "}
-              <NumberTicker value={stats.raysPrecipDays} className="font-display font-bold text-white" /> days.
+              {copy.why.beat4Body}
+              (missing <strong className="text-white">{stats.raysPrecipDays - stats.raysPrecipProvided}</strong> of{" "}
+              <NumberTicker value={stats.raysPrecipDays} className="font-display font-bold text-white" /> days).
             </p>
           </Beat>
 
           <Beat reduce={reduce}>
             <h3 className="font-display text-lg font-bold sm:text-xl">
-              <PointerHighlight>The old way is out.</PointerHighlight>
+              <PointerHighlight>{copy.why.beat5Head}</PointerHighlight>
             </h3>
-            <p className="mt-1 text-sm text-white/70">Better data is free. Good design is cheap. This site is the proof.</p>
+            <p className="mt-1 text-sm text-white/70">{copy.why.beat5Body}</p>
+          </Beat>
+
+          <Beat reduce={reduce}>
+            <h3 className="font-display text-lg font-bold sm:text-xl">{copy.why.beat6Head}</h3>
+            <p className="mt-1 text-sm text-white/70">{copy.why.beat6Body}</p>
           </Beat>
         </div>
 
         <p className="mt-10 border-t border-white/10 pt-4 text-center text-xs text-white/60">
           Every score here comes from one transparent rubric, applied to all forecasters alike.{" "}
           <Link href="/methodology" className="font-medium text-white/85 underline underline-offset-2">
-            See exactly how we score each forecast &rarr;
+            See exactly how we score each forecast
           </Link>
         </p>
       </div>

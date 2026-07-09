@@ -36,7 +36,7 @@ export default function UpcomingForecasts(
     <div>
       <p className="mb-4 text-sm text-muted">
         Here&apos;s what each forecast says for{" "}
-        <strong className="text-foreground">{fmtDate(data.date)}</strong>{" "}&mdash; logged before the actuals exist.
+        <strong className="text-foreground">{fmtDate(data.date)}</strong>: Logged before the actuals exist.
         Come back once the day&apos;s in to see who was right.
       </p>
 

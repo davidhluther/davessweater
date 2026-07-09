@@ -649,8 +649,24 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       cash, live forecast + packing list, calendar export) across meta title/description, OG, hero dek, REPORTS
       card, and the reports-page teaser; added a `WebPage` JSON-LD node. Verified: OG PNG renders 1200×630, page
       200 with og:image + twitter card + canonical, banner links to the new slug. 160 vitest / lint / build green.
-- [ ] **Owner:** merge + request GSC indexing (new slug **…-planner-2026**); games start Thu Jul 9 (evergreen for 2027).
-      For 2027 reuse, re-verify all logistics (lots/prices/hours drift), and give real numbers for the
+- [x] **Owner GSC round — ✅ DONE 2026-07-07 (morning of):** merged, requested indexing for the planner slug,
+      **submitted sitemap.xml to GSC for the first time** (it had never been submitted; robots.txt was the only
+      discovery path), and started Validate Fix on the duplicate-canonical issue. Context: a GSC inspection that
+      evening showed the planner URL "unknown to Google" pre-request while the fireworks report (which got the
+      same treatment 07-02) was indexed with rich results PASS and 904 impressions / 36 clicks in 11 days —
+      the franchise playbook works, the planner just needed the same push.
+- [x] **Pre-games SEO/internal-linking pass — 2026-07-07 evening (PR pending).** (1) GMHG title/meta/h1/WebPage
+      JSON-LD/REPORTS-card title now lead with query language: "…2026: Schedule, Parking & Day Planner" +
+      description names parking-by-day and shuttle cash (fireworks query data shows event + logistics-modifier
+      searches; OG card art keeps "Plan Your Days" as display copy). (2) Report cross-links: fireworks report
+      (most-crawled page) → planner callout band; planner → fireworks + /resources/reports footer line.
+      (3) Article mesh completed — every missing edge added contextually: 12-dollars → report-card + is-rays +
+      10-day; report-card → 10-day; 10-day → 12-dollars; is-rays → 12-dollars (the 4 posts previously had
+      partial linking, and "12 dollars" linked no siblings). (4) Main pages now link the articles (were
+      orphaned outside the nav dropdown): homepage head-to-head band, /right-wrong-ray scoring footnote, and
+      /methodology coverage section each carry "longer story" links. All links verified present in prerendered
+      HTML; 172 vitest / lint / build green.
+- [ ] **2027 reuse:** re-verify all logistics (lots/prices/hours drift), and give real numbers for the
       cross-cluster walk estimates if you have them (currently hand-tuned: center↔south 11, ↔north 12,
       north↔south 20). Keep `src/lib/gmhg/` engines event-agnostic (they already are) for Woolly Worm /
       gamedays.
@@ -863,6 +879,46 @@ via subagent-driven TDD + per-task + final adversarial review (READY_TO_MERGE), 
       surfaces snow coverage/columns against real winter data.
 - [ ] Then: M4 radar/maps + Woolcam + photo-of-the-day, M5 multi-location, M6 Ecowitt station ground-truth.
 
+## Done: Voice repositioning + data-democracy thesis (2026-07-07, PR pending)
+Owner call: the site has moved from pure parody/hostility to "complex and subversive" — credible alternative
+positioning for expansion to other domains. Ray's stays the named symbol of gated expertise (pointed at, never
+bitter); the data is the knife, the copy stays gracious. New throughline in CLAUDE.md: "Every forecast is a
+claim about tomorrow. We check them all — including ours," framed as **data democracy** (public data, found,
+vetted, handed over free — weather, fireworks dusk math, the Games planner all being the same move).
+- [x] Homepage "Why this exists" timeline reworked to six beats carrying the thesis: bill+credentials setup →
+      "so somebody started checking" → gap chart → rain-total fact (depersonalized, "he won't even" cut) →
+      NEW "The weather was never his" (data-democracy beat) → "So we publish the receipts" close that names
+      fireworks + the Games (expansion posture; replaced the gloating "The old way is out" triplet).
+      Timeline copy migrated to `src/content/copy.ts` so the owner can tune wording in the GitHub editor.
+- [x] Softened: hero iPhone aside ("A better forecast may already be in your pocket"), footer ("We just check
+      the math" replaces "not on speaking terms"), OG description (no longer names Ray's in share cards),
+      /right-wrong-ray header (fixed the muddled "trust us…held to account" line; now "Same rubric for
+      everybody"). KEPT deliberately: hero headline, BrandMark strikethrough, "most mostly reliable",
+      the Right Ray / Wrong Ray name, timeline beats 1–3 (accountability register, not hostility).
+- [x] AI-voice pass per the new universal styleguide (`shared-skills/writing-styleguide.md`): killed the
+      "Better data is free. Good design is cheap. This site is the proof." triplet; colon pass on the two Ray
+      articles (~11 and ~15 body-colon restructures; remaining validator counts are frontmatter/heading
+      artifacts); fixed one negative-parallelism construction in the June report card.
+
+## Done: Ownership thesis above the fold + /about (2026-07-08, PR pending)
+Follow-on to the voice repositioning, owner-directed: land the message immediately, restore the sweater
+joke's connective tissue, make service-not-business explicit. NOTE: the satire's political dimension stays
+OUT of the public repo per the standing contributor rule — the copy targets the gated-expertise business
+model only.
+- [x] **Hero dek (above the fold):** "Scored daily, published free, because nobody owns the weather.
+      A sweater, you can own." — the sweater clause links to /about. Lands data democracy +
+      service-not-business + the name joke in one line. In `copy.ts` (hero.dekLead/dekLink).
+- [x] **Sweater Index tagline:** "The forecast belongs to everybody. The sweater call is yours." —
+      ownership made personal (the index answers the one forecast question that's about YOU). In `copy.ts`.
+- [x] **/about page** — consolidates the thesis: A service, not a business (h1); the short version; the
+      name (sweater earns its place; links the Realest Quarter-Zip as "the only thing around here with a
+      price on it" — the shop closes the ownership joke); why it's free ($12/yr, public data); held to the
+      same standard (our station joins the same rubric); beyond the weather (fireworks + Games as the same
+      habit; invites reader suggestions). AboutPage + BreadcrumbList JSON-LD, canonical, sitemap entry,
+      footer "What this is" link. Satire disclosure: "Satire, with receipts."
+- [x] 172 vitest / lint / build green (31 routes); hero dek, tagline, and /about all verified in
+      prerendered HTML.
+
 ## To do — site (pre-station, outstanding)
 
 - [ ] **Scoring recalibration — the big one (owner-flagged 2026-07-02).** Clustered 90s = weak
@@ -949,6 +1005,11 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
       fill the PENDING cells + one self-grade line, then publish via the same native-post mechanism.
 - [ ] **Report Card franchise route** — v1 ships the June card under Articles for speed. The tracker's intended
       home is `/report-card/{yyyy-mm}` (recurring franchise); build that route + 301 the Articles URL when ready.
+- [ ] **STANDING MONTHLY: publish the report card for each completed month** (owner directive 2026-07-08).
+      July 2026 card due ~Aug 1; same corpay-method pipeline as the June card (brief → draft → adversarial
+      fact-check vs scores.json → style validate). **Report-card titles are Title Case** ("Ray's Weather
+      Report Card: July 2026") — as are ALL blog-post titles now (the four live posts were retitled
+      2026-07-08; H2/H3 stay sentence case).
 - [ ] **Post detail date format** — the detail route renders `post.date` raw (ISO); site standard is
       "Month D, YYYY" (`lib/dates.ts`). Pre-existing (affects Substack posts too); format when convenient.
 
@@ -1017,6 +1078,29 @@ Owner chose both tools, sitewide: Microsoft Clarity (heatmaps/recordings) + GA4 
       multiple independent environments (owner's real device AND an unrelated automated browser), suspect a
       blocked sub-resource domain before assuming a bug in the vendor's script or in the integration code —
       check ALL the domains a multi-stage tag loader depends on, not just the one that returns 200.
+- [x] **Meta Pixel added 2026-07-07 (pre-GMHG, for the Meta social/ads push).** Pixel ID 4659969744289221,
+      hardcoded in `AnalyticsScripts.tsx` beside GA4 (pixel IDs are public in page source; env-var
+      indirection buys nothing here). Sits inside the same `ds_track=off` gate, so the owner opt-out covers
+      it; no `<noscript>` fallback (the component only mounts when JS runs, so it would be dead code).
+      fbevents.js auto-refires PageView on history pushes, so client-side navs are covered. Verify in Meta
+      Events Manager against real traffic, NOT an automated browser (tracker endpoints commonly blocked
+      there — same artifact as the GA 503s/Clarity notes above). **Live-verified on prod 2026-07-07:**
+      config fetched for the right ID on davessweater.com + the PageView beacon fired to facebook.com/tr.
+- [x] **GA4 admin config round — DONE 2026-07-07 (via the owner's browser; lives in GA, not the repo).**
+      (1) Derived event `gmhg_started_plan` created (Custom configurations → Custom events; the simplified
+      "Create event" wizard only offers page_view/form_submit as triggers — the full condition builder is
+      behind "View more options" / Custom events): `event_name equals gmhg_engagement` AND `action equals
+      started_plan`, copy-params ON, marked as key event at creation (no default value, once per event).
+      ⚠️ Verify the key-event flag once data flows — the Key events tab only lists names with 28-day data,
+      so it can't confirm the flag yet; if `gmhg_started_plan` shows unstarred tomorrow, star it.
+      (2) Five event-scoped custom dimensions registered (were ZERO — params were invisible in standard
+      reports): GMHG action (`action`), GMHG filter name (`filter_name`), Click element type
+      (`element_type`), Click link text (`link_text`), Click link URL (`link_url`). Dimensions + derived
+      event only populate going forward (created ~10 PM EDT, before games traffic).
+      **Why "only page_view and form_submit" showed in GA:** element_click/gmhg_engagement shipped only
+      hours earlier (new event names take 24-48h to reach standard reports + the Admin events list), and
+      the owner's own devices are ds_track=off since #120 — verified the code fires on prod via dataLayer
+      (element_click with correct payload). Realtime → "Event count by Event name" is the no-lag view.
 
 ## SEO / performance / accessibility (audited 2026-07-01)
 Multi-agent audit + Lighthouse (production, mobile). **SEO = 100** (the promotion-readiness metadata/JSON-LD/
@@ -1031,12 +1115,11 @@ SEO/AIO program spec: `planning/specs/2026-07-02-seo-aio-program-design.md` (blo
       *Duplicate without user-selected canonical* on `https://www.davessweater.com/` (signal loop). Owner flipped it
       in Project → Settings → Domains: `davessweater.com` = Connect to environment (serves); `www` = 308 Permanent
       Redirect → apex. **Verified live:** apex 200, `www` 308 → apex, served post canonical self-referential
-      (apex). No code change. **Owner to-do in GSC: hit Validate Fix** on the "Duplicate without user-selected
-      canonical" issue + optionally Request Indexing for the apex homepage. (The two `http://` "Page with redirect"
-      entries are the benign http→https redirect — not a bug.)
-  - [ ] **Nice-to-have: explicit homepage self-canonical.** `/` has no `<link rel="canonical">` (relies on
-        `metadataBase`); the homepage was the exact URL GSC flagged. Add `alternates: { canonical: "/" }` (+ og:url)
-        to `src/app/page.tsx` metadata to make the apex homepage signal explicit. Low-risk one-liner.
+      (apex). No code change. **Validate Fix started by owner 2026-07-07** on the "Duplicate without user-selected
+      canonical" issue — watch GSC for the validation verdict (typically days–2 weeks). (The two `http://` "Page
+      with redirect" entries are the benign http→https redirect — not a bug.)
+  - [x] **Explicit homepage self-canonical — ✅ DONE (PR #116, merged 2026-07-07).** `alternates: { canonical: "/" }`
+        in `src/app/page.tsx`.
 - [x] **/right-wrong-ray full metadata** — was title-only; now description + canonical + OG/Twitter
       (`summary_large_image`).
 - [x] **/right-wrong-ray OG/Twitter share card** — build-time `opengraph-image.tsx` from the same
