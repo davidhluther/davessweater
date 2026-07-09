@@ -13,6 +13,8 @@ import FiveDayStrip from "@/components/FiveDayStrip";
 import WhyTimeline from "@/components/WhyTimeline";
 import HeadToHeadCard from "@/components/HeadToHeadCard";
 import LiveConditions from "@/components/LiveConditions";
+import IphoneShot from "@/components/IphoneShot";
+import { copy } from "@/content/copy";
 
 export const metadata = {
   alternates: { canonical: "/" },
@@ -64,17 +66,25 @@ export default async function HomePage() {
       {h2h && (
         <SectionBand tone="surface">
           <h2 className="mb-3 font-display text-lg font-bold sm:text-xl">Yesterday in Boone | {fmtLongDate(h2h.date)}</h2>
-          <HeadToHeadCard h={h2h} />
-          <p className="mt-3 text-xs text-muted">
-            The longer story:{" "}
-            <Link href="/resources/articles/is-rays-weather-accurate" className="text-teal underline underline-offset-2">
-              Is Ray&apos;s Weather Accurate? 118 Days Scored
-            </Link>
-            {" | "}
-            <Link href="/resources/articles/rays-weather-report-card-june-2026" className="text-teal underline underline-offset-2">
-              Ray&apos;s Weather Report Card: June 2026
-            </Link>
-          </p>
+          <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-start">
+            <div>
+              <HeadToHeadCard h={h2h} />
+              <p className="mt-3 text-xs text-muted">
+                The longer story:{" "}
+                <Link href="/resources/articles/is-rays-weather-accurate" className="text-teal underline underline-offset-2">
+                  Is Ray&apos;s Weather Accurate? 118 Days Scored
+                </Link>
+                {" | "}
+                <Link href="/resources/articles/rays-weather-report-card-june-2026" className="text-teal underline underline-offset-2">
+                  Ray&apos;s Weather Report Card: June 2026
+                </Link>
+              </p>
+            </div>
+            <figure className="mx-auto shrink-0 md:mx-0">
+              <IphoneShot />
+              <figcaption className="mt-2 max-w-[13rem] text-xs text-muted">{copy.hero.iphoneAside}</figcaption>
+            </figure>
+          </div>
         </SectionBand>
       )}
     </>
