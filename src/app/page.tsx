@@ -33,31 +33,31 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero stats={stats} />
+      <Hero stats={stats} forecasters={composite?.sources ?? []} />
       <GmhgBanner />
       <FireworksBanner />
 
-      {/* The week ahead — featured directly under the hero. FiveDayStrip renders
-          null on a data-less day, leaving an empty card only in that rare case. */}
+      {/* Today + the week ahead in one band so they read as a set and stay
+          tight: the Dave's Sweater Index (today's consensus + sweater verdict)
+          leads, the 5-day strip follows. FiveDayStrip renders null on a
+          data-less day, leaving an empty card only in that rare case. */}
       <SectionBand>
-        <div className="mx-auto max-w-2xl rounded-2xl border border-border bg-surface px-4 py-6 sm:px-8 sm:py-8">
-          <FiveDayStrip />
-        </div>
-      </SectionBand>
-
-      {/* Today module: the Dave's Sweater Index consensus + the sweater verdict, one card */}
-      <SectionBand>
-        <div className="mx-auto max-w-2xl rounded-2xl border border-border bg-surface px-4 py-6 sm:px-8 sm:py-8">
-          <CompositeForecast />
-          <div className="my-6 border-t border-border" />
-          <h2 className="mb-3 text-center font-display text-lg font-bold sm:text-xl">Sweater Weather Index</h2>
-          <LiveConditions
-            initialScore={sw.sweater_count ?? 0}
-            initialVerdict={sw.detail ?? sw.answer ?? ""}
-            initialLayers={sw.layers ?? ""}
-            initialTemp={temp}
-            consensusHigh={composite?.high ?? null}
-          />
+        <div className="mx-auto flex max-w-2xl flex-col gap-4 sm:gap-5">
+          <div className="rounded-2xl border border-border bg-surface px-4 py-6 sm:px-8 sm:py-8">
+            <CompositeForecast />
+            <div className="my-6 border-t border-border" />
+            <h2 className="mb-3 text-center font-display text-lg font-bold sm:text-xl">Sweater Weather Index</h2>
+            <LiveConditions
+              initialScore={sw.sweater_count ?? 0}
+              initialVerdict={sw.detail ?? sw.answer ?? ""}
+              initialLayers={sw.layers ?? ""}
+              initialTemp={temp}
+              consensusHigh={composite?.high ?? null}
+            />
+          </div>
+          <div className="rounded-2xl border border-border bg-surface px-4 py-6 sm:px-8 sm:py-8">
+            <FiveDayStrip />
+          </div>
         </div>
       </SectionBand>
 

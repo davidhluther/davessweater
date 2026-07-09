@@ -66,9 +66,9 @@ export default async function FiveDayStrip() {
   const anyHourly = days.some((d) => d.hourly?.length);
   return (
     <div className="text-center">
-        <div className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted">
-          The 5-day <span className="text-muted/60">|</span> {f5.location}
-        </div>
+        <h2 className="font-display text-lg font-bold sm:text-xl">
+          The 5-day <span className="font-normal text-muted/50">|</span> {f5.location}
+        </h2>
 
         {/* Mobile: a vertical list of day rows — every day visible, no swipe.
             sm+: an even grid of cards, one column per day. */}
@@ -127,13 +127,13 @@ export default async function FiveDayStrip() {
 
         {maePair ? (
           <p className="mt-3 text-xs text-muted">
-            Measured: the forecasts behind this consensus have missed the next-day high by ±{maePair.a.mae}°F on
+            Measured against actuals, the forecasts behind this consensus have missed the next-day high by ±{maePair.a.mae}°F on
             average; day 5 runs ±{maePair.b.mae}°F. <span className="text-muted/60">|</span>{" "}
-            <Link href="/methodology" className="text-teal underline underline-offset-2">How we grade &rarr;</Link>
+            <Link href="/methodology" className="text-teal underline underline-offset-2">How we grade</Link>
           </p>
         ) : null}
         <p className="mt-1.5 text-xs">
-          <Link href="/right-wrong-ray" className="text-teal underline underline-offset-2">See the scoreboard &rarr;</Link>
+          <Link href="/right-wrong-ray" className="text-teal underline underline-offset-2">See the scoreboard</Link>
         </p>
     </div>
   );

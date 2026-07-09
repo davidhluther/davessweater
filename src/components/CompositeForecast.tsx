@@ -1,7 +1,6 @@
 import { getLatestForecasts } from "@/lib/data";
 import { compositeForecast } from "@/lib/composite";
 import { copy } from "@/content/copy";
-import ForecasterLogos from "@/components/ForecasterLogos";
 
 // The "Dave's Sweater Index" half of the homepage Today module: a composite of
 // all the independent automated forecasters' upcoming-day predictions.
@@ -19,7 +18,6 @@ export default async function CompositeForecast() {
       </div>
       <div className="mt-1 text-xs text-muted">{copy.index.footnote(c.count)}</div>
       <div className="mt-1 text-xs italic text-muted">{copy.index.tagline}</div>
-      <ForecasterLogos sources={c.sources} />
     </div>
   );
 }

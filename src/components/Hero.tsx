@@ -2,10 +2,11 @@ import Link from "next/link";
 import type { HeroStats } from "@/lib/homeStats";
 import BrandMark from "@/components/BrandMark";
 import Scoreboard from "@/components/Scoreboard";
+import ForecasterLogos from "@/components/ForecasterLogos";
 import WeatherBackdrop from "@/components/WeatherBackdrop";
 import { copy } from "@/content/copy";
 
-export default function Hero({ stats }: { stats: HeroStats }) {
+export default function Hero({ stats, forecasters }: { stats: HeroStats; forecasters: string[] }) {
   return (
     <section className="relative isolate w-full overflow-hidden bg-teal-700 text-white">
       <WeatherBackdrop />
@@ -22,6 +23,7 @@ export default function Hero({ stats }: { stats: HeroStats }) {
             {copy.hero.dekLink}
           </Link>
         </p>
+        <ForecasterLogos sources={forecasters} align="start" />
         <div className="mt-5 max-w-md">
           <Scoreboard sources={stats.trackingSources} />
         </div>

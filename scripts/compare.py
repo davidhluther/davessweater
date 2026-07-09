@@ -58,7 +58,7 @@ def is_sweater_weather(high_f, current_f=None, wind_mph=0, humidity=None):
         return {
             "answer": "ABSOLUTELY",
             "detail": "That's not sweater weather, that's SWEATER EMERGENCY.",
-            "layers": "3+ (sweater, fleece, AND a coat)",
+            "layers": "3+",
             "emoji": "🥶🧥",
             "sweater_count": 5,
         }
@@ -66,7 +66,7 @@ def is_sweater_weather(high_f, current_f=None, wind_mph=0, humidity=None):
         return {
             "answer": "YES",
             "detail": "Classic sweater weather. This is what we're here for.",
-            "layers": "2 (solid sweater + optional layer)",
+            "layers": "2",
             "emoji": "🧣✅",
             "sweater_count": 4,
         }
@@ -74,7 +74,7 @@ def is_sweater_weather(high_f, current_f=None, wind_mph=0, humidity=None):
         return {
             "answer": "YES",
             "detail": "Still sweater territory. Don't let anyone tell you otherwise.",
-            "layers": "1-2 (light to medium sweater)",
+            "layers": "1-2",
             "emoji": "🧶👍",
             "sweater_count": 3,
         }
@@ -82,7 +82,7 @@ def is_sweater_weather(high_f, current_f=None, wind_mph=0, humidity=None):
         return {
             "answer": "MAYBE",
             "detail": "You could go either way. Bring it and decide later.",
-            "layers": "0-1 (light layer, keep one in the car)",
+            "layers": "0-1",
             "emoji": "🤔",
             "sweater_count": 2,
         }
@@ -90,7 +90,7 @@ def is_sweater_weather(high_f, current_f=None, wind_mph=0, humidity=None):
         return {
             "answer": "NO",
             "detail": "No sweater needed unless you're in aggressive AC.",
-            "layers": "0 (the sweater rests today)",
+            "layers": "0",
             "emoji": "☀️❌",
             "sweater_count": 1,
         }
@@ -98,7 +98,7 @@ def is_sweater_weather(high_f, current_f=None, wind_mph=0, humidity=None):
         return {
             "answer": "ABSOLUTELY NOT",
             "detail": "Wearing a sweater would be a cry for help.",
-            "layers": "0 (this is shorts weather, Dave)",
+            "layers": "0",
             "emoji": "🥵🩳",
             "sweater_count": 0,
         }
