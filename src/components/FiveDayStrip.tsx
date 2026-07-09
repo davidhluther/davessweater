@@ -86,7 +86,7 @@ export default async function FiveDayStrip() {
                 <div className="flex-1 sm:mt-1 sm:flex-none">
                   <div className="text-sm font-medium text-foreground sm:text-[0.7rem]">{d.summary}</div>
                   {d.wind ? (
-                    <div className="text-[0.6rem] text-muted">{d.wind}</div>
+                    <div className="text-[0.6rem] text-muted">Wind: {d.wind}</div>
                   ) : null}
                 </div>
                 <div className="shrink-0 text-right sm:mt-0.5 sm:text-center">
@@ -95,7 +95,7 @@ export default async function FiveDayStrip() {
                   </div>
                   {d.precip !== "none" && d.precipProb != null ? (
                     <div className="text-[0.6rem] text-muted">
-                      <span className="hidden sm:inline">{CHANCE_WORD[d.precip] ?? d.precipLabel} · </span>{d.precipProb}%
+                      {CHANCE_WORD[d.precip] ?? "Precip"}: {d.precipProb}%
                     </div>
                   ) : null}
                 </div>
