@@ -57,4 +57,12 @@ export const copy = {
     beat6Body:
       "One open rubric, every forecaster graded alike — ours included. And it doesn't stop at weather: dusk math for the fireworks, a day planner for the Highland Games, and more to come. Whatever's sitting out there, we'll make it useful.",
   },
+
+  // The 5-day strip in the Today module.
+  fiveDay: {
+    // Header tooltip. `n` is the number of forecasters contributing to the
+    // leading day's consensus — derived at render (same count the Dave's
+    // Sweater Index shows), so it tracks roster changes on its own.
+    tooltip: (n: number) => `The consensus of ${n} free forecasts, graded against reality every morning.`,
+  },
 } as const;

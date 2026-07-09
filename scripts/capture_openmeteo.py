@@ -29,6 +29,7 @@ FORECAST_URL = (
     f"latitude={LAT}&longitude={LON}"
     f"&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,snowfall_sum,"
     f"precipitation_probability_max,weather_code,wind_speed_10m_max"
+    f"&hourly=precipitation,precipitation_probability"
     f"&current=temperature_2m,relative_humidity_2m,apparent_temperature,"
     f"weather_code,wind_speed_10m"
     f"&temperature_unit=fahrenheit&wind_speed_unit=mph"
@@ -155,6 +156,16 @@ def capture_forecast():
             "category": weather_category(code),
             "fields_provided": ["high", "low", "wind", "precip_type", "rain_amount", "snow_amount"],
         })
+
+    # Hourly precip (probability + amount) — passed through raw for the 5-day
+    # strip's rain-timing bars. Open-Meteo is the only source we carry hourly
+    # for; build_forecast_5day windows this to daytime per day.
+    hourly_raw = raw.get("hourly", {})
+    forecast["hourly"] = {
+        "time": hourly_raw.get("time", []),
+        "precipitation": hourly_raw.get("precipitation", []),
+        "precipitation_probability": hourly_raw.get("precipitation_probability", []),
+    }
 
     # Save
     json_path = capture_dir / "openmeteo_forecast.json"

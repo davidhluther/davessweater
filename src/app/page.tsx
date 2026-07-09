@@ -9,9 +9,12 @@ import GmhgBanner from "@/components/GmhgBanner";
 import FireworksBanner from "@/components/FireworksBanner";
 import SectionBand from "@/components/SectionBand";
 import CompositeForecast from "@/components/CompositeForecast";
+import FiveDayStrip from "@/components/FiveDayStrip";
 import WhyTimeline from "@/components/WhyTimeline";
 import HeadToHeadCard from "@/components/HeadToHeadCard";
 import LiveConditions from "@/components/LiveConditions";
+import IphoneShot from "@/components/IphoneShot";
+import { copy } from "@/content/copy";
 
 export const metadata = {
   alternates: { canonical: "/" },
@@ -30,23 +33,31 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero stats={stats} />
+      <Hero stats={stats} forecasters={composite?.sources ?? []} />
       <GmhgBanner />
       <FireworksBanner />
 
-      {/* Today module: the Dave's Sweater Index consensus + the sweater verdict, one card */}
+      {/* Today + the week ahead in one band so they read as a set and stay
+          tight: the Dave's Sweater Index (today's consensus + sweater verdict)
+          leads, the 5-day strip follows. FiveDayStrip renders null on a
+          data-less day, leaving an empty card only in that rare case. */}
       <SectionBand>
-        <div className="mx-auto max-w-2xl rounded-2xl border border-border bg-surface px-4 py-6 sm:px-8 sm:py-8">
-          <CompositeForecast />
-          <div className="my-6 border-t border-border" />
-          <h2 className="mb-3 text-center font-display text-lg font-bold sm:text-xl">Sweater Weather Index</h2>
-          <LiveConditions
-            initialScore={sw.sweater_count ?? 0}
-            initialVerdict={sw.detail ?? sw.answer ?? ""}
-            initialLayers={sw.layers ?? ""}
-            initialTemp={temp}
-            consensusHigh={composite?.high ?? null}
-          />
+        <div className="mx-auto flex max-w-2xl flex-col gap-4 sm:gap-5">
+          <div className="rounded-2xl border border-border bg-surface px-4 py-6 sm:px-8 sm:py-8">
+            <CompositeForecast />
+            <div className="my-6 border-t border-border" />
+            <h2 className="mb-3 text-center font-display text-lg font-bold sm:text-xl">Sweater Weather Index</h2>
+            <LiveConditions
+              initialScore={sw.sweater_count ?? 0}
+              initialVerdict={sw.detail ?? sw.answer ?? ""}
+              initialLayers={sw.layers ?? ""}
+              initialTemp={temp}
+              consensusHigh={composite?.high ?? null}
+            />
+          </div>
+          <div className="rounded-2xl border border-border bg-surface px-4 py-6 sm:px-8 sm:py-8">
+            <FiveDayStrip />
+          </div>
         </div>
       </SectionBand>
 
@@ -55,17 +66,25 @@ export default async function HomePage() {
       {h2h && (
         <SectionBand tone="surface">
           <h2 className="mb-3 font-display text-lg font-bold sm:text-xl">Yesterday in Boone | {fmtLongDate(h2h.date)}</h2>
-          <HeadToHeadCard h={h2h} />
-          <p className="mt-3 text-xs text-muted">
-            The longer story:{" "}
-            <Link href="/resources/articles/is-rays-weather-accurate" className="text-teal underline underline-offset-2">
-              Is Ray&apos;s Weather Accurate? 118 Days Scored
-            </Link>
-            {" | "}
-            <Link href="/resources/articles/rays-weather-report-card-june-2026" className="text-teal underline underline-offset-2">
-              Ray&apos;s Weather Report Card: June 2026
-            </Link>
-          </p>
+          <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-start">
+            <div>
+              <HeadToHeadCard h={h2h} />
+              <p className="mt-3 text-xs text-muted">
+                The longer story:{" "}
+                <Link href="/resources/articles/is-rays-weather-accurate" className="text-teal underline underline-offset-2">
+                  Is Ray&apos;s Weather Accurate? 118 Days Scored
+                </Link>
+                {" | "}
+                <Link href="/resources/articles/rays-weather-report-card-june-2026" className="text-teal underline underline-offset-2">
+                  Ray&apos;s Weather Report Card: June 2026
+                </Link>
+              </p>
+            </div>
+            <figure className="mx-auto shrink-0 md:mx-0">
+              <IphoneShot />
+              <figcaption className="mt-2 max-w-[13rem] text-xs text-muted">{copy.hero.iphoneAside}</figcaption>
+            </figure>
+          </div>
         </SectionBand>
       )}
     </>

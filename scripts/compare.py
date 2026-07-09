@@ -58,7 +58,7 @@ def is_sweater_weather(high_f, current_f=None, wind_mph=0, humidity=None):
         return {
             "answer": "ABSOLUTELY",
             "detail": "That's not sweater weather, that's SWEATER EMERGENCY.",
-            "layers": "3+ (sweater, fleece, AND a coat)",
+            "layers": "3+",
             "emoji": "🥶🧥",
             "sweater_count": 5,
         }
@@ -66,7 +66,7 @@ def is_sweater_weather(high_f, current_f=None, wind_mph=0, humidity=None):
         return {
             "answer": "YES",
             "detail": "Classic sweater weather. This is what we're here for.",
-            "layers": "2 (solid sweater + optional layer)",
+            "layers": "2",
             "emoji": "🧣✅",
             "sweater_count": 4,
         }
@@ -74,7 +74,7 @@ def is_sweater_weather(high_f, current_f=None, wind_mph=0, humidity=None):
         return {
             "answer": "YES",
             "detail": "Still sweater territory. Don't let anyone tell you otherwise.",
-            "layers": "1-2 (light to medium sweater)",
+            "layers": "1-2",
             "emoji": "🧶👍",
             "sweater_count": 3,
         }
@@ -82,7 +82,7 @@ def is_sweater_weather(high_f, current_f=None, wind_mph=0, humidity=None):
         return {
             "answer": "MAYBE",
             "detail": "You could go either way. Bring it and decide later.",
-            "layers": "0-1 (light layer, keep one in the car)",
+            "layers": "0-1",
             "emoji": "🤔",
             "sweater_count": 2,
         }
@@ -90,7 +90,7 @@ def is_sweater_weather(high_f, current_f=None, wind_mph=0, humidity=None):
         return {
             "answer": "NO",
             "detail": "No sweater needed unless you're in aggressive AC.",
-            "layers": "0 (the sweater rests today)",
+            "layers": "0",
             "emoji": "☀️❌",
             "sweater_count": 1,
         }
@@ -98,7 +98,7 @@ def is_sweater_weather(high_f, current_f=None, wind_mph=0, humidity=None):
         return {
             "answer": "ABSOLUTELY NOT",
             "detail": "Wearing a sweater would be a cry for help.",
-            "layers": "0 (this is shorts weather, Dave)",
+            "layers": "0",
             "emoji": "🥵🩳",
             "sweater_count": 0,
         }
@@ -530,6 +530,7 @@ def run_daily_comparison(target_date=None):
 
     # Emit the newest unscored forecasts for the "what they're predicting now" section
     build_latest_forecasts()
+    build_forecast_5day()
 
     return comparison
 
@@ -603,11 +604,12 @@ def _forecast_display(contract):
     }
 
 
-def build_latest_forecasts():
-    """Emit data/latest_forecasts.json — each source's newest *unscored* forecast
-    (the upcoming day, before its actuals exist), so the site can show "here's what
-    each predicts; come back and check." Reuses the same per-source parsing as the
-    daily comparison so nothing is duplicated. No scoring (no actuals yet)."""
+def _newest_unscored_capture():
+    """The newest predictions/{date} capture folder with no comparison yet (the
+    current upcoming day), or None. BOTH unscored-forecast builders anchor here:
+    latest_forecasts.json and forecast_5day.json must agree on the capture
+    folder or the site contradicts itself (the day panel shows one date, the
+    5-day strip starts on another)."""
     import re
     pred_root = DATA_DIR / "predictions"
     if not pred_root.exists():
@@ -616,10 +618,18 @@ def build_latest_forecasts():
     dirs = sorted(d.name for d in pred_root.iterdir()
                   if d.is_dir() and re.match(r"^\d{4}-\d{2}-\d{2}$", d.name)
                   and not (comp_dir / f"{d.name}.json").exists())
-    if not dirs:
+    return dirs[-1] if dirs else None
+
+
+def build_latest_forecasts():
+    """Emit data/latest_forecasts.json — each source's newest *unscored* forecast
+    (the upcoming day, before its actuals exist), so the site can show "here's what
+    each predicts; come back and check." Reuses the same per-source parsing as the
+    daily comparison so nothing is duplicated. No scoring (no actuals yet)."""
+    date = _newest_unscored_capture()
+    if date is None:
         return None
-    date = dirs[-1]
-    pred_dir = pred_root / date
+    pred_dir = DATA_DIR / "predictions" / date
     sources = {}
 
     om = pred_dir / "openmeteo_forecast.json"
@@ -686,16 +696,180 @@ def build_latest_forecasts():
     return out
 
 
+# Daytime window for the rain-timing bars: 6 AM–10 PM local, the hours a person
+# is actually out in the weather. The capture URL sets timezone=America/New_York,
+# so Open-Meteo's hourly timestamps are already local and the hour slices directly.
+_HOURLY_START, _HOURLY_END = 6, 22
+
+
+def _daytime_hourly(hourly, window):
+    """Group Open-Meteo hourly precip into per-date daytime lists.
+
+    `hourly` is the raw {time, precipitation, precipitation_probability} block
+    from openmeteo_forecast.json. Returns {date: [{hour, prob, inches}, ...]}
+    for dates in `window`, restricted to _HOURLY_START.._HOURLY_END inclusive.
+    Tolerant of ragged/short arrays (same idiom as the daily loop)."""
+    times = hourly.get("time") or []
+    precip = hourly.get("precipitation") or []
+    prob = hourly.get("precipitation_probability") or []
+    win = set(window)
+    out = {}
+    for i, t in enumerate(times):
+        date = t[:10]  # "2026-07-09T14:00" -> "2026-07-09"
+        if date not in win:
+            continue
+        try:
+            hour = int(t[11:13])
+        except (ValueError, IndexError):
+            continue
+        if hour < _HOURLY_START or hour > _HOURLY_END:
+            continue
+        out.setdefault(date, []).append({
+            "hour": hour,
+            "prob": prob[i] if i < len(prob) and prob[i] is not None else 0,
+            "inches": round(precip[i], 3) if i < len(precip) and precip[i] is not None else 0.0,
+        })
+    return out
+
+
+def build_forecast_5day():
+    """Emit data/forecast_5day.json — every source's outlook for the next six
+    days (capture day + 5), read from the same newest-unscored capture folder
+    build_latest_forecasts anchors on. Each days[] entry carries the exact
+    per-source shape of latest_forecasts.json ({high_f, low_f, wind,
+    precip_type[, precip_prob], label}) so the TS compositeForecast() consumes
+    each day unchanged — the composite itself stays in TS (src/lib/composite.ts),
+    which also owns the Ray's/Apple EXCLUDE set, so both are included here just
+    like the daily file. Missing or corrupt capture files skip that source
+    (same tolerance idiom as the source loop above)."""
+    date = _newest_unscored_capture()
+    if date is None:
+        return None
+    pred_dir = DATA_DIR / "predictions" / date
+    start = datetime.strptime(date, "%Y-%m-%d")
+    window = [(start + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(6)]
+    days = {}  # date -> {source_key: display dict}
+    sky = {}  # date -> Open-Meteo sky category (the only source that carries one)
+
+    def _load(path):
+        try:
+            return json.load(open(path))
+        except (json.JSONDecodeError, OSError):
+            return None
+
+    def _put(d, key, pred):
+        entry = _forecast_display(_to_contract(pred))
+        if pred.get("precip_prob") is not None:
+            entry["precip_prob"] = pred["precip_prob"]
+        days.setdefault(d, {})[key] = entry
+
+    hourly_by_date = {}  # date -> [{hour, prob, inches}] across the daytime window
+    om = _load(pred_dir / "openmeteo_forecast.json")
+    if om:
+        for day in (om.get("daily") or []):
+            if day.get("date") in window:
+                _put(day["date"], "openmeteo", day)
+                sky[day["date"]] = day.get("category")
+        hourly_by_date = _daytime_hourly(om.get("hourly") or {}, window)
+
+    rays_rebuilt = pred_dir / "rays_boone.rebuilt.json"
+    rays = _load(rays_rebuilt if rays_rebuilt.exists() else pred_dir / "rays_boone.json")
+    if rays:
+        rows = {r.get("date"): r for r in (rays.get("daily") or [])}
+        for d in window:
+            # Day 0 mirrors build_latest_forecasts: _best_rays_prediction merges
+            # the capture-day strip over daily[]. Beyond day 0 the strip
+            # describes the capture day, not d, so only an exact daily[] row
+            # counts — fed through the same helper one row at a time so its
+            # field whitelist (which never carries precip_in) still applies.
+            # Same rule as leadtime._rays_row.
+            if d == date:
+                pred = _best_rays_prediction(rays, d)
+            elif d in rows:
+                pred = _best_rays_prediction({"daily": [rows[d]]}, d)
+            else:
+                continue
+            if pred and (_get_high(pred) is not None or _get_low(pred) is not None):
+                _put(d, "raysweather", pred)
+
+    # Apple is a flat single-day capture (the real Shortcut file, or the
+    # fallback's nested `forecast` dict), so it only ever contributes day 0 —
+    # same parse as build_latest_forecasts, same reason leadtime.py skips it.
+    apple_data = None
+    try:
+        apple_path = pred_dir / "iphone_forecast_apple.json"
+        if apple_path.exists():
+            apple_data = _parse_apple_forecast(apple_path)
+        elif (pred_dir / "iphone_forecast.json").exists():
+            apple_data = _parse_apple_forecast(pred_dir / "iphone_forecast.json")
+            if isinstance(apple_data, dict) and isinstance(apple_data.get("forecast"), dict):
+                apple_data = dict(apple_data["forecast"])
+    except (json.JSONDecodeError, OSError):
+        apple_data = None
+    if apple_data:
+        if apple_data.get("conditions") and not apple_data.get("category"):
+            apple_data["category"] = _apple_condition_to_category(apple_data["conditions"])
+        if "precip_in" not in apple_data and apple_data.get("category"):
+            cat = apple_data["category"]
+            if cat in ("rain", "drizzle", "storm", "snow"):
+                apple_data["precip_in"] = 0.01
+            elif cat != "unknown":
+                apple_data["precip_in"] = 0.0
+        if _get_high(apple_data) is not None or _get_low(apple_data) is not None:
+            _put(date, "apple_weather", apple_data)
+
+    for s in SOURCES:
+        key = s["key"]
+        data = _load(pred_dir / f"{key}_forecast.json")
+        if not data:
+            continue
+        for day in (data.get("daily") or []):
+            d = day.get("date")
+            if d not in window or key in days.get(d, {}):
+                continue
+            if d == date:
+                # The capture-day low recovery only applies to day 0 (the
+                # midday-capture problem); later rows already span their full
+                # day and must keep their own lows (leadtime.score_lead's rule).
+                day = _fix_bucket_low(key, d, dict(day))
+            _put(d, key, day)
+
+    labels = dict(SOURCE_LABELS)
+    for s in SOURCES:
+        labels[s["key"]] = s["label"]
+    for srcs in days.values():
+        for k, v in srcs.items():
+            v["label"] = labels.get(k, k)
+
+    def _day_entry(d):
+        entry = {"date": d, "sky": sky.get(d), "sources": days[d]}
+        hrs = hourly_by_date.get(d)
+        # Only attach timing bars where there's a real chance to time — a day of
+        # bare 5% bars is noise. UI shows the bar iff `hourly` is present.
+        if hrs and any(h["prob"] >= 20 or h["inches"] >= 0.01 for h in hrs):
+            entry["hourly"] = hrs
+        return entry
+
+    out = {"generated_at": datetime.now(EST).isoformat(), "location": "Boone",
+           "days": [_day_entry(d) for d in sorted(days)]}
+    with open(DATA_DIR / "forecast_5day.json", "w") as f:
+        json.dump(out, f, indent=2)
+    print(f"  Wrote 5-day forecasts: {len(days)} days from {date}")
+    return out
+
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Dave's Sweater daily comparison")
     parser.add_argument("--date", type=str, help="Date to compare (YYYY-MM-DD, default: yesterday)")
     parser.add_argument("--sweater-only", action="store_true", help="Just check sweater weather for today")
-    parser.add_argument("--forecasts-only", action="store_true", help="Just rebuild data/latest_forecasts.json")
+    parser.add_argument("--forecasts-only", action="store_true",
+                        help="Just rebuild data/latest_forecasts.json + data/forecast_5day.json")
     args = parser.parse_args()
 
     if args.forecasts_only:
         build_latest_forecasts()
+        build_forecast_5day()
     elif args.sweater_only:
         # Quick sweater check using current Open-Meteo data
         from capture_openmeteo import fetch_json, FORECAST_URL

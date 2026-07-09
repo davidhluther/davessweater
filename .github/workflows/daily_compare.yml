@@ -87,6 +87,25 @@ jobs:
             python scripts/check_capture_health.py
           fi
 
+      # Lead-time scoring: grade the just-compared date at leads 0-5 and
+      # rebuild data/leadtime_scores.json (the accuracy-decay chart's input).
+      # The commit step's `git add data/` picks up data/leadtime/ and
+      # leadtime_scores. The date input rides in via env (never interpolated
+      # into run:), same as the compare steps above.
+      # Non-gating (unlike Check capture health): leadtime is downstream
+      # derived reporting, rebuildable via backfill_leadtime.py; a crash here
+      # must not block the day's validated comparisons from publishing.
+      - name: Update lead-time scores
+        continue-on-error: true
+        env:
+          INPUT_DATE: ${{ github.event.inputs.date }}
+        run: |
+          if [ -n "$INPUT_DATE" ]; then
+            python scripts/leadtime.py "$INPUT_DATE"
+          else
+            python scripts/leadtime.py
+          fi
+
       - name: Export scores CSV
         run: python scripts/export_scores_csv.py
 
