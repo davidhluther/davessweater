@@ -51,6 +51,8 @@ export interface StripDay {
   low: number;
   /** Raw majority precip key ("rain" | "snow" | "mixed" | "none"). */
   precip: string;
+  /** Open-Meteo sky category ("storm" | "drizzle" | "clear" | …), for labeling. */
+  sky?: string | null;
   /** Human label for the raw key. */
   precipLabel: string;
   /** Highest precip chance among the contributing free forecasts, when any publishes one. */
@@ -184,6 +186,7 @@ export function stripDays(f5: Forecast5Day | null, opts?: { max?: number; today?
       high: c.high,
       low: c.low,
       precip: c.precip,
+      ...(day.sky ? { sky: day.sky } : {}),
       precipLabel: c.precipLabel,
       ...(maxProb != null ? { precipProb: maxProb } : {}),
       summary: summarize(day.sky, c.high, c.precip, maxProb, windMph),

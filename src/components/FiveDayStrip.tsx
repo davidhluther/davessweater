@@ -95,7 +95,7 @@ export default async function FiveDayStrip() {
                   </div>
                   {d.precip !== "none" && d.precipProb != null ? (
                     <div className="text-[0.6rem] text-muted">
-                      {CHANCE_WORD[d.precip] ?? "Precip"}: {d.precipProb}%
+                      {d.sky === "storm" ? "Storm" : CHANCE_WORD[d.precip] ?? "Precip"}: {d.precipProb}%
                     </div>
                   ) : null}
                 </div>
