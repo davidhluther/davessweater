@@ -696,6 +696,42 @@ def build_latest_forecasts():
     return out
 
 
+# Daytime window for the rain-timing bars: 6 AM–10 PM local, the hours a person
+# is actually out in the weather. The capture URL sets timezone=America/New_York,
+# so Open-Meteo's hourly timestamps are already local and the hour slices directly.
+_HOURLY_START, _HOURLY_END = 6, 22
+
+
+def _daytime_hourly(hourly, window):
+    """Group Open-Meteo hourly precip into per-date daytime lists.
+
+    `hourly` is the raw {time, precipitation, precipitation_probability} block
+    from openmeteo_forecast.json. Returns {date: [{hour, prob, inches}, ...]}
+    for dates in `window`, restricted to _HOURLY_START.._HOURLY_END inclusive.
+    Tolerant of ragged/short arrays (same idiom as the daily loop)."""
+    times = hourly.get("time") or []
+    precip = hourly.get("precipitation") or []
+    prob = hourly.get("precipitation_probability") or []
+    win = set(window)
+    out = {}
+    for i, t in enumerate(times):
+        date = t[:10]  # "2026-07-09T14:00" -> "2026-07-09"
+        if date not in win:
+            continue
+        try:
+            hour = int(t[11:13])
+        except (ValueError, IndexError):
+            continue
+        if hour < _HOURLY_START or hour > _HOURLY_END:
+            continue
+        out.setdefault(date, []).append({
+            "hour": hour,
+            "prob": prob[i] if i < len(prob) and prob[i] is not None else 0,
+            "inches": round(precip[i], 3) if i < len(precip) and precip[i] is not None else 0.0,
+        })
+    return out
+
+
 def build_forecast_5day():
     """Emit data/forecast_5day.json — every source's outlook for the next six
     days (capture day + 5), read from the same newest-unscored capture folder
@@ -727,12 +763,14 @@ def build_forecast_5day():
             entry["precip_prob"] = pred["precip_prob"]
         days.setdefault(d, {})[key] = entry
 
+    hourly_by_date = {}  # date -> [{hour, prob, inches}] across the daytime window
     om = _load(pred_dir / "openmeteo_forecast.json")
     if om:
         for day in (om.get("daily") or []):
             if day.get("date") in window:
                 _put(day["date"], "openmeteo", day)
                 sky[day["date"]] = day.get("category")
+        hourly_by_date = _daytime_hourly(om.get("hourly") or {}, window)
 
     rays_rebuilt = pred_dir / "rays_boone.rebuilt.json"
     rays = _load(rays_rebuilt if rays_rebuilt.exists() else pred_dir / "rays_boone.json")
@@ -803,8 +841,17 @@ def build_forecast_5day():
         for k, v in srcs.items():
             v["label"] = labels.get(k, k)
 
+    def _day_entry(d):
+        entry = {"date": d, "sky": sky.get(d), "sources": days[d]}
+        hrs = hourly_by_date.get(d)
+        # Only attach timing bars where there's a real chance to time — a day of
+        # bare 5% bars is noise. UI shows the bar iff `hourly` is present.
+        if hrs and any(h["prob"] >= 20 or h["inches"] >= 0.01 for h in hrs):
+            entry["hourly"] = hrs
+        return entry
+
     out = {"generated_at": datetime.now(EST).isoformat(), "location": "Boone",
-           "days": [{"date": d, "sky": sky.get(d), "sources": days[d]} for d in sorted(days)]}
+           "days": [_day_entry(d) for d in sorted(days)]}
     with open(DATA_DIR / "forecast_5day.json", "w") as f:
         json.dump(out, f, indent=2)
     print(f"  Wrote 5-day forecasts: {len(days)} days from {date}")

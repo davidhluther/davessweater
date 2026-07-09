@@ -2,6 +2,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { getForecast5Day, stripDays } from "@/lib/forecast5";
 import { getLeadtimeScores, compositeMemberMaePair } from "@/lib/leadtime";
+import RainTimingBar from "@/components/RainTimingBar";
 
 // The consumer half of the Today module: the week ahead for a person who just
 // wants Friday's forecast. It states ONE forecast per day — the same
@@ -62,6 +63,7 @@ export default async function FiveDayStrip() {
   // is a flat column of one-bar meters that says nothing — drop it entirely
   // rather than imply five separately-uncertain days.
   const showConfidence = days.some((d) => d.confidence !== "low");
+  const anyHourly = days.some((d) => d.hourly?.length);
   return (
     <div className="text-center">
         <div className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted">
@@ -74,39 +76,54 @@ export default async function FiveDayStrip() {
           {days.map((d) => (
             <div
               key={d.date}
-              className="flex items-center gap-3 rounded-lg border border-border bg-background px-3 py-2 text-left sm:flex-col sm:items-stretch sm:gap-0 sm:px-1.5 sm:py-2.5 sm:text-center"
+              className="rounded-lg border border-border bg-background px-3 py-2 text-left sm:px-1.5 sm:py-2.5 sm:text-center"
             >
-              <div className="w-11 shrink-0 sm:w-auto">
-                <div className="text-xs font-semibold uppercase tracking-wide text-muted sm:text-[0.65rem]">{d.weekday}</div>
-                <div className="text-[0.6rem] text-muted">{d.dayLabel}</div>
-              </div>
-              <div className="flex-1 sm:mt-1 sm:flex-none">
-                <div className="text-sm font-medium text-foreground sm:text-[0.7rem]">{d.summary}</div>
-                {d.wind ? (
-                  <div className="text-[0.6rem] text-muted">{d.wind}</div>
-                ) : null}
-              </div>
-              <div className="shrink-0 text-right sm:mt-0.5 sm:text-center">
-                <div className="font-display text-lg font-bold leading-tight text-teal">
-                  {d.high}° <span className="align-middle font-sans text-xs font-normal text-muted">{d.low}°</span>
+              <div className="flex items-center gap-3 sm:flex-col sm:items-stretch sm:gap-0">
+                <div className="w-11 shrink-0 sm:w-auto">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-muted sm:text-[0.65rem]">{d.weekday}</div>
+                  <div className="text-[0.6rem] text-muted">{d.dayLabel}</div>
                 </div>
-                {d.precip !== "none" && d.precipProb != null ? (
-                  <div className="text-[0.6rem] text-muted">
-                    <span className="hidden sm:inline">{CHANCE_WORD[d.precip] ?? d.precipLabel} · </span>{d.precipProb}%
+                <div className="flex-1 sm:mt-1 sm:flex-none">
+                  <div className="text-sm font-medium text-foreground sm:text-[0.7rem]">{d.summary}</div>
+                  {d.wind ? (
+                    <div className="text-[0.6rem] text-muted">{d.wind}</div>
+                  ) : null}
+                </div>
+                <div className="shrink-0 text-right sm:mt-0.5 sm:text-center">
+                  <div className="font-display text-lg font-bold leading-tight text-teal">
+                    {d.high}° <span className="align-middle font-sans text-xs font-normal text-muted">{d.low}°</span>
+                  </div>
+                  {d.precip !== "none" && d.precipProb != null ? (
+                    <div className="text-[0.6rem] text-muted">
+                      <span className="hidden sm:inline">{CHANCE_WORD[d.precip] ?? d.precipLabel} · </span>{d.precipProb}%
+                    </div>
+                  ) : null}
+                </div>
+                <div className="flex shrink-0 justify-end gap-0.5 sm:mt-1.5 sm:justify-center" role="img" aria-label={`${d.sweaters} of 5 sweaters`}>
+                  {sweaterIcons(d.sweaters)}
+                </div>
+                {showConfidence ? (
+                  <div className="flex shrink-0 justify-end sm:mt-1.5 sm:justify-center">
+                    {confidenceMeter(d.confidence)}
                   </div>
                 ) : null}
               </div>
-              <div className="flex shrink-0 justify-end gap-0.5 sm:mt-1.5 sm:justify-center" role="img" aria-label={`${d.sweaters} of 5 sweaters`}>
-                {sweaterIcons(d.sweaters)}
-              </div>
-              {showConfidence ? (
-                <div className="flex shrink-0 justify-end sm:mt-1.5 sm:justify-center">
-                  {confidenceMeter(d.confidence)}
+              {/* When will it rain — Open-Meteo hourly, gated to consensus-wet days
+                  in stripDays so a dry card never shows a bar. */}
+              {d.hourly?.length ? (
+                <div className="mt-2 sm:mt-2.5">
+                  <RainTimingBar hours={d.hourly} />
                 </div>
               ) : null}
             </div>
           ))}
         </div>
+
+        {anyHourly ? (
+          <p className="mt-2 text-[0.65rem] text-muted/80">
+            Bars show the hourly chance of rain, 6a–10p (Open-Meteo). Taller, solid bars = heavier odds.
+          </p>
+        ) : null}
 
         {maePair ? (
           <p className="mt-3 text-xs text-muted">

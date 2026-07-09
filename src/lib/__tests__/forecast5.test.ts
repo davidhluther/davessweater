@@ -193,6 +193,17 @@ describe("stripDays", () => {
     expect(stripDays(f, T0)[0].summary).toContain("breezy");
   });
 
+  it("carries hourly rain bars onto a wet day but drops them on a dry one", () => {
+    const hourly = [{ hour: 6, prob: 30, inches: 0 }, { hour: 14, prob: 60, inches: 0.1 }];
+    const f: Forecast5Day = { generated_at: "", location: "Boone", days: [
+      { date: "2026-07-10", hourly, sources: { openmeteo: src(80, 60, "rain", 60), nws: src(84, 64, "rain") } },
+      { date: "2026-07-11", hourly, sources: { openmeteo: src(80, 60, "none"), nws: src(84, 64, "none") } },
+    ] };
+    const out = stripDays(f, T0);
+    expect(out[0].hourly).toEqual(hourly);   // consensus-wet day keeps the bars
+    expect(out[1].hourly).toBeUndefined();   // consensus-dry day never sprouts a rain bar
+  });
+
   it("today undefined defaults to the current America/New_York date", () => {
     // Dynamic fixture anchored to the real clock so the default path is
     // exercised hermetically: yesterday must drop, today and tomorrow stay.

@@ -12,12 +12,22 @@ const DATA = join(process.cwd(), "data");
 // display rows as latest_forecasts.json (plus an optional precip_prob where
 // the provider publishes one). Each days[] entry is structurally a
 // LatestForecasts, so it feeds compositeForecast() directly.
+/** One hour of the rain-timing bar: chance of precip and the amount that hour.
+ *  Sourced from Open-Meteo hourly (the only source we carry sub-daily). */
+export interface RainHour {
+  hour: number;   // 0–23 local
+  prob: number;   // % chance of precipitation
+  inches: number; // precip amount that hour
+}
+
 export interface Forecast5Day {
   generated_at: string;
   location: string;
   days: {
     date: string;
     sky?: string | null;
+    /** Daytime hourly precip (6a–10p), present only on days with a real chance. */
+    hourly?: RainHour[];
     sources: Record<string, ForecastDisplay & { precip_prob?: number }>;
   }[];
 }
@@ -51,6 +61,8 @@ export interface StripDay {
   wind?: string;
   /** How tightly the sources' highs cluster that day — "high" | "medium" | "low". */
   confidence: "high" | "medium" | "low";
+  /** Open-Meteo daytime rain-timing bars; present only on days with a real chance. */
+  hourly?: RainHour[];
   /** 0–5 sweater verdict from the composite high. */
   sweaters: number;
   /** Number of forecasters contributing to the day's consensus. */
@@ -177,6 +189,10 @@ export function stripDays(f5: Forecast5Day | null, opts?: { max?: number; today?
       summary: summarize(day.sky, c.high, c.precip, maxProb, windMph),
       ...(windMph != null ? { wind: `${windMph} mph` } : {}),
       confidence: confidenceTier(day.sources, c.sources),
+      // Timing bars only make sense on a day the consensus calls wet — a
+      // "Partly cloudy" card must never sprout a rain bar even if Open-Meteo's
+      // hourly carries a stray chance.
+      ...(c.precip !== "none" && day.hourly?.length ? { hourly: day.hourly } : {}),
       // A forecast day has no "current temp" to blend, so the effective temp
       // IS the high (effectiveTemp(h, h) === h) — the published bands applied
       // straight to the consensus high.

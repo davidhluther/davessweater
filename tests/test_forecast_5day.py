@@ -220,3 +220,86 @@ def test_returns_none_without_prediction_dirs(tmp_path, monkeypatch):
     (tmp_path / "predictions").mkdir()
     assert compare.build_forecast_5day() is None            # predictions/ but no capture dirs
     assert not (tmp_path / "forecast_5day.json").exists()   # and nothing was written
+
+
+# --- rain-timing bars (Open-Meteo hourly) -----------------------------------
+
+def _hourly_block(date, per_hour):
+    """Raw Open-Meteo hourly block for one date. `per_hour` maps hour ->
+    (prob, inches); unlisted hours are dry (0, 0.0)."""
+    times, prob, precip = [], [], []
+    for h in range(24):
+        times.append(f"{date}T{h:02d}:00")
+        p, inc = per_hour.get(h, (0, 0.0))
+        prob.append(p)
+        precip.append(inc)
+    return {"time": times, "precipitation": precip, "precipitation_probability": prob}
+
+
+def _merge_hourly(blocks):
+    """Concatenate per-date blocks into one raw hourly block (the API shape)."""
+    merged = {"time": [], "precipitation": [], "precipitation_probability": []}
+    for b in blocks:
+        for k in merged:
+            merged[k] += b[k]
+    return merged
+
+
+def test_daytime_hourly_windows_to_6_to_22_and_groups_by_date():
+    date = "2026-07-08"
+    block = _hourly_block(date, {3: (90, 0.2), 6: (10, 0.0), 14: (60, 0.1), 22: (40, 0.05), 23: (99, 1.0)})
+    out = compare._daytime_hourly(block, [date])
+    assert [h["hour"] for h in out[date]] == list(range(6, 23))  # 6..22; 3 and 23 dropped
+    by_hour = {h["hour"]: h for h in out[date]}
+    assert by_hour[14]["prob"] == 60 and by_hour[14]["inches"] == 0.1
+    assert by_hour[22]["prob"] == 40
+
+
+def test_daytime_hourly_skips_dates_outside_window():
+    block = _merge_hourly([_hourly_block("2026-07-08", {14: (50, 0.1)}),
+                           _hourly_block("2026-07-20", {14: (99, 1.0)})])
+    out = compare._daytime_hourly(block, ["2026-07-08"])  # only 07-08 in window
+    assert set(out) == {"2026-07-08"}
+
+
+def test_daytime_hourly_tolerates_ragged_arrays():
+    block = {"time": ["2026-07-08T06:00", "2026-07-08T07:00"],
+             "precipitation_probability": [50], "precipitation": []}  # short + empty
+    out = compare._daytime_hourly(block, ["2026-07-08"])
+    assert out["2026-07-08"][0]["prob"] == 50
+    assert out["2026-07-08"][0]["inches"] == 0.0   # missing amount -> 0
+    assert out["2026-07-08"][1]["prob"] == 0       # missing prob   -> 0
+
+
+def test_hourly_attached_only_to_days_with_a_real_chance(tmp_path, monkeypatch):
+    _setup(tmp_path, monkeypatch, {
+        "openmeteo_forecast.json": {
+            "daily": [_om_day("2026-07-08", 79.0, prob=60), _om_day("2026-07-09", 81.0, prob=5)],
+            "hourly": _merge_hourly([
+                _hourly_block("2026-07-08", {14: (60, 0.1), 15: (40, 0.0)}),  # real chance
+                _hourly_block("2026-07-09", {14: (8, 0.0)}),                  # all <20%, dry
+            ]),
+        },
+    })
+    out = compare.build_forecast_5day()
+    by_date = {d["date"]: d for d in out["days"]}
+    assert "hourly" in by_date["2026-07-08"]
+    assert by_date["2026-07-08"]["hourly"][0]["hour"] == 6   # windowed, full daytime span
+    assert "hourly" not in by_date["2026-07-09"]             # bare sub-20% bars -> omitted
+
+
+def test_measurable_rain_attaches_even_below_20_percent(tmp_path, monkeypatch):
+    _setup(tmp_path, monkeypatch, {
+        "openmeteo_forecast.json": {
+            "daily": [_om_day("2026-07-08", 79.0, prob=15)],
+            "hourly": _hourly_block("2026-07-08", {14: (15, 0.03)}),  # low odds, but it rains
+        },
+    })
+    out = compare.build_forecast_5day()
+    assert "hourly" in out["days"][0]                        # inches>=0.01 clears the gate
+
+
+def test_hourly_absent_when_capture_has_no_hourly_block(tmp_path, monkeypatch):
+    _standard_fixture(tmp_path, monkeypatch)                 # openmeteo fixture has no "hourly"
+    out = compare.build_forecast_5day()
+    assert all("hourly" not in d for d in out["days"])       # nothing fabricated
