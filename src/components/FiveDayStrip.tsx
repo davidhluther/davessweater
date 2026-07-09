@@ -57,6 +57,11 @@ export default async function FiveDayStrip() {
   // leads), so the two numbers are comparable — not an artifact of short-
   // horizon sources dropping out of one side.
   const maePair = scores ? compositeMemberMaePair(scores, 1, 5) : null;
+  // The agreement meter only earns its space when it actually differentiates
+  // the days. A week where the sources disagree wide on every day (all "low")
+  // is a flat column of one-bar meters that says nothing — drop it entirely
+  // rather than imply five separately-uncertain days.
+  const showConfidence = days.some((d) => d.confidence !== "low");
   return (
     <div className="text-center">
         <div className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted">
@@ -94,9 +99,11 @@ export default async function FiveDayStrip() {
               <div className="flex shrink-0 justify-end gap-0.5 sm:mt-1.5 sm:justify-center" role="img" aria-label={`${d.sweaters} of 5 sweaters`}>
                 {sweaterIcons(d.sweaters)}
               </div>
-              <div className="flex shrink-0 justify-end sm:mt-1.5 sm:justify-center">
-                {confidenceMeter(d.confidence)}
-              </div>
+              {showConfidence ? (
+                <div className="flex shrink-0 justify-end sm:mt-1.5 sm:justify-center">
+                  {confidenceMeter(d.confidence)}
+                </div>
+              ) : null}
             </div>
           ))}
         </div>

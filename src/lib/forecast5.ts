@@ -60,31 +60,69 @@ export interface StripDay {
 function tempWord(h: number) {
   return h >= 88 ? "hot" : h >= 78 ? "warm" : h >= 68 ? "mild" : h >= 58 ? "cool" : h >= 48 ? "chilly" : "cold";
 }
-function skyWord(sky?: string | null) {                 // dry-day sky word
-  if (!sky) return null;
-  if (sky === "clear") return "Sunny";
-  if (sky === "fog") return "Foggy";
-  return "Cloudy";                                       // cloudy/rain/snow/storm all read "Cloudy" as a sky word
-}
-function precipNoun(precip: string) {
-  return precip === "snow" ? "snow" : precip === "mixed" ? "wintry mix" : "showers";
-}
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-function summarize(sky: string | null | undefined, high: number, precip: string, precipProb?: number): string {
-  const temp = tempWord(high);
-  if (precip === "none" || precipProb == null) return `${skyWord(sky) ?? "Dry"}, ${temp}`;
-  const noun = precipNoun(precip);
-  if (precipProb >= 65) return `${cap(noun)} likely, ${temp}`;
-  if (precipProb < 35 && sky === "clear") return `Mostly sunny, slight chance of ${noun}`;
-  const qual = precipProb < 35 ? "slight chance of" : "a chance of";
-  return `${cap(qual)} ${noun}, ${temp}`;
+
+// Mountain wind is a real local signal, so name it when it's stiff enough to
+// feel. Null below the threshold keeps calm days quiet.
+function windWord(mph?: number): string | null {
+  if (mph == null || !Number.isFinite(mph)) return null;
+  return mph >= 25 ? "windy" : mph >= 15 ? "breezy" : null;
 }
-function medianWind(sources: Record<string, { wind?: string | null }>, keys: string[]): string | undefined {
+
+// Dry-day sky lead. Open-Meteo's category (capture_openmeteo.weather_category)
+// is the only per-day sky we get: "clear" spans WMO clear+mainly-clear,
+// "cloudy" spans partly-cloudy+overcast. `mentionsPrecip` softens "Sunny" to
+// "Mostly sunny" when a slight chance still rides along.
+function drySkyLead(sky: string | null | undefined, mentionsPrecip: boolean): string {
+  if (sky === "clear") return mentionsPrecip ? "Mostly sunny" : "Sunny";
+  if (sky === "cloudy") return "Partly cloudy";
+  if (sky === "fog") return "Morning fog";
+  if (!sky) return "Dry";
+  return "Mostly cloudy"; // a rain/drizzle/storm/snow sky but a dry-odds day
+}
+
+const precipNoun = (precip: string) =>
+  precip === "snow" ? "snow" : precip === "mixed" ? "wintry mix" : "showers";
+
+// Wet-day precip clause. Likelihood word is driven by the day's max chance;
+// the noun leans on the sky category so storms and drizzle don't flatten into
+// a generic "showers". This is what breaks a stormy week out of five identical
+// "chance of showers" lines.
+function wetClause(sky: string | null | undefined, precip: string, prob: number): string {
+  if (sky === "drizzle") return prob >= 65 ? "Drizzle likely" : "Patchy drizzle";
+  if (sky === "storm") return prob >= 65 ? "Thunderstorms likely" : prob >= 40 ? "Scattered storms" : "A stray storm";
+  if (precip === "mixed") return prob >= 65 ? "Wintry mix likely" : "A wintry mix at times";
+  const noun = precipNoun(precip);
+  if (prob >= 65) return `${cap(noun)} likely`;
+  if (prob >= 40) return `Scattered ${noun}`;
+  return `A few ${noun}`;
+}
+
+// A day reads "wet" only at/above this chance; a 15–24% chance still surfaces,
+// but as a slight-chance aside on an otherwise fair-sky lead.
+const WET_MIN = 25;
+const SLIGHT_MIN = 15;
+
+function summarize(
+  sky: string | null | undefined, high: number, precip: string,
+  precipProb?: number, windMph?: number,
+): string {
+  const wind = windWord(windMph);
+  const tail = wind ? `, ${tempWord(high)}, ${wind}` : `, ${tempWord(high)}`;
+  const wet = precip !== "none" && precipProb != null && precipProb >= WET_MIN;
+  if (wet) return `${wetClause(sky, precip, precipProb!)}${tail}`;
+  // Dry-ish: fair-sky lead, with a slight-chance aside when a low chance lingers.
+  const slight = precip !== "none" && precipProb != null && precipProb >= SLIGHT_MIN;
+  const lead = drySkyLead(sky, slight);
+  return slight ? `${lead}${tail}, slight chance of ${precipNoun(precip)}` : `${lead}${tail}`;
+}
+
+function medianWindMph(sources: Record<string, { wind?: string | null }>, keys: string[]): number | undefined {
   const nums = keys.map((k) => sources[k]?.wind).map((w) => (typeof w === "string" ? parseInt(w, 10) : NaN))
     .filter((n) => Number.isFinite(n)) as number[];
   if (!nums.length) return undefined;
   nums.sort((a, b) => a - b);
-  return `${nums[Math.floor(nums.length / 2)]} mph`;
+  return nums[Math.floor(nums.length / 2)];
 }
 function confidenceTier(sources: Record<string, { high_f?: number | null }>, keys: string[]): "high" | "medium" | "low" {
   const highs = keys.map((k) => sources[k]?.high_f).filter((n): n is number => typeof n === "number");
@@ -125,6 +163,8 @@ export function stripDays(f5: Forecast5Day | null, opts?: { max?: number; today?
       .map((k) => day.sources[k]?.precip_prob)
       .filter((p): p is number => typeof p === "number");
     const d = new Date(day.date + "T12:00:00"); // noon anchor: see src/lib/dates.ts
+    const maxProb = probs.length ? Math.max(...probs) : undefined;
+    const windMph = medianWindMph(day.sources, c.sources);
     out.push({
       date: day.date,
       weekday: d.toLocaleDateString("en-US", { weekday: "short" }),
@@ -133,9 +173,9 @@ export function stripDays(f5: Forecast5Day | null, opts?: { max?: number; today?
       low: c.low,
       precip: c.precip,
       precipLabel: c.precipLabel,
-      ...(probs.length ? { precipProb: Math.max(...probs) } : {}),
-      summary: summarize(day.sky, c.high, c.precip, probs.length ? Math.max(...probs) : undefined),
-      ...(medianWind(day.sources, c.sources) ? { wind: medianWind(day.sources, c.sources) } : {}),
+      ...(maxProb != null ? { precipProb: maxProb } : {}),
+      summary: summarize(day.sky, c.high, c.precip, maxProb, windMph),
+      ...(windMph != null ? { wind: `${windMph} mph` } : {}),
       confidence: confidenceTier(day.sources, c.sources),
       // A forecast day has no "current temp" to blend, so the effective temp
       // IS the high (effectiveTemp(h, h) === h) — the published bands applied

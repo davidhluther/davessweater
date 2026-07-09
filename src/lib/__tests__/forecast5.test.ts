@@ -162,6 +162,37 @@ describe("stripDays", () => {
     expect(stripDays(clear, T0)[0].summary).toContain("Mostly sunny");
   });
 
+  it("keys the wet-day phrase off the sky category so days differ", () => {
+    const mk = (sky: string, prob: number, precip = "rain"): Forecast5Day => ({
+      generated_at: "", location: "Boone",
+      days: [{ date: "2026-07-10", sky, sources: {
+        openmeteo: src(80, 60, precip, prob), nws: src(84, 64, precip, prob),
+      } }],
+    });
+    expect(stripDays(mk("storm", 80), T0)[0].summary).toContain("Thunderstorms likely");
+    expect(stripDays(mk("storm", 45), T0)[0].summary).toContain("Scattered storms");
+    expect(stripDays(mk("drizzle", 40), T0)[0].summary).toContain("Patchy drizzle");
+    expect(stripDays(mk("rain", 50), T0)[0].summary).toContain("Scattered showers");
+  });
+
+  it("a dry cloudy day leads 'Partly cloudy' with no phantom precip", () => {
+    const f: Forecast5Day = { generated_at: "", location: "Boone",
+      days: [{ date: "2026-07-10", sky: "cloudy",
+        sources: { openmeteo: src(80, 60, "none"), nws: src(84, 64, "none") } }] };
+    const s = stripDays(f, T0)[0].summary;
+    expect(s).toContain("Partly cloudy");
+    expect(s).not.toContain("showers");
+  });
+
+  it("names stiff wind ('breezy') in the summary", () => {
+    const f: Forecast5Day = { generated_at: "", location: "Boone",
+      days: [{ date: "2026-07-10", sky: "clear", sources: {
+        openmeteo: src(80, 60, "none", undefined, "18 mph"),
+        nws: src(84, 64, "none", undefined, "16 mph"),
+      } }] };
+    expect(stripDays(f, T0)[0].summary).toContain("breezy");
+  });
+
   it("today undefined defaults to the current America/New_York date", () => {
     // Dynamic fixture anchored to the real clock so the default path is
     // exercised hermetically: yesterday must drop, today and tomorrow stay.
