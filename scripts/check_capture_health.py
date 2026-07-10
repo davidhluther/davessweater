@@ -161,7 +161,17 @@ def check(date):
         return [], [f"actuals for {date} not available yet (archive lag) — health check skipped"]
     cpath = DATA_DIR / "comparisons" / f"{date}.json"
     if not cpath.exists():
-        # Actuals ARE present but compare wrote no comparison: a real failure, not lag.
+        # Actuals ARE present but compare wrote no comparison. Distinguish:
+        #  - the capture folder is empty/missing → the capture itself dropped that
+        #    day, so there was never anything to score. A missing comparison is
+        #    EXPECTED; don't fail the run forever on a day that can't be recaptured.
+        #  - the folder has sources but no comparison → a genuine compare failure.
+        pred_dir = DATA_DIR / "predictions" / date
+        has_sources = pred_dir.is_dir() and (any(pred_dir.glob("*_forecast.json"))
+                                              or (pred_dir / "rays_boone.json").exists())
+        if not has_sources:
+            return ([], [f"comparison for {date}: none, but no capture was recorded that day "
+                         f"(capture gap — nothing to score, not a compare failure)"])
         return ([f"Actuals exist for {date} but no comparison was written (compare failure?)."],
                 [f"comparison for {date}: MISSING despite actuals"])
     try:

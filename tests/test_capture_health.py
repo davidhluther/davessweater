@@ -68,13 +68,17 @@ def test_malformed_shapes_do_not_crash():
 
 
 # ── check(): actuals gating (the archive-lag false-positive fix) ───────────
-def _write(tmp, date, actuals=True, comparison=None):
+def _write(tmp, date, actuals=True, comparison=None, captures=False):
     (tmp / "actuals").mkdir(exist_ok=True)
     (tmp / "comparisons").mkdir(exist_ok=True)
     if actuals:
         (tmp / "actuals" / f"{date}.json").write_text("{}")
     if comparison is not None:
         (tmp / "comparisons" / f"{date}.json").write_text(json.dumps(comparison))
+    if captures:
+        pred = tmp / "predictions" / date
+        pred.mkdir(parents=True, exist_ok=True)
+        (pred / "openmeteo_forecast.json").write_text("{}")
 
 
 def test_missing_actuals_is_a_benign_skip(tmp_path, monkeypatch):
@@ -83,11 +87,25 @@ def test_missing_actuals_is_a_benign_skip(tmp_path, monkeypatch):
     assert h.check("2026-07-01")[0] == []  # archive lag -> skip, not fail
 
 
-def test_actuals_present_but_no_comparison_is_flagged(tmp_path, monkeypatch):
+def test_actuals_and_captures_but_no_comparison_is_flagged(tmp_path, monkeypatch):
+    # Sources were captured and actuals exist, yet compare wrote nothing — a
+    # genuine compare failure, must fail the run.
     monkeypatch.setattr(h, "DATA_DIR", tmp_path)
-    _write(tmp_path, "2026-07-01", actuals=True, comparison=None)
+    _write(tmp_path, "2026-07-01", actuals=True, comparison=None, captures=True)
     problems = h.check("2026-07-01")[0]
     assert problems and "no comparison" in problems[0].lower()
+
+
+def test_capture_gap_no_predictions_is_not_flagged(tmp_path, monkeypatch):
+    # Actuals exist but the capture folder is empty/missing (the capture itself
+    # dropped that day) — nothing was ever scoreable, so a missing comparison is
+    # expected, not a compare failure. Must NOT fail the run: the day can't be
+    # recaptured, and failing forever would wedge the pipeline (the 2026-07-09 case).
+    monkeypatch.setattr(h, "DATA_DIR", tmp_path)
+    _write(tmp_path, "2026-07-01", actuals=True, comparison=None, captures=False)
+    problems, lines = h.check("2026-07-01")
+    assert problems == []
+    assert any("capture gap" in l.lower() for l in lines)
 
 
 def test_healthy_comparison_with_actuals_passes(tmp_path, monkeypatch):

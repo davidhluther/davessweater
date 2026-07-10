@@ -604,12 +604,23 @@ def _forecast_display(contract):
     }
 
 
+def _has_captures(pred_dir):
+    """A capture folder counts as real only if a source actually wrote a forecast
+    there. A failed capture (e.g. a hung Action) can leave an empty folder, and
+    anchoring on it blanks latest_forecasts.json and forecast_5day.json — the whole
+    homepage Today module + 5-day strip (as happened 2026-07-09)."""
+    return (any(pred_dir.glob("*_forecast.json"))
+            or (pred_dir / "rays_boone.json").exists()
+            or (pred_dir / "rays_boone.rebuilt.json").exists())
+
+
 def _newest_unscored_capture():
     """The newest predictions/{date} capture folder with no comparison yet (the
     current upcoming day), or None. BOTH unscored-forecast builders anchor here:
     latest_forecasts.json and forecast_5day.json must agree on the capture
     folder or the site contradicts itself (the day panel shows one date, the
-    5-day strip starts on another)."""
+    5-day strip starts on another). Empty folders from a failed capture are
+    skipped so the anchor falls back to the newest folder that actually has data."""
     import re
     pred_root = DATA_DIR / "predictions"
     if not pred_root.exists():
@@ -617,6 +628,7 @@ def _newest_unscored_capture():
     comp_dir = DATA_DIR / "comparisons"
     dirs = sorted(d.name for d in pred_root.iterdir()
                   if d.is_dir() and re.match(r"^\d{4}-\d{2}-\d{2}$", d.name)
+                  and _has_captures(d)
                   and not (comp_dir / f"{d.name}.json").exists())
     return dirs[-1] if dirs else None
 
@@ -689,6 +701,11 @@ def build_latest_forecasts():
     for k, v in sources.items():
         v["label"] = labels.get(k, k)
 
+    if not sources:
+        # Anchor had no parseable sources — writing this would blank the homepage's
+        # Today module. Keep the last good file rather than overwrite it with nothing.
+        print(f"  No sources parsed for {date}; keeping previous latest_forecasts.json.")
+        return None
     out = {"date": date, "generated_at": datetime.now(EST).isoformat(), "sources": sources}
     with open(DATA_DIR / "latest_forecasts.json", "w") as f:
         json.dump(out, f, indent=2)
@@ -850,6 +867,11 @@ def build_forecast_5day():
             entry["hourly"] = hrs
         return entry
 
+    if not days:
+        # No parseable forecast days — writing this empties the 5-day strip. Keep
+        # the last good file rather than overwrite it with nothing.
+        print(f"  No forecast days parsed from {date}; keeping previous forecast_5day.json.")
+        return None
     out = {"generated_at": datetime.now(EST).isoformat(), "location": "Boone",
            "days": [_day_entry(d) for d in sorted(days)]}
     with open(DATA_DIR / "forecast_5day.json", "w") as f:

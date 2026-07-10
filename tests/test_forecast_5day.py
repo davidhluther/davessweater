@@ -222,6 +222,41 @@ def test_returns_none_without_prediction_dirs(tmp_path, monkeypatch):
     assert not (tmp_path / "forecast_5day.json").exists()   # and nothing was written
 
 
+def test_empty_capture_dir_is_not_anchored(tmp_path, monkeypatch):
+    """Regression for 2026-07-09: a failed capture leaves an EMPTY predictions/{date}
+    folder. It must not become the anchor — the newest folder with actual data wins."""
+    monkeypatch.setattr(compare, "DATA_DIR", tmp_path)
+    good = tmp_path / "predictions" / "2026-07-08"
+    good.mkdir(parents=True)
+    (good / "openmeteo_forecast.json").write_text(json.dumps({"daily": [_om_day("2026-07-08", 80.0)]}))
+    (tmp_path / "predictions" / "2026-07-09").mkdir()       # empty = failed capture, and newer
+    assert compare._newest_unscored_capture() == "2026-07-08"
+
+
+def test_failed_capture_does_not_blank_the_forecast(tmp_path, monkeypatch):
+    """The whole point of the anchor fix: an empty newest folder must not produce an
+    empty forecast_5day.json (which blanks the strip). Build anchors on the day with
+    data instead."""
+    _standard_fixture(tmp_path, monkeypatch)               # 07-08 has openmeteo + nws
+    (tmp_path / "predictions" / "2026-07-09").mkdir()      # empty, newer than 07-08
+    out = compare.build_forecast_5day()
+    assert out is not None and out["days"]                 # real days, not [] from the empty dir
+    assert out["days"][0]["date"] == "2026-07-08"
+
+
+def test_empty_days_are_not_written(tmp_path, monkeypatch):
+    """Belt-and-suspenders: if a build somehow yields no days, keep the last-good
+    file rather than overwrite it with an empty one."""
+    monkeypatch.setattr(compare, "DATA_DIR", tmp_path)
+    pred = tmp_path / "predictions" / "2026-07-08"
+    pred.mkdir(parents=True)
+    # a capture file present (so the dir anchors) but no rows in the window
+    (pred / "openmeteo_forecast.json").write_text(json.dumps({"daily": [_om_day("2026-01-01", 50.0)]}))
+    (tmp_path / "forecast_5day.json").write_text('{"sentinel": "keep me"}')
+    assert compare.build_forecast_5day() is None
+    assert json.loads((tmp_path / "forecast_5day.json").read_text()) == {"sentinel": "keep me"}
+
+
 # --- rain-timing bars (Open-Meteo hourly) -----------------------------------
 
 def _hourly_block(date, per_hour):
