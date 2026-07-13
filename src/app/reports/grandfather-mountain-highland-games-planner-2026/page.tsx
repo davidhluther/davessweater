@@ -20,12 +20,12 @@ const PAGE_URL = `https://davessweater.com${SLUG}`;
 export const metadata = {
   title: "Grandfather Mountain Highland Games 2026: Schedule, Parking & Day Planner",
   description:
-    "Filter the full 2026 schedule, see which parking lot runs each day and the shuttle cash you need, and get a printable itinerary, field map, and packing list. MacRae Meadows, July 9–12.",
+    "Filter the full 2026 schedule, see which parking lot runs each day and the shuttle fare you need, and get a printable itinerary, field map, and packing list. MacRae Meadows, July 9–12.",
   alternates: { canonical: SLUG },
   openGraph: {
     title: "Grandfather Mountain Highland Games 2026: Schedule, Parking & Day Planner",
     description:
-      "Filter events, then get a printable per-day itinerary, a field map with your stops pinned, arrive-by and between-event walk times, the right lot and shuttle cash, a live forecast with packing list, and a calendar export.",
+      "Filter events, then get a printable per-day itinerary, a field map with your stops pinned, arrive-by and between-event walk times, the right lot and shuttle fare, a live forecast with packing list, and a calendar export.",
     url: PAGE_URL,
     type: "website",
   },
@@ -42,8 +42,8 @@ const FAQS: Faq[] = [
   },
   {
     id: "faq-cash",
-    q: "How much is the shuttle, and do I need cash?",
-    a: "The shuttle is $10 per seat, round trip, cash only, bought from the attendants at the lot. There is no reliable ATM at the lots or on the mountain, so get cash in Boone, Linville, or Banner Elk before you head up. The planner totals the cash you need across your days and the calendar export drops a reminder the evening before.",
+    q: "How much is the shuttle, and can I pay by card?",
+    a: "The shuttle is $10 per seat, round trip, bought from the attendants at the lot — and they take cards now, so cash is no longer required (it still works if you prefer it). The planner totals the shuttle cost across your days and the calendar export drops a reminder the evening before.",
   },
   {
     id: "faq-concert",
@@ -105,7 +105,7 @@ function buildJsonLd() {
       "@type": "WebPage",
       name: "Grandfather Mountain Highland Games 2026: Schedule, Parking & Day Planner",
       url: PAGE_URL,
-      description: "A free interactive planner for the 70th Grandfather Mountain Highland Games. Filter events, then get a downloadable per-day itinerary, a field map with your stops pinned, arrive-by and between-event walk times, the right lot and shuttle cash, a live forecast with packing list, and a calendar export.",
+      description: "A free interactive planner for the 70th Grandfather Mountain Highland Games. Filter events, then get a downloadable per-day itinerary, a field map with your stops pinned, arrive-by and between-event walk times, the right lot and shuttle fare, a live forecast with packing list, and a calendar export.",
       isPartOf: { "@type": "WebSite", name: "Dave's Sweater", url: "https://davessweater.com" },
       about: { "@type": "Event", name: "70th Grandfather Mountain Highland Games" },
     },
@@ -178,7 +178,7 @@ export default async function Page() {
             type, pick the ones you want, and get it back the way you actually need it: A downloadable,
             printable per-day itinerary, a field map with your stops pinned, arrive-by and between-event
             walk times (so you never book two things across a field you cannot cut across), the right lot
-            and cash for the shuttle, and a live mountain forecast with a packing list. Free, no app, no
+            and the shuttle fare, and a live mountain forecast with a packing list. Free, no app, no
             sign-up.
           </p>
           <p className="mt-4 flex flex-wrap gap-3 text-xs text-white/70">
@@ -230,7 +230,7 @@ export default async function Page() {
           </table>
         </div>
         <ul className="mt-4 max-w-2xl space-y-2 text-sm text-muted">
-          <li><strong className="text-foreground">Cash only.</strong> The shuttle is $10 per seat, round trip, paid at the lot. No reliable ATM anywhere up there, so get cash in Boone, Linville, or Banner Elk first.</li>
+          <li><strong className="text-foreground">Cards or cash.</strong> The shuttle is $10 per seat, round trip, paid at the lot — the attendants take cards now, so you no longer have to hunt down an ATM in town first.</li>
           <li><strong className="text-foreground">Concert nights are different.</strong> Friday and Saturday after 5 PM, the public may drive up and park on MacRae Meadows itself; gates 2 and 3 open at 6 PM, concert 6:30–10 PM. No shuttle.</li>
           <li><strong className="text-foreground">Accessible transport</strong> runs from Newland Elementary (Fri–Sun) and Avery County HS (Thu); one companion may ride along. Golf-cart help on the field from GMHG personnel.</li>
           <li><strong className="text-foreground">No pets on the Meadow.</strong> Certified ADA service animals only. Games office: (828) 733-1333.</li>
@@ -241,7 +241,7 @@ export default async function Page() {
         <h2 className="font-display text-2xl font-bold">Good to Know Before You Go</h2>
         <ul className="mt-3 max-w-2xl space-y-2 text-sm text-muted">
           <li><strong className="text-foreground">There is an EMS and First Aid tent</strong> on the field. Find the red cross near the center of the meadow.</li>
-          <li><strong className="text-foreground">Bring cash for the shuttle, but cards work on the field.</strong> Vendors and ticket booths widely take card readers; the shuttle is the cash-only exception.</li>
+          <li><strong className="text-foreground">Cards work just about everywhere now.</strong> Vendors, ticket booths, and — as of this year — the shuttle all take card readers. Cash still works as a backup.</li>
           <li><strong className="text-foreground">There is little shelter from rain.</strong> Beyond the Patron tent, your options are the vendor tents and the trees, so pack a poncho and plan to ride out a passing shower.</li>
           <li><strong className="text-foreground">Coolers are welcome.</strong> Pack your own food and drinks.</li>
           <li><strong className="text-foreground">Bring chairs or a blanket.</strong> There is plenty of open, grassy hillside to set up and watch the field from, and a good vantage lets you take in more than one thing at once.</li>

@@ -95,7 +95,7 @@ export async function planImageDataUrl(input: PlanImageInput): Promise<string> {
   write("Your Highland Games plan, 2026", 30, 700, INK, PAD, 2);
   write("Grandfather Mountain Highland Games, MacRae Meadows", 17, 400, MUTED, PAD, 14);
   if (input.cost.shuttleDays > 0) {
-    write(`Bring $${input.cost.totalUsd} cash for shuttles. $10/seat round trip, cash only, no ATM on site.`, 19, 700, ORANGE, PAD, 12);
+    write(`Shuttle total $${input.cost.totalUsd}. $10/seat round trip, cards or cash at the lot.`, 19, 700, ORANGE, PAD, 12);
   }
 
   if (input.forecast) {
@@ -128,7 +128,7 @@ export async function planImageDataUrl(input: PlanImageInput): Promise<string> {
       const bits: string[] = [];
       if (plan.leaveByMin != null) bits.push(`Leave ${input.originLabel} by ${fmtClock(plan.leaveByMin)}`);
       if (plan.lot) bits.push(`Park at ${plan.lot}`);
-      bits.push("Shuttle $10/seat cash only");
+      bits.push("Shuttle $10/seat, cards or cash");
       write(bits.join("  |  "), 17, 400, INK, PAD, 4);
     }
 
@@ -159,7 +159,7 @@ export async function planImageDataUrl(input: PlanImageInput): Promise<string> {
   }
 
   y += 6;
-  write("Good to know: EMS/First Aid tent on the field. Card readers are common, but the shuttle is cash only. Little rain shelter beyond the Patron tent, vendor tents, and trees, so pack rain gear. Coolers are welcome, and there is plenty of grassy hillside for chairs and blankets.", 14, 400, MUTED, PAD, 6);
+  write("Good to know: EMS/First Aid tent on the field. Card readers are everywhere now, including the shuttle, though cash still works. Little rain shelter beyond the Patron tent, vendor tents, and trees, so pack rain gear. Coolers are welcome, and there is plenty of grassy hillside for chairs and blankets.", 14, 400, MUTED, PAD, 6);
   write("Games office (828) 733-1333. No pets (ADA service animals only). Accessible transport: Newland Elementary (Fri to Sun), Avery County HS (Thu).", 14, 400, MUTED, PAD, 2);
   write("Walk and drive times are estimates, not a promise. Grandfather makes its own weather. davessweater.com", 14, 400, MUTED, PAD, 0);
 

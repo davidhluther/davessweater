@@ -374,7 +374,7 @@ export default async function Page() {
           >
             Grandfather Mountain Highland Games 2026 planner
           </Link>{" "}
-          (July 9–12, MacRae Meadows). Filter the schedule, then get parking by day, shuttle cash,
+          (July 9–12, MacRae Meadows). Filter the schedule, then get parking by day, the shuttle fare,
           between-event walk times, and a printable per-day itinerary.
         </p>
       </SectionBand>

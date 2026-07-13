@@ -484,7 +484,7 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
                       <p className="mt-1 text-sm text-muted">
                         {plan.leaveByMin != null && <>Leave {ORIGIN_LABELS[origin]} by <strong className="text-foreground tabular-nums">{fmtClock(plan.leaveByMin)}</strong> | </>}
                         {plan.lot && <>Park at <strong className="text-foreground">{plan.lot}</strong>{plan.alternateLots.length > 0 && <span className="text-muted"> (or {plan.alternateLots.join(", ")})</span>} | </>}
-                        Shuttle $10/seat, cash only
+                        Shuttle $10/seat, cards or cash
                       </p>
                     )}
                     <div className="mt-2">
@@ -529,8 +529,8 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
 
               {cost.shuttleDays > 0 && (
                 <div className="rounded-xl border border-orange-600/30 bg-background p-4">
-                  <p className="text-sm"><strong className="text-orange-600">Bring ${cost.totalUsd} cash</strong> for shuttles.</p>
-                  <p className="mt-0.5 text-xs text-muted">$10 × {partySize} {partySize === 1 ? "person" : "people"} × {cost.shuttleDays} {cost.shuttleDays === 1 ? "day" : "days"}. Cash only, no ATM on the mountain, so get it in town first.</p>
+                  <p className="text-sm"><strong className="text-orange-600">Shuttle total: ${cost.totalUsd}</strong></p>
+                  <p className="mt-0.5 text-xs text-muted">$10 × {partySize} {partySize === 1 ? "person" : "people"} × {cost.shuttleDays} {cost.shuttleDays === 1 ? "day" : "days"}, round trip. Cards or cash at the lot.</p>
                 </div>
               )}
 
@@ -593,7 +593,7 @@ function PrintSheet({
     <div className="gmhg-print hidden print:block">
       <h1 className="text-2xl font-bold">Your Grandfather Mountain Highland Games Plan, 2026</h1>
       {cost.shuttleDays > 0 && (
-        <p className="mt-1 text-sm"><strong>Bring ${cost.totalUsd} cash</strong> for shuttles. $10/seat round trip, cash only, no ATM on site.</p>
+        <p className="mt-1 text-sm"><strong>Shuttle total: ${cost.totalUsd}</strong> — $10/seat round trip, cards or cash at the lot.</p>
       )}
       <p className="mt-1 text-xs">
         {checkedAt ? `Forecast checked ${checkedAt}. ` : ""}Mountain weather changes fast; check again the morning you go.
@@ -616,7 +616,7 @@ function PrintSheet({
               <p className="text-sm">
                 {plan.leaveByMin != null && <>Leave {ORIGIN_LABELS[origin]} by <strong>{fmtClock(plan.leaveByMin)}</strong> | </>}
                 {plan.lot && <>Park at <strong>{plan.lot}</strong>{plan.alternateLots.length > 0 && ` (or ${plan.alternateLots.join(", ")})`} | </>}
-                Shuttle $10/seat, cash only.
+                Shuttle $10/seat, cards or cash.
               </p>
             )}
             <ul className="mt-1 text-sm">

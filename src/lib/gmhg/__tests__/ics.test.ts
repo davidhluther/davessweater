@@ -47,9 +47,9 @@ describe("buildIcs", () => {
     expect((ics.match(/BEGIN:VEVENT/g) ?? []).length).toBe(2);
   });
 
-  it("attaches a night-before CASH alarm and a morning leave-by alarm", () => {
+  it("attaches a night-before shuttle heads-up and a morning leave-by alarm", () => {
     expect((ics.match(/BEGIN:VALARM/g) ?? []).length).toBeGreaterThanOrEqual(2);
-    expect(ics).toContain("CASH ONLY");
+    expect(ics).toContain("cards or cash");
     expect(ics).toMatch(/TRIGGER;VALUE=DATE-TIME:20260709T220000Z/); // 6 PM EDT the day before Fri
     expect(ics).toContain("Time to leave for the Games");
   });

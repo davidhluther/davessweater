@@ -1,8 +1,8 @@
 // ICS (RFC 5545) export for a selected itinerary. The timezone block is the
 // classic failure point, so we ship an explicit VTIMEZONE for America/New_York
 // (EDT −0400 in July) and reference it by TZID on every DTSTART/DTEND. The
-// payoff is the VALARMs: a night-before "get cash" nudge (the shuttle is
-// cash-only, no ATM on the mountain) and a morning leave-by reminder.
+// payoff is the VALARMs: a night-before shuttle heads-up (fare + cards-or-cash)
+// and a morning leave-by reminder.
 
 import type { GmhgEvent } from "@/lib/types";
 import type { DayPlan } from "@/lib/gmhg/plan";
@@ -102,7 +102,7 @@ function planLine(plan: DayPlan | undefined): string {
   }
   const bits: string[] = [];
   if (plan.lot) bits.push(`Park at ${plan.lot}`);
-  bits.push(`shuttle $${SHUTTLE_PRICE_USD}/seat round trip, CASH ONLY (no ATM on site)`);
+  bits.push(`shuttle $${SHUTTLE_PRICE_USD}/seat round trip, cards or cash`);
   if (plan.leaveByMin != null && plan.leaveByMin >= 0) {
     bits.push(`suggested departure ${fmtClock(plan.leaveByMin)}`);
   }
@@ -167,20 +167,20 @@ export function buildIcs(events: GmhgEvent[], opts: IcsOptions = {}): string {
         "ACTION:DISPLAY",
         `TRIGGER;VALUE=DATE-TIME:${localToUtcStamp(e.day, plan.leaveByMin)}`,
         `DESCRIPTION:${esc(
-          `Time to leave for the Games. Park at ${plan.lot ?? "your lot"}, shuttle up, and bring cash.`,
+          `Time to leave for the Games. Park at ${plan.lot ?? "your lot"} and shuttle up — cards or cash for the shuttle.`,
         )}`,
         "END:VALARM",
       );
     }
 
-    // Night-before CASH alarm, once, on the very first event of the trip (6 PM prior day).
+    // Night-before shuttle heads-up, once, on the very first event of the trip (6 PM prior day).
     if (isEarliest && e.day === firstDay) {
       lines.push(
         "BEGIN:VALARM",
         "ACTION:DISPLAY",
         `TRIGGER;VALUE=DATE-TIME:${localToUtcStamp(addDays(e.day, -1), 18 * 60)}`,
         `DESCRIPTION:${esc(
-          `Get cash for the Games tomorrow. The shuttle is $${SHUTTLE_PRICE_USD}/seat, CASH ONLY, no ATM at the lots. Get it in Boone, Linville, or Banner Elk before you head up.`,
+          `The Games are tomorrow. The shuttle runs $${SHUTTLE_PRICE_USD}/seat round trip — they take cards now, and cash still works.`,
         )}`,
         "END:VALARM",
       );
