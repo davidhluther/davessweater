@@ -706,19 +706,25 @@ model only.
       "pick").** Note the earlier 8-day pilot read 84.2 because it forfeited wind/amount and used a smaller
       sample; scoring on the full contract + error-cancellation on temp is what lifts it. The DSI only forms
       once ≥2 independent members exist, so history starts ~2026-06-23.
-- [ ] **DSI membership optimization — decide at ~30 days (open).** Now that we can measure it, choose whether
-      to beat the flat mean. Three levers, in rough order of evidence: (1) **skill-weighted mean** (inverse-MAE,
-      drop-the-worst) rather than winners-only — keeps error-cancellation while fading the laggards
-      (NWS/OWM/WeatherAPI ~85); (2) **per-lead-time member selection** — the leader changes by horizon
-      (Google/MET win day 0-1, Visual Crossing/Tomorrow.io hold up best at day 2-5), so a 5-day DSI should
-      weight per horizon (BLOCKED on the leadtime item below); (3) **per-variable specialization** (precip from
-      one, wind from another) — supported in principle but BLOCKED on rolling up per-element/per-source skill
-      (only high/low MAE is aggregated today; wind/precip live in per-day `comparisons/*.json`). Caveat: ~21
-      days is one summer regime — don't hard-code weights before a fuller sample or it overfits.
-- [ ] **Score the DSI per lead time (foundation for the per-horizon strategy).** `leadtime.py` builds
-      `leadtime_scores.json` per source from each day's day-ahead forecasts but has no `composite` row; add one
-      (build the consensus at each lead from the members' day-ahead files) so the accuracy-decay chart and the
-      per-horizon membership decision have real data.
+- [x] **Score the DSI per lead time — ✅ DONE 2026-07-15.** `leadtime.score_composite_lead` builds the DSI at
+      every lead 0-5 from the members' day-ahead files (via `compare.build_composite`, so lead 0 == the daily
+      DSI), backfilled into `leadtime_scores.json`. Featured as the bold white hero line on the accuracy-decay
+      chart. `compositeMemberMae`/`Pair` exclude the `composite` row (not a member of itself). The DSI is the
+      flattest line on the board — 94-97 across all five days.
+- [x] **DSI precip-aggregation fix (adaptive step 1) — ✅ DONE 2026-07-15.** Replaced the lossy majority-vote
+      precip rule with the **credible-minority rule**: if ≥ a quarter of members (floor 2) forecast precip, the
+      DSI forecasts precip; rain/snow by majority among callers; any split reads mixed. Stateless (no weighting,
+      no history), disclosed on `/methodology`. Measured +1.9 pts on the record → **DSI is now #1 at 96.7, 21-0-0.**
+      Kept in sync across `compare.py:_composite_precip_type` and `composite.ts:compositePrecipType` (change both).
+- [ ] **DSI temperature bias correction (adaptive step 2 — the last lever, ~+0.5).** Members share a ~+1.1°F
+      warm-high bias that averaging can't remove. A causal, rolling, per-member trailing-bias correction (only
+      past days; re-adapts by season) would recover it. It's the one genuinely *learned* piece, so it needs the
+      walk-forward backfill machinery + a `/methodology` note, and it's the most overfit-prone on 21 summer days
+      — **best validated with a fuller sample / into winter before shipping.** Owner chose the full adaptive path
+      (B); this is the remaining B work after the precip rule.
+- [ ] **DSI membership optimization — revisit at ~30-60 days.** With per-lead scoring now in hand, decide any
+      per-horizon member weighting (leader changes by horizon: Google/MET win day 0-1, Visual Crossing/Tomorrow
+      hold up best at day 2-5). Don't hard-code weights before a fuller sample — ~21 days is one summer regime.
 - [ ] **Ray's real price for the "Paid" chip** on `/right-wrong-ray` — owner to supply the figure.
 
 ### Homepage design backlog (owner review, 2026-07-01 — banked, not yet actioned)

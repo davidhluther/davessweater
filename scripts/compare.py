@@ -367,6 +367,24 @@ def _mean(xs):
     return sum(xs) / len(xs)
 
 
+def _composite_precip_type(contributing):
+    """The DSI's precip type from its contributing member contracts, via the
+    credible-minority rule. `contributing` is the list of member contracts that
+    supplied a high (the same set that votes in composite.ts). Kept byte-for-byte
+    in sync with compositePrecipType() in src/lib/composite.ts."""
+    callers = [c.get("precip_type") for c in contributing
+               if c.get("precip_type") in ("rain", "snow", "mixed")]
+    needed = max(2, round(0.25 * len(contributing)))
+    if len(callers) < needed:
+        return "none"
+    r = callers.count("rain")
+    s = callers.count("snow")
+    m = callers.count("mixed")
+    if m > 0 or (r > 0 and s > 0):
+        return "mixed"
+    return "rain" if r > 0 else "snow"
+
+
 def _contract_wind(contract):
     """Point wind for a scored contract: interval midpoint if it carries one,
     else the scalar. None when the source published no wind."""
@@ -395,24 +413,18 @@ def build_composite(member_contracts, norm_actual):
     snows = [c["snow_in"] for c in member_contracts.values()
              if "snow_amount" in c.get("fields_provided", []) and c.get("snow_in") is not None]
 
-    # Majority precip type across the members that contributed a high (mirrors
-    # composite.ts): one clear leader wins; a tie that includes "none" stays
-    # "none"; a tie purely between precip types reads as "mixed".
-    counts = {}
-    for c in member_contracts.values():
-        if c.get("high_f") is None:
-            continue
-        t = c.get("precip_type")
-        if t:
-            counts[t] = counts.get(t, 0) + 1
-    top = max(counts.values()) if counts else 0
-    leaders = [k for k, v in counts.items() if v == top]
-    if len(leaders) == 1:
-        precip = leaders[0]
-    elif not leaders or "none" in leaders:
-        precip = "none"
-    else:
-        precip = "mixed"
+    # Precip type — the "credible minority" rule (mirrors composite.ts).
+    #
+    # Plain majority-vote is the wrong aggregator for precip: precip days are the
+    # minority and the costly miss is calling a wet day "dry", so a dry majority
+    # must not be allowed to veto a credible minority that called the rain. If at
+    # least a quarter of the contributing members (floored at 2) forecast precip,
+    # the DSI forecasts precip; rain vs snow follows the majority among *those*
+    # callers, and any genuine rain/snow split reads "mixed". This is a stateless
+    # rule (no weighting, no history) — measured on the record to recover ~+1.9
+    # points the majority vote was forfeiting on marginal-precip days.
+    contributing = [c for c in member_contracts.values() if c.get("high_f") is not None]
+    precip = _composite_precip_type(contributing)
 
     rain_mean = round(_mean(rains), 3) if rains else None
     snow_mean = round(_mean(snows), 3) if snows else None

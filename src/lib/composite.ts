@@ -27,6 +27,20 @@ export interface Composite {
 
 const mean = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
 
+// The DSI's precip type from its contributing members' precip_type values, via
+// the credible-minority rule. Kept byte-for-byte in sync with
+// compare.py:_composite_precip_type — change both together.
+export function compositePrecipType(types: (string | null | undefined)[]): string {
+  const callers = types.filter((t) => t === "rain" || t === "snow" || t === "mixed");
+  const needed = Math.max(2, Math.round(0.25 * types.length));
+  if (callers.length < needed) return "none";
+  const r = callers.filter((t) => t === "rain").length;
+  const s = callers.filter((t) => t === "snow").length;
+  const m = callers.filter((t) => t === "mixed").length;
+  if (m > 0 || (r > 0 && s > 0)) return "mixed";
+  return r > 0 ? "rain" : "snow";
+}
+
 export function compositeForecast(latest: LatestForecasts | null): Composite | null {
   if (!latest?.sources) return null;
   const entries = Object.entries(latest.sources).filter(([k]) => !EXCLUDE.has(k));
@@ -36,17 +50,13 @@ export function compositeForecast(latest: LatestForecasts | null): Composite | n
   const lows = entries.map(([, v]) => v.low_f).filter((n): n is number => typeof n === "number");
   if (highs.length < 2 || lows.length < 2) return null;
 
-  // Majority precip type across the contributing forecasters (only sources
-  // that made the index get a vote). A tie is not a consensus: a tie that
-  // includes "none" stays "none"; a tie between precip types reads as "mixed".
-  const counts: Record<string, number> = {};
-  for (const [, v] of contributing) {
-    if (v.precip_type) counts[v.precip_type] = (counts[v.precip_type] ?? 0) + 1;
-  }
-  const top = Math.max(0, ...Object.values(counts));
-  const leaders = Object.keys(counts).filter((k) => counts[k] === top);
-  const precip =
-    leaders.length === 1 ? leaders[0] : leaders.length === 0 || leaders.includes("none") ? "none" : "mixed";
+  // Precip type via the "credible minority" rule — kept in sync with
+  // compare.py:_composite_precip_type (see that docstring). Plain majority-vote
+  // lets a dry majority veto a minority that correctly called the rain; instead,
+  // if at least a quarter of contributors (floored at 2) forecast precip, the
+  // DSI forecasts precip, with rain/snow following the majority among those
+  // callers and any real rain/snow split reading "mixed".
+  const precip = compositePrecipType(contributing.map(([, v]) => v.precip_type));
 
   const d = new Date(latest.date + "T12:00:00");
   const dateLabel = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });

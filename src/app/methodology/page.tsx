@@ -180,6 +180,44 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="light">
+        <h2 className="font-display text-xl font-bold">How the Dave&apos;s Sweater Index is built</h2>
+        <p className="mt-1 max-w-2xl text-sm text-muted">
+          The Dave&apos;s Sweater Index (DSI) is our own forecast &mdash; a consensus of the independent
+          automated forecasters we track. It is not a black box, and it is graded by the same 100-point rubric
+          as every source it draws on. Here is exactly how each day&apos;s number is made:
+        </p>
+        <ul className="mt-2 max-w-2xl space-y-1 text-sm text-muted">
+          <li>
+            <strong className="text-foreground">Members.</strong>{" "}Every free, automated forecaster with a
+            forecast that day. Ray&apos;s Weather is excluded (it&apos;s the forecast we grade against), as is
+            the Apple slot when it&apos;s the Open-Meteo fallback (it would double-count Open-Meteo). The index
+            forms only when at least two members report.
+          </li>
+          <li>
+            <strong className="text-foreground">High, low, wind, amount.</strong>{" "}A straight average of the
+            members. No source is weighted above another &mdash; the point of a consensus is that independent
+            errors cancel.
+          </li>
+          <li>
+            <strong className="text-foreground">Precip type &mdash; the one rule.</strong>{" "}A plain majority
+            vote is the wrong tool here: rain days are the minority, and the costly miss is calling a wet day
+            &ldquo;dry.&rdquo; So a dry majority does not get to veto a credible minority. If at least a quarter
+            of the members (and never fewer than two) forecast precipitation, the index forecasts precipitation;
+            rain versus snow follows the majority among those callers, and a genuine rain/snow split reads
+            &ldquo;wintry mix.&rdquo;
+          </li>
+        </ul>
+        <p className="mt-2 max-w-2xl text-sm text-muted">
+          That precip rule is the only place the index does anything other than average, and it uses no
+          weighting and no memory of past performance &mdash; it&apos;s a fixed rule you can apply by hand to
+          any day&apos;s forecasts. We adopted it because, measured across the record, it recovers the points a
+          majority vote was throwing away on marginal-precipitation days. When we change how the index is built,
+          it&apos;s to make it more accurate against what the sky actually did &mdash; and the change shows up
+          here first.
+        </p>
+      </SectionBand>
+
+      <SectionBand tone="light">
         <h2 className="font-display text-xl font-bold">What counts as &quot;actual&quot;</h2>
         <p className="mt-1 max-w-2xl text-sm text-muted">
           The conditions we grade against come from the{" "}

@@ -44,22 +44,34 @@ def test_scored_on_full_contract_not_just_temps():
     assert all(c["score"]["coverage"].values())
 
 
-def test_majority_precip_vote_and_none_tiebreak():
-    # 2 rain vs 1 none -> rain leads.
-    c = build_composite({"a": full(70, 50, 5, "rain", rain=0.2),
-                         "b": full(72, 52, 6, "rain", rain=0.3),
-                         "c": full(71, 51, 5, "none")}, ACT)
-    assert c["prediction"]["precip_type"] == "rain"
-    # A tie that includes "none" stays "none".
-    c2 = build_composite({"a": full(70, 50, 5, "rain", rain=0.2),
-                          "b": full(71, 51, 5, "none")}, ACT)
-    assert c2["prediction"]["precip_type"] == "none"
+def test_credible_minority_calls_precip_over_a_dry_majority():
+    # 2 of 8 members call rain -> the DSI calls rain, even though 6 say "none".
+    # (needed = max(2, round(0.25*8)) = 2). This is the whole point of the rule:
+    # a dry majority can't veto a credible minority that called the rain.
+    m = {f"dry{i}": full(70, 50, 5, "none") for i in range(6)}
+    m["w1"] = full(72, 52, 6, "rain", rain=0.2)
+    m["w2"] = full(71, 51, 5, "rain", rain=0.3)
+    assert build_composite(m, ACT)["prediction"]["precip_type"] == "rain"
 
 
-def test_tie_between_precip_types_reads_mixed():
+def test_lone_precip_caller_is_not_enough():
+    # 1 of 8 -> below the floor of 2 -> stays "none".
+    m = {f"dry{i}": full(70, 50, 5, "none") for i in range(7)}
+    m["w1"] = full(72, 52, 6, "rain", rain=0.2)
+    assert build_composite(m, ACT)["prediction"]["precip_type"] == "none"
+
+
+def test_rain_snow_split_reads_mixed():
     c = build_composite({"a": full(30, 20, 5, "rain", rain=0.2),
                          "b": full(31, 21, 6, "snow", snow=2.0)}, ACT)
     assert c["prediction"]["precip_type"] == "mixed"
+
+
+def test_snow_majority_among_callers_reads_snow():
+    m = {f"dry{i}": full(30, 20, 5, "none") for i in range(4)}
+    m["s1"] = full(31, 21, 5, "snow", snow=2.0)
+    m["s2"] = full(30, 22, 6, "snow", snow=1.5)
+    assert build_composite(m, ACT)["prediction"]["precip_type"] == "snow"
 
 
 def test_add_composite_excludes_rays_and_apple():
