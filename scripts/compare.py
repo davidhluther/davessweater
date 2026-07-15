@@ -342,6 +342,129 @@ def _fix_bucket_low(key, date, day):
 
 
 # ═══════════════════════════════════════════════════════════════════
+# DAVE'S SWEATER INDEX (DSI) — the composite consensus
+# ═══════════════════════════════════════════════════════════════════
+# The DSI is our own forecast: the mean of the independent automated forecasters,
+# scored on the exact same 100-point contract as every source it aggregates —
+# because the whole point of the tracker is "we check them all, including ours."
+#
+# This MIRRORS the display composite in src/lib/composite.ts (same members, same
+# ≥2 guard, same high/low mean, same majority precip-type vote) and EXTENDS it:
+# the site's composite renders only high/low/precip, but to grade the DSI fairly
+# against sources that publish wind and precip amount, the *scored* DSI also
+# averages those fields. Feed the aggregate through the same _to_contract +
+# score_prediction path so the implied-zero rule and field handling stay
+# identical to every other source. Keep the member set and vote logic in sync
+# with composite.ts if either changes.
+COMPOSITE_KEY = "composite"
+# Excluded from the consensus, matching composite.ts: Ray's is the forecaster we
+# grade against, and the Apple slot mirrors the Open-Meteo fallback (including it
+# would double-weight Open-Meteo).
+COMPOSITE_EXCLUDE = {"raysweather", "apple_weather"}
+
+
+def _mean(xs):
+    return sum(xs) / len(xs)
+
+
+def _contract_wind(contract):
+    """Point wind for a scored contract: interval midpoint if it carries one,
+    else the scalar. None when the source published no wind."""
+    if "wind" not in contract.get("fields_provided", []):
+        return None
+    lo, hi = contract.get("wind_lo"), contract.get("wind_hi")
+    if lo is not None and hi is not None:
+        return (lo + hi) / 2.0
+    return contract.get("wind_mph")
+
+
+def build_composite(member_contracts, norm_actual):
+    """Aggregate the member forecasters' scored contracts into the DSI and score
+    it. `member_contracts` maps source key -> the contract that was scored for it
+    (post _to_contract). Returns {"prediction", "score"} or None when fewer than
+    two members supply a high or a low (same guard as composite.ts — a consensus
+    needs at least two voices)."""
+    highs = [c["high_f"] for c in member_contracts.values() if c.get("high_f") is not None]
+    lows = [c["low_f"] for c in member_contracts.values() if c.get("low_f") is not None]
+    if len(highs) < 2 or len(lows) < 2:
+        return None
+
+    winds = [w for c in member_contracts.values() if (w := _contract_wind(c)) is not None]
+    rains = [c["rain_in"] for c in member_contracts.values()
+             if "rain_amount" in c.get("fields_provided", []) and c.get("rain_in") is not None]
+    snows = [c["snow_in"] for c in member_contracts.values()
+             if "snow_amount" in c.get("fields_provided", []) and c.get("snow_in") is not None]
+
+    # Majority precip type across the members that contributed a high (mirrors
+    # composite.ts): one clear leader wins; a tie that includes "none" stays
+    # "none"; a tie purely between precip types reads as "mixed".
+    counts = {}
+    for c in member_contracts.values():
+        if c.get("high_f") is None:
+            continue
+        t = c.get("precip_type")
+        if t:
+            counts[t] = counts.get(t, 0) + 1
+    top = max(counts.values()) if counts else 0
+    leaders = [k for k, v in counts.items() if v == top]
+    if len(leaders) == 1:
+        precip = leaders[0]
+    elif not leaders or "none" in leaders:
+        precip = "none"
+    else:
+        precip = "mixed"
+
+    rain_mean = round(_mean(rains), 3) if rains else None
+    snow_mean = round(_mean(snows), 3) if snows else None
+    # precip_in is display-only (the "Rain" column on the site); scoring reads
+    # rain_in/snow_in. Keep it consistent with the members' raw shape.
+    precip_in = None
+    if rain_mean is not None or snow_mean is not None:
+        precip_in = round((rain_mean or 0) + (snow_mean or 0), 3)
+
+    raw = {
+        "high_f": round(_mean(highs), 1),
+        "low_f": round(_mean(lows), 1),
+        "wind_mph": round(_mean(winds), 1) if winds else None,
+        "precip_type": precip,
+        "rain_in": rain_mean,
+        "snow_in": snow_mean,
+        "precip_in": precip_in,
+        # Provenance so the row is auditable: who fed the consensus this day.
+        "members": sorted(member_contracts.keys()),
+        "member_count": len(highs),
+    }
+    result = score_prediction(_to_contract(raw), norm_actual)
+    return {"prediction": raw, "score": result}
+
+
+def add_composite_source(comparison):
+    """Compute the DSI for a comparison and attach it as sources['composite'].
+    Rebuilds from the member sources on every call (idempotent); removes any
+    stale composite when fewer than two members are scoreable. Members are every
+    scored source except the COMPOSITE_EXCLUDE set — reproduced from each stored
+    raw prediction via _to_contract so live and backfill runs agree exactly."""
+    actuals = comparison.get("actuals")
+    if not actuals:
+        return None
+    norm = _normalize_actual(actuals)
+    members = {}
+    for key, sd in comparison.get("sources", {}).items():
+        if key in COMPOSITE_EXCLUDE or key == COMPOSITE_KEY:
+            continue
+        pred = sd.get("prediction")
+        if pred is None or "score" not in sd:
+            continue
+        members[key] = _to_contract(pred)
+    built = build_composite(members, norm)
+    if built is None:
+        comparison.get("sources", {}).pop(COMPOSITE_KEY, None)
+        return None
+    comparison["sources"][COMPOSITE_KEY] = built
+    return built
+
+
+# ═══════════════════════════════════════════════════════════════════
 # DAILY COMPARISON RUNNER
 # ═══════════════════════════════════════════════════════════════════
 
@@ -503,6 +626,13 @@ def run_daily_comparison(target_date=None):
                 comparison["sources"][key] = {"prediction": day, "score": result}
                 print(f"  {s['label']}: {result['score']}/100")
                 break
+
+    # Dave's Sweater Index — the consensus of the members just scored above.
+    # Added last so it aggregates every source that reported today.
+    dsi = add_composite_source(comparison)
+    if dsi:
+        print(f"  Dave's Sweater Index ({dsi['prediction']['member_count']} sources): "
+              f"{dsi['score']['score']}/100")
 
     # Sweater weather verdict
     sw = comparison["sweater_weather"]

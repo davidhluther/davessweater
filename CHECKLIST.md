@@ -696,11 +696,29 @@ model only.
       precipitation score / tighter-steeper temp bands; show per-source deltas + the wins-by-omission
       fairness check (as the R2 revert did); update `/methodology` + `CLAUDE.md`; rescore via
       `scripts/rescore_history.py`. Never ship a scoring change without proving it wasn't tuned against Ray.
-- [ ] **DSI membership decision (analysis delivered 2026-07-02).** On the 8-day sample the composite (84.2)
-      scores below its best members (Google 95.1, MET.no 95.0) — banded scoring + majority-type misses make
-      averaging lossy; best subset (metno + visualcrossing + google, median, implied-zero) ≈ 89.
-      Recommendation: ship a private daily tracker, decide cuts at ~30 days (or earlier with a methodology
-      disclosure). Tracker script still to be written as `scripts/` tooling.
+- [x] **DSI now scored + tracked on the board — ✅ DONE 2026-07-15.** The composite is graded daily as its
+      own source (`compare.add_composite_source` / `build_composite`), scored on the FULL 100-pt contract
+      (wind + precip amount aggregated too, not just the display high/low/precip), backfilled across history
+      (`scripts/backfill_composite.py`), and shown on `/right-wrong-ray` as **"Dave's Sweater Index"** ranked by
+      merit alongside everyone else. Mirrors `src/lib/composite.ts` (same members / ≥2 guard / majority vote);
+      keep the two in sync. Tests: `tests/test_composite.py`. **Current standing: 94.8 avg over 21 days,
+      21-0-0 (never graded Wrong) — 3rd overall, ~tied with MET, and ~2.4 pts above Open-Meteo (our old
+      "pick").** Note the earlier 8-day pilot read 84.2 because it forfeited wind/amount and used a smaller
+      sample; scoring on the full contract + error-cancellation on temp is what lifts it. The DSI only forms
+      once ≥2 independent members exist, so history starts ~2026-06-23.
+- [ ] **DSI membership optimization — decide at ~30 days (open).** Now that we can measure it, choose whether
+      to beat the flat mean. Three levers, in rough order of evidence: (1) **skill-weighted mean** (inverse-MAE,
+      drop-the-worst) rather than winners-only — keeps error-cancellation while fading the laggards
+      (NWS/OWM/WeatherAPI ~85); (2) **per-lead-time member selection** — the leader changes by horizon
+      (Google/MET win day 0-1, Visual Crossing/Tomorrow.io hold up best at day 2-5), so a 5-day DSI should
+      weight per horizon (BLOCKED on the leadtime item below); (3) **per-variable specialization** (precip from
+      one, wind from another) — supported in principle but BLOCKED on rolling up per-element/per-source skill
+      (only high/low MAE is aggregated today; wind/precip live in per-day `comparisons/*.json`). Caveat: ~21
+      days is one summer regime — don't hard-code weights before a fuller sample or it overfits.
+- [ ] **Score the DSI per lead time (foundation for the per-horizon strategy).** `leadtime.py` builds
+      `leadtime_scores.json` per source from each day's day-ahead forecasts but has no `composite` row; add one
+      (build the consensus at each lead from the members' day-ahead files) so the accuracy-decay chart and the
+      per-horizon membership decision have real data.
 - [ ] **Ray's real price for the "Paid" chip** on `/right-wrong-ray` — owner to supply the figure.
 
 ### Homepage design backlog (owner review, 2026-07-01 — banked, not yet actioned)

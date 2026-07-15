@@ -38,6 +38,7 @@ export const metadata = {
 const EXTRA_META: Record<string, { label: string; iconSrc?: string; iconChar?: string }> = {
   raysweather: { label: "Ray's Weather", iconSrc: "/assets/ray_face.svg" },
   apple_weather: { label: "Apple Weather", iconChar: "📱" },
+  composite: { label: "Dave's Sweater Index", iconChar: "🧶" },
 };
 const PRICES: Record<string, string> = { raysweather: "Paid" };
 
@@ -171,7 +172,9 @@ export default async function Page() {
           <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
             <h2 className="font-display mb-1 text-2xl font-bold">Season Scoreboard</h2>
             <p className="mb-4 text-sm text-white/70">
-              Every forecaster we track, ranked by season average. The order is merit-based.
+              Every forecaster we track, ranked by season average. The order is merit-based &mdash; including
+              the <span className="font-semibold text-white/90">Dave&apos;s Sweater Index</span>, our own
+              consensus of the free forecasters, graded by the same rubric as everyone else.
             </p>
             <SortableScoreTable rows={rows} />
             <p className="mt-3 text-xs text-white/70">R = graded Right (75+) | M = Meh (60&ndash;74) | W = graded Wrong (under 60). Trend = 7-day rolling average on the 0&ndash;100 scale.</p>
