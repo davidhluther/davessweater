@@ -696,11 +696,40 @@ model only.
       precipitation score / tighter-steeper temp bands; show per-source deltas + the wins-by-omission
       fairness check (as the R2 revert did); update `/methodology` + `CLAUDE.md`; rescore via
       `scripts/rescore_history.py`. Never ship a scoring change without proving it wasn't tuned against Ray.
-- [ ] **DSI membership decision (analysis delivered 2026-07-02).** On the 8-day sample the composite (84.2)
-      scores below its best members (Google 95.1, MET.no 95.0) — banded scoring + majority-type misses make
-      averaging lossy; best subset (metno + visualcrossing + google, median, implied-zero) ≈ 89.
-      Recommendation: ship a private daily tracker, decide cuts at ~30 days (or earlier with a methodology
-      disclosure). Tracker script still to be written as `scripts/` tooling.
+- [x] **DSI now scored + tracked on the board — ✅ DONE 2026-07-15.** The composite is graded daily as its
+      own source (`compare.add_composite_source` / `build_composite`), scored on the FULL 100-pt contract
+      (wind + precip amount aggregated too, not just the display high/low/precip), backfilled across history
+      (`scripts/backfill_composite.py`), and shown on `/right-wrong-ray` as **"Dave's Sweater Index"** ranked by
+      merit alongside everyone else. Mirrors `src/lib/composite.ts` (same members / ≥2 guard / majority vote);
+      keep the two in sync. Tests: `tests/test_composite.py`. **Current standing: 94.8 avg over 21 days,
+      21-0-0 (never graded Wrong) — 3rd overall, ~tied with MET, and ~2.4 pts above Open-Meteo (our old
+      "pick").** Note the earlier 8-day pilot read 84.2 because it forfeited wind/amount and used a smaller
+      sample; scoring on the full contract + error-cancellation on temp is what lifts it. The DSI only forms
+      once ≥2 independent members exist, so history starts ~2026-06-23.
+- [x] **Score the DSI per lead time — ✅ DONE 2026-07-15.** `leadtime.score_composite_lead` builds the DSI at
+      every lead 0-5 from the members' day-ahead files (via `compare.build_composite`, so lead 0 == the daily
+      DSI), backfilled into `leadtime_scores.json`. Featured as the bold white hero line on the accuracy-decay
+      chart. `compositeMemberMae`/`Pair` exclude the `composite` row (not a member of itself). The DSI is the
+      flattest line on the board — 94-97 across all five days.
+- [x] **DSI precip-aggregation fix (adaptive step 1) — ✅ DONE 2026-07-15.** Replaced the lossy majority-vote
+      precip rule with the **credible-minority rule**: if ≥ a quarter of members (floor 2) forecast precip, the
+      DSI forecasts precip; rain/snow by majority among callers; any split reads mixed. Stateless (no weighting,
+      no history), disclosed on `/methodology`. Measured +1.9 pts on the record → **DSI is now #1 at 96.7, 21-0-0.**
+      Kept in sync across `compare.py:_composite_precip_type` and `composite.ts:compositePrecipType` (change both).
+- [ ] **REEVALUATE DSI ~2026-08-15 (scheduled).** A month-out check (reminder set 2026-07-15, GitHub issue #128): with a
+      fuller sample (and any regime shift), re-test out-of-sample whether the precip credible-minority rule still
+      holds, and whether the deferred bias correction + per-horizon weighting are now worth building. Re-run the
+      analysis scripts against `data/comparisons` + `data/leadtime`, report the DSI's standing, and implement the
+      bias correction if the evidence supports it.
+- [ ] **DSI temperature bias correction (adaptive step 2 — the last lever, ~+0.5).** Members share a ~+1.1°F
+      warm-high bias that averaging can't remove. A causal, rolling, per-member trailing-bias correction (only
+      past days; re-adapts by season) would recover it. It's the one genuinely *learned* piece, so it needs the
+      walk-forward backfill machinery + a `/methodology` note, and it's the most overfit-prone on 21 summer days
+      — **best validated with a fuller sample / into winter before shipping.** Owner chose the full adaptive path
+      (B); this is the remaining B work after the precip rule.
+- [ ] **DSI membership optimization — revisit at ~30-60 days.** With per-lead scoring now in hand, decide any
+      per-horizon member weighting (leader changes by horizon: Google/MET win day 0-1, Visual Crossing/Tomorrow
+      hold up best at day 2-5). Don't hard-code weights before a fuller sample — ~21 days is one summer regime.
 - [ ] **Ray's real price for the "Paid" chip** on `/right-wrong-ray` — owner to supply the figure.
 
 ### Homepage design backlog (owner review, 2026-07-01 — banked, not yet actioned)

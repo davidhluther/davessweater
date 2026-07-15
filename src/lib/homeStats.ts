@@ -1,11 +1,14 @@
 import type { Scores, SourceTotals, Comparison, Actuals } from "@/lib/types";
 
-type SrcKey = "openmeteo" | "apple_weather" | "raysweather";
-const ORDER: SrcKey[] = ["openmeteo", "apple_weather", "raysweather"];
+// The hero leads with our own forecast — the Dave's Sweater Index — then
+// Open-Meteo and Ray's. Apple Weather was moved out of the hero (owner call): it
+// mirrors the Open-Meteo fallback, so it added no independent signal here.
+type SrcKey = "composite" | "openmeteo" | "apple_weather" | "raysweather";
+const ORDER: SrcKey[] = ["composite", "openmeteo", "raysweather"];
 const LABELS: Record<SrcKey, string> = {
-  openmeteo: "Open-Meteo", apple_weather: "Apple Weather", raysweather: "Ray's Weather",
+  composite: "Dave's Sweater Index", openmeteo: "Open-Meteo", apple_weather: "Apple Weather", raysweather: "Ray's Weather",
 };
-const IS_FREE: Record<SrcKey, boolean> = { openmeteo: true, apple_weather: true, raysweather: false };
+const IS_FREE: Record<SrcKey, boolean> = { composite: true, openmeteo: true, apple_weather: true, raysweather: false };
 
 const round1 = (n: number) => Math.round(n * 10) / 10;
 
@@ -67,8 +70,8 @@ export function heroStats(scores: Scores | null): HeroStats {
   const trackingEntries = entries.filter((e) => typeof e.raysweather === "number");
   const trackingDays = trackingEntries.length;
 
-  const TRACKING_ORDER: SrcKey[] = ["openmeteo", "apple_weather", "raysweather"];
-  const trackingScoreMap: Record<SrcKey, number[]> = { openmeteo: [], apple_weather: [], raysweather: [] };
+  const TRACKING_ORDER: SrcKey[] = ["composite", "openmeteo", "raysweather"];
+  const trackingScoreMap: Record<SrcKey, number[]> = { composite: [], openmeteo: [], apple_weather: [], raysweather: [] };
   for (const e of trackingEntries) {
     for (const k of TRACKING_ORDER) {
       if (typeof (e as Record<string, unknown>)[k] === "number") {
@@ -169,7 +172,10 @@ export function headToHead(comp: Comparison | null): HeadToHead | null {
   if (!comp) return null;
   return {
     date: comp.date,
-    dave: comp.sources?.openmeteo?.score?.score ?? null,
+    // Our number is the Dave's Sweater Index (the composite). Fall back to
+    // Open-Meteo only on old days that predate the DSI (before its members came
+    // online), so the card never shows a blank on a scored day.
+    dave: comp.sources?.composite?.score?.score ?? comp.sources?.openmeteo?.score?.score ?? null,
     rays: comp.sources?.raysweather?.score?.score ?? null,
     actualLines: actualLines(comp.actuals),
   };

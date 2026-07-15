@@ -23,6 +23,9 @@ const IH = H - M.top - M.bottom;
 // neighbors in the same family stay tellable in the legend. orange-300 is
 // globals.css's designated orange for dark teal grounds (5.6:1 on teal-700).
 const STYLE: Record<string, { color: string; width?: number; dash?: string }> = {
+  // Our own consensus reads as the hero line: bold and white, distinct from both
+  // Ray's orange and the green free field.
+  composite: { color: "#ffffff", width: 3.2 },
   raysweather: { color: "var(--orange-300)", width: 2.6 },
   openmeteo: { color: "var(--green)", width: 2.4 },
   metno: { color: "#6ee7b7" },
@@ -36,7 +39,7 @@ const STYLE: Record<string, { color: string; width?: number; dash?: string }> = 
 const FALLBACK_STYLE = { color: "#94a3b8" };
 
 // Names sources on purpose: this page is the receipts page.
-const EXTRA_LABELS: Record<string, string> = { raysweather: "Ray's Weather" };
+const EXTRA_LABELS: Record<string, string> = { raysweather: "Ray's Weather", composite: "Dave's Sweater Index" };
 const label = (key: string) => FORECASTERS[key]?.label ?? EXTRA_LABELS[key] ?? key;
 
 export default function AccuracyDecayChart({ series }: { series: ChartSeries[] }) {
@@ -53,7 +56,8 @@ export default function AccuracyDecayChart({ series }: { series: ChartSeries[] }
 
   // Legend reads merit-first (best same-day score at the top of the list);
   // draw order puts the emphasized pair on top of the field.
-  const emphasis = (key: string) => (key === "raysweather" ? 2 : key === "openmeteo" ? 1 : 0);
+  const emphasis = (key: string) =>
+    key === "composite" ? 3 : key === "raysweather" ? 2 : key === "openmeteo" ? 1 : 0;
   const legend = [...series].sort((a, b) => (b.points[0]?.value ?? 0) - (a.points[0]?.value ?? 0));
   const drawn = [...series].sort((a, b) => emphasis(a.source) - emphasis(b.source));
   const leads = Array.from({ length: maxLead + 1 }, (_, i) => i);

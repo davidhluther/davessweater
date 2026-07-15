@@ -4,6 +4,7 @@ import { HEADLINE_SOURCES, isProvisional } from "@/lib/gating";
 
 const LABELS: Record<string, string> = {
   raysweather: "Ray's Weather", openmeteo: "Open-Meteo", apple_weather: "Apple Weather",
+  composite: "Dave's Sweater Index",
 };
 
 const label = (src: string) => FORECASTERS[src]?.label ?? LABELS[src] ?? src;
@@ -36,7 +37,9 @@ export function otherSourcesRows(scores: Scores | null): OtherSourceRow[] {
   const order = Object.keys(FORECASTERS);
   const rank = (k: string) => { const i = order.indexOf(k); return i === -1 ? order.length : i; };
   return Object.entries(scores.totals)
-    .filter(([src]) => !HEADLINE_SOURCES.has(src))
+    // "composite" is the Dave's Sweater Index — our own consensus, not a
+    // third-party forecaster — so it never belongs in "the rest of the field".
+    .filter(([src]) => !HEADLINE_SOURCES.has(src) && src !== "composite")
     .map(([src, t]) => ({
       key: src,
       label: label(src),

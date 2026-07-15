@@ -78,12 +78,17 @@ export default async function FiveDayStrip() {
               key={d.date}
               className="rounded-lg border border-border bg-background px-3 py-2 text-left sm:px-1.5 sm:py-2.5 sm:text-center"
             >
-              <div className="flex items-center gap-3 sm:flex-col sm:items-stretch sm:gap-0">
+              {/* Mobile: day + summary + temp on row 1, sweaters + agreement
+                  wrap to row 2 (flex-wrap + the meta cluster is w-full so it
+                  claims its own line) — otherwise five fixed items overflow a
+                  phone. sm+: the whole thing is a vertical stack (sm:flex-col),
+                  unchanged. */}
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 sm:flex-col sm:flex-nowrap sm:items-stretch sm:gap-0">
                 <div className="w-11 shrink-0 sm:w-auto">
                   <div className="text-xs font-semibold uppercase tracking-wide text-muted sm:text-[0.65rem]">{d.weekday}</div>
                   <div className="text-[0.6rem] text-muted">{d.dayLabel}</div>
                 </div>
-                <div className="flex-1 sm:mt-1 sm:flex-none">
+                <div className="min-w-0 flex-1 sm:mt-1 sm:flex-none">
                   <div className="text-sm font-medium text-foreground sm:text-[0.7rem]">{d.summary}</div>
                   {d.wind ? (
                     <div className="text-[0.6rem] text-muted">Wind: {d.wind}</div>
@@ -99,14 +104,18 @@ export default async function FiveDayStrip() {
                     </div>
                   ) : null}
                 </div>
-                <div className="flex shrink-0 justify-end gap-0.5 sm:mt-1.5 sm:justify-center" role="img" aria-label={`${d.sweaters} of 5 sweaters`}>
-                  {sweaterIcons(d.sweaters)}
-                </div>
-                {showConfidence ? (
-                  <div className="flex shrink-0 justify-end sm:mt-1.5 sm:justify-center">
-                    {confidenceMeter(d.confidence)}
+                {/* Sweaters + agreement: their own full-width row on mobile,
+                    stacked in the card column on sm+. */}
+                <div className="flex w-full items-center gap-3 sm:mt-1.5 sm:w-auto sm:flex-col sm:items-center sm:gap-1">
+                  <div className="flex shrink-0 gap-0.5" role="img" aria-label={`${d.sweaters} of 5 sweaters`}>
+                    {sweaterIcons(d.sweaters)}
                   </div>
-                ) : null}
+                  {showConfidence ? (
+                    <div className="flex shrink-0">
+                      {confidenceMeter(d.confidence)}
+                    </div>
+                  ) : null}
+                </div>
               </div>
               {/* When will it rain — Open-Meteo hourly, gated to consensus-wet days
                   in stripDays so a dry card never shows a bar. */}

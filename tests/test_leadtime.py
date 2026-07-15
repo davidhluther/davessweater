@@ -46,6 +46,22 @@ def test_missing_capture_returns_none():
     assert leadtime.score_lead("1900-01-01", "openmeteo", 3, norm_actual) is None
 
 
+def test_composite_lead0_matches_daily_dsi():
+    """The lead-0 DSI must reproduce the day-0 composite the daily comparison
+    stored — both go through compare.build_composite, so they can't diverge."""
+    date, comp = _a_date_with_comparison("composite")
+    norm_actual = compare._normalize_actual(comp["actuals"])
+    lead0 = leadtime.score_composite_lead(date, 0, norm_actual)
+    assert lead0 is not None
+    assert lead0["score"] == comp["sources"]["composite"]["score"]["score"]
+
+
+def test_composite_missing_capture_returns_none():
+    _, comp = _a_date_with_comparison("composite")
+    norm_actual = compare._normalize_actual(comp["actuals"])
+    assert leadtime.score_composite_lead("1900-01-01", 0, norm_actual) is None
+
+
 def test_source_files_matches_sources_registry():
     """Drift guard: every registered source (plus openmeteo, which compare.py
     scores outside the SOURCES loop) must have a capture-file mapping.

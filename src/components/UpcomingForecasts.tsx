@@ -2,7 +2,7 @@ import type { LatestForecasts } from "@/lib/types";
 import { MIN_SCORED_DAYS } from "@/lib/gating";
 
 const ORDER = [
-  "openmeteo", "apple_weather", "raysweather",
+  "composite", "openmeteo", "apple_weather", "raysweather",
   "nws", "metno", "openweathermap", "weatherapi", "visualcrossing", "tomorrowio", "googleweather",
 ];
 

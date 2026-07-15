@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { compositeForecast } from "@/lib/composite";
+import { compositeForecast, compositePrecipType } from "@/lib/composite";
 import type { LatestForecasts, ForecastDisplay } from "@/lib/types";
 
 function src(high: number | null, low: number | null, precip: string | null = "none"): ForecastDisplay {
@@ -30,7 +30,7 @@ describe("compositeForecast", () => {
     expect(c!.sources.sort()).toEqual(["nws", "openmeteo"]);
   });
 
-  it("exposes the raw majority precip key alongside the display label", () => {
+  it("exposes the raw precip key alongside the display label", () => {
     const c = compositeForecast(latest({
       openmeteo: src(80, 60, "rain"),
       nws: src(84, 64, "rain"),
@@ -60,20 +60,48 @@ describe("compositeForecast", () => {
     expect(c!.precip).toBe("none");
   });
 
-  it("treats a tie that includes none as no consensus (none)", () => {
+  it("needs a credible minority (2+ callers): a lone precip caller stays none", () => {
     const c = compositeForecast(latest({
       openmeteo: src(80, 60, "rain"),
       nws: src(84, 64, "none"),
     }));
-    expect(c!.precip).toBe("none");
+    expect(c!.precip).toBe("none"); // 1 of 2 callers < floor of 2
   });
 
-  it("treats a tie between precip types as mixed", () => {
+  it("lets a credible minority call precip over a dry majority", () => {
+    const c = compositeForecast(latest({
+      openmeteo: src(80, 60, "rain"),
+      nws: src(84, 64, "rain"),
+      metno: src(82, 62, "none"),
+      weatherapi: src(83, 63, "none"),
+      tomorrowio: src(81, 61, "none"),
+      googleweather: src(82, 62, "none"),
+    }));
+    expect(c!.precip).toBe("rain"); // 2 of 6 call rain -> rain
+  });
+
+  it("reads a rain/snow split among callers as mixed", () => {
     const c = compositeForecast(latest({
       openmeteo: src(30, 20, "rain"),
       nws: src(32, 22, "snow"),
     }));
     expect(c!.precip).toBe("mixed");
     expect(c!.precipLabel).toBe("Wintry mix");
+  });
+});
+
+describe("compositePrecipType", () => {
+  it("floors the caller count at 2 and scales to a quarter of contributors", () => {
+    expect(compositePrecipType(["rain", "none"])).toBe("none"); // 1 < 2
+    expect(compositePrecipType(["rain", "rain", "none", "none"])).toBe("rain"); // 2 of 4
+    // 8 contributors -> needed = 2; two callers clear it.
+    expect(compositePrecipType(["rain", "rain", ...Array(6).fill("none")])).toBe("rain");
+  });
+  it("reads snow-only callers as snow, but ANY rain/snow split as mixed", () => {
+    expect(compositePrecipType(["snow", "snow"])).toBe("snow");
+    expect(compositePrecipType(["rain", "snow"])).toBe("mixed");
+    expect(compositePrecipType(["snow", "snow", "rain"])).toBe("mixed"); // lopsided split still mixed
+    expect(compositePrecipType(["mixed", "rain"])).toBe("mixed"); // an explicit mixed caller (2 callers clear the floor)
+    expect(compositePrecipType(["mixed", "none"])).toBe("none"); // lone caller below the floor of 2
   });
 });

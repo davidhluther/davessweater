@@ -3,7 +3,17 @@ import { useState } from "react";
 import { sortRows, type SortDir } from "@/lib/tableSort";
 import Sparkline from "@/components/Sparkline";
 
-export interface ScoreRow { key: string; label: string; isFree: boolean; record: string; avg: number; days: number; spark: number[]; [k: string]: unknown; }
+export interface ScoreRow { key: string; label: string; isFree: boolean; own?: boolean; record: string; avg: number; days: number; spark: number[]; [k: string]: unknown; }
+
+// Our own entry (the Dave's Sweater Index) gets a faint green wash so it reads as
+// "ours" within the merit ranking (green is Dave's Sweater's color across the
+// site), without leaving the ranked order.
+const ownBg = (r: ScoreRow) => (r.own ? "bg-emerald-400/10" : "");
+const OwnTag = () => (
+  <span className="ml-1.5 rounded-full bg-emerald-400/15 px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-emerald-300 align-middle">
+    ours
+  </span>
+);
 type ColKey = "label" | "avg" | "days";
 const COLS: { key: ColKey; label: string; numeric: boolean }[] = [
   { key: "label", label: "Source", numeric: false },
@@ -61,8 +71,8 @@ export default function SortableScoreTable({ rows }: { rows: ScoreRow[] }) {
           {sorted.map((r) => {
             const t = tone(r);
             return (
-              <tr key={r.key} className="border-b border-white/15">
-                <td className={`border-l-[3px] py-2 pl-2.5 ${TEXT[t]}`} style={{ borderLeftColor: rail(r) }}>{r.label}</td>
+              <tr key={r.key} className={`border-b border-white/15 ${ownBg(r)}`}>
+                <td className={`border-l-[3px] py-2 pl-2.5 ${TEXT[t]}`} style={{ borderLeftColor: rail(r) }}>{r.label}{r.own && <OwnTag />}</td>
                 <td className={`py-2 tabular-nums ${TEXT[t]} ${t === "win" ? "font-semibold" : ""}`}>{r.avg.toFixed(1)}</td>
                 <td className="py-2 tabular-nums">{r.days}</td>
                 <td className="py-2 text-white/70">{r.record}</td>
@@ -76,10 +86,10 @@ export default function SortableScoreTable({ rows }: { rows: ScoreRow[] }) {
         {sorted.map((r) => {
           const t = tone(r);
           return (
-            <li key={r.key} className="rounded-lg border border-l-[3px] border-white/10 p-3"
+            <li key={r.key} className={`rounded-lg border border-l-[3px] border-white/10 p-3 ${ownBg(r)}`}
               style={{ borderLeftColor: rail(r) }}>
               <div className="flex items-center justify-between">
-                <span className={`font-medium ${TEXT[t]}`}>{r.label}</span>
+                <span className={`font-medium ${TEXT[t]}`}>{r.label}{r.own && <OwnTag />}</span>
                 <span className={`tabular-nums ${TEXT[t]} ${t === "win" ? "font-semibold" : ""}`}>{r.avg.toFixed(1)}</span>
               </div>
               <div className="mt-1 flex items-center justify-between text-white/60">

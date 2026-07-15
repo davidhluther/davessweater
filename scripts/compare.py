@@ -342,6 +342,148 @@ def _fix_bucket_low(key, date, day):
 
 
 # ═══════════════════════════════════════════════════════════════════
+# DAVE'S SWEATER INDEX (DSI) — the composite consensus
+# ═══════════════════════════════════════════════════════════════════
+# The DSI is our own forecast: the mean of the independent automated forecasters,
+# scored on the exact same 100-point contract as every source it aggregates —
+# because the whole point of the tracker is "we check them all, including ours."
+#
+# This MIRRORS the display composite in src/lib/composite.ts (same members, same
+# ≥2 guard, same high/low mean, same majority precip-type vote) and EXTENDS it:
+# the site's composite renders only high/low/precip, but to grade the DSI fairly
+# against sources that publish wind and precip amount, the *scored* DSI also
+# averages those fields. Feed the aggregate through the same _to_contract +
+# score_prediction path so the implied-zero rule and field handling stay
+# identical to every other source. Keep the member set and vote logic in sync
+# with composite.ts if either changes.
+COMPOSITE_KEY = "composite"
+# Excluded from the consensus, matching composite.ts: Ray's is the forecaster we
+# grade against, and the Apple slot mirrors the Open-Meteo fallback (including it
+# would double-weight Open-Meteo).
+COMPOSITE_EXCLUDE = {"raysweather", "apple_weather"}
+
+
+def _mean(xs):
+    return sum(xs) / len(xs)
+
+
+def _composite_precip_type(contributing):
+    """The DSI's precip type from its contributing member contracts, via the
+    credible-minority rule. `contributing` is the list of member contracts that
+    supplied a high (the same set that votes in composite.ts). Kept byte-for-byte
+    in sync with compositePrecipType() in src/lib/composite.ts."""
+    callers = [c.get("precip_type") for c in contributing
+               if c.get("precip_type") in ("rain", "snow", "mixed")]
+    needed = max(2, round(0.25 * len(contributing)))
+    if len(callers) < needed:
+        return "none"
+    r = callers.count("rain")
+    s = callers.count("snow")
+    m = callers.count("mixed")
+    if m > 0 or (r > 0 and s > 0):
+        return "mixed"
+    return "rain" if r > 0 else "snow"
+
+
+def _contract_wind(contract):
+    """Point wind for a scored contract: interval midpoint if it carries one,
+    else the scalar. None when the source published no wind."""
+    if "wind" not in contract.get("fields_provided", []):
+        return None
+    lo, hi = contract.get("wind_lo"), contract.get("wind_hi")
+    if lo is not None and hi is not None:
+        return (lo + hi) / 2.0
+    return contract.get("wind_mph")
+
+
+def composite_prediction(member_contracts):
+    """The DSI's raw prediction dict from member contracts — means of high / low /
+    wind / precip amount, plus the credible-minority precip type. Returns None
+    when fewer than two members supply a high or a low (same guard as
+    composite.ts — a consensus needs at least two voices). No scoring, so this
+    also builds the DSI for upcoming (un-actualed) days on the site."""
+    highs = [c["high_f"] for c in member_contracts.values() if c.get("high_f") is not None]
+    lows = [c["low_f"] for c in member_contracts.values() if c.get("low_f") is not None]
+    if len(highs) < 2 or len(lows) < 2:
+        return None
+
+    winds = [w for c in member_contracts.values() if (w := _contract_wind(c)) is not None]
+    rains = [c["rain_in"] for c in member_contracts.values()
+             if "rain_amount" in c.get("fields_provided", []) and c.get("rain_in") is not None]
+    snows = [c["snow_in"] for c in member_contracts.values()
+             if "snow_amount" in c.get("fields_provided", []) and c.get("snow_in") is not None]
+
+    # Precip type — the "credible minority" rule (mirrors composite.ts). Plain
+    # majority-vote is the wrong aggregator for precip: precip days are the
+    # minority and the costly miss is calling a wet day "dry", so a dry majority
+    # must not be allowed to veto a credible minority that called the rain. If at
+    # least a quarter of the contributing members (floored at 2) forecast precip,
+    # the DSI forecasts precip; rain vs snow follows the majority among *those*
+    # callers, and any genuine rain/snow split reads "mixed". Stateless — no
+    # weighting, no history; measured on the record to recover ~+1.9 points.
+    contributing = [c for c in member_contracts.values() if c.get("high_f") is not None]
+    precip = _composite_precip_type(contributing)
+
+    rain_mean = round(_mean(rains), 3) if rains else None
+    snow_mean = round(_mean(snows), 3) if snows else None
+    # precip_in is display-only (the "Rain" column on the site); scoring reads
+    # rain_in/snow_in. Keep it consistent with the members' raw shape.
+    precip_in = None
+    if rain_mean is not None or snow_mean is not None:
+        precip_in = round((rain_mean or 0) + (snow_mean or 0), 3)
+
+    return {
+        "high_f": round(_mean(highs), 1),
+        "low_f": round(_mean(lows), 1),
+        "wind_mph": round(_mean(winds), 1) if winds else None,
+        "precip_type": precip,
+        "rain_in": rain_mean,
+        "snow_in": snow_mean,
+        "precip_in": precip_in,
+        # Provenance so the row is auditable: who fed the consensus this day.
+        "members": sorted(member_contracts.keys()),
+        "member_count": len(highs),
+    }
+
+
+def build_composite(member_contracts, norm_actual):
+    """The scored DSI: composite_prediction fed through the same scoring path as
+    every source. Returns {"prediction", "score"} or None (fewer than two
+    members)."""
+    raw = composite_prediction(member_contracts)
+    if raw is None:
+        return None
+    result = score_prediction(_to_contract(raw), norm_actual)
+    return {"prediction": raw, "score": result}
+
+
+def add_composite_source(comparison):
+    """Compute the DSI for a comparison and attach it as sources['composite'].
+    Rebuilds from the member sources on every call (idempotent); removes any
+    stale composite when fewer than two members are scoreable. Members are every
+    scored source except the COMPOSITE_EXCLUDE set — reproduced from each stored
+    raw prediction via _to_contract so live and backfill runs agree exactly."""
+    actuals = comparison.get("actuals")
+    if not actuals:
+        return None
+    norm = _normalize_actual(actuals)
+    members = {}
+    for key, sd in comparison.get("sources", {}).items():
+        if key in COMPOSITE_EXCLUDE or key == COMPOSITE_KEY:
+            continue
+        pred = sd.get("prediction")
+        if pred is None or "score" not in sd:
+            continue
+        members[key] = _to_contract(pred)
+    built = build_composite(members, norm)
+    if built is None:
+        comparison.get("sources", {}).pop(COMPOSITE_KEY, None)
+        return None
+    comparison["sources"][COMPOSITE_KEY] = built
+    return built
+
+
+# ═══════════════════════════════════════════════════════════════════
 # DAILY COMPARISON RUNNER
 # ═══════════════════════════════════════════════════════════════════
 
@@ -504,6 +646,13 @@ def run_daily_comparison(target_date=None):
                 print(f"  {s['label']}: {result['score']}/100")
                 break
 
+    # Dave's Sweater Index — the consensus of the members just scored above.
+    # Added last so it aggregates every source that reported today.
+    dsi = add_composite_source(comparison)
+    if dsi:
+        print(f"  Dave's Sweater Index ({dsi['prediction']['member_count']} sources): "
+              f"{dsi['score']['score']}/100")
+
     # Sweater weather verdict
     sw = comparison["sweater_weather"]
     print(f"\n  🧣 Sweater Weather? {sw['answer']} {sw.get('emoji', '')}")
@@ -643,12 +792,18 @@ def build_latest_forecasts():
         return None
     pred_dir = DATA_DIR / "predictions" / date
     sources = {}
+    # Contracts for the composite-eligible members (openmeteo + the SOURCES
+    # roster; Ray's/Apple are excluded from the DSI), collected as we parse so
+    # the "what they're predicting" DSI is built the same way as the scored one.
+    member_contracts = {}
 
     om = pred_dir / "openmeteo_forecast.json"
     if om.exists():
         for day in json.load(open(om)).get("daily", []):
             if day.get("date") == date:
-                sources["openmeteo"] = _forecast_display(_to_contract(day))
+                c = _to_contract(day)
+                sources["openmeteo"] = _forecast_display(c)
+                member_contracts["openmeteo"] = c
                 break
 
     rays_rebuilt = pred_dir / "rays_boone.rebuilt.json"
@@ -692,12 +847,22 @@ def build_latest_forecasts():
         for day in data.get("daily", []):
             if day.get("date") == date:
                 day = _fix_bucket_low(key, date, day)
-                sources[key] = _forecast_display(_to_contract(day))
+                c = _to_contract(day)
+                sources[key] = _forecast_display(c)
+                member_contracts[key] = c
                 break
+
+    # The Dave's Sweater Index for the upcoming day — the consensus of the
+    # members above, shown alongside them so "what they're predicting" leads with
+    # our own forecast.
+    dsi_pred = composite_prediction(member_contracts)
+    if dsi_pred is not None:
+        sources[COMPOSITE_KEY] = _forecast_display(_to_contract(dsi_pred))
 
     labels = dict(SOURCE_LABELS)
     for s in SOURCES:
         labels[s["key"]] = s["label"]
+    labels[COMPOSITE_KEY] = "Dave's Sweater Index"
     for k, v in sources.items():
         v["label"] = labels.get(k, k)
 

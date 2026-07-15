@@ -16,6 +16,8 @@ export interface Prediction {
   precip_prob?: number; weather_code?: number; conditions?: string;
   category?: string; wind_mph?: number;
   today_high_f?: number; tonight_low_f?: number; daytime_desc?: string; rainfall_in?: number;
+  // Dave's Sweater Index (composite) provenance — which forecasters fed the consensus.
+  members?: string[]; member_count?: number;
 }
 
 export type CoverageField = "high_temp" | "low_temp" | "wind" | "precip_type" | "precip_amount";

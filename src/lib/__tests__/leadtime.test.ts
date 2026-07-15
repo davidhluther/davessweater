@@ -40,6 +40,14 @@ describe("compositeMemberMae", () => {
   it("returns null when no member has data at that lead", () => {
     expect(compositeMemberMae(scores, 3)).toBeNull();
   });
+  it("excludes the DSI's own 'composite' row — it's not a member of itself", () => {
+    // A composite row with a wildly off high_mae must not enter the members' mean.
+    const withDsi: LeadtimeScores = {
+      ...scores,
+      by_source: { ...scores.by_source, composite: { "0": { n: 5, avg_score: 95, high_mae: 99 } } },
+    };
+    expect(compositeMemberMae(withDsi, 0)!.mae).toBe(2.2); // unchanged: composite ignored
+  });
 });
 
 describe("compositeMemberMaePair", () => {

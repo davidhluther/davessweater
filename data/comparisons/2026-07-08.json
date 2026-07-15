@@ -762,6 +762,84 @@
           }
         }
       }
+    },
+    "composite": {
+      "prediction": {
+        "high_f": 80.6,
+        "low_f": 64.0,
+        "wind_mph": 7.2,
+        "precip_type": "rain",
+        "rain_in": 0.326,
+        "snow_in": 0.0,
+        "precip_in": 0.326,
+        "members": [
+          "googleweather",
+          "metno",
+          "nws",
+          "openmeteo",
+          "openweathermap",
+          "tomorrowio",
+          "visualcrossing",
+          "weatherapi"
+        ],
+        "member_count": 8
+      },
+      "score": {
+        "score": 98.2,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 5
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip_type": true,
+          "precip_amount": true
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 30.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 80.6,
+            "actual": 80.3,
+            "error": 0.3
+          },
+          "low_temp": {
+            "points": 30.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 64.0,
+            "actual": 64.8,
+            "error": 0.8
+          },
+          "wind": {
+            "points": 20.0,
+            "max": 20,
+            "scored": true,
+            "predicted": 7.2,
+            "actual": 5.0,
+            "error": 2.2
+          },
+          "precip_type": {
+            "points": 10.0,
+            "max": 10,
+            "scored": true,
+            "predicted": "rain",
+            "actual": "rain"
+          },
+          "precip_amount": {
+            "points": 8.2,
+            "max": 10,
+            "scored": true,
+            "predicted": 0.326,
+            "actual": 0.138,
+            "error": 0.188,
+            "unit": "in_liquid"
+          }
+        }
+      }
     }
   },
   "rays_current": {
