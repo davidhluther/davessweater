@@ -183,43 +183,43 @@ export default async function Page() {
       {/* Dave's Sweater Index — featured on its own. Our consensus leads the page,
           graded on the same rubric, before the field it aggregates. */}
       {dsiRow && (
-        <section className="w-full bg-green-700 text-white">
+        <section className="w-full bg-surface text-foreground">
           <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
-            <div className="text-xs font-bold uppercase tracking-wider text-white/80">Our forecast</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-muted">Our forecast</div>
             <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <h2 className="font-display text-2xl font-bold sm:text-3xl">
                 Dave&apos;s Sweater Index
               </h2>
               {dsiRank && (
-                <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-semibold">
+                <span className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs font-semibold text-muted">
                   #{dsiRank} of {allRows.length}
                 </span>
               )}
             </div>
-            <p className="mt-2 max-w-2xl text-sm text-white/85">
+            <p className="mt-2 max-w-2xl text-sm text-muted">
               Our own forecast: the free forecasters below, averaged into one number &mdash; then graded by the
               exact same rubric as every one of them. No résumé, no paywall, just the consensus.
             </p>
             <div className="mt-5 grid grid-cols-3 gap-3 sm:max-w-md">
-              <div className="rounded-xl bg-white/10 px-3 py-3">
+              <div className="rounded-xl border border-border bg-background px-3 py-3">
                 <div className="font-display text-2xl font-bold sm:text-3xl tabular-nums">{dsiRow.avg.toFixed(1)}</div>
-                <div className="mt-0.5 text-xs text-white/75">season avg / 100</div>
+                <div className="mt-0.5 text-xs text-muted">season avg / 100</div>
               </div>
-              <div className="rounded-xl bg-white/10 px-3 py-3">
+              <div className="rounded-xl border border-border bg-background px-3 py-3">
                 <div className="font-display text-2xl font-bold sm:text-3xl tabular-nums">{dsiRow.record.split(" ")[0]}</div>
-                <div className="mt-0.5 text-xs text-white/75">graded Right</div>
+                <div className="mt-0.5 text-xs text-muted">graded Right</div>
               </div>
-              <div className="rounded-xl bg-white/10 px-3 py-3">
+              <div className="rounded-xl border border-border bg-background px-3 py-3">
                 <div className="font-display text-2xl font-bold sm:text-3xl tabular-nums">{dsiRow.days}</div>
-                <div className="mt-0.5 text-xs text-white/75">days scored</div>
+                <div className="mt-0.5 text-xs text-muted">days scored</div>
               </div>
             </div>
             {dsiScored && (
-              <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/85">
-                <span className="font-semibold">Latest scored day:</span>
-                <span className="font-display text-xl font-bold tabular-nums">{dsiScored.score.score.toFixed(1)}<span className="text-sm font-normal text-white/70">/100</span></span>
+              <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
+                <span className="font-semibold text-foreground">Latest scored day:</span>
+                <span className="font-display text-xl font-bold tabular-nums text-foreground">{dsiScored.score.score.toFixed(1)}<span className="text-sm font-normal text-muted">/100</span></span>
                 {typeof dsiDay?.prediction?.member_count === "number" && (
-                  <span className="text-white/70">from {dsiDay.prediction.member_count} forecasters</span>
+                  <span>from {dsiDay.prediction.member_count} forecasters</span>
                 )}
               </div>
             )}
