@@ -38,7 +38,7 @@ export const metadata = {
 const EXTRA_META: Record<string, { label: string; iconSrc?: string; iconChar?: string }> = {
   raysweather: { label: "Ray's Weather", iconSrc: "/assets/ray_face.svg" },
   apple_weather: { label: "Apple Weather", iconChar: "📱" },
-  composite: { label: "Dave's Sweater Index", iconChar: "🧶" },
+  composite: { label: "Dave's Sweater Index" },
 };
 const PRICES: Record<string, string> = { raysweather: "Paid" };
 
@@ -183,12 +183,12 @@ export default async function Page() {
       {/* Dave's Sweater Index — featured on its own. Our consensus leads the page,
           graded on the same rubric, before the field it aggregates. */}
       {dsiRow && (
-        <section className="w-full bg-orange-600 text-white">
+        <section className="w-full bg-green-700 text-white">
           <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
             <div className="text-xs font-bold uppercase tracking-wider text-white/80">Our forecast</div>
             <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <h2 className="font-display text-2xl font-bold sm:text-3xl">
-                <span aria-hidden="true">🧶 </span>Dave&apos;s Sweater Index
+                Dave&apos;s Sweater Index
               </h2>
               {dsiRank && (
                 <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-semibold">
@@ -237,7 +237,7 @@ export default async function Page() {
             <p className="mb-4 text-sm text-white/70">
               Every forecaster we track, ranked by season average &mdash; our own{" "}
               <span className="font-semibold text-white/90">Dave&apos;s Sweater Index</span> (marked{" "}
-              <span className="font-semibold text-orange-300">ours</span>) graded right in the mix. The order
+              <span className="font-semibold text-emerald-300">ours</span>) graded right in the mix. The order
               is merit-based.
             </p>
             <SortableScoreTable rows={rows} />

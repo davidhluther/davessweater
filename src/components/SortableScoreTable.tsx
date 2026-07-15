@@ -5,11 +5,12 @@ import Sparkline from "@/components/Sparkline";
 
 export interface ScoreRow { key: string; label: string; isFree: boolean; own?: boolean; record: string; avg: number; days: number; spark: number[]; [k: string]: unknown; }
 
-// Our own entry (the Dave's Sweater Index) gets a faint brand-orange wash so it
-// reads as "ours" within the merit ranking, without leaving the ranked order.
-const ownBg = (r: ScoreRow) => (r.own ? "bg-orange-500/10" : "");
+// Our own entry (the Dave's Sweater Index) gets a faint green wash so it reads as
+// "ours" within the merit ranking (green is Dave's Sweater's color across the
+// site), without leaving the ranked order.
+const ownBg = (r: ScoreRow) => (r.own ? "bg-emerald-400/10" : "");
 const OwnTag = () => (
-  <span className="ml-1.5 rounded-full bg-orange-500/20 px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-orange-200 align-middle">
+  <span className="ml-1.5 rounded-full bg-emerald-400/15 px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-emerald-300 align-middle">
     ours
   </span>
 );

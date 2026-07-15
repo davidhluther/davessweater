@@ -3,7 +3,11 @@ import type { LatestForecasts } from "@/lib/types";
 // The consensus excludes Ray's (the forecaster we grade against) and the Apple
 // slot (it mirrors the Open-Meteo fallback, so including it would double-weight
 // Open-Meteo). What's left is the spread of independent automated forecasters.
-const EXCLUDE = new Set(["raysweather", "apple_weather"]);
+// raysweather is the graded forecaster; apple_weather mirrors the Open-Meteo
+// fallback (double-weighting it). "composite" is the DSI's own row — now emitted
+// into latest_forecasts.json for the "what they're predicting" table — and must
+// never feed back into itself.
+const EXCLUDE = new Set(["raysweather", "apple_weather", "composite"]);
 
 const PRECIP_LABEL: Record<string, string> = {
   rain: "Rain likely",

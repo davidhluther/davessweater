@@ -4,6 +4,9 @@ import { heroStats } from "@/lib/homeStats";
 const scores = {
   entries: [],
   totals: {
+    // The hero leads with the Dave's Sweater Index (composite); Apple Weather was
+    // moved out of the hero, so it no longer appears here even though it's tracked.
+    composite: { right: 21, wrong: 0, meh: 0, total_score: 2031.0, days: 21 },
     openmeteo: { right: 105, wrong: 0, meh: 2, total_score: 9800.8, days: 107 },
     apple_weather: { right: 102, wrong: 0, meh: 2, total_score: 9545.7, days: 104 },
     raysweather: { right: 46, wrong: 29, meh: 32, total_score: 7556.6, days: 107 },
@@ -13,35 +16,36 @@ const scores = {
 // Scores fixture with entries for tracking-period tests
 const scoresWithEntries = {
   totals: {
+    composite: { right: 21, wrong: 0, meh: 0, total_score: 2031.0, days: 21 },
     openmeteo: { right: 465, wrong: 1, meh: 8, total_score: 43378.4, days: 474 },
     apple_weather: { right: 100, wrong: 0, meh: 4, total_score: 9500.0, days: 104 },
     raysweather: { right: 46, wrong: 29, meh: 32, total_score: 7556.6, days: 107 },
   },
   entries: [
-    // Tracking day 1: raysweather present, free sources both score well
-    { date: "2025-03-01", openmeteo: 91.6, apple_weather: 100, raysweather: 63.2 },
-    // Tracking day 2: raysweather present, apple_weather scores below 60 (wrong in tracking)
-    { date: "2025-03-02", openmeteo: 80.0, apple_weather: 55.0, raysweather: 50.0 },
+    // Tracking day 1: raysweather present, free sources score well
+    { date: "2025-03-01", composite: 97.0, openmeteo: 91.6, apple_weather: 100, raysweather: 63.2 },
+    // Tracking day 2: raysweather present, openmeteo scores below 60 (a free source wrong in tracking)
+    { date: "2025-03-02", composite: 96.0, openmeteo: 55.0, apple_weather: 55.0, raysweather: 50.0 },
     // Tracking day 3: raysweather present, raysweather scores below 60 (wrong)
-    { date: "2025-03-03", openmeteo: 95.0, apple_weather: 90.0, raysweather: 40.0 },
+    { date: "2025-03-03", composite: 95.0, openmeteo: 95.0, apple_weather: 90.0, raysweather: 40.0 },
     // Non-tracking day: raysweather absent (backfilled Open-Meteo only)
     { date: "2025-02-01", openmeteo: 88.0 },
   ],
 };
 
 describe("heroStats", () => {
-  it("returns labeled per-source stats ordered free-first, then Ray's", () => {
+  it("returns labeled per-source stats — DSI first, then Open-Meteo, then Ray's (Apple out of the hero)", () => {
     const h = heroStats(scores);
-    expect(h.sources.map((s) => s.key)).toEqual(["openmeteo", "apple_weather", "raysweather"]);
-    expect(h.sources[0]).toMatchObject({ label: "Open-Meteo", isFree: true, record: "105–2–0" });
-    expect(h.sources[0].avg).toBeCloseTo(91.6, 1);
+    expect(h.sources.map((s) => s.key)).toEqual(["composite", "openmeteo", "raysweather"]);
+    expect(h.sources[0]).toMatchObject({ label: "Dave's Sweater Index", isFree: true, record: "21–0–0" });
+    expect(h.sources[0].avg).toBeCloseTo(96.7, 1);
   });
-  it("derives tracked days, graded-Wrong count, and the free-vs-Ray's point gap", () => {
+  it("derives tracked days, graded-Wrong count, and the DSI-vs-Ray's point gap", () => {
     const h = heroStats(scores);
     expect(h.trackedDays).toBe(107);
     expect(h.raysWrongDays).toBe(29);
-    expect(h.bestFree?.key).toBe("apple_weather");
-    expect(h.pointGap).toBeCloseTo(21.2, 1);
+    expect(h.bestFree?.key).toBe("composite");
+    expect(h.pointGap).toBeCloseTo(26.1, 1);
   });
   it("handles null/empty scores without throwing", () => {
     expect(heroStats(null).sources).toEqual([]);
@@ -73,7 +77,7 @@ describe("heroStats — tracking-period stats", () => {
 
   it("trackingFreeNeverWrong is false when a free source scored wrong in tracking period", () => {
     const h = heroStats(scoresWithEntries);
-    // apple_weather scored 55.0 on 2025-03-02, which is <60 → wrong
+    // openmeteo scored 55.0 on 2025-03-02, which is <60 → wrong
     expect(h.trackingFreeNeverWrong).toBe(false);
   });
 
@@ -97,9 +101,9 @@ describe("heroStats — tracking-period stats", () => {
     expect(h.openmeteoFull?.record).toBe("465–8–1");
   });
 
-  it("trackingSources are in order: openmeteo, apple_weather, raysweather", () => {
+  it("trackingSources are in order: composite, openmeteo, raysweather", () => {
     const h = heroStats(scoresWithEntries);
-    expect(h.trackingSources.map((s) => s.key)).toEqual(["openmeteo", "apple_weather", "raysweather"]);
+    expect(h.trackingSources.map((s) => s.key)).toEqual(["composite", "openmeteo", "raysweather"]);
   });
 
   it("trackingRaysWrong counts Ray's wrong grades in the tracking period", () => {
@@ -154,19 +158,32 @@ describe("whyStats", () => {
 import { headToHead } from "@/lib/homeStats";
 
 describe("headToHead", () => {
-  it("pulls Dave's (openmeteo) vs Ray's scores and actual lines", () => {
+  it("pulls Dave's number from the DSI (composite) when present, over Open-Meteo", () => {
     const comp = {
       date: "2026-06-20",
       actuals: { high_f: 84, low_f: 61, wind_mph: 6.2, precip_in: 0 },
       sweater_weather: {},
       sources: {
+        composite: { prediction: {}, score: { score: 98.0, grade: { verdict: "Right", ray_count: 5 }, breakdown: {} } },
         openmeteo: { prediction: {}, score: { score: 100, grade: { verdict: "Right", ray_count: 5 }, breakdown: {} } },
         raysweather: { prediction: {}, score: { score: 51.6, grade: { verdict: "Wrong", ray_count: 2 }, breakdown: {} } },
       },
     };
     const h = headToHead(comp as never);
-    expect(h).toMatchObject({ date: "2026-06-20", dave: 100, rays: 51.6 });
+    expect(h).toMatchObject({ date: "2026-06-20", dave: 98.0, rays: 51.6 }); // composite wins
     expect(h?.actualLines[0]).toBe("Hi: 84° / Lo: 61°");
+  });
+  it("falls back to Open-Meteo on days that predate the DSI", () => {
+    const comp = {
+      date: "2025-05-01",
+      actuals: { high_f: 70, low_f: 50, precip_in: 0 },
+      sweater_weather: {},
+      sources: {
+        openmeteo: { prediction: {}, score: { score: 92, grade: { verdict: "Right", ray_count: 5 }, breakdown: {} } },
+        raysweather: { prediction: {}, score: { score: 60, grade: { verdict: "Meh", ray_count: 3 }, breakdown: {} } },
+      },
+    };
+    expect(headToHead(comp as never)).toMatchObject({ dave: 92, rays: 60 });
   });
   it("returns null for null comparison", () => {
     expect(headToHead(null)).toBeNull();

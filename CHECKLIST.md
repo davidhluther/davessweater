@@ -716,7 +716,7 @@ model only.
       DSI forecasts precip; rain/snow by majority among callers; any split reads mixed. Stateless (no weighting,
       no history), disclosed on `/methodology`. Measured +1.9 pts on the record → **DSI is now #1 at 96.7, 21-0-0.**
       Kept in sync across `compare.py:_composite_precip_type` and `composite.ts:compositePrecipType` (change both).
-- [ ] **⏰ REEVALUATE DSI ~2026-08-15 (scheduled).** A month-out check (cron/trigger set 2026-07-15): with a
+- [ ] **REEVALUATE DSI ~2026-08-15 (scheduled).** A month-out check (reminder set 2026-07-15, GitHub issue #128): with a
       fuller sample (and any regime shift), re-test out-of-sample whether the precip credible-minority rule still
       holds, and whether the deferred bias correction + per-horizon weighting are now worth building. Re-run the
       analysis scripts against `data/comparisons` + `data/leadtime`, report the DSI's standing, and implement the
