@@ -96,6 +96,9 @@ export default async function Page() {
     key: r.key,
     label: r.label,
     isFree: r.key !== "raysweather",
+    // The DSI is our own consensus — flagged so the standings mark it as ours
+    // rather than reading it as just another third-party forecaster.
+    own: r.key === "composite",
     record: r.record,
     avg: r.avg,
     days: r.days,
@@ -104,6 +107,14 @@ export default async function Page() {
   const provisionalKeys = new Set(
     allRows.filter((r) => isProvisional(r.days) && !HEADLINE_SOURCES.has(r.key)).map((r) => r.key)
   );
+
+  // The Dave's Sweater Index gets a featured block of its own — season standing
+  // plus its rank against the field — so our forecast leads the page instead of
+  // hiding in row three.
+  const dsiRow = allRows.find((r) => r.key === "composite") ?? null;
+  const dsiRank = dsiRow
+    ? [...allRows].sort((x, y) => y.avg - x.avg).findIndex((r) => r.key === "composite") + 1
+    : null;
 
   // Day cards run as a leaderboard: best score first. Tied scores break on the
   // summed miss across the graded "show the math" fields (the closer forecast
@@ -116,7 +127,12 @@ export default async function Page() {
     }
     return n ? sum : Number.MAX_SAFE_INTEGER;
   };
+  // The DSI is featured on its own (below) — keep it out of the member leaderboard
+  // so it doesn't compete against the very sources it averages for "day's best".
+  const dsiDay = comp?.sources?.composite;
+  const dsiScored = dsiDay && dsiDay.score ? (dsiDay as SourceEntry & { score: NonNullable<SourceEntry["score"]> }) : null;
   const scored = Object.keys(comp?.sources ?? {})
+    .filter((key) => key !== "composite")
     .map((key) => ({ key, ...srcMeta(key), e: comp!.sources![key] }))
     .filter((s): s is typeof s & { e: SourceEntry & { score: NonNullable<SourceEntry["score"]> } } =>
       Boolean(s.e && s.e.score))
@@ -164,6 +180,53 @@ export default async function Page() {
         </div>
       </section>
 
+      {/* Dave's Sweater Index — featured on its own. Our consensus leads the page,
+          graded on the same rubric, before the field it aggregates. */}
+      {dsiRow && (
+        <section className="w-full bg-orange-600 text-white">
+          <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
+            <div className="text-xs font-bold uppercase tracking-wider text-white/80">Our forecast</div>
+            <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <h2 className="font-display text-2xl font-bold sm:text-3xl">
+                <span aria-hidden="true">🧶 </span>Dave&apos;s Sweater Index
+              </h2>
+              {dsiRank && (
+                <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-semibold">
+                  #{dsiRank} of {allRows.length}
+                </span>
+              )}
+            </div>
+            <p className="mt-2 max-w-2xl text-sm text-white/85">
+              Our own forecast: the free forecasters below, averaged into one number &mdash; then graded by the
+              exact same rubric as every one of them. No résumé, no paywall, just the consensus.
+            </p>
+            <div className="mt-5 grid grid-cols-3 gap-3 sm:max-w-md">
+              <div className="rounded-xl bg-white/10 px-3 py-3">
+                <div className="font-display text-2xl font-bold sm:text-3xl tabular-nums">{dsiRow.avg.toFixed(1)}</div>
+                <div className="mt-0.5 text-xs text-white/75">season avg / 100</div>
+              </div>
+              <div className="rounded-xl bg-white/10 px-3 py-3">
+                <div className="font-display text-2xl font-bold sm:text-3xl tabular-nums">{dsiRow.record.split(" ")[0]}</div>
+                <div className="mt-0.5 text-xs text-white/75">graded Right</div>
+              </div>
+              <div className="rounded-xl bg-white/10 px-3 py-3">
+                <div className="font-display text-2xl font-bold sm:text-3xl tabular-nums">{dsiRow.days}</div>
+                <div className="mt-0.5 text-xs text-white/75">days scored</div>
+              </div>
+            </div>
+            {dsiScored && (
+              <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/85">
+                <span className="font-semibold">Latest scored day:</span>
+                <span className="font-display text-xl font-bold tabular-nums">{dsiScored.score.score.toFixed(1)}<span className="text-sm font-normal text-white/70">/100</span></span>
+                {typeof dsiDay?.prediction?.member_count === "number" && (
+                  <span className="text-white/70">from {dsiDay.prediction.member_count} forecasters</span>
+                )}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
       {/* The scoreboard sits on its own darker plane — same dot-grid ground as the
           "what actually happened" card and the homepage "why we exist" band — so the
           header and the ten-row table read as two surfaces, not one slab. */}
@@ -172,9 +235,10 @@ export default async function Page() {
           <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
             <h2 className="font-display mb-1 text-2xl font-bold">Season Scoreboard</h2>
             <p className="mb-4 text-sm text-white/70">
-              Every forecaster we track, ranked by season average. The order is merit-based &mdash; including
-              the <span className="font-semibold text-white/90">Dave&apos;s Sweater Index</span>, our own
-              consensus of the free forecasters, graded by the same rubric as everyone else.
+              Every forecaster we track, ranked by season average &mdash; our own{" "}
+              <span className="font-semibold text-white/90">Dave&apos;s Sweater Index</span> (marked{" "}
+              <span className="font-semibold text-orange-300">ours</span>) graded right in the mix. The order
+              is merit-based.
             </p>
             <SortableScoreTable rows={rows} />
             <p className="mt-3 text-xs text-white/70">R = graded Right (75+) | M = Meh (60&ndash;74) | W = graded Wrong (under 60). Trend = 7-day rolling average on the 0&ndash;100 scale.</p>
