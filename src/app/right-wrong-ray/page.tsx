@@ -257,7 +257,9 @@ export default async function Page() {
             The same 100-point grading, applied to the forecast each source published up to five days
             ahead. The free forecasts win at every horizon, and the gap widens at days 3 and 4: Ray&apos;s
             extended days publish fewer scoreable fields, and under the published rules a blank earns
-            nothing.
+            nothing. Our own <span className="font-semibold text-white">Dave&apos;s Sweater Index</span> (the
+            bold white line) stays near the top clear out to day five &mdash; a consensus barely fades when
+            no single source has to carry it.
           </p>
           <AccuracyDecayChart series={decay} />
           <p className="mt-2 text-xs">

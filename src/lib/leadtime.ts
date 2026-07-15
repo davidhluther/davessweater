@@ -72,8 +72,9 @@ export function warmBiasRange(
 // Mean high-MAE across the free composite members at a given lead — powers the
 // consumer strip's honesty footer. EXCLUDE mirrors src/lib/composite.ts
 // (raysweather is the graded forecaster; apple_weather mirrors the Open-Meteo
-// fallback and would double-weight it).
-const EXCLUDE = new Set(["raysweather", "apple_weather"]);
+// fallback and would double-weight it) — plus "composite" itself, which is the
+// DSI's own scored row in by_source, not one of the members it averages.
+const EXCLUDE = new Set(["raysweather", "apple_weather", "composite"]);
 
 const usable = (c: LeadCell | undefined): c is LeadCell =>
   !!c && typeof c.high_mae === "number" && c.n > 0;

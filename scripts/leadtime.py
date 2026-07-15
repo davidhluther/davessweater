@@ -126,6 +126,39 @@ def score_lead(target_date: str, source: str, lead: int, norm_actual: dict):
     }
 
 
+def score_composite_lead(target_date: str, lead: int, norm_actual: dict):
+    """Score the Dave's Sweater Index for target_date built from the member
+    forecasts issued `lead` days earlier. Uses the SAME aggregation as the day-0
+    DSI (compare.build_composite) so lead 0 matches the daily comparison exactly.
+    Returns the score_lead row shape, or None when fewer than two members have a
+    row at this lead (build_composite's floor)."""
+    capture_day = (date.fromisoformat(target_date) - timedelta(days=lead)).isoformat()
+    capture_dir = DATA_DIR / "predictions" / capture_day
+    members = {}
+    for source in SOURCE_FILES:  # SOURCE_FILES == the composite members (no Ray's/Apple)
+        row = _row_for(capture_dir, source, target_date, lead)
+        if not row:
+            continue
+        day = dict(row)
+        if lead == 0:
+            day = compare._fix_bucket_low(source, target_date, day)
+        members[source] = compare._to_contract(day)
+    built = compare.build_composite(members, norm_actual)
+    if built is None:
+        return None
+    pred = built["prediction"]
+    ph, pl = pred.get("high_f"), pred.get("low_f")
+    ah, al = norm_actual.get("high_f"), norm_actual.get("low_f")
+    return {
+        "score": built["score"]["score"],
+        "grade": built["score"]["grade"],
+        "high_err": abs(ph - ah) if ph is not None and ah is not None else None,
+        "low_err": abs(pl - al) if pl is not None and al is not None else None,
+        "high_bias": (ph - ah) if ph is not None and ah is not None else None,
+        "low_bias": (pl - al) if pl is not None and al is not None else None,
+    }
+
+
 def _norm_actual_for(target_date: str):
     """Normalized actuals for target_date from data/actuals, or None.
 
@@ -157,6 +190,13 @@ def build_leadtime(target_date: str):
             r = score_lead(target_date, source, lead, norm_actual)
             if r:
                 rows.append({"source": source, "lead": lead, **r})
+    # The Dave's Sweater Index at each lead — the consensus of the members above,
+    # so the accuracy-decay chart can show how our own forecast holds up out to 5
+    # days (and later inform per-horizon member weighting).
+    for lead in range(MAX_LEAD + 1):
+        r = score_composite_lead(target_date, lead, norm_actual)
+        if r:
+            rows.append({"source": "composite", "lead": lead, **r})
     out = {"date": target_date, "location": LOCATION, "rows": rows}
     d = _leadtime_dir()
     d.mkdir(parents=True, exist_ok=True)
