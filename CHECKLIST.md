@@ -195,9 +195,10 @@ renders. Three date states built + build-tested (preview / tonight Jul 3–4 / a
       when the owner's own Facebook dig finds a 2025 first-shell time, set `firstShell: "21:XX"` on the
       2025 entry in `src/lib/fireworksVenues.ts` (marked "← THE SLOT") — venue card + FAQ update on next
       build. Owner searches FB independently; broad-net agent research is DONE, don't repeat it.
-- [ ] **Observe 2026-07-04 live:** clock first-shell for Boone + Tweetsie (+ App State if firing) from the
-      owner's vantage; add as `observed` entries (year 2026) and publish "observed vs computed" July 5 —
-      original data nobody else has; repeat annually.
+- [x] ~~**Observe 2026-07-04 live**~~ — MISSED (owner confirmed 2026-07-18: times not captured; postmortem
+      post dropped). **Re-arm for 2027-07-04:** clock first-shell for Boone + Tweetsie from the owner's
+      vantage; add as `observed` entries and publish "observed vs computed" July 5 — original data nobody
+      else has.
 - [x] **IA/copy restructure — ✅ SHIPPED 2026-07-02 (owner-approved plan).** New order: hero → checker →
       merged outlook grid → dusk table → show details → tested spots → FAQ → methodology. H1/title now
       "{year} Fourth of July fireworks in Boone & the High Country"; dek names Watauga County + Boone +
@@ -756,8 +757,23 @@ model only.
       Plan: P0 = Blowing Rock + Deep Gap (silent capture; Deep Gap = subtitle/brand slot), P1 = pages
       at ≥9 scored days + Banner Elk + Beech Mtn (the real demand), P2 = publish the two embargoed
       posts + long-tail batch. **Ray's per-town capture DECIDED (owner, 2026-07-18): once daily** via
-      his public blurbs endpoint. **Still open (spec §7):** owner nod on the P0 composition change
-      (VC→Deep Gap), URL naming (`/weather/{slug}` as specced?), keyed-source quota tolerance.
+      his public blurbs endpoint. All §7 decisions closed same day (owner: yes ×3 — P0 towns, /weather
+      naming, quota fallback OK).
+  - [x] **P0 BUILT + LIVE 2026-07-18 (same session).** Registry `data/locations/locations.json`
+        (geocode-verified pins w/ provenance; Boone deliberately absent — legacy paths canonical);
+        `scripts/locations.py` + `capture_locations.py` (Open-Meteo + all 7 adapters at each town's
+        coords — adapters already took lat/lon) + `compare_locations.py` (identical rubric via
+        compare._to_contract + scoring.score_prediction, location-scoped bucket-low recovery, DSI
+        composite, no-ghosts rule, per-town scores.json, self-healing 14-day sweep). Both workflows
+        gained non-gating steps (capture commit now adds `data/locations/`). 6 new pytest (218 green).
+        Live-verified: real captures for both towns; first-day data already differs (Blowing Rock
+        trace-rain + 14.8 mph vs Boone dry 12.5). **First scored days land when the archive posts
+        (~1-5 day lag); the 9-day P1 gate starts counting from the first scored day.**
+  - [ ] **P0.5 — Ray's per-town numbers** (approved once-daily): discover the blurbs station IDs for
+        Blowing Rock + Deep Gap from `weather.station.blurbs`, add a capture script + scoring rows
+        (high/low per-town; narrative fields inherit his regional text — that's his published forecast).
+  - [ ] **P1 trigger (~2026-07-28+):** once both towns have ≥9 scored days, build `/weather` hub +
+        `/weather/{slug}` pages + `/right-wrong-ray/{slug}` boards + switcher (spec §5).
 
 ### Homepage design backlog (owner review, 2026-07-01 — banked, not yet actioned)
 - [ ] **iPhone shot: find it a new home; the Today module owns above-the-fold long-term.** The Apple
@@ -824,9 +840,10 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
       ids injected + sanitizer now allows `id`); **H2/H3 hierarchy** (2xl/extrabold+rule vs lg/semibold, were
       near-identical xl/lg); **em-dash density cut ~60%** (11–16→4–7/1k) + statement H3s→question subheads, no facts
       changed (number/link diff clean). 160 vitest / lint / build green; verified in prerendered HTML.
-- [ ] **Post #5 — fireworks postmortem** (`boone-fireworks-2026-observed-vs-computed`) held: needs the **observed
-      July 4 first-shell times** (owner clocks them; July 4 has now passed). Draft + brief staged in `planning/seo/`;
-      fill the PENDING cells + one self-grade line, then publish via the same native-post mechanism.
+- [x] ~~**Post #5 — fireworks postmortem**~~ — **DROPPED 2026-07-18 (owner):** the observed July 4
+      first-shell times were never captured ("I don't have them. Ignore."). Draft stays staged in
+      `planning/seo/` in case 2027 revives the concept (the observe-live checklist item below repeats
+      annually).
 - [ ] **Report Card franchise route** — v1 ships the June card under Articles for speed. The tracker's intended
       home is `/report-card/{yyyy-mm}` (recurring franchise); build that route + 301 the Articles URL when ready.
 - [ ] **STANDING MONTHLY: publish the report card for each completed month** (owner directive 2026-07-08).
@@ -925,6 +942,20 @@ Owner chose both tools, sitewide: Microsoft Clarity (heatmaps/recordings) + GA4 
       hours earlier (new event names take 24-48h to reach standard reports + the Admin events list), and
       the owner's own devices are ds_track=off since #120 — verified the code fires on prod via dataLayer
       (element_click with correct payload). Realtime → "Event count by Event name" is the no-lag view.
+
+## SEO scan follow-ups (audited 2026-07-18 — owner said "remind me later")
+Full-site scan 2026-07-18: fundamentals clean (sitemap exact, robots OK, canonicals self-referencing,
+all JSON-LD valid, redirects single-hop, no noindex). Two fix-sized items were spun into task chips;
+if the chips are gone, re-create from this list:
+- [ ] **og:image missing on 12 of 17 pages** incl. all four articles (layout.tsx openGraph lacks
+      `images`; post route sets openGraph without image; BlogPosting schema lacks `image`). Fix =
+      sitewide default + dynamic post-route opengraph-image.tsx in the existing next/og dialect.
+- [ ] **/blog/:slug redirect trap:** article-category slugs 308 to /resources/news/:slug → 404
+      (ARTICLE_SLUGS guard only covers moved pre-split slugs, not native articles). Make it automatic.
+- [ ] **Dead 410 citation** (exploreboone.com Town-of-Boone event URL) on the fireworks report, also
+      inside its JSON-LD — swap before the page's evergreen-2027 job.
+- [ ] Low: sitemap `lastModified: new Date()` on every entry each build; TechArticle on /methodology
+      lacks dates; og:url absent on /resources* pages; Dataset lacks `license`; Events lack image/offers.
 
 ## SEO / performance / accessibility (audited 2026-07-01)
 Multi-agent audit + Lighthouse (production, mobile). **SEO = 100** (the promotion-readiness metadata/JSON-LD/

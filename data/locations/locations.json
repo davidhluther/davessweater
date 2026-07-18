@@ -1,0 +1,23 @@
+{
+  "_comment": "M5 multi-location registry — the single source of truth for every tracked town except Boone (Boone stays at the legacy top-level data/ paths and on the homepage). Coordinate provenance is mandatory (standing rule: no eyeballed pins). Spec: planning/specs/2026-07-18-multi-location-multiplication-design.md",
+  "locations": [
+    {
+      "slug": "blowing-rock",
+      "name": "Blowing Rock",
+      "lat": 36.13513,
+      "lon": -81.67761,
+      "elevation_ft": 3573,
+      "county": "Watauga",
+      "provenance": "Open-Meteo geocoder 2026-07-18 (Watauga entry, pop 1292, elev 1089 m); elevation cross-checked against the town's published ~3,566 ft"
+    },
+    {
+      "slug": "deep-gap",
+      "name": "Deep Gap",
+      "lat": 36.23707,
+      "lon": -81.51233,
+      "elevation_ft": 3002,
+      "county": "Watauga",
+      "provenance": "Open-Meteo geocoder 2026-07-18 (Watauga County entry, elev 915 m; the Graham County Deep Gap explicitly rejected)"
+    }
+  ]
+}

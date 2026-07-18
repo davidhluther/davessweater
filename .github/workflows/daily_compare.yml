@@ -74,6 +74,13 @@ jobs:
         run: python scripts/backfill_missing.py
         continue-on-error: true
 
+      # M5 P0 (silent): score each registry town against its own actuals.
+      # Sweeps its own 14-day lag window, so it self-heals like the Boone
+      # backfill. Non-gating until towns cross the scoreboard gate.
+      - name: Score locations (Blowing Rock, Deep Gap)
+        run: python scripts/compare_locations.py
+        continue-on-error: true
+
       # Fail the run (before committing) if a mandatory source silently dropped a
       # field — the Ray's-deflation failure mode — so it surfaces as a red run and
       # a notification instead of a quietly-published bad day.

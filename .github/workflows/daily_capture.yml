@@ -67,11 +67,23 @@ jobs:
           TOMORROW_API_KEY: ${{ secrets.TOMORROW_API_KEY }}
           GOOGLE_WEATHER_API_KEY: ${{ secrets.GOOGLE_WEATHER_API_KEY }}
 
+      # M5 P0 (silent): per-town captures at each registry location's own
+      # coordinates. Best-effort — a town or source failing never blocks Boone.
+      - name: Capture location forecasts (Blowing Rock, Deep Gap)
+        run: python scripts/capture_locations.py
+        continue-on-error: true
+        env:
+          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+          WEATHERAPI_KEY: ${{ secrets.WEATHERAPI_KEY }}
+          VISUALCROSSING_KEY: ${{ secrets.VISUALCROSSING_KEY }}
+          TOMORROW_API_KEY: ${{ secrets.TOMORROW_API_KEY }}
+          GOOGLE_WEATHER_API_KEY: ${{ secrets.GOOGLE_WEATHER_API_KEY }}
+
       - name: Commit captures
         run: |
           git config user.name "DavesSweaterBot"
           git config user.email "bot@davessweater.com"
-          git add data/predictions/ data/substack_feed.json data/fireworks_forecast.json
+          git add data/predictions/ data/locations/ data/substack_feed.json data/fireworks_forecast.json
           git commit -m "Daily capture $(date +%Y-%m-%d)" || echo "No changes to commit"
           git pull origin main --no-rebase -X ours || true
           git push origin main || (sleep 5 && git pull origin main --no-rebase -X ours && git push origin main)
