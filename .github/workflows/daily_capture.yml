@@ -79,6 +79,12 @@ jobs:
           TOMORROW_API_KEY: ${{ secrets.TOMORROW_API_KEY }}
           GOOGLE_WEATHER_API_KEY: ${{ secrets.GOOGLE_WEATHER_API_KEY }}
 
+      # M5 P0.5: Ray's per-town numbers — ONE unauthenticated public-API call
+      # for all towns (owner-approved once-daily, 2026-07-18).
+      - name: Capture Ray's per-town forecasts
+        run: python scripts/capture_rays_locations.py
+        continue-on-error: true
+
       - name: Commit captures
         run: |
           git config user.name "DavesSweaterBot"

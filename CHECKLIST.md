@@ -769,9 +769,15 @@ model only.
         Live-verified: real captures for both towns; first-day data already differs (Blowing Rock
         trace-rain + 14.8 mph vs Boone dry 12.5). **First scored days land when the archive posts
         (~1-5 day lag); the 9-day P1 gate starts counting from the first scored day.**
-  - [ ] **P0.5 — Ray's per-town numbers** (approved once-daily): discover the blurbs station IDs for
-        Blowing Rock + Deep Gap from `weather.station.blurbs`, add a capture script + scoring rows
-        (high/low per-town; narrative fields inherit his regional text — that's his published forecast).
+  - [x] **P0.5 — Ray's per-town numbers — ✅ BUILT + LIVE-VERIFIED 2026-07-18.** Station IDs
+        discovered from public `weather.station.list`: Blowing Rock = **2** (downtown, ~350 m from
+        our pin), Deep Gap = **57** (~750 m); Boone = 1; future: Banner Elk 13, Beech 12, Valle
+        Crucis 5, Foscoe 74, Vilas 99. `capture_rays_locations.py`: ONE unauth blurbs call/day
+        (owner-approved) → per-town 7-day high/low + Ray's own `golfballs` confidence (stored,
+        unscored) → raysweather_forecast.json per town, `fields_provided: ["high","low"]` (numbers
+        only — wind/precip live in his regional narrative, so they're honest forfeits; possible
+        later upgrade: icon-filename → precip type, needs a vetted icon vocabulary). Workflow step
+        added (non-gating). Live run captured 7 days for both towns; 2 new pytest.
   - [ ] **P1 trigger (~2026-07-28+):** once both towns have ≥9 scored days, build `/weather` hub +
         `/weather/{slug}` pages + `/right-wrong-ray/{slug}` boards + switcher (spec §5).
 
@@ -947,11 +953,20 @@ Owner chose both tools, sitewide: Microsoft Clarity (heatmaps/recordings) + GA4 
 Full-site scan 2026-07-18: fundamentals clean (sitemap exact, robots OK, canonicals self-referencing,
 all JSON-LD valid, redirects single-hop, no noindex). Two fix-sized items were spun into task chips;
 if the chips are gone, re-create from this list:
-- [ ] **og:image missing on 12 of 17 pages** incl. all four articles (layout.tsx openGraph lacks
-      `images`; post route sets openGraph without image; BlogPosting schema lacks `image`). Fix =
-      sitewide default + dynamic post-route opengraph-image.tsx in the existing next/og dialect.
-- [ ] **/blog/:slug redirect trap:** article-category slugs 308 to /resources/news/:slug → 404
-      (ARTICLE_SLUGS guard only covers moved pre-split slugs, not native articles). Make it automatic.
+- [x] **og:image — ✅ FIXED 2026-07-18 (owner-directed, same session as the audit).** Shared
+      `src/lib/ogCard.tsx` (brand dot-grid next/og card) + colocated opengraph-image/twitter-image
+      pairs for /shop, /about, /methodology, /resources/[category], /resources/[category]/[slug],
+      AND the two static segments that shadow the dynamic route (/resources/videos,
+      /resources/reports — they do NOT inherit [category]'s files; caught in build verification).
+      BlogPosting JSON-LD gained `image`. Post cards: title + summary + "Published Month D, YYYY"
+      (brand date format); long paths render domain-only in the footer. Verified in built HTML:
+      og:image + twitter:image present on all 12 previously-missing pages; sample card rendered
+      1200×630.
+- [x] **/blog/:slug redirect trap — ✅ FIXED 2026-07-18.** `nativePostRedirects()` in next.config.ts
+      scans src/content/posts frontmatter at build and emits `/blog/<slug>` →
+      `/resources/<category>/<slug>` for every non-news post, BEFORE the blanket news rule
+      (first match wins) — automatic for all future articles. Verified on `next start`: article
+      slugs 308 → their articles URL (200), the news slug + /blog hub unchanged.
 - [ ] **Dead 410 citation** (exploreboone.com Town-of-Boone event URL) on the fireworks report, also
       inside its JSON-LD — swap before the page's evergreen-2027 job.
 - [ ] Low: sitemap `lastModified: new Date()` on every entry each build; TechArticle on /methodology

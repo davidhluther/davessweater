@@ -53,6 +53,7 @@ export default async function Page({ params }: { params: Promise<{ category: str
       headline: post.title,
       url: `${SITE_BASE}${url}`,
       mainEntityOfPage: `${SITE_BASE}${url}`,
+      image: `${SITE_BASE}${url}/opengraph-image`,
       ...(post.date ? { datePublished: post.date } : {}),
       ...(post.summary ? { description: post.summary } : {}),
       author: { "@type": "Organization", name: "Dave's Sweater" },
