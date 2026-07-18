@@ -6,6 +6,7 @@ WIND_TOL, WIND_SLOPE = 3.0, 2.0
 WIND_WIDTH_K = 0.5  # vagueness tax: half the forecast-range width is added to the error
 RAIN_TOL, RAIN_SLOPE = 0.1, 20.0
 SNOW_MIN_TOL, SNOW_PCT, SNOW_SLOPE = 1.0, 0.20, 2.0
+TYPE_TRACE_CREDIT = 6.0  # none-vs-precip disagreement inside the amount tolerances
 
 
 def precip_type(rain_in, snow_in):
@@ -50,12 +51,37 @@ def _snow_tol(actual_snow):
     return max(SNOW_MIN_TOL, (actual_snow or 0) * SNOW_PCT)
 
 
-def _type_points(pred_type, actual_type):
+_PRECIP_TYPES = {"rain", "snow", "mixed"}
+
+
+def _is_trace(rain_in, snow_in):
+    """Amounts the amount score already treats as indistinguishable from zero."""
+    return (rain_in or 0) <= RAIN_TOL and (snow_in or 0) <= SNOW_MIN_TOL
+
+
+def _type_points(pred, actual, pred_type, actual_type):
     if pred_type == actual_type:
         return 10.0
-    precip = {"rain", "snow", "mixed"}
-    if pred_type in precip and actual_type in precip:
+    if pred_type in _PRECIP_TYPES and actual_type in _PRECIP_TYPES:
         return 4.0
+    # Trace band: the type boundary (0.005" rain / 0.05" snow) sits far below the
+    # amount tolerances (0.1" / 1"), so without this rule a "none" forecast on a
+    # trace day scores 0/10 on type beside a 10/10 on amount — the same claim
+    # graded fully wrong and fully right at once. When the precip side of a
+    # none-vs-precip disagreement is inside the amount tolerances, the miss is
+    # partial, not total. A source that names precip but omits the total cannot
+    # claim the band (no gain by omission).
+    if pred_type == "none" and actual_type in _PRECIP_TYPES:
+        if _is_trace(actual.get("rain_in"), actual.get("snow_in")):
+            return TYPE_TRACE_CREDIT
+    elif actual_type == "none" and pred_type in _PRECIP_TYPES:
+        fp = pred.get("fields_provided", [])
+        needs_rain = pred_type in ("rain", "mixed")
+        needs_snow = pred_type in ("snow", "mixed")
+        if ((not needs_rain or ("rain_amount" in fp and pred.get("rain_in") is not None))
+                and (not needs_snow or ("snow_amount" in fp and pred.get("snow_in") is not None))
+                and _is_trace(pred.get("rain_in"), pred.get("snow_in"))):
+            return TYPE_TRACE_CREDIT
     return 0.0
 
 
@@ -129,7 +155,7 @@ def score_prediction(pred, actual):
     high = _band(pred.get("high_f"), actual.get("high_f"), 30, TEMP_TOL, TEMP_SLOPE) if "high" in fp else None
     low = _band(pred.get("low_f"), actual.get("low_f"), 30, TEMP_TOL, TEMP_SLOPE) if "low" in fp else None
     wind = _wind_points(pred, actual)
-    ptype = _type_points(pred.get("precip_type"), actual_type) if "precip_type" in fp else None
+    ptype = _type_points(pred, actual, pred.get("precip_type"), actual_type) if "precip_type" in fp else None
     pamt = _amount_points(pred, actual, actual_type)
 
     iv = _wind_interval(pred) if "wind" in fp else None

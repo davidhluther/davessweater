@@ -84,6 +84,47 @@ def test_wrong_precip_form_gets_partial_type_credit():
     r = score_prediction(pred, act)
     assert r["breakdown"]["precip_type"]["points"] == 4.0
 
+def test_none_forecast_on_trace_rain_day_gets_partial_type_credit():
+    # Actual 0.03" is inside the amount tolerance (<= 0.1"), so a "none" forecast
+    # is nearly right: 6/10 type, full amount — never 0/10 next to a 10/10.
+    act = {"high_f": 80, "low_f": 60, "wind_mph": 5, "rain_in": 0.03, "snow_in": 0.0}
+    pred = P(high_f=80, low_f=60, wind_mph=5, precip_type="none", rain_in=0.0, snow_in=0.0,
+             fields_provided=["high","low","wind","precip_type","rain_amount","snow_amount"])
+    r = score_prediction(pred, act)
+    assert r["breakdown"]["precip_type"]["points"] == 6.0
+    assert r["breakdown"]["precip_amount"]["points"] == 10.0
+    assert r["score"] == 96.0
+
+def test_none_forecast_beyond_trace_band_still_misses_type():
+    act = {"high_f": 80, "low_f": 60, "wind_mph": 5, "rain_in": 0.15, "snow_in": 0.0}
+    pred = P(high_f=80, low_f=60, wind_mph=5, precip_type="none", rain_in=0.0, snow_in=0.0,
+             fields_provided=["high","low","wind","precip_type","rain_amount","snow_amount"])
+    assert score_prediction(pred, act)["breakdown"]["precip_type"]["points"] == 0.0
+
+def test_zero_qpf_rain_forecast_on_dry_day_gets_partial_type_credit():
+    # The mirror case (e.g. a thunderstorm weather-code with 0" QPF, nothing fell).
+    dry = {"high_f": 80, "low_f": 60, "wind_mph": 5, "rain_in": 0.0, "snow_in": 0.0}
+    pred = P(high_f=80, low_f=60, wind_mph=5, precip_type="rain", rain_in=0.0,
+             fields_provided=["high","low","wind","precip_type","rain_amount"])
+    r = score_prediction(pred, dry)
+    assert r["breakdown"]["precip_type"]["points"] == 6.0
+    assert r["breakdown"]["precip_amount"]["points"] == 10.0
+
+def test_rain_forecast_without_amount_gets_no_trace_credit():
+    # Names precip but omits the total -> can't claim the trace band (no gain by omission).
+    dry = {"high_f": 80, "low_f": 60, "wind_mph": 5, "rain_in": 0.0, "snow_in": 0.0}
+    pred = P(high_f=80, low_f=60, wind_mph=5, precip_type="rain",
+             fields_provided=["high","low","wind","precip_type"])
+    assert score_prediction(pred, dry)["breakdown"]["precip_type"]["points"] == 0.0
+
+def test_none_forecast_on_sub_tolerance_snow_day_gets_partial_type_credit():
+    act = {"high_f": 30, "low_f": 20, "wind_mph": 10, "rain_in": 0.0, "snow_in": 0.8}
+    pred = P(high_f=30, low_f=20, wind_mph=10, precip_type="none", rain_in=0.0, snow_in=0.0,
+             fields_provided=["high","low","wind","precip_type","rain_amount","snow_amount"])
+    assert score_prediction(pred, act)["breakdown"]["precip_type"]["points"] == 6.0
+    act_heavy = dict(act, snow_in=3.0)
+    assert score_prediction(pred, act_heavy)["breakdown"]["precip_type"]["points"] == 0.0
+
 def test_precip_type_derivation():
     assert precip_type(0.2, 0.0) == "rain"
     assert precip_type(0.0, 3.0) == "snow"
