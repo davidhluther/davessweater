@@ -714,6 +714,21 @@ model only.
       Recommendation: ship a private daily tracker, decide cuts at ~30 days (or earlier with a methodology
       disclosure). Tracker script still to be written as `scripts/` tooling.
 - [ ] **Ray's real price for the "Paid" chip** on `/right-wrong-ray` — owner to supply the figure.
+- [ ] **M5 multi-location "multiplication" — spec written 2026-07-18, pending owner review:**
+      `planning/specs/2026-07-18-multi-location-multiplication-design.md`. Decisions taken in spec:
+      real per-town URLs (`/weather/{slug}`) with a switcher-as-router (NO client-state toggle — SEO is
+      half the point); Boone keeps `/` (no `/weather/boone` twin — dup-canonical lesson); per-town
+      Right/Wrong boards at `/right-wrong-ray/{slug}` on the identical rubric, gated by the existing
+      `MIN_SCORED_DAYS` pattern, **never blended into one average**; Boone data layout untouched, new
+      towns under `data/locations/{slug}/`. **Town list DECIDED (owner, 2026-07-18): Watauga first by
+      traffic/population, then expand beyond.** Ahrefs volumes pulled same day (in spec §3; 460 units,
+      KD 0–1 everywhere): Boone ~9.3k/mo, Blowing Rock ~3k, Banner Elk ~2.3k, Beech ~2k, everything
+      else ≤206, **Valle Crucis ~4 (demoted from P0 — data falsified the foot-traffic assumption)**.
+      Plan: P0 = Blowing Rock + Deep Gap (silent capture; Deep Gap = subtitle/brand slot), P1 = pages
+      at ≥9 scored days + Banner Elk + Beech Mtn (the real demand), P2 = publish the two embargoed
+      posts + long-tail batch. **Ray's per-town capture DECIDED (owner, 2026-07-18): once daily** via
+      his public blurbs endpoint. **Still open (spec §7):** owner nod on the P0 composition change
+      (VC→Deep Gap), URL naming (`/weather/{slug}` as specced?), keyed-source quota tolerance.
 
 ### Homepage design backlog (owner review, 2026-07-01 — banked, not yet actioned)
 - [ ] **iPhone shot: find it a new home; the Today module owns above-the-fold long-term.** The Apple
