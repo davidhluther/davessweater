@@ -692,6 +692,18 @@ model only.
 - [ ] **Scoring recalibration — the big one (owner-flagged 2026-07-02).** Clustered 90s = weak
       differentiation, and on trace days (0.071") a "none" forecast incoherently earned 10/10 amount after
       0/10 type. Owner wants balance and explicitly NO double-penalty on trace misses. Model on FULL history
+  - [x] **Trace incoherence half — ✅ FIXED 2026-07-18 (uncommitted).** Root cause: type boundary (0.005"
+        rain) vs amount tolerance (0.1") disagree 20×, so any 0.005–0.1" day graded the same forecast 0/10
+        type + 10/10 amount (147 historical rows, both directions — incl. googleweather's 0"-QPF rain-category
+        days). Fix: none-vs-precip type miss inside the amount tolerances earns 6/10 (`TYPE_TRACE_CREDIT`,
+        `scoring.py:_type_points` + `_is_trace`); precip-without-a-total still gets 0 (no gain by omission —
+        Ray's wet days unchanged). Modeled on full history BEFORE implementing: source-blind, all 10 sources
+        lifted +0.56..+1.26 (Ray +0.56/12 days, Open-Meteo +1.08/89 — NOT tuned against Ray; gap widens 0.5
+        only because Ray makes fewer trace-day "none" calls). No double-penalty: a trace miss now costs 4 pts
+        total. 5 new pytest cases; 200 py tests green; history rescored (`rescore_history.py`, 100 files;
+        consistency test green); `/methodology` + `CLAUDE.md` updated. New avgs: Open-Meteo 92.80, Ray 72.28.
+  - [ ] **Remaining (the actual recalibration):** clustered-90s differentiation — merged 20-pt precip score /
+        tighter-steeper temp bands; same full-history modeling discipline. Unchanged below:
       before touching the scorer: trace-day partial type credit / type-gated amount cap / merged 20-pt
       precipitation score / tighter-steeper temp bands; show per-source deltas + the wins-by-omission
       fairness check (as the R2 revert did); update `/methodology` + `CLAUDE.md`; rescore via

@@ -101,7 +101,10 @@ export default async function Page() {
                 <td className="py-2 pr-3 tabular-nums">10</td>
                 <td className="py-2">
                   exact match (rain, snow, mixed, or none) = 10. Right that <em>something</em> falls but wrong
-                  form, say rain when it snowed, = 4. Otherwise 0.
+                  form, say rain when it snowed, = 4. A miss inside the trace band = 6: when the disagreement
+                  between &quot;none&quot; and &quot;precip&quot; involves an amount the row below already treats
+                  as zero (rain of 0.1&Prime; or less, snow of 1&Prime; or less), the call was nearly right, and
+                  a forecast is never graded fully wrong on type while fully right on amount. Otherwise 0.
                 </td>
               </tr>
               <tr>
@@ -122,7 +125,9 @@ export default async function Page() {
         <p className="mt-1 max-w-2xl text-sm text-muted">
           Every forecast is scored out of a fixed 100. The one wrinkle is the rain total. A forecast of no rain
           is a zero-inch prediction, so on a dry day it earns those points like any other right call. A forecast
-          of rain with no stated total leaves the amount blank and earns nothing for it.
+          of rain with no stated total leaves the amount blank and earns nothing for it. The trace-band
+          partial credit above follows the same logic in reverse, and it also demands the number: a source
+          that predicted rain but never said how much cannot claim its miss was only a trace.
         </p>
         <p className="mt-3 max-w-2xl text-sm text-muted">
           That matters for{" "}

@@ -63,7 +63,7 @@ GitHub Actions run the **data** pipeline and commit `data/` to `main`; each push
 | High temp     | 30        | within 2°F = full | -3 pts per °F beyond  |
 | Low temp      | 30        | within 2°F = full | -3 pts per °F beyond  |
 | Wind speed    | 20        | within 3 mph = full | -2 pts per mph beyond (interval midpoint + a 0.5× range-width vagueness tax) |
-| Precip type   | 10        | exact = 10; right category / wrong form = 4 | 0 otherwise |
+| Precip type   | 10        | exact = 10; right category / wrong form = 4; trace-band none-vs-precip miss = 6 | 0 otherwise |
 | Precip amount | 10        | snow-aware (rain ±0.1", snow ±max(1", 20%)) | rain -20/in, snow -2/in |
 
 **Precip & the implied-zero rule (2026-06-30):** scored out of a fixed 100. A forecast of **"no precip"** is a
@@ -75,6 +75,16 @@ when `precip_type == "none"`). This replaced the short-lived R2 coverage-normali
 outrank a more-accurate one purely by omitting the amount. Precip **type** follows the forecast's weather
 category (a rain / storm / snow forecast counts as predicting precipitation even at 0" QPF, so a thunderstorm
 isn't mislabeled "none"), which also keeps the Apple/Open-Meteo fallback scoring consistent (`compare.py:_to_contract`).
+
+**Trace-band partial type credit (2026-07-18):** the type boundary (rain > 0.005", snow > 0.05") sits far below
+the amount tolerances (0.1" / 1"), so a "none" forecast on a trace day used to score 0/10 on type beside 10/10 on
+amount — the same claim graded fully wrong and fully right at once (147 historical rows; owner-flagged 2026-07-02).
+Fix: a none-vs-precip type disagreement earns **6/10** (`TYPE_TRACE_CREDIT` in `scoring.py:_type_points`) when the
+precip side's amounts are inside the amount tolerances (`_is_trace`), in either direction. A source that names
+precip but omits the total cannot claim the band (no gain by omission — Ray's wet-forecast days unchanged). Not
+tuned against Ray: source-blind, lifted all 10 sources (+0.56 to +1.26 avg; Ray +0.56, Open-Meteo +1.08). History
+rescored via `rescore_history.py`. This narrows the trace incoherence only; the broader recalibration (merged
+20-pt precip, temp-band tightening) stays open in `CHECKLIST.md`.
 
 **Capture-day low recovery (2026-07-01):** Met.no and OpenWeatherMap derive the daily low as `min()` over their
 sub-daily timeseries. On the capture day (~midday) that series no longer covers the pre-dawn hours, so its "low"
