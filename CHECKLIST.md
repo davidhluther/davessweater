@@ -864,6 +864,10 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
       first-shell times were never captured ("I don't have them. Ignore."). Draft stays staged in
       `planning/seo/` in case 2027 revives the concept (the observe-live checklist item below repeats
       annually).
+- [ ] **Guideline stack (spec §7)** — `guidelines/seo/DS_VOICE.md` DRAFT stub landed 2026-07-19 (condensed
+      from CLAUDE.md's voice section; owner review pending). Still to write: `DS_CONTENT_STRUCTURE.md` +
+      `DS_WRITING_QUALITY.md` (+ satire-lane rules from the tracker). CLAUDE.md now has a "Content
+      production" section mapping the pipeline (briefs/drafts in `planning/seo/`, finals in `src/content/posts/`).
 - [ ] **Report Card franchise route** — v1 ships the June card under Articles for speed. The tracker's intended
       home is `/report-card/{yyyy-mm}` (recurring franchise); build that route + 301 the Articles URL when ready.
 - [ ] **STANDING MONTHLY: publish the report card for each completed month** (owner directive 2026-07-08).
