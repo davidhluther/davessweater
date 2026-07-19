@@ -878,6 +878,17 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
       from CLAUDE.md's voice section; owner review pending). Still to write: `DS_CONTENT_STRUCTURE.md` +
       `DS_WRITING_QUALITY.md` (+ satire-lane rules from the tracker). CLAUDE.md now has a "Content
       production" section mapping the pipeline (briefs/drafts in `planning/seo/`, finals in `src/content/posts/`).
+- [ ] **Multi-location launch content — PREPPED 2026-07-19, publishes gate on P1 town pages.**
+      Map: `planning/seo/multi-location-content-map.md` (~19,700/mo addressable across 18 places,
+      KD 0-1; layers + sequencing + per-town keyword table). Staged in `planning/seo/drafts/`:
+      **17-high-country-towns.md** (News announcement, NEW — publish the day town pages ship) and
+      **rays-66-locations-3-forecasts.md** ("What we do instead" now filled with the real 17-town
+      build; publish-morning checklist in its header; follows the announcement by 1-2 days).
+      Data-gated follow-ups mapped: flagship per-town accuracy piece (~Sept 1, needs ~30 scored
+      days/town; the elevation question is its spine), July report card gains a wider-field
+      paragraph. Owner reviews drafts before publish (house rule). ⚠️ Owner mentioned "Keytastic"
+      (set up for Pigasus) — nothing by that name exists in any repo/skill/connector; awaiting
+      owner clarification (noted in map §5).
 - [ ] **Report Card franchise route** — v1 ships the June card under Articles for speed. The tracker's intended
       home is `/report-card/{yyyy-mm}` (recurring franchise); build that route + 301 the Articles URL when ready.
 - [ ] **STANDING MONTHLY: publish the report card for each completed month** (owner directive 2026-07-08).
