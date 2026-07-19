@@ -39,8 +39,10 @@ def test_registry_loads_and_is_valid():
     assert "boone" not in slugs
     for loc in locs:
         assert loc["provenance"], "every pin needs coordinate provenance"
-        # Watauga-area sanity box — a wrong-state geocode fails loudly
-        assert 35.9 < loc["lat"] < 36.6 and -82.2 < loc["lon"] < -81.2
+        # Five-county coverage sanity box (Watauga/Ashe/Avery/Mitchell/Wilkes/
+        # Yancey, Burnsville west to N. Wilkesboro east) — a wrong-state
+        # geocode fails loudly. Widened deliberately 2026-07-19.
+        assert 35.85 < loc["lat"] < 36.55 and -82.45 < loc["lon"] < -81.05
 
 
 def test_perfect_town_day_scores_100_and_writes_comparison(tmp_path):

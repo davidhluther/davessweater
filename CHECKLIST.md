@@ -792,8 +792,18 @@ model only.
   - [ ] **P1 trigger (~2026-07-28+):** once a town has ≥9 scored days, build `/weather` hub +
         `/weather/{slug}` pages + `/right-wrong-ray/{slug}` boards + switcher (spec §5). Towns
         launch individually as they cross the gate.
+  - [x] **Five-county major-towns expansion — ✅ 2026-07-19 (owner: "cover the major towns in
+        Watauga, Ashe, Mitchell, Wilkes, and Yancey").** Registry now **17 towns** (+Boone = 18
+        places): adds Jefferson, Spruce Pine, Bakersville, North Wilkesboro, Wilkesboro (NO Ray
+        station — N. Wilkesboro is a different municipality, no borrowing), Burnsville (Ray's own
+        named Hawk Branch station, 8.3 km, noted). All geocode-verified; volumes pulled (Burnsville
+        ~1.3k/mo, Wilkesboro ~1.3k, Spruce Pine ~960 — county seats beat the Watauga long tail);
+        elevation span now 1,001→5,436 ft. Live captures verified for all six + Ray rows for five.
+        Test sanity box widened to the five-county footprint. **Tomorrow.io quota now 18/25 per
+        hour — the NEXT town batch must space or subset that source.**
   - [ ] **Watch 2026-07-19/20 crons:** first unattended runs of location capture + Ray per-town +
-        location scoring (scoring no-ops until the archive posts; first scored days ~07-21..23).
+        location scoring across all 17 towns (scoring no-ops until the archive posts; first scored
+        days ~07-21..23).
 
 ### Homepage design backlog (owner review, 2026-07-01 — banked, not yet actioned)
 - [ ] **iPhone shot: find it a new home; the Today module owns above-the-fold long-term.** The Apple
