@@ -778,8 +778,22 @@ model only.
         only — wind/precip live in his regional narrative, so they're honest forfeits; possible
         later upgrade: icon-filename → precip type, needs a vetted icon vocabulary). Workflow step
         added (non-gating). Live run captured 7 days for both towns; 2 new pytest.
-  - [ ] **P1 trigger (~2026-07-28+):** once both towns have ≥9 scored days, build `/weather` hub +
-        `/weather/{slug}` pages + `/right-wrong-ray/{slug}` boards + switcher (spec §5).
+  - [x] **Capture phases collapsed — ALL 11 towns live 2026-07-19 (owner: "Add the towns").**
+        Registry now: Blowing Rock, Deep Gap, Banner Elk, Beech Mtn (Avery mountaintop pin, 5,436 ft
+        — the Watauga CDP fragment rejected), Seven Devils, Valle Crucis, Vilas, Foscoe,
+        West Jefferson, Sugar Grove, Todd. All geocode-verified w/ provenance; Ray station IDs
+        mapped for 9 (Seven Devils + Sugar Grove have NO station in their community — Ray renders
+        honestly absent; never borrow a neighbor's). Live-verified: 33 keyless captures + 9 Ray
+        town captures OK; day-one spread Beech 68.4° vs West Jefferson 81.3° high. Quota ceiling
+        documented: Tomorrow.io 25 req/hr binds at ~24 towns. **Full-66 Ray mirror REJECTED with
+        reasons — spec §9** (station sites ≠ towns; High Country identity; teardown-post
+        credibility; thin-content risk on a cold-start domain; git-pipeline strain at 600
+        files/day).
+  - [ ] **P1 trigger (~2026-07-28+):** once a town has ≥9 scored days, build `/weather` hub +
+        `/weather/{slug}` pages + `/right-wrong-ray/{slug}` boards + switcher (spec §5). Towns
+        launch individually as they cross the gate.
+  - [ ] **Watch 2026-07-19/20 crons:** first unattended runs of location capture + Ray per-town +
+        location scoring (scoring no-ops until the archive posts; first scored days ~07-21..23).
 
 ### Homepage design backlog (owner review, 2026-07-01 — banked, not yet actioned)
 - [ ] **iPhone shot: find it a new home; the Today module owns above-the-fold long-term.** The Apple

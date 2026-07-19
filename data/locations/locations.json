@@ -1,5 +1,5 @@
 {
-  "_comment": "M5 multi-location registry — the single source of truth for every tracked town except Boone (Boone stays at the legacy top-level data/ paths and on the homepage). Coordinate provenance is mandatory (standing rule: no eyeballed pins). Spec: planning/specs/2026-07-18-multi-location-multiplication-design.md",
+  "_comment": "M5 multi-location registry — the single source of truth for every tracked town except Boone (Boone stays at the legacy top-level data/ paths and on the homepage). Coordinate provenance is mandatory (standing rule: no eyeballed pins). Towns without rays_station_id have NO Ray's station in their community — Ray renders honestly absent there; never borrow a neighboring station. Spec: planning/specs/2026-07-18-multi-location-multiplication-design.md",
   "locations": [
     {
       "slug": "blowing-rock",
@@ -22,6 +22,101 @@
       "provenance": "Open-Meteo geocoder 2026-07-18 (Watauga County entry, elev 915 m; the Graham County Deep Gap explicitly rejected)",
       "rays_station_id": "57",
       "rays_station_provenance": "weather.station.list 2026-07-18: 'Deep Gap' (36.236301/-81.52066, ~750 m from our pin)"
+    },
+    {
+      "slug": "banner-elk",
+      "name": "Banner Elk",
+      "lat": 36.16318,
+      "lon": -81.8715,
+      "elevation_ft": 3701,
+      "county": "Avery",
+      "provenance": "Open-Meteo geocoder 2026-07-19 (Avery entry, pop 1138, elev 1128 m)",
+      "rays_station_id": "13",
+      "rays_station_provenance": "weather.station.list 2026-07-19: 'Banner Elk' (Town Hall, 0.3 km from our pin)"
+    },
+    {
+      "slug": "beech-mountain",
+      "name": "Beech Mountain",
+      "lat": 36.18457,
+      "lon": -81.8815,
+      "elevation_ft": 5436,
+      "county": "Avery",
+      "provenance": "Open-Meteo geocoder 2026-07-19 — the Avery entry (elev 1657 m) is the mountaintop town center; the lower Watauga-side CDP fragment (1294 m) deliberately rejected. Highest incorporated town in the eastern US (~5,506 ft published).",
+      "rays_station_id": "12",
+      "rays_station_provenance": "weather.station.list 2026-07-19: 'Beech Mountain' (Fred's General Mercantile atop the mountain, 5,028 ft, ~0.7 km from our pin)"
+    },
+    {
+      "slug": "seven-devils",
+      "name": "Seven Devils",
+      "lat": 36.15818,
+      "lon": -81.83539,
+      "elevation_ft": 3970,
+      "county": "Avery/Watauga",
+      "provenance": "Open-Meteo geocoder 2026-07-19 (Avery entry, pop 192, elev 1210 m); town straddles the county line. NO rays_station_id: Ray has no Seven Devils station (nearest are Banner Elk 2.9 km, Sugar Mountain 3.8 km — different communities)."
+    },
+    {
+      "slug": "valle-crucis",
+      "name": "Valle Crucis",
+      "lat": 36.20929,
+      "lon": -81.77844,
+      "elevation_ft": 2677,
+      "county": "Watauga",
+      "provenance": "Open-Meteo geocoder 2026-07-19 (Watauga entry, pop 412, elev 816 m)",
+      "rays_station_id": "5",
+      "rays_station_provenance": "weather.station.list 2026-07-19: 'Valle Crucis' (0.2 km from our pin)"
+    },
+    {
+      "slug": "vilas",
+      "name": "Vilas",
+      "lat": 36.24568,
+      "lon": -81.76761,
+      "elevation_ft": 2746,
+      "county": "Watauga",
+      "provenance": "Open-Meteo geocoder 2026-07-19 (Watauga entry, elev 837 m)",
+      "rays_station_id": "99",
+      "rays_station_provenance": "weather.station.list 2026-07-19: 'Vilas' (Motorcycle Medic in Vilas, 3.7 km from our pin — dispersed rural community, station explicitly sited in Vilas)"
+    },
+    {
+      "slug": "foscoe",
+      "name": "Foscoe",
+      "lat": 36.16179,
+      "lon": -81.76566,
+      "elevation_ft": 3041,
+      "county": "Watauga",
+      "provenance": "Open-Meteo geocoder 2026-07-19 (Watauga entry, pop 1370, elev 927 m); Hwy 105 corridor",
+      "rays_station_id": "74",
+      "rays_station_provenance": "weather.station.list 2026-07-19: 'Foscoe' (Holloway Corner Kitchen on Hwy 105, 0.6 km from our pin)"
+    },
+    {
+      "slug": "west-jefferson",
+      "name": "West Jefferson",
+      "lat": 36.40374,
+      "lon": -81.49288,
+      "elevation_ft": 2976,
+      "county": "Ashe",
+      "provenance": "Open-Meteo geocoder 2026-07-19 (Ashe entry, pop 1308, elev 907 m)",
+      "rays_station_id": "10",
+      "rays_station_provenance": "weather.station.list 2026-07-19: 'West Jefferson' (0.4 km from our pin, AsheWeather.Com)"
+    },
+    {
+      "slug": "sugar-grove",
+      "name": "Sugar Grove",
+      "lat": 36.2579,
+      "lon": -81.78817,
+      "elevation_ft": 2677,
+      "county": "Watauga",
+      "provenance": "Open-Meteo geocoder 2026-07-19 (Watauga entry, elev 816 m). NO rays_station_id: Ray has no Sugar Grove station (nearest is Vilas 3.5 km — a different community)."
+    },
+    {
+      "slug": "todd",
+      "name": "Todd",
+      "lat": 36.30957,
+      "lon": -81.59538,
+      "elevation_ft": 2982,
+      "county": "Ashe/Watauga",
+      "provenance": "Open-Meteo geocoder 2026-07-19 (Ashe entry, elev 909 m); community straddles the county line",
+      "rays_station_id": "95",
+      "rays_station_provenance": "weather.station.list 2026-07-19: 'Todd' (3.7 km from our pin — dispersed river-valley community, station explicitly named Todd, AsheWeather.Com)"
     }
   ]
 }
