@@ -13,7 +13,7 @@ export const metadata = {
   title: "Resources",
   description: DESCRIPTION,
   alternates: { canonical: "/resources" },
-  openGraph: { title: "Resources — Dave's Sweater", description: DESCRIPTION },
+  openGraph: { title: "Resources — Dave's Sweater", description: DESCRIPTION, url: "https://davessweater.com/resources" },
 };
 
 function countLine(count: number, noun: string): string {

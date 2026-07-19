@@ -213,6 +213,7 @@ function buildJsonLd(views: VenueView[], faqs: Faq[], todayStr: string) {
       geo: { "@type": "GeoCoordinates", latitude: venue.lat, longitude: venue.lon },
     },
     description: `Official listing: "${venue.officialWording}". Details and dusk math at ${PAGE_URL}`,
+    image: "https://davessweater.com/assets/fireworks-photo.webp",
     ...(venue.sources.length
       ? { organizer: { "@type": "Organization", name: venue.sources[0].name, url: venue.sources[0].url } }
       : {}),

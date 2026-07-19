@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
     title: def.label,
     description: def.description,
     alternates: { canonical: def.href },
-    openGraph: { title: `${def.label} — Dave's Sweater`, description: def.description },
+    openGraph: { title: `${def.label} — Dave's Sweater`, description: def.description, url: `https://davessweater.com${def.href}` },
   };
 }
 

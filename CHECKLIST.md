@@ -967,10 +967,21 @@ if the chips are gone, re-create from this list:
       `/resources/<category>/<slug>` for every non-news post, BEFORE the blanket news rule
       (first match wins) — automatic for all future articles. Verified on `next start`: article
       slugs 308 → their articles URL (200), the news slug + /blog hub unchanged.
-- [ ] **Dead 410 citation** (exploreboone.com Town-of-Boone event URL) on the fireworks report, also
-      inside its JSON-LD — swap before the page's evergreen-2027 job.
-- [ ] Low: sitemap `lastModified: new Date()` on every entry each build; TechArticle on /methodology
-      lacks dates; og:url absent on /resources* pages; Dataset lacks `license`; Events lack image/offers.
+- [x] **Dead 410 citation — ✅ FIXED 2026-07-19.** The TDA purges past-event pages, so the per-event
+      URL is gone for good; Jones House (the town's own page, live) promoted to primary source —
+      it now feeds the Event schema organizer — and the TDA citation repointed at their stable
+      annual-events page. Verified: zero references to the dead URL in built HTML.
+- [x] **LOW batch — ✅ FIXED 2026-07-19.** Sitemap: posts carry their real dates as `lastmod`, all
+      other routes honestly omit it (the daily build-date stamp taught Google to distrust it).
+      /methodology TechArticle: datePublished 2026-06-26 (R4 ship) + dateModified 2026-07-18
+      (trace-band change; bump on scoring changes — comment in the file). og:url added to
+      /resources hub + category + post metadata. Event schema: fireworks events carry the CC0
+      fireworks photo, GMHG carries the credited torch photo.
+- [ ] **Dataset `license` — OWNER DECISION, deliberately not set.** The repo has no LICENSE file, so
+      declaring one in schema would grant rights nobody has granted. If desired: CC BY 4.0 fits the
+      data-democracy thesis (free reuse, credit required) — add a LICENSE + the schema property
+      together. Event `offers` also skipped deliberately: GMHG admission is paid (a $0 offer would
+      be false) and per-show fireworks pricing was never verified — add only with verified prices.
 
 ## SEO / performance / accessibility (audited 2026-07-01)
 Multi-agent audit + Lighthouse (production, mobile). **SEO = 100** (the promotion-readiness metadata/JSON-LD/

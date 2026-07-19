@@ -128,6 +128,7 @@ function buildJsonLd() {
       },
       description: "The 70th Grandfather Mountain Highland Games. Scottish heavy athletics, Highland dance, piping and drumming, Celtic music, and clan gatherings over four days at MacRae Meadows.",
       url: PAGE_URL,
+      image: "https://davessweater.com/assets/gmhg-torch-lighting-photo-by-skip-sickler-courtesy-grandfather-mountain-stewardship-foundation.webp",
     },
     {
       "@context": "https://schema.org",

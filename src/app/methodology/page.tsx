@@ -27,6 +27,11 @@ const jsonLd = [
     "description":
       "The 100-point model, the NWS qualitative-wind mapping, and where the actual weather comes from.",
     "about": "Weather forecast accuracy scoring methodology",
+    // Real dates from the changelog: page shipped with R4 (2026-06-26); last
+    // substantive rubric change was the trace-band type credit (2026-07-18).
+    // Bump dateModified when the scoring model changes.
+    "datePublished": "2026-06-26",
+    "dateModified": "2026-07-18",
     "isAccessibleForFree": true,
     "author": { "@type": "Organization", "name": "Dave's Sweater" },
     "publisher": { "@type": "Organization", "name": "Dave's Sweater", "url": "https://davessweater.com" },

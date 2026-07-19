@@ -68,8 +68,11 @@ export const VENUES: FireworksVenue[] = [
     lat: 36.2049,
     lon: -81.6507,
     sources: [
-      { name: "ExploreBoone (Watauga County TDA)", url: "https://www.exploreboone.com/event/town-of-boones-4th-of-july-fireworks/27478/" },
+      // Jones House (the town's own) leads — it also feeds the Event schema's
+      // organizer. The TDA's per-event URL 410'd after the show (they purge past
+      // events), so the TDA citation points at their stable annual-events page.
       { name: "Jones House Cultural Center (Town of Boone)", url: "https://www.joneshouse.org/4thofjuly" },
+      { name: "ExploreBoone (Watauga County TDA)", url: "https://www.exploreboone.com/events/annual-events/" },
     ],
     verifiedOn: "2026-07-02",
     weatherPolicy: "Not stated on any official source; a day-of call would land on the town's channels.",
