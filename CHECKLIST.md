@@ -922,6 +922,28 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
 - [ ] **Post detail date format** — the detail route renders `post.date` raw (ISO); site standard is
       "Month D, YYYY" (`lib/dates.ts`). Pre-existing (affects Substack posts too); format when convenient.
 
+## Disavow submission + GA4 verification (2026-07-20, routed from PG IA 2 per David)
+Brief: `DISAVOW-GA4-HANDOFF.md`. Both tasks are DS-owned follow-ups.
+- [x] **GA4 live measurement ID CONFIRMED — no change needed.** Live davessweater.com sends to exactly
+      **`G-7XL0TZ4GSS`** (the March ID) — verified three ways: hardcoded in `AnalyticsScripts.tsx:36,41`,
+      and live in production (gtag loader src + `gtag('config', …)` + `window.dataLayer`, `gtag` present so
+      it IS receiving data). **`G-F3TW73EZK1` (June) is RETIRED** — appears nowhere in code or live source.
+      The mistaken Corpay-account property (543003059, "receives no data") therefore is NOT the live tag
+      (the live tag fires + collects). ⚠️ **David's final check (GA4-admin fact not readable from the site):**
+      confirm `G-7XL0TZ4GSS`'s data stream sits under HIS OWN GA4 property/account, then finish deleting the
+      mis-added Corpay property 543003059. Context: marketing-baseline-log.md Q6 (pigasus-group).
+- [~] **Disavow file REFRESHED + ready — awaiting David's upload (his account click, not silent).**
+      Re-audited `sc-domain:davessweater.com` backlinks via Ahrefs 2026-07-20: profile grew 250 → **308**
+      referring domains, still **0 dofollow / 0 organic traffic across ALL 308** (100% the same SEO/PBN spam
+      net; 300/308 Ahrefs-flagged, the other 8 obvious by name). Appended the **58 new** spam domains to
+      `planning/seo/davessweater-disavow.txt` (now 308 unique `domain:` lines; dated cluster + updated header
+      counts); refreshed `planning/seo/davessweater-disavow-notes.md` (summary + a Submission log section).
+      **Nothing to remove** (all 250 prior are still live RDs). Files live in gitignored `planning/` (local
+      only — never committed). **David: upload `davessweater-disavow.txt` at
+      search.google.com/search-console/disavow-links (domain property), then I'll stamp the submission date
+      in the notes' Submission log.** The spam net keeps blasting new domains at the `*weather.com` family,
+      so re-run this refresh ~monthly and re-upload the whole file (uploads are full replacements).
+
 ## Click tracking (PR #117 `analytics-click-tracking` — ✅ MERGED 2026-07-07)
 Owner chose both tools, sitewide: Microsoft Clarity (heatmaps/recordings) + GA4 custom click events.
 - [x] **GA4 `element_click` custom event, sitewide — DONE + LIVE.** One delegated `document` click listener
