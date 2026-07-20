@@ -168,18 +168,23 @@ function parseFaqs(md: string): { q: string; a: string }[] {
 // and then flows through the same sanitizer as feed content.
 async function getNativePosts(): Promise<BlogPost[]> {
   if (!existsSync(POSTS_DIR)) return [];
-  const files = (await readdir(POSTS_DIR)).filter((f) => f.endsWith(".md"));
+  // .md = hand-authored posts; .mdoc = Keystatic (CMS) posts. Both are YAML
+  // frontmatter + a markdown-compatible body, so one reader serves both.
+  const files = (await readdir(POSTS_DIR)).filter((f) => f.endsWith(".md") || f.endsWith(".mdoc"));
   const out: BlogPost[] = [];
   for (const f of files) {
     const { data, body } = parseFrontmatter(await readFile(join(POSTS_DIR, f), "utf8"));
-    if (!data.slug || !data.title) continue;
+    // Keystatic stores the slug as the filename and doesn't write a `slug:` key,
+    // so fall back to the filename when the frontmatter omits it.
+    const slug = data.slug || f.replace(/\.(md|mdoc)$/, "");
+    if (!slug || !data.title) continue;
     const category = data.category === "news" ? "news" : "articles";
     const bodyNoH1 = stripLeadingH1(body);
     const headings = parseHeadings(bodyNoH1);
     const rendered = marked.parse(bodyNoH1, { async: false }) as string;
     out.push({
       title: data.title,
-      slug: data.slug,
+      slug,
       category,
       date: data.date,
       summary: data.summary,

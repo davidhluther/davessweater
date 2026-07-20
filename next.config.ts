@@ -12,14 +12,15 @@ function nativePostRedirects() {
   let files: string[] = [];
   const dir = join(process.cwd(), "src/content/posts");
   try {
-    files = readdirSync(dir).filter((f) => f.endsWith(".md"));
+    files = readdirSync(dir).filter((f) => f.endsWith(".md") || f.endsWith(".mdoc"));
   } catch {
     return out;
   }
   for (const f of files) {
     const head = readFileSync(join(dir, f), "utf8").slice(0, 2000);
     const category = /^category:\s*["']?([\w-]+)/m.exec(head)?.[1] ?? "news";
-    const slug = /^slug:\s*["']?([\w-]+)/m.exec(head)?.[1] ?? f.replace(/\.md$/, "");
+    // CMS (.mdoc) posts store the slug as the filename, not a frontmatter key.
+    const slug = /^slug:\s*["']?([\w-]+)/m.exec(head)?.[1] ?? f.replace(/\.(md|mdoc)$/, "");
     if (category !== "news") {
       out.push({ source: `/blog/${slug}`, destination: `/resources/${category}/${slug}`, permanent: true });
     }
@@ -42,6 +43,13 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // getNativePosts() reads src/content/posts/*.{md,mdoc} off the filesystem.
+  // Next's tracer only bundles files it can see statically, so any route that
+  // renders in a Lambda rather than at build (e.g. a future revalidate window)
+  // would otherwise get an empty reader. Ship the content with every function.
+  outputFileTracingIncludes: {
+    "/*": ["./src/content/**/*"],
+  },
   async headers() {
     return [
       {

@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import ChromeGate from "@/components/ChromeGate";
 import JsonLd from "@/components/JsonLd";
 import AnalyticsScripts from "@/components/AnalyticsScripts";
 import TrackingOptOut from "@/components/TrackingOptOut";
@@ -63,9 +64,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         <JsonLd data={siteJsonLd} />
-        <SiteHeader />
+        <ChromeGate><SiteHeader /></ChromeGate>
         <main id="main" className="flex-1">{children}</main>
-        <SiteFooter />
+        <ChromeGate><SiteFooter /></ChromeGate>
         <TrackingOptOut />
         <AnalyticsScripts clarityId={process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID} />
       </body>

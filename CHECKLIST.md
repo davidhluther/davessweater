@@ -841,6 +841,29 @@ model only.
       tab (`target="_blank" rel="noopener noreferrer"`), same pattern as the page's own fallback link;
       `ShopGrid` dropped `Dialog`/`iframe`/client state, back to a plain server component.
 
+## Content editor (Keystatic CMS) — ✅ BUILT 2026-07-19, owner setup pending for live editing
+Owner asked to replicate Pigasus's "Keytastic" (= Keystatic, the Git-based CMS in
+`pigasus-group/keystatic.config.ts`). Ported the four-piece pattern: `keystatic.config.ts` (Posts
+collection, local storage in dev / GitHub storage `davidhluther/davessweater` in prod),
+`src/app/keystatic/` + `src/app/api/keystatic/` (editor UI + API route with the same try/catch 503
+degrade so a pre-setup build never breaks), `src/components/ChromeGate.tsx` (hides site header/footer
+on /keystatic). Deps added: `@keystatic/core`, `@keystatic/next`, `@markdoc/markdoc`.
+- [x] **Reader coexistence (the safe part):** CMS writes `.mdoc`; `getNativePosts` (data.ts) now reads
+      `.md` + `.mdoc` with slug-from-filename fallback; `nativePostRedirects` (next.config) globs both.
+      Round-trip verified programmatically (a Keystatic-shaped `.mdoc` renders through `marked` with
+      bold/link/list/FAQ/TOC all correct) AND the 4 existing `.md` posts still load untouched. Editor
+      live-verified in dev (browser): collection loads, create form renders every field with the house
+      help text, Articles/News categories, title→slug autofill. Build 41/41, 214 vitest, lint green.
+      robots.txt disallows /keystatic + /api/keystatic; `.keystatic/` gitignored;
+      `outputFileTracingIncludes` ships content to Lambdas (the Pigasus prod-empty-reader bug, pre-empted).
+- [ ] **OWNER — one-time GitHub App for live editing** (`docs/cms.md` has the steps): visit
+      davessweater.com/keystatic → wizard → create `davessweater-keystatic` app → add 4 env vars in
+      Vercel (Production+Preview) → redeploy. Until then, local `/keystatic` works fully; the deployed
+      editor shows the setup screen and the public site is unaffected.
+- [ ] **Optional follow-up:** migrate the 4 original `.md` posts into the CMS (convert to `.mdoc`,
+      drop the explicit `slug:` key). Deferred deliberately — it touches redirect/sitemap coupling, so
+      it's a reviewed change, not a side effect. They render + hand-edit fine as-is meanwhile.
+
 ## To do — content / distribution
 - [ ] Instagram automation (Graph API posting).
 - [ ] Weekly summary workflow + graphic.
