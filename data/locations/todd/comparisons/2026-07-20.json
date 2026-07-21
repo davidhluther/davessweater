@@ -1,0 +1,92 @@
+{
+  "date": "2026-07-20",
+  "location": "Todd",
+  "location_slug": "todd",
+  "actuals": {
+    "date": "2026-07-20",
+    "fetched_at": "2026-07-21T07:48:32.328358-04:00",
+    "location": "Todd",
+    "location_slug": "todd",
+    "high_f": 79.9,
+    "low_f": 65.1,
+    "wind_mph": 6.2,
+    "gust_mph": 17.4,
+    "precip_type": "rain",
+    "rain_in": 0.244,
+    "snow_in": 0.0,
+    "precip_in": 0.244,
+    "weather_code": 61,
+    "conditions": "Slight rain",
+    "category": "rain"
+  },
+  "sources": {
+    "raysweather": {
+      "prediction": {
+        "date": "2026-07-20",
+        "high_f": 81,
+        "low_f": 63,
+        "golfballs": 3,
+        "fields_provided": [
+          "high",
+          "low"
+        ]
+      },
+      "score": {
+        "score": 59.7,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": false,
+          "precip_type": false,
+          "precip_amount": false
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 30.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 81,
+            "actual": 79.9,
+            "error": 1.1
+          },
+          "low_temp": {
+            "points": 29.7,
+            "max": 30,
+            "scored": true,
+            "predicted": 63,
+            "actual": 65.1,
+            "error": 2.1
+          },
+          "wind": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 6.2,
+            "error": null
+          },
+          "precip_type": {
+            "points": null,
+            "max": 10,
+            "scored": false,
+            "predicted": null,
+            "actual": "rain"
+          },
+          "precip_amount": {
+            "points": null,
+            "max": 10,
+            "scored": false,
+            "predicted": null,
+            "actual": 0.244,
+            "error": null,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}
