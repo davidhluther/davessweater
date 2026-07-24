@@ -1,0 +1,92 @@
+{
+  "date": "2026-07-23",
+  "location": "Bakersville",
+  "location_slug": "bakersville",
+  "actuals": {
+    "date": "2026-07-23",
+    "fetched_at": "2026-07-24T07:43:49.331587-04:00",
+    "location": "Bakersville",
+    "location_slug": "bakersville",
+    "high_f": 72.7,
+    "low_f": 64.1,
+    "wind_mph": 7.6,
+    "gust_mph": 19.9,
+    "precip_type": "rain",
+    "rain_in": 0.626,
+    "snow_in": 0.0,
+    "precip_in": 0.626,
+    "weather_code": 63,
+    "conditions": "Moderate rain",
+    "category": "rain"
+  },
+  "sources": {
+    "raysweather": {
+      "prediction": {
+        "date": "2026-07-23",
+        "high_f": 76,
+        "low_f": 63,
+        "golfballs": 2,
+        "fields_provided": [
+          "high",
+          "low"
+        ]
+      },
+      "score": {
+        "score": 56.1,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": false,
+          "precip_type": false,
+          "precip_amount": false
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 26.1,
+            "max": 30,
+            "scored": true,
+            "predicted": 76,
+            "actual": 72.7,
+            "error": 3.3
+          },
+          "low_temp": {
+            "points": 30.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 63,
+            "actual": 64.1,
+            "error": 1.1
+          },
+          "wind": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 7.6,
+            "error": null
+          },
+          "precip_type": {
+            "points": null,
+            "max": 10,
+            "scored": false,
+            "predicted": null,
+            "actual": "rain"
+          },
+          "precip_amount": {
+            "points": null,
+            "max": 10,
+            "scored": false,
+            "predicted": null,
+            "actual": 0.626,
+            "error": null,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}

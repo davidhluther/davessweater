@@ -1,0 +1,92 @@
+{
+  "date": "2026-07-23",
+  "location": "West Jefferson",
+  "location_slug": "west-jefferson",
+  "actuals": {
+    "date": "2026-07-23",
+    "fetched_at": "2026-07-24T07:43:26.678551-04:00",
+    "location": "West Jefferson",
+    "location_slug": "west-jefferson",
+    "high_f": 67.4,
+    "low_f": 60.2,
+    "wind_mph": 9.0,
+    "gust_mph": 20.4,
+    "precip_type": "rain",
+    "rain_in": 0.567,
+    "snow_in": 0.0,
+    "precip_in": 0.567,
+    "weather_code": 61,
+    "conditions": "Slight rain",
+    "category": "rain"
+  },
+  "sources": {
+    "raysweather": {
+      "prediction": {
+        "date": "2026-07-23",
+        "high_f": 70,
+        "low_f": 59,
+        "golfballs": 2,
+        "fields_provided": [
+          "high",
+          "low"
+        ]
+      },
+      "score": {
+        "score": 58.2,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": false,
+          "precip_type": false,
+          "precip_amount": false
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 28.2,
+            "max": 30,
+            "scored": true,
+            "predicted": 70,
+            "actual": 67.4,
+            "error": 2.6
+          },
+          "low_temp": {
+            "points": 30.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 59,
+            "actual": 60.2,
+            "error": 1.2
+          },
+          "wind": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 9.0,
+            "error": null
+          },
+          "precip_type": {
+            "points": null,
+            "max": 10,
+            "scored": false,
+            "predicted": null,
+            "actual": "rain"
+          },
+          "precip_amount": {
+            "points": null,
+            "max": 10,
+            "scored": false,
+            "predicted": null,
+            "actual": 0.567,
+            "error": null,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}

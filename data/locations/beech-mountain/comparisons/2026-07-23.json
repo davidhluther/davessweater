@@ -1,0 +1,92 @@
+{
+  "date": "2026-07-23",
+  "location": "Beech Mountain",
+  "location_slug": "beech-mountain",
+  "actuals": {
+    "date": "2026-07-23",
+    "fetched_at": "2026-07-24T07:43:23.076229-04:00",
+    "location": "Beech Mountain",
+    "location_slug": "beech-mountain",
+    "high_f": 63.0,
+    "low_f": 54.5,
+    "wind_mph": 7.0,
+    "gust_mph": 19.2,
+    "precip_type": "rain",
+    "rain_in": 0.591,
+    "snow_in": 0.0,
+    "precip_in": 0.591,
+    "weather_code": 63,
+    "conditions": "Moderate rain",
+    "category": "rain"
+  },
+  "sources": {
+    "raysweather": {
+      "prediction": {
+        "date": "2026-07-23",
+        "high_f": 65,
+        "low_f": 57,
+        "golfballs": 2,
+        "fields_provided": [
+          "high",
+          "low"
+        ]
+      },
+      "score": {
+        "score": 58.5,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": false,
+          "precip_type": false,
+          "precip_amount": false
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 30.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 65,
+            "actual": 63.0,
+            "error": 2.0
+          },
+          "low_temp": {
+            "points": 28.5,
+            "max": 30,
+            "scored": true,
+            "predicted": 57,
+            "actual": 54.5,
+            "error": 2.5
+          },
+          "wind": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 7.0,
+            "error": null
+          },
+          "precip_type": {
+            "points": null,
+            "max": 10,
+            "scored": false,
+            "predicted": null,
+            "actual": "rain"
+          },
+          "precip_amount": {
+            "points": null,
+            "max": 10,
+            "scored": false,
+            "predicted": null,
+            "actual": 0.591,
+            "error": null,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}

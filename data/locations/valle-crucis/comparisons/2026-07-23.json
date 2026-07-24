@@ -1,0 +1,92 @@
+{
+  "date": "2026-07-23",
+  "location": "Valle Crucis",
+  "location_slug": "valle-crucis",
+  "actuals": {
+    "date": "2026-07-23",
+    "fetched_at": "2026-07-24T07:43:23.727959-04:00",
+    "location": "Valle Crucis",
+    "location_slug": "valle-crucis",
+    "high_f": 71.9,
+    "low_f": 62.7,
+    "wind_mph": 8.0,
+    "gust_mph": 21.5,
+    "precip_type": "rain",
+    "rain_in": 0.528,
+    "snow_in": 0.0,
+    "precip_in": 0.528,
+    "weather_code": 63,
+    "conditions": "Moderate rain",
+    "category": "rain"
+  },
+  "sources": {
+    "raysweather": {
+      "prediction": {
+        "date": "2026-07-23",
+        "high_f": 73,
+        "low_f": 60,
+        "golfballs": 2,
+        "fields_provided": [
+          "high",
+          "low"
+        ]
+      },
+      "score": {
+        "score": 57.9,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": false,
+          "precip_type": false,
+          "precip_amount": false
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 30.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 73,
+            "actual": 71.9,
+            "error": 1.1
+          },
+          "low_temp": {
+            "points": 27.9,
+            "max": 30,
+            "scored": true,
+            "predicted": 60,
+            "actual": 62.7,
+            "error": 2.7
+          },
+          "wind": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 8.0,
+            "error": null
+          },
+          "precip_type": {
+            "points": null,
+            "max": 10,
+            "scored": false,
+            "predicted": null,
+            "actual": "rain"
+          },
+          "precip_amount": {
+            "points": null,
+            "max": 10,
+            "scored": false,
+            "predicted": null,
+            "actual": 0.528,
+            "error": null,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}
