@@ -1073,8 +1073,20 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
         Both wired into daily_capture.yml; 262 tests green. Index history accrues daily from today.
   - [ ] **Tourism v1 page** (route + name = orchestrator default `/tourism` unless owner renames):
         build ~Labor Day when the baseline matures — index data will be ready.
-  - [ ] **Traffic v1/v2 — BLOCKED on owner keys only:** free DriveNC + NPS signups (+ optional
-        TomTom) are name/email registrations only the owner can do. Everything else proceeds. **Weather events verified 2026-07-25:**
+  - [x] **Keys UNBLOCKED 2026-07-25 — owner supplied DriveNC + NPS + TomTom; all three
+        live-verified** + stored as GH secrets. DriveNC v2 shape confirmed:
+        `drivenc.gov/api/v2/get/{event,roadconditions,cameras}?key=` (roadconditions =
+        per-Division rows; Watauga = Division 11); WZDx keyless. ⚠️ TomTom flowSegmentData
+        defaults to km/h — request `unit=mph` (caught live).
+  - [x] **Traffic v2 actuals — BUILT + MERGED 2026-07-25 (PR #135).** `capture_traffic_actuals.py`
+        + own workflow (4 peak-window crons): 6 corridor pins, every one reverse-geocoded onto its
+        intended road (no-eyeballed-pins rule — first-guess pins ALL landed on side streets):
+        US-321 bypass, King St/421, NC-105 split, NC-105 Foscoe, US-321 Valley Blvd, US-421 Deep
+        Gap. 24 of 2,500 free calls/day. Day-one: King St 11/25 mph, bypass 20/30 (July Friday PM).
+        Corridor grading data accrues from today. 266 tests green.
+  - [ ] **Roads v1 — EXECUTING 2026-07-25** (dispatched agent, branch `feat/roads-v1`, the
+        2026-07-08 plan's 8 TDD tasks; workflow wiring reserved for the orchestrator). Orchestrator
+        verifies (incl. 390px mobile check), merges, wires DriveNC/NPS steps. **Weather events verified 2026-07-25:**
       NWS alerts API keyless (`api.weather.gov/alerts`, Watauga = NCZ018/NCC189) → new capture for
       watches/warnings; our own forecasts double as demand modifiers (leaf-Saturday sun ↑, festival
       rain ↓, powder → ski surge); the whole weather→demand→traffic chain is gradable because we
