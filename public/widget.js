@@ -49,6 +49,8 @@
   iframe.title = "Dave's Sweater forecast";
   iframe.setAttribute("scrolling", "no");
   iframe.setAttribute("loading", "lazy");
+  iframe.setAttribute("allowtransparency", "true");
+  iframe.style.background = "transparent";
   iframe.style.width = "100%";
   iframe.style.border = "0";
   iframe.style.display = "block";

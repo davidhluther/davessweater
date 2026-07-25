@@ -26,6 +26,9 @@ const weekdayShort = (date: string) =>
 function Shell({ id, children }: { id: string; children: React.ReactNode }) {
   return (
     <>
+      {/* The widget lives in an iframe on third-party pages: the embedding page's
+          background must show through around the card, whatever theme it uses. */}
+      <style>{`html, body { background: transparent }`}</style>
       <div
         id="ds-widget-root"
         className="mx-auto max-w-md overflow-hidden rounded-2xl bg-teal-900 text-white"
