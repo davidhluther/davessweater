@@ -1114,19 +1114,36 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
         US-321 bypass, King St/421, NC-105 split, NC-105 Foscoe, US-321 Valley Blvd, US-421 Deep
         Gap. 24 of 2,500 free calls/day. Day-one: King St 11/25 mph, bypass 20/30 (July Friday PM).
         Corridor grading data accrues from today. 266 tests green.
-  - [ ] **Roads v1 — EXECUTING 2026-07-25** (dispatched agent, branch `feat/roads-v1`, the
-        2026-07-08 plan's 8 TDD tasks; workflow wiring reserved for the orchestrator). Orchestrator
-        verifies (incl. 390px mobile check), merges, wires DriveNC/NPS steps.
-  - [ ] **Traffic model v0 — EXECUTING 2026-07-25** (owner: "can we use actuals+historical to begin
-        a predictive model?" → yes, structure-first): daily predict→grade loop, branch
-        `feat/traffic-model-v0`. Per-corridor congestion-ratio prediction = learned baseline cell
-        (corridor × weekday-class × window, cold-start fallback chain recorded per prediction) ×
-        DECLARED event priors (registry/athletics/Busy-ness band) × weather multiplier; binary
-        "jammed" (ratio <0.55) with Brier grading; comparer writes daily comparisons + running
-        `data/traffic/scores.json` split event-day vs ordinary. Runs SILENT — priors corrected
-        weekly by grading; by the Sep 5 opener there's a ~6-week graded track record before
-        anything publishes ("we've been grading ourselves since July"). Google predicted-ETA
-        rival-grading = later option (needs owner's Google Maps Platform billing signup). **Weather events verified 2026-07-25:**
+  - [x] **Roads v1 — SHIPPED 2026-07-25 (PR #136 + wiring commit f9a2e3a).** All 8 plan tasks:
+        rubric + ordinal scorer (reconciled tests-as-spec: Icy temperature-gated ≤30°F; WMO
+        freezing-rain codes 56/57/66/67 escalate to Hazardous), daily forecast from our own
+        Open-Meteo capture, DriveNC + NPS capture (LIVE FIELD CORRECTIONS: `snowandice` endpoint
+        doesn't exist — real one is `roadconditions`, per-county rows, Watauga/Ashe/Avery all
+        Division 11; event fields are RoadwayName/Description/EventType/IsFullClosure), scorer +
+        running road_scores.json, TS loaders w/ 48h freshness gate, **/roads page live** (static,
+        nav + sitemap + methodology §, dateModified bumped). Wired into daily_capture (forecast +
+        capture steps) + daily_compare (scoring step). Day-one: 14 High Country incidents incl. a
+        Parkway weather closure; first scored day 100/100. 275 py + 237 vitest; mobile-verified
+        390px. First fully forward-looking traffic-family product, ~4 months before first snow.
+  - [x] **Traffic model v0 — SHIPPED 2026-07-25 (PR #137).** Daily predict→grade loop, running
+        SILENT: per-corridor congestion-ratio forecasts (today+tomorrow × 4 windows) = learned
+        baseline cell (corridor × weekday-class × window; cold-start fallback chain recorded as
+        `basis` per prediction) × declared event priors (football ×0.55 downtown / academic inflow
+        ×0.65 / town events ×0.75 / Busy-ness band nudges on tourist corridors / outflow ×1.05;
+        "v0 priors, corrected by grading") × weather multiplier + logistic jammed probability.
+        Comparer grades yesterday (ratio MAE + jammed Brier, split event-day vs ordinary +
+        weekday-class) into running `data/traffic/scores.json`; idempotent; wired into the first
+        daily actuals run (grade → forecast). **Day-one prediction on record: King St 17:00
+        jammed p=0.79** — graded tomorrow morning. 42 new tests (main = 321 py total). By the
+        Sep 5 opener: ~6-week graded track record before anything publishes. v0 documented
+        simplifications: event multipliers uniform across windows; town-based corridor matching
+        (registry `corridors` taxonomy differs from actuals slugs — unify later).
+  - [ ] **NCDOT continuous-count historical data (owner email, optional but valuable):** hourly
+        volumes 24/365, public/clean — station-level exports need a request to the Traffic Survey
+        Group; unknown whether a continuous station sits on our corridors. Draft email provided
+        2026-07-25. If it lands: years of labeled hours joinable to reconstructed features
+        (weather archive + past schedules + festivals) — the free historical backfill. Commercial
+        alternatives confirmed dead ends (TomTom Stats = enterprise; Google = ToS §3.2.3). **Weather events verified 2026-07-25:**
       NWS alerts API keyless (`api.weather.gov/alerts`, Watauga = NCZ018/NCC189) → new capture for
       watches/warnings; our own forecasts double as demand modifiers (leaf-Saturday sun ↑, festival
       rain ↓, powder → ski surge); the whole weather→demand→traffic chain is gradable because we
