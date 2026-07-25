@@ -933,15 +933,11 @@ Brief: `DISAVOW-GA4-HANDOFF.md`. Both tasks are DS-owned follow-ups.
       (the live tag fires + collects). ✅ **CLOSED 2026-07-25 — owner corrected the GA4 admin situation**
       (stream ownership confirmed / mis-added Corpay property handled). Context: marketing-baseline-log.md
       Q6 (pigasus-group).
-- [~] **Disavow — BLOCKED on property type, discovered 2026-07-25 (owner screenshot): the disavow
-      tool rejects Domain properties** ("Domain properties are not supported at this time"), and
-      davessweater.com in GSC is the domain property. NOT yet submitted. Corrected procedure:
-      (1) GSC → Add property → **URL prefix** → `https://davessweater.com/` if it doesn't already
-      exist (verification instant — the GSC meta tag is live in layout.tsx); (2) disavow tool →
-      select the URL-prefix property → upload `planning/seo/davessweater-disavow.txt` (same file,
-      same format); (3) report the listed upload date → stamp it in
-      `planning/seo/davessweater-disavow-notes.md` Submission log and close this. www variant not
-      needed (308s to apex). Prior state:
+- [x] **Disavow — ✅ SUBMITTED 2026-07-25 by David** (308 domains, via the **URL-prefix property**
+      `https://davessweater.com/` — the disavow tool rejects Domain properties, so future
+      re-uploads use the URL-prefix property too). Submission log stamped in
+      `planning/seo/davessweater-disavow-notes.md`. **STANDING ~MONTHLY:** re-run the Ahrefs
+      refresh, append new spam RDs, David re-uploads (full replacement). Prior state:
       Re-audited `sc-domain:davessweater.com` backlinks via Ahrefs 2026-07-20: profile grew 250 → **308**
       referring domains, still **0 dofollow / 0 organic traffic across ALL 308** (100% the same SEO/PBN spam
       net; 300/308 Ahrefs-flagged, the other 8 obvious by name). Appended the **58 new** spam domains to
