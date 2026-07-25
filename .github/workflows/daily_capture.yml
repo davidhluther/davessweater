@@ -85,11 +85,17 @@ jobs:
         run: python scripts/capture_rays_locations.py
         continue-on-error: true
 
+      # Tourism forecast v0 (silent accrual): lodging prices for future weekend
+      # stays via the keyless Xotelo API. Script always exits 0 (fail-closed).
+      - name: Capture lodging demand (tourism forecast v0)
+        run: python scripts/capture_lodging_demand.py
+        continue-on-error: true
+
       - name: Commit captures
         run: |
           git config user.name "DavesSweaterBot"
           git config user.email "bot@davessweater.com"
-          git add data/predictions/ data/locations/ data/substack_feed.json data/fireworks_forecast.json
+          git add data/predictions/ data/locations/ data/demand/ data/substack_feed.json data/fireworks_forecast.json
           git commit -m "Daily capture $(date +%Y-%m-%d)" || echo "No changes to commit"
           git pull origin main --no-rebase -X ours || true
           git push origin main || (sleep 5 && git pull origin main --no-rebase -X ours && git push origin main)
