@@ -13,6 +13,8 @@ import SortableScoreTable, { type ScoreRow } from "@/components/SortableScoreTab
 import ScoreBreakdown from "@/components/ScoreBreakdown";
 import AccuracyDecayChart from "@/components/AccuracyDecayChart";
 import UpcomingForecasts from "@/components/UpcomingForecasts";
+import TownSwitcher from "@/components/TownSwitcher";
+import { listPublicTowns } from "@/lib/towns";
 import type { SourceEntry } from "@/lib/types";
 import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
@@ -82,9 +84,12 @@ const datasetJsonLd = {
 };
 
 export default async function Page() {
-  const [comp, scores, forecasts, leadtime] = await Promise.all([
-    getLatestComparison(), getScores(), getLatestForecasts(), getLeadtimeScores(),
+  const [comp, scores, forecasts, leadtime, publicTowns] = await Promise.all([
+    getLatestComparison(), getScores(), getLatestForecasts(), getLeadtimeScores(), listPublicTowns(),
   ]);
+  // Sibling town boards, shown only once at least one town is past the gate
+  // (otherwise the switcher would list Boone alone). Grows automatically.
+  const hasTownBoards = publicTowns.some((t) => t.slug !== "boone");
   const trackingDays = heroStats(scores).trackingDays;
   // Accuracy-decay section gates on usable data (2+ sources with 2+ charted
   // points) — the whole section renders nothing otherwise.
@@ -158,8 +163,11 @@ export default async function Page() {
       {/* Branded page header: same band language as the homepage hero, none of its furniture */}
       <section className="w-full bg-teal-700 text-white">
         <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:py-12">
-          <div className="text-xs font-bold uppercase tracking-wider text-orange-300">
-            Tracked daily | {trackingDays} days on the record
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="text-xs font-bold uppercase tracking-wider text-orange-300">
+              Tracked daily | {trackingDays} days on the record
+            </div>
+            {hasTownBoards && <TownSwitcher towns={publicTowns} current="boone" base="right-wrong-ray" />}
           </div>
           <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">Right Ray / Wrong Ray</h1>
           <p className="mt-2 max-w-2xl text-sm text-white/70">
