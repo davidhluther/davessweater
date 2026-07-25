@@ -1169,7 +1169,23 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
         (Town meters = IPS Group + ParkMobile, occupancy private; App State runs Modii
         permit-finder, no live counts) — parking stays cameras-later + the design doc's owner
         asks; near-term move = INFER pressure from event stacking (game + Holmes concert =
-        downtown full), which the index can do already. **Weather events verified 2026-07-25:**
+        downtown full), which the index can do already.
+  - [x] **Data-source brainstorm (owner-prompted 2026-07-25) + first build.** SHIPPED: **USGS
+        river gauges** (PR #139 — Watauga @ Sugar Grove, S Fork New @ Jefferson, Wilson Creek
+        gorge; public domain, keyless; recreation-demand + flood-risk axis; 3/3 sites live).
+        RANKED BACKLOG (all free unless noted): (1) **own GA4/GSC as trip-planning signal**
+        (out-of-region forecast views = intent; ours, zero ToS); (2) **calibration money-trail
+        series** — NC monthly county sales-tax distributions + NC ABC board sales + NPS Parkway
+        visitation stats (official, trailing; the "how busy was it really" ground truth);
+        (3) **RunSignup open API** (race calendars WITH participant counts — quantifies event
+        magnitude; Blood Sweat & Gears etc.); (4) **Town agenda parsing** (special-event permits
+        appear weeks early; we already pull the CivicPlus RSS); (5) fall-color report pages as
+        LEAF-MODEL GRADING source; (6) NC Wildlife hunting/fishing season dates (rural corridor
+        modifier); (7) NCHSAA high-school schedules (Friday-night locals); (8) quirky tier:
+        OpenSky ADS-B arrivals at GEV/UKF/Elk River strips (second-home pulse), Reddit chatter
+        monitor (incident detection; Reddit tool already connected), AppalCart ridership (records
+        request), town STR-permit registrations (supply side). Build order: (1)+(2) with the
+        tourism v1 page; (3)+(4) at next registry pass; rest opportunistic. **Weather events verified 2026-07-25:**
       NWS alerts API keyless (`api.weather.gov/alerts`, Watauga = NCZ018/NCC189) → new capture for
       watches/warnings; our own forecasts double as demand modifiers (leaf-Saturday sun ↑, festival
       rain ↓, powder → ski surge); the whole weather→demand→traffic chain is gradable because we
