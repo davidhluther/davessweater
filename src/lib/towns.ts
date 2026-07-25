@@ -15,7 +15,7 @@ import { readFile, readdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import type { Scores, Comparison } from "@/lib/types";
-import type { Forecast5Day } from "@/lib/forecast5";
+import { stripDays, type Forecast5Day, type StripDay } from "@/lib/forecast5";
 import type { ForecastDisplay } from "@/lib/types";
 import { MIN_SCORED_DAYS } from "@/lib/gating";
 
@@ -132,6 +132,36 @@ export async function publicSlugs(): Promise<string[]> {
   return (await listPublicTowns()).map((t) => t.slug);
 }
 
+export interface TownStatus extends Town {
+  scored_days: number;
+  /** Past the MIN_SCORED_DAYS gate (Boone always true). */
+  is_public: boolean;
+}
+
+/** Every town in the registry with its scored-day count and public flag —
+ *  drives the /weather hub, which shows the public towns as cards AND the
+ *  not-yet-gated towns honestly, with their running counts (the gate is a
+ *  feature, not a secret). Keyed off the SAME MIN_SCORED_DAYS gate as
+ *  listPublicTowns, so a town crossing the bar flips is_public with no code
+ *  change. */
+export async function listTownsWithStatus(): Promise<TownStatus[]> {
+  const towns = await allTowns();
+  const out: TownStatus[] = [];
+  for (const t of towns) {
+    const days = scoredDays(await getTownScores(t.slug));
+    out.push({ ...t, scored_days: days, is_public: t.slug === "boone" || days >= MIN_SCORED_DAYS });
+  }
+  return out;
+}
+
+/** A town's upcoming-day consensus strip (today first), assembled from its own
+ *  captures via the same stripDays() the homepage uses. Empty when the town has
+ *  no usable forecast yet. */
+export async function getTownStrip(slug: string, max = 5): Promise<StripDay[]> {
+  const f5 = await getTownForecast5(slug);
+  return stripDays(f5, { max });
+}
+
 // ── Comparisons (the daily Right/Wrong Ray result) ─────────────────────────
 export async function latestComparisonDate(slug: string): Promise<string | null> {
   const dir = join(townBase(slug), "comparisons");
@@ -211,8 +241,22 @@ export async function getTownForecast5(slug: string): Promise<Forecast5Day | nul
   if (!existsSync(predDir)) return null;
   const dates = (await readdir(predDir)).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort();
   if (!dates.length) return null;
-  const latest = dates[dates.length - 1];
-  const dir = join(predDir, latest);
+  // Prefer the most recent capture day that holds a multi-source snapshot
+  // (>= 2 forecasts). On a partial day only Ray's may have run — his forecast
+  // is one request, the keyed sources rotate under quota — and one source has
+  // no consensus to show. Fall back to the newest non-empty day if none has
+  // two, so a lone-Ray latest day doesn't blank the forecast.
+  let chosen: string | null = null;
+  let fallback: string | null = null;
+  for (let i = dates.length - 1; i >= 0; i--) {
+    const files = (await readdir(join(predDir, dates[i]))).filter((f) => f.endsWith("_forecast.json"));
+    if (!files.length) continue;
+    if (!fallback) fallback = dates[i];
+    if (files.length >= 2) { chosen = dates[i]; break; }
+  }
+  const date = chosen ?? fallback;
+  if (!date) return null;
+  const dir = join(predDir, date);
   const files = (await readdir(dir)).filter((f) => f.endsWith("_forecast.json"));
   const captures: Capture[] = [];
   for (const f of files) {
@@ -221,5 +265,5 @@ export async function getTownForecast5(slug: string): Promise<Forecast5Day | nul
   }
   if (!captures.length) return null;
   const town = await getTown(slug);
-  return buildForecast5FromCaptures(captures, town?.name ?? slug, `${latest}T12:00:00`);
+  return buildForecast5FromCaptures(captures, town?.name ?? slug, `${date}T12:00:00`);
 }

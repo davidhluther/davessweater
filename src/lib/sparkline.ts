@@ -4,9 +4,16 @@ import type { Scores } from "@/lib/types";
 // (entries where a raysweather score exists) so every sparkline shares an axis.
 type Key = string;
 
-export function sparkSeries(scores: Scores | null, keys: Key[]): Record<Key, number[]> {
+// requireRays scopes the series to the Ray-era window (entries where a
+// raysweather score exists) so the headline Boone sparklines share a common
+// axis. Per-town boards pass requireRays:false — a town with no Ray's station
+// (its column is honestly empty) still gets a trend line over all its days.
+export function sparkSeries(
+  scores: Scores | null, keys: Key[], opts?: { requireRays?: boolean },
+): Record<Key, number[]> {
+  const requireRays = opts?.requireRays ?? true;
   const entries = (scores?.entries ?? [])
-    .filter((e) => typeof (e as Record<string, unknown>).raysweather === "number")
+    .filter((e) => !requireRays || typeof (e as Record<string, unknown>).raysweather === "number")
     .slice()
     .sort((a, b) => String(a.date).localeCompare(String(b.date)));
   const out = Object.fromEntries(keys.map((k) => [k, [] as number[]])) as Record<Key, number[]>;
