@@ -105,11 +105,23 @@ jobs:
         run: python scripts/capture_wx_alerts.py
         continue-on-error: true
 
+      # Tourism/traffic events: App State athletics ICS feeds (football + hoops)
+      # from the verified registry. Fail-closed per feed; always exits 0.
+      - name: Capture App State athletics (ICS events)
+        run: python scripts/capture_events_ics.py
+        continue-on-error: true
+
+      # Busy-ness Index v0: 14-day forward regional demand score built from the
+      # hotel, STR, events, alerts, and forecast captures above. Fail-soft; exits 0.
+      - name: Compute Busy-ness Index (tourism forecast v0)
+        run: python scripts/compute_busyness.py
+        continue-on-error: true
+
       - name: Commit captures
         run: |
           git config user.name "DavesSweaterBot"
           git config user.email "bot@davessweater.com"
-          git add data/predictions/ data/locations/ data/demand/ data/alerts/ data/substack_feed.json data/fireworks_forecast.json
+          git add data/predictions/ data/locations/ data/demand/ data/alerts/ data/events/ data/substack_feed.json data/fireworks_forecast.json
           git commit -m "Daily capture $(date +%Y-%m-%d)" || echo "No changes to commit"
           git pull origin main --no-rebase -X ours || true
           git push origin main || (sleep 5 && git pull origin main --no-rebase -X ours && git push origin main)
