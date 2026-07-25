@@ -1049,6 +1049,19 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
       `data/demand/{date}.json` with derived per-town median min-rate + "high-share" per date (the
       index seeds; published number = OUR computation, never a vendor reprint). Wired into
       `daily_capture.yml` (continue-on-error). 6 new pytest (226 total green).
+- [ ] **Demand-signal expansion (owner-directed 2026-07-25) — event/calendar layer for tourism +
+      traffic.** Inventory mapped; source-verification research DISPATCHED 2026-07-25 (App State
+      athletics SIDEARM ICS + academic calendar incl. move-in — the likely 8/15 spike — festival
+      dates from primary sources: MerleFest, Boonerang, GMHG, Woolly Worm, Valle Country Fair,
+      Symphony by the Lake, WinterFest; TDA/chamber calendar ICS/RSS feeds; ski season; Christmas
+      tree season). Build after verification: a provenance-verified **event registry**
+      (fixed-date rules + ICS ingests + annual-verify entries, each with town/corridor/magnitude)
+      that the tourism index and traffic v2 both consume — spikes get EXPLAINED ("Aug 15 =
+      move-in"), and lodging catches what the calendar misses. **Weather events verified 2026-07-25:**
+      NWS alerts API keyless (`api.weather.gov/alerts`, Watauga = NCZ018/NCC189) → new capture for
+      watches/warnings; our own forecasts double as demand modifiers (leaf-Saturday sun ↑, festival
+      rain ↓, powder → ski surge); the whole weather→demand→traffic chain is gradable because we
+      already score the weather layer. Spec §1 table updated.
 - [ ] **v1 page** (`/tourism` or report-franchise slug — owner call): Busy-ness Index headline +
       30-day heat calendar + weekend rate trend + event/weather overlays. GATE: ~4–6 weeks of
       baseline (~Labor Day if v0 ships now — in time for leaf season). Grade the index itself later
