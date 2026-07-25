@@ -1062,9 +1062,19 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
       Festival marked DEFUNCT (last trace 2021). Housing-page hall tables are stale-2023 — only the
       verified top-level move-in windows are in the registry. ANNUAL: re-verify each spring; fill
       WinterFest/Christmas-in-July/GMHG 2027 dates when announced.
-  - [ ] **Next build (index engine):** ICS ingest capture (athletics kickoff times firm up late —
-        feed keeps the registry current) + the Busy-ness Index computation joining lodging (Xotelo/
-        AirROI) × registry × NWS alerts × weather — then the tourism v1 page + traffic v2. **Weather events verified 2026-07-25:**
+  - [x] **Index engine + athletics ICS — BUILT + MERGED 2026-07-25 (PR #134).**
+        `capture_events_ics.py` (stdlib RFC 5545 parser; 74 games across football/MBB/WBB; `home`
+        flag; football home dates match the registry) + `compute_busyness.py` (daily 14-day forward
+        index → `data/demand/index/{date}.json`: hotel high-share ×40 + STR fill ×25 + registry
+        events [negative-sign outflows subtract, seasons half-weight, feed-vs-registry football
+        dedup] + weekend +5; bands calm/typical/busy/slammed; named drivers; `provisional` until
+        ~4-6 wks of baseline; STR lead-time decay documented as v0 bias). Day-one index: **Aug 1 =
+        77 "slammed"** (App Summer + Horse Show + 87% hotels high + Sat) vs mid-week 11–13 calm.
+        Both wired into daily_capture.yml; 262 tests green. Index history accrues daily from today.
+  - [ ] **Tourism v1 page** (route + name = orchestrator default `/tourism` unless owner renames):
+        build ~Labor Day when the baseline matures — index data will be ready.
+  - [ ] **Traffic v1/v2 — BLOCKED on owner keys only:** free DriveNC + NPS signups (+ optional
+        TomTom) are name/email registrations only the owner can do. Everything else proceeds. **Weather events verified 2026-07-25:**
       NWS alerts API keyless (`api.weather.gov/alerts`, Watauga = NCZ018/NCC189) → new capture for
       watches/warnings; our own forecasts double as demand modifiers (leaf-Saturday sun ↑, festival
       rain ↓, powder → ski surge); the whole weather→demand→traffic chain is gradable because we
