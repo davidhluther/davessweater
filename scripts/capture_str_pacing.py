@@ -14,8 +14,16 @@ are market-level aggregated statistics, carried with the required
 "Data source: AirROI" attribution in every file, and any page publishing them
 must show the same attribution. Do not add per-listing data to this capture.
 
-Cost: 2 markets x 1 call/day on a pay-as-you-go key (~cents/day). The key comes
-from the AIRROI_API_KEY env var (GitHub Actions secret).
+Cost control (owner directive 2026-07-25): pulls are gated to Mon/Wed/Fri (NY),
+2 markets x 3 pulls/week on a pay-as-you-go key (~$1.30-2.60/mo at the quoted
+$0.05-0.10/call) — enough resolution to watch a weekend fill without daily
+spend. --force overrides the gate for testing. The key comes from the
+AIRROI_API_KEY env var (GitHub Actions secret).
+
+Sharing rule: this capture is the ONLY thing that calls AirROI. Every consumer
+(tourism page, feeds, traffic forecast, any future project) reads the committed
+JSON under data/demand/str/ — the repo is the API; vendor pulls never multiply
+with consumers.
 
 Fail-closed, stdlib only: no key or an API failure records nulls / skips, and
 the script ALWAYS exits 0 so a third-party outage can never fail the workflow.
@@ -45,6 +53,12 @@ NUM_MONTHS = 3
 CALL_SPACING_S = 1.0
 TIMEOUT_S = 30
 ATTRIBUTION = "Data source: AirROI"
+SAMPLE_WEEKDAYS = (0, 2, 4)  # Mon/Wed/Fri — the paid-pull cadence
+
+
+def is_sample_day(today: date) -> bool:
+    """Paid AirROI pulls run Mon/Wed/Fri only (owner cost directive)."""
+    return today.weekday() in SAMPLE_WEEKDAYS
 
 
 def upcoming_weekend_dates(today: date, weekends: int = 4) -> list[str]:
@@ -93,6 +107,7 @@ def fetch_market(market: dict, api_key: str) -> list[dict] | None:
 
 
 def main() -> int:
+    force = "--force" in sys.argv
     api_key = os.environ.get("AIRROI_API_KEY", "").strip()
     if not api_key:
         print("AIRROI_API_KEY not set; skipping STR pacing capture (exit 0).")
@@ -100,6 +115,9 @@ def main() -> int:
 
     now = datetime.now(NY)
     today = now.date()
+    if not is_sample_day(today) and not force:
+        print(f"{today} is not a sample day (Mon/Wed/Fri); skipping paid pull (exit 0).")
+        return 0
     weekend_dates = upcoming_weekend_dates(today)
 
     markets_out = {}

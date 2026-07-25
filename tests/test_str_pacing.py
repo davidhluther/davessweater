@@ -6,7 +6,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
-from capture_str_pacing import upcoming_weekend_dates, weekend_pacing
+from capture_str_pacing import is_sample_day, upcoming_weekend_dates, weekend_pacing
+
+
+def test_sample_days_are_mon_wed_fri():
+    # 2026-07-20 is a Monday.
+    assert [is_sample_day(date(2026, 7, 20 + i)) for i in range(7)] == [
+        True, False, True, False, True, False, False,
+    ]
 
 
 def test_upcoming_weekends_from_a_wednesday():
