@@ -140,6 +140,24 @@ jobs:
         run: python scripts/capture_river_gauges.py
         continue-on-error: true
 
+      # Calibration: Blue Ridge Parkway monthly visitation (NPS Stats API,
+      # keyless). Self-gates to one pull a month (the 3rd); exits 0 otherwise.
+      - name: Capture NPS Blue Ridge Parkway visitation (monthly)
+        run: python scripts/capture_nps_visits.py
+        continue-on-error: true
+
+      # Event magnitude: races within 40mi of Boone (RunSignup open API,
+      # keyless). Self-gates to a weekly (Monday) pull; exits 0 otherwise.
+      - name: Capture nearby races (RunSignup)
+        run: python scripts/capture_races.py
+        continue-on-error: true
+
+      # Early-warning: keyword scan of Town of Boone CivicPlus calendar + agenda
+      # RSS feeds for permitted events/closures. Daily, fail-soft; exits 0.
+      - name: Capture Town of Boone event signals (agenda scan)
+        run: python scripts/capture_town_signals.py
+        continue-on-error: true
+
       # Busy-ness Index v0: 14-day forward regional demand score built from the
       # hotel, STR, events, alerts, and forecast captures above. Fail-soft; exits 0.
       - name: Compute Busy-ness Index (tourism forecast v0)
@@ -150,7 +168,7 @@ jobs:
         run: |
           git config user.name "DavesSweaterBot"
           git config user.email "bot@davessweater.com"
-          git add data/predictions/ data/locations/ data/demand/ data/alerts/ data/events/ data/attention/ data/rivers/ data/substack_feed.json data/fireworks_forecast.json data/roads_forecast.json data/road_conditions/
+          git add data/predictions/ data/locations/ data/demand/ data/alerts/ data/events/ data/attention/ data/rivers/ data/calibration/ data/substack_feed.json data/fireworks_forecast.json data/roads_forecast.json data/road_conditions/
           git commit -m "Daily capture $(date +%Y-%m-%d)" || echo "No changes to commit"
           git pull origin main --no-rebase -X ours || true
           git push origin main || (sleep 5 && git pull origin main --no-rebase -X ours && git push origin main)

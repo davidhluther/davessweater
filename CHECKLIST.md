@@ -1190,6 +1190,21 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
       watches/warnings; our own forecasts double as demand modifiers (leaf-Saturday sun ↑, festival
       rain ↓, powder → ski surge); the whole weather→demand→traffic chain is gradable because we
       already score the weather layer. Spec §1 table updated.
+  - [x] **Calibration + event-magnitude layer built 2026-07-25 (branch `feat/calibration-signals`).**
+        Backlog items (2)(3)(4)(5)(6) shipped: **NPS BLRI monthly visitation** (`capture_nps_visits.py`
+        → `data/calibration/nps_blri_visits.json`; irmaservices.nps.gov Stats API, keyless, 564 months
+        back to 1979, monthly gate on the 3rd; textbook curve — Jan trough ~399k, Oct leaf-peak ~2.35M);
+        **RunSignup races** (`capture_races.py` → `data/events/races.json`; keyless, 40mi/12mo, weekly
+        Monday gate; 52 upcoming day-one — NOTE participant COUNTS are not in the search payload, only
+        `is_registration_open` is, so counts would need per-race calls we don't make); **Town of Boone
+        agenda scan** (`capture_town_signals.py` → `data/events/town_signals.json`; 3 CivicPlus RSS feeds
+        — events + all-calendars + agenda-center ModID=65 — keyword-filtered daily, 0 hits at build =
+        summer lull, all 3 reachable); **registry enrichment** — deer gun seasons (Northwestern Nov 21 /
+        Western Nov 28, TENTATIVE until ~Aug 1 regs digest) + `grading_sources` fall-color note
+        (Grandfather gallery, High Country Host, WataugaOnline). Backlog item (2) **NCDOR sales-tax +
+        NC ABC** = DOCUMENTED-ONLY (`data/calibration/README.md`): both are xlsx/PDF behind dated landing
+        pages, no stable CSV → out of stdlib scope; ingest notes recorded for a future capture. +21 tests
+        (328→349 green). Backlog items (1)(7)(8) still open.
 - [ ] **v1 page** (`/tourism` or report-franchise slug — owner call): Busy-ness Index headline +
       30-day heat calendar + weekend rate trend + event/weather overlays. GATE: ~4–6 weeks of
       baseline (~Labor Day if v0 ships now — in time for leaf season). Grade the index itself later
