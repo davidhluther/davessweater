@@ -1049,15 +1049,26 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
       `data/demand/{date}.json` with derived per-town median min-rate + "high-share" per date (the
       index seeds; published number = OUR computation, never a vendor reprint). Wired into
       `daily_capture.yml` (continue-on-error). 6 new pytest (226 total green).
-- [ ] **Demand-signal expansion (owner-directed 2026-07-25) — event/calendar layer for tourism +
-      traffic.** Inventory mapped; source-verification research DISPATCHED 2026-07-25 (App State
-      athletics SIDEARM ICS + academic calendar incl. move-in — the likely 8/15 spike — festival
-      dates from primary sources: MerleFest, Boonerang, GMHG, Woolly Worm, Valle Country Fair,
-      Symphony by the Lake, WinterFest; TDA/chamber calendar ICS/RSS feeds; ski season; Christmas
-      tree season). Build after verification: a provenance-verified **event registry**
-      (fixed-date rules + ICS ingests + annual-verify entries, each with town/corridor/magnitude)
-      that the tourism index and traffic v2 both consume — spikes get EXPLAINED ("Aug 15 =
-      move-in"), and lodging catches what the calendar misses. **Weather events verified 2026-07-25:**
+- [x] **Demand-signal expansion — EVENT REGISTRY BUILT + MERGED 2026-07-25 (PR #133).**
+      `data/events/registry.json`: 25 events + 5 seasons + 8 verified machine-readable feeds, every
+      record with source/verification-date/confidence flags (fireworks-matrix pattern). Verified:
+      **Aug 15 = App State continuing-student move-in** (confirms the day-one lodging spike; Art in
+      the Park stacks same day) · **Sep 5 opener = Labor Day Saturday** (traffic v2 has an extra
+      week vs the "late Aug" assumption) · Oct 10 Homecoming + Sugar Mtn Oktoberfest · **Oct 17–18
+      Woolly Worm + Valle Country Fair in peak leaf = the monster weekend** · athletics via
+      verified SIDEARM ICS (football sport_id=3, MBB 5, WBB 12; 29 is an empty decoy) · commencements
+      Dec 11 + May 6–8 · negative-demand entries (fall/spring break outflows). Feed reality: only
+      Downtown Boone ICS + Town of Boone RSS are plain-HTTP fetchable; Blowing Rock ICS needs a
+      browser-grade fetcher (WAF); Explore Boone/High Country Host/Ashe/Avery/Wilkes chambers have
+      NO feeds → festival layer is annual-verify by design. Ski 2026-27: App Ski Mtn official-
+      projected Nov 20–Mar 14; Beech/Sugar typical placeholders pending announcements. Christmas
+      tree season = typical Thanksgiving-Friday→Dec 24 (no county calendar exists). Todd New River
+      Festival marked DEFUNCT (last trace 2021). Housing-page hall tables are stale-2023 — only the
+      verified top-level move-in windows are in the registry. ANNUAL: re-verify each spring; fill
+      WinterFest/Christmas-in-July/GMHG 2027 dates when announced.
+  - [ ] **Next build (index engine):** ICS ingest capture (athletics kickoff times firm up late —
+        feed keeps the registry current) + the Busy-ness Index computation joining lodging (Xotelo/
+        AirROI) × registry × NWS alerts × weather — then the tourism v1 page + traffic v2. **Weather events verified 2026-07-25:**
       NWS alerts API keyless (`api.weather.gov/alerts`, Watauga = NCZ018/NCC189) → new capture for
       watches/warnings; our own forecasts double as demand modifiers (leaf-Saturday sun ↑, festival
       rain ↓, powder → ski surge); the whole weather→demand→traffic chain is gradable because we
