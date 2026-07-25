@@ -14,11 +14,12 @@ are market-level aggregated statistics, carried with the required
 "Data source: AirROI" attribution in every file, and any page publishing them
 must show the same attribution. Do not add per-listing data to this capture.
 
-Cost control (owner directive 2026-07-25): pulls are gated to Mon/Wed/Fri (NY),
-2 markets x 3 pulls/week on a pay-as-you-go key (~$1.30-2.60/mo at the quoted
-$0.05-0.10/call) — enough resolution to watch a weekend fill without daily
-spend. --force overrides the gate for testing. The key comes from the
-AIRROI_API_KEY env var (GitHub Actions secret).
+Cost control (owner directive 2026-07-25, tightened same day): pulls run ONCE
+a week, Mondays (NY) — 2 markets x 1 pull/week (~$0.45-0.90/mo at the quoted
+$0.05-0.10/call). Monday reads the coming weekend 4-5 days out (max lead time
+for the busy-weekend call) and same-weekday pulls give clean week-over-week
+fill comparisons for any fixed date. --force overrides the gate for testing.
+The key comes from the AIRROI_API_KEY env var (GitHub Actions secret).
 
 Sharing rule: this capture is the ONLY thing that calls AirROI. Every consumer
 (tourism page, feeds, traffic forecast, any future project) reads the committed
@@ -53,11 +54,11 @@ NUM_MONTHS = 3
 CALL_SPACING_S = 1.0
 TIMEOUT_S = 30
 ATTRIBUTION = "Data source: AirROI"
-SAMPLE_WEEKDAYS = (0, 2, 4)  # Mon/Wed/Fri — the paid-pull cadence
+SAMPLE_WEEKDAYS = (0,)  # Mondays only — the weekly paid-pull cadence
 
 
 def is_sample_day(today: date) -> bool:
-    """Paid AirROI pulls run Mon/Wed/Fri only (owner cost directive)."""
+    """Paid AirROI pulls run once a week, Mondays (owner cost directive)."""
     return today.weekday() in SAMPLE_WEEKDAYS
 
 

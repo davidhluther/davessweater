@@ -9,10 +9,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 from capture_str_pacing import is_sample_day, upcoming_weekend_dates, weekend_pacing
 
 
-def test_sample_days_are_mon_wed_fri():
+def test_sample_day_is_monday_only():
     # 2026-07-20 is a Monday.
     assert [is_sample_day(date(2026, 7, 20 + i)) for i in range(7)] == [
-        True, False, True, False, True, False, False,
+        True, False, False, False, False, False, False,
     ]
 
 

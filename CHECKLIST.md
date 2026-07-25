@@ -1087,9 +1087,12 @@ handlers: forecast/today/scores/verdict/towns + tourism later; prerendered RSS v
       folded into /api docs; /api/v1/tourism waits for tourism v1.
   - [ ] **Post-deploy check:** prod curl `davessweater.com/api/v1/forecast` (Lambda packaging of
         traced data files) + one real cross-origin widget embed.
-- [x] **API cost control + shared-data architecture (owner directive 2026-07-25).** Paid AirROI
-      pulls gated to **Mon/Wed/Fri** (`is_sample_day` in capture_str_pacing.py, --force override) →
-      ~$1.30–2.60/mo at quoted rates. Standing rule (in the script header): **each vendor gets
+- [x] **API cost control + shared-data architecture (owner directive 2026-07-25; tightened to
+      weekly same day).** Paid AirROI pulls gated to **Mondays only** (`is_sample_day` in
+      capture_str_pacing.py, --force override) → 2 calls/wk ≈ **$0.45–0.90/mo** at quoted rates.
+      Monday = max lead time on the coming weekend + clean week-over-week fill comparison. What we
+      pull: ONE endpoint (`/markets/metrics/future/pacing`) × 2 markets; the needed field is the
+      forward **fill_rate** curve (~90 days out; rate averages ride along free). Standing rule (in the script header): **each vendor gets
       exactly ONE capture point; every consumer — tourism page, feeds, traffic forecast, future
       projects — reads the committed `data/demand/` JSON. The repo is the API; pulls never multiply
       with consumers.** Xotelo (free) stays daily; revisit AirROI cadence against the first
