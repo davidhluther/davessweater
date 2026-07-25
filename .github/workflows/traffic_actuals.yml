@@ -1,0 +1,41 @@
+name: Traffic Actuals
+
+# TomTom corridor flow samples at the daily demand peaks (America/New_York
+# ~8 AM, noon, 5 PM, 7 PM; UTC crons sit an hour early in winter — acceptable
+# drift, the samples carry their own timestamps). 6 pins x 4 runs = 24 of
+# TomTom's 2,500 free calls/day.
+on:
+  schedule:
+    - cron: '7 12 * * *'
+    - cron: '7 16 * * *'
+    - cron: '7 21 * * *'
+    - cron: '7 23 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Sample corridor flow (fail-closed)
+        run: python scripts/capture_traffic_actuals.py
+        continue-on-error: true
+        env:
+          TOMTOM_API_KEY: ${{ secrets.TOMTOM_API_KEY }}
+
+      - name: Commit sample
+        run: |
+          git config user.name "DavesSweaterBot"
+          git config user.email "bot@davessweater.com"
+          git add data/traffic/
+          git commit -m "Traffic actuals sample $(date -u +%Y-%m-%dT%H:%MZ)" || echo "No changes to commit"
+          git pull origin main --no-rebase -X ours || true
+          git push origin main || (sleep 5 && git pull origin main --no-rebase -X ours && git push origin main)
