@@ -1074,14 +1074,26 @@ handlers: forecast/today/scores/verdict/towns + tourism later; prerendered RSS v
 - [x] **Owner sign-offs GIVEN 2026-07-25:** CC BY 4.0 data license APPROVED ("do the 4.0" — ties off
       the parked Dataset-license decision) · embeddable widget APPROVED ("do the widget") · town
       gating = same ≥9-scored-days gate everywhere (rec adopted, not overridden).
-- [ ] **BUILD IN FLIGHT 2026-07-25** (dispatched to an implementation agent, branch
-      `feat/public-feed-api-widget`): data/LICENSE (CC BY 4.0) + Dataset JSON-LD license property ·
-      `/api/v1/{forecast,today,scores,verdict,towns}` (days=1|3|5, town, detail=summary|full; CORS
-      open; license+attribution in every response) · prerendered RSS `/feed/{town}/forecast-{N}day.xml`
-      + `/feed/{town}/verdict.xml` · `/widget` route + `public/widget.js` (iframe embed, no
-      analytics in the embed, CC BY attribution line doubles as the backlink) · `/api` docs page.
-      Orchestrator verifies (incl. mandatory 390px mobile check) before PR. Tourism endpoint joins
-      with tourism v1.
+- [x] **BUILT + MERGED 2026-07-25 (PR #131).** data/LICENSE (CC BY 4.0) + data/README + Dataset
+      JSON-LD license property · `/api/v1/{forecast,today,scores,verdict,towns}` (days=1|3|5, town,
+      detail=summary|full; CORS open; license+attribution in every response; town param honors the
+      shared ≥9-scored-days gate — Boone only today, towns auto-appear as they cross) · prerendered
+      RSS `/feed/{town}/forecast-{N}day.xml` + `/feed/{town}/verdict.xml` + homepage autodiscovery ·
+      `/widget` (no analytics in the embed; CC BY attribution backlink; X-Frame exemption scoped to
+      /widget only) + `public/widget.js` (iframe loader, postMessage sizing) · `/api` docs page +
+      sitewide footer link. Vercel data tracing: `outputFileTracingIncludes` → data/**/*.json (no
+      PNGs), verified in .nft.json. 232 vitest + lint + build green; endpoints curled; RSS validates;
+      mobile checked 390px (/api) + 390/300px (/widget). Deviations logged in the PR: /feed/index
+      folded into /api docs; /api/v1/tourism waits for tourism v1.
+  - [ ] **Post-deploy check:** prod curl `davessweater.com/api/v1/forecast` (Lambda packaging of
+        traced data files) + one real cross-origin widget embed.
+- [x] **API cost control + shared-data architecture (owner directive 2026-07-25).** Paid AirROI
+      pulls gated to **Mon/Wed/Fri** (`is_sample_day` in capture_str_pacing.py, --force override) →
+      ~$1.30–2.60/mo at quoted rates. Standing rule (in the script header): **each vendor gets
+      exactly ONE capture point; every consumer — tourism page, feeds, traffic forecast, future
+      projects — reads the committed `data/demand/` JSON. The repo is the API; pulls never multiply
+      with consumers.** Xotelo (free) stays daily; revisit AirROI cadence against the first
+      month's actual bill.
 
 ## Click tracking (PR #117 `analytics-click-tracking` — ✅ MERGED 2026-07-07)
 Owner chose both tools, sitewide: Microsoft Clarity (heatmaps/recordings) + GA4 custom click events.
