@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // No blanket lastModified: stamping every URL with the build date (daily,
   // since data commits rebuild the site) teaches Google to distrust it. Posts
   // carry their real dates; everything else omits the field honestly.
-  const routes = ["", "/right-wrong-ray", "/shop"].map((r) => ({
+  const routes = ["", "/right-wrong-ray", "/roads", "/shop"].map((r) => ({
     url: `${base}${r}`, changeFrequency: "daily" as const, priority: r === "" ? 1 : 0.7,
   }));
   // The free-data hub (JSON API, RSS feeds, widget docs).

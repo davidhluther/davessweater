@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 const primary = [
   { href: "/", label: "Today" },
   { href: "/right-wrong-ray", label: "Right/Wrong Ray" },
+  { href: "/roads", label: "Roads" },
 ];
 const resources = [
   { href: "/resources/articles", label: "Articles" },
