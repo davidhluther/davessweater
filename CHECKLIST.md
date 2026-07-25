@@ -1086,7 +1086,17 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
         Corridor grading data accrues from today. 266 tests green.
   - [ ] **Roads v1 — EXECUTING 2026-07-25** (dispatched agent, branch `feat/roads-v1`, the
         2026-07-08 plan's 8 TDD tasks; workflow wiring reserved for the orchestrator). Orchestrator
-        verifies (incl. 390px mobile check), merges, wires DriveNC/NPS steps. **Weather events verified 2026-07-25:**
+        verifies (incl. 390px mobile check), merges, wires DriveNC/NPS steps.
+  - [ ] **Traffic model v0 — EXECUTING 2026-07-25** (owner: "can we use actuals+historical to begin
+        a predictive model?" → yes, structure-first): daily predict→grade loop, branch
+        `feat/traffic-model-v0`. Per-corridor congestion-ratio prediction = learned baseline cell
+        (corridor × weekday-class × window, cold-start fallback chain recorded per prediction) ×
+        DECLARED event priors (registry/athletics/Busy-ness band) × weather multiplier; binary
+        "jammed" (ratio <0.55) with Brier grading; comparer writes daily comparisons + running
+        `data/traffic/scores.json` split event-day vs ordinary. Runs SILENT — priors corrected
+        weekly by grading; by the Sep 5 opener there's a ~6-week graded track record before
+        anything publishes ("we've been grading ourselves since July"). Google predicted-ETA
+        rival-grading = later option (needs owner's Google Maps Platform billing signup). **Weather events verified 2026-07-25:**
       NWS alerts API keyless (`api.weather.gov/alerts`, Watauga = NCZ018/NCC189) → new capture for
       watches/warnings; our own forecasts double as demand modifiers (leaf-Saturday sun ↑, festival
       rain ↓, powder → ski surge); the whole weather→demand→traffic chain is gradable because we
