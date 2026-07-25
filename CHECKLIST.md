@@ -1138,12 +1138,19 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
         Sep 5 opener: ~6-week graded track record before anything publishes. v0 documented
         simplifications: event multipliers uniform across windows; town-based corridor matching
         (registry `corridors` taxonomy differs from actuals slugs — unify later).
-  - [ ] **NCDOT continuous-count historical data (owner email, optional but valuable):** hourly
-        volumes 24/365, public/clean — station-level exports need a request to the Traffic Survey
-        Group; unknown whether a continuous station sits on our corridors. Draft email provided
-        2026-07-25. If it lands: years of labeled hours joinable to reconstructed features
-        (weather archive + past schedules + festivals) — the free historical backfill. Commercial
-        alternatives confirmed dead ends (TomTom Stats = enterprise; Google = ToS §3.2.3). **Weather events verified 2026-07-25:**
+  - [~] **NCDOT continuous-count historical data — EMAIL SENT by owner 2026-07-25; awaiting
+        Traffic Survey Group reply.** Hourly volumes 24/365, public/clean; unknown whether a
+        continuous station sits on our corridors. If it lands: years of labeled hours joinable to
+        reconstructed features — the free historical backfill. Commercial alternatives are dead
+        ends (TomTom Stats = enterprise; Google = ToS §3.2.3).
+  - [ ] **Restaurant-API historical data — ANSWERED 2026-07-25: the APIs hold no demand history**
+        (Yelp/TripAdvisor "history" = review timestamps — lagging, thin at Boone scale, ToS-
+        encumbered; Google popular-times curves = the real thing but API-inaccessible and
+        scrape-barred). Bounded option ON THE TABLE: **BestTime.app one-shot** — one month $29,
+        pull historical busyness curves for ~20 Boone venues as permanent internal training
+        features, cancel. GATE: owner creates the free test account first → orchestrator
+        spot-checks Boone venue coverage before any card. Data stays internal/derived, never
+        republished raw. **Weather events verified 2026-07-25:**
       NWS alerts API keyless (`api.weather.gov/alerts`, Watauga = NCZ018/NCC189) → new capture for
       watches/warnings; our own forecasts double as demand modifiers (leaf-Saturday sun ↑, festival
       rain ↓, powder → ski surge); the whole weather→demand→traffic chain is gradable because we
