@@ -31,6 +31,22 @@ jobs:
         env:
           TOMTOM_API_KEY: ${{ secrets.TOMTOM_API_KEY }}
 
+      # Predict→grade loop, ONCE a day, on the first (12:07 UTC) run only. All
+      # four crons share this job, so gate on the UTC hour — reliable because
+      # only the '7 12 * * *' cron fires in the 12:00 UTC hour. (A
+      # workflow_dispatch triggers the model only if dispatched during that
+      # hour; acceptable.) Grade yesterday BEFORE forecasting today. Both
+      # scripts are fail-soft and exit 0; the trailing `|| true` guards the step.
+      - name: Grade yesterday, then forecast today + tomorrow (first daily run only)
+        run: |
+          if [ "$(date -u +%H)" = "12" ]; then
+            python scripts/compare_traffic.py || true
+            python scripts/forecast_traffic.py || true
+          else
+            echo "Not the 12:00 UTC run (hour=$(date -u +%H)); skipping traffic model."
+          fi
+        continue-on-error: true
+
       - name: Commit sample
         run: |
           git config user.name "DavesSweaterBot"
