@@ -91,6 +91,14 @@ jobs:
         run: python scripts/capture_lodging_demand.py
         continue-on-error: true
 
+      # Tourism forecast v0: STR booking pace (AirROI, owner-approved paid key;
+      # market-level stats only, attribution carried in-file). Exits 0 w/o key.
+      - name: Capture STR booking pace (tourism forecast v0)
+        run: python scripts/capture_str_pacing.py
+        continue-on-error: true
+        env:
+          AIRROI_API_KEY: ${{ secrets.AIRROI_API_KEY }}
+
       - name: Commit captures
         run: |
           git config user.name "DavesSweaterBot"
