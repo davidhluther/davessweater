@@ -1149,16 +1149,27 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
         scrape-barred). Bounded option ON THE TABLE: **BestTime.app one-shot** — one month $29,
         pull historical busyness curves for ~20 Boone venues as permanent internal training
         features, cancel. **DECLINED by owner 2026-07-25 — CLOSED.**
-  - [ ] **Busy-signal sweep round 2 — DISPATCHED 2026-07-25** (owner-directed): NCDOT continuous-
-        station self-serve hunt (incl. possible public MS2 TCDS portal — could moot the emailed
-        request) · **NCDOT cameras: 07-08 "no DOT cams in Boone" was WRONG — 6 cams verified on
-        our corridors** (NC-105 Boone + Foscoe, US-321 Bishop Ridge, US-421 both ramps, Broadstone;
-        sweep confirms still-URL pattern + reuse terms → CV-on-existing-cams could replace the
-        $500-900 own-camera v3 plan at $0) · webcam aggregators/hosted services (Windy API,
-        RaysWeather-style subscriptions) · untapped event feeds (events.appstate.edu platform,
-        Ticketmaster Discovery, Bandsintown, Appalachian Theatre, school calendars, Wikipedia
-        pageviews) · parking re-check (Passport/ParkMobile vendor data, App State deck counts).
-        Results → registry + next builds. **Weather events verified 2026-07-25:**
+  - [x] **Busy-signal sweep round 2 — DONE 2026-07-25; winners BUILT same day (PR #138).**
+        SHIPPED: **campus events capture** (calendar.appstate.edu Localist JSON, keyless — covers
+        Holmes Center/theatre/commencement; day-one pull caught tonight's Jon Pardi Kidd Brewer
+        stadium concert that athletics ICS + registry both missed — the missing driver behind
+        today's real King St congestion; NOTE: feed includes some off-site rows, consumers filter
+        by venue/address) + **Wikipedia attention capture** (official pageviews API, 5 regional
+        articles, rolling lag-safe series). VERDICTS on the rest: NCDOT continuous stations —
+        probably NONE in Watauga; MS2 TCDS portal exists but bot-blocked/JS (owner's emailed
+        request = the authoritative answer; AADT stays annual-baseline-only) · NCDOT cams = video
+        (HLS) not stills, reuse terms undocumented → CV-on-DOT-cams is an experiment-grade spike,
+        owner should ask NCDOT re image reuse when convenient · Windy webcams = display-only
+        (tokened URLs + attribution; not a sensor); **ResortCams = local Boone company
+        (828-963-7286), hosts App Ski/Beech cams, reportedly waives fees by location — worth an
+        owner call if we ever want a town cam** · Ticketmaster = free key but Boone coverage
+        doubtful (Holmes on AXS/SeatGeek instead) — skip unless Localist gaps appear · Eventbrite
+        search API dead (2020), Bandsintown artist-scoped — OUT · schools calendar = cheap annual
+        registry entries, add at next registry pass · **parking: confirmed NO live feed exists**
+        (Town meters = IPS Group + ParkMobile, occupancy private; App State runs Modii
+        permit-finder, no live counts) — parking stays cameras-later + the design doc's owner
+        asks; near-term move = INFER pressure from event stacking (game + Holmes concert =
+        downtown full), which the index can do already. **Weather events verified 2026-07-25:**
       NWS alerts API keyless (`api.weather.gov/alerts`, Watauga = NCZ018/NCC189) → new capture for
       watches/warnings; our own forecasts double as demand modifiers (leaf-Saturday sun ↑, festival
       rain ↓, powder → ski surge); the whole weather→demand→traffic chain is gradable because we
