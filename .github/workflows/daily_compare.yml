@@ -67,6 +67,19 @@ jobs:
             python scripts/compare.py
           fi
 
+      # Roads v1: score yesterday's road-condition forecast vs the captured
+      # DriveNC actual (data/road_scores.json is inside the git add data/ below).
+      - name: Score road-condition forecast
+        continue-on-error: true
+        env:
+          INPUT_DATE: ${{ github.event.inputs.date }}
+        run: |
+          if [ -n "$INPUT_DATE" ]; then
+            python scripts/compare_roads.py "$INPUT_DATE"
+          else
+            python scripts/compare_roads.py
+          fi
+
       # Recover any older day the archive lag left captured-but-unscored (best-
       # effort, retried daily). Runs after the main compare so a recovered
       # comparison is committed with the day's data.

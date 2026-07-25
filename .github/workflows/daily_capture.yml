@@ -53,6 +53,19 @@ jobs:
         run: python scripts/capture_iphone_weather.py
         continue-on-error: true
 
+      # Roads v1: forecast tomorrow's road conditions from our own Open-Meteo
+      # capture, then pull DriveNC conditions/incidents + NPS Parkway alerts.
+      - name: Forecast road conditions (from Open-Meteo)
+        run: python scripts/roads.py
+        continue-on-error: true
+
+      - name: Capture DriveNC road conditions + NPS Parkway alerts
+        run: python scripts/capture_roads.py
+        continue-on-error: true
+        env:
+          DRIVENC_API_KEY: ${{ secrets.DRIVENC_API_KEY }}
+          NPS_API_KEY: ${{ secrets.NPS_API_KEY }}
+
       - name: Capture fireworks forecast (seasonal; self-gating outside late June-July 5)
         run: python scripts/capture_fireworks_forecast.py
         continue-on-error: true
@@ -121,7 +134,7 @@ jobs:
         run: |
           git config user.name "DavesSweaterBot"
           git config user.email "bot@davessweater.com"
-          git add data/predictions/ data/locations/ data/demand/ data/alerts/ data/events/ data/substack_feed.json data/fireworks_forecast.json
+          git add data/predictions/ data/locations/ data/demand/ data/alerts/ data/events/ data/substack_feed.json data/fireworks_forecast.json data/roads_forecast.json data/road_conditions/
           git commit -m "Daily capture $(date +%Y-%m-%d)" || echo "No changes to commit"
           git pull origin main --no-rebase -X ours || true
           git push origin main || (sleep 5 && git pull origin main --no-rebase -X ours && git push origin main)
