@@ -1073,6 +1073,22 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
         Both wired into daily_capture.yml; 262 tests green. Index history accrues daily from today.
   - [ ] **Tourism v1 page** (route + name = orchestrator default `/tourism` unless owner renames):
         build ~Labor Day when the baseline matures — index data will be ready.
+  - [ ] **Business Demand Partner — bring-your-own-data custom predictors (owner vision
+        2026-07-25; spec §3c).** Local businesses contribute their own daily series (covers/sales/
+        any one number per day) → per-business calibrated forecast built on our regional feature
+        stack (events + weather + lodging + traffic + index), graded over time. Reframe: gated
+        third-party dining data isn't the source — the businesses are; Key Data's contribute-to-
+        benefit model, cross-vertical, town-scale. MVP staircase: (1) 2–3 pilot businesses from
+        owner's network, CSV/Sheet intake, transparent regression, weekly one-pager — zero new
+        infra; (2) /business page + upload + private dashboard; (3) later: consented aggregate
+        dining index, paid tier (owner calls). ⚠️ HARD CONSTRAINT: contributed data is private —
+        NEVER in the public repo (pilot = owner-side storage; v1 needs Supabase/private store).
+        OWNER ACTION to start the pilot: name 2–3 businesses willing to share a daily number.
+  - [ ] **Bookings/dining data + Google pricing — research DISPATCHED 2026-07-25:** Yelp Fusion
+        current tiers, TripAdvisor Content API, OpenTable/Resy availability (expect: partner-only),
+        official Places popular-times (expect: not exposed; scraping libs ToS-barred), BestTime.app,
+        + Google Maps Platform current free volumes/cost for future-departure predicted ETAs (the
+        "grade Google" rival lane) incl. caching/derived-works ToS. Results → registry/spec.
   - [x] **Keys UNBLOCKED 2026-07-25 — owner supplied DriveNC + NPS + TomTom; all three
         live-verified** + stored as GH secrets. DriveNC v2 shape confirmed:
         `drivenc.gov/api/v2/get/{event,roadconditions,cameras}?key=` (roadconditions =
