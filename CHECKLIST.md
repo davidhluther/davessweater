@@ -916,7 +916,8 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
       home is `/report-card/{yyyy-mm}` (recurring franchise); build that route + 301 the Articles URL when ready.
 - [ ] **STANDING MONTHLY: publish the report card for each completed month** (owner directive 2026-07-08).
       July 2026 card due ~Aug 1; same corpay-method pipeline as the June card (brief → draft → adversarial
-      fact-check vs scores.json → style validate). **Report-card titles are Title Case** ("Ray's Weather
+      fact-check vs scores.json → style validate). **Owner 2026-07-25: July card is pre-authorized —
+      draft AND publish as soon as Aug 1** (no separate review gate for this one). **Report-card titles are Title Case** ("Ray's Weather
       Report Card: July 2026") — as are ALL blog-post titles now (the four live posts were retitled
       2026-07-08; H2/H3 stay sentence case).
 - [ ] **Post detail date format** — the detail route renders `post.date` raw (ISO); site standard is
@@ -929,9 +930,9 @@ Brief: `DISAVOW-GA4-HANDOFF.md`. Both tasks are DS-owned follow-ups.
       and live in production (gtag loader src + `gtag('config', …)` + `window.dataLayer`, `gtag` present so
       it IS receiving data). **`G-F3TW73EZK1` (June) is RETIRED** — appears nowhere in code or live source.
       The mistaken Corpay-account property (543003059, "receives no data") therefore is NOT the live tag
-      (the live tag fires + collects). ⚠️ **David's final check (GA4-admin fact not readable from the site):**
-      confirm `G-7XL0TZ4GSS`'s data stream sits under HIS OWN GA4 property/account, then finish deleting the
-      mis-added Corpay property 543003059. Context: marketing-baseline-log.md Q6 (pigasus-group).
+      (the live tag fires + collects). ✅ **CLOSED 2026-07-25 — owner corrected the GA4 admin situation**
+      (stream ownership confirmed / mis-added Corpay property handled). Context: marketing-baseline-log.md
+      Q6 (pigasus-group).
 - [~] **Disavow file REFRESHED + ready — awaiting David's upload (his account click, not silent).**
       Re-audited `sc-domain:davessweater.com` backlinks via Ahrefs 2026-07-20: profile grew 250 → **308**
       referring domains, still **0 dofollow / 0 organic traffic across ALL 308** (100% the same SEO/PBN spam
@@ -943,6 +944,123 @@ Brief: `DISAVOW-GA4-HANDOFF.md`. Both tasks are DS-owned follow-ups.
       search.google.com/search-console/disavow-links (domain property), then I'll stamp the submission date
       in the notes' Submission log.** The spam net keeps blasting new domains at the `*weather.com` family,
       so re-run this refresh ~monthly and re-upload the whole file (uploads are full replacements).
+
+## Traffic forecast (owner, 2026-07-08; RESTARTED 2026-07-25 — restored from the 07-09 backup)
+> Restored 2026-07-25: this block existed only in `planning/CHECKLIST-working-backup-2026-07-09.md`
+> (~L171–255) and had dropped out of the live checklist. Current state + 07-25 updates at the bottom.
+
+Owner wants to pursue a **Boone traffic forecast** — the accuracy bit extended to a universal local pain
+(the 321/421 bypass, King St, App State game days / move-in, leaf + ski season, downtown events). Traffic
+here is heavily **calendar/event/weather-driven → genuinely forecastable**, which is exactly what makes a
+*forecast* (not just a live cam) winnable, and nobody local does it. **Cameras CAN double as the sensor**
+(the multi-angle intersection pattern). Two data-source paths weighed in the brainstorm:
+  - **(a) Our own cams + computer vision** — vehicle-count/speed via a detection model on the snapshot feed →
+    build a congestion "actuals" dataset → forecast AND score it (on-brand; owns the data; heavier lift;
+    privacy = aggregate counts only, no plates/faces; night/weather robustness is the hard part).
+  - **(b) Existing traffic data** — Google/TomTom/HERE traffic APIs or NCDOT DriveNC/511 cams+incidents —
+    faster to a forecast, less "ours," proven data.
+  - **Winning hybrid:** forecast from calendar + events + **weather (we already have it!)**, validate
+    against a traffic API now and camera-CV later (mirrors the Ecowitt "own ground truth" arc).
+- [ ] **Scope locked by owner (2026-07-08):** (1) PRODUCT = **hybrid** — scored predictive forecast (the
+      differentiator) + live-conditions hook + winter road conditions as a first-class pillar;
+      (2) GEOGRAPHY = **Boone chokepoints first** (~2-6 cams: US-321/421 bypass, King St, US-321↔Blowing
+      Rock, NC-105/321 split), prove then expand; (3) DATA = **hybrid buy-now-build-later** — ship a
+      forecast on NCDOT + a traffic API, add our own cameras + vehicle-recognition as independent ground
+      truth later (the Ecowitt arc).
+  - **On-brand angle (design):** we grade OTHERS' traffic predictions too — Google's "typical traffic"/
+    predicted ETAs are a forecast we can score. Google's generic curve doesn't know about the App State
+    game or tomorrow's snow; ours does. A traffic "Right/Wrong Ray" scored publicly is the differentiator.
+  - **CV cost — RESEARCHED 2026-07-08:** vehicle-recognition "actuals" run on the EDGE for ~$0/mo. Sweet
+    spot = **Raspberry Pi 5 + Hailo AI HAT+ 13 TOPS (~$70 hat, ~$150/site)**; NOT cloud vision APIs
+    (~$43–194/cam/mo) and NOT rented GPU. **Target CONGESTION LEVEL (free-flow/heavy/stopped, ~94%+), not
+    precise counts** — also the honest, defensible metric. Turnkey stack: **Frigate** (Pi5+Hailo) →
+    **supervision/ByteTrack** → density rule → bucket. Cheapest viable **~$130–150 one-time/site, ~$0/mo**;
+    does-it-well **~$500–900 for 2–4 sites**. Slots into `scripts/capture_*.py` → `data/actuals/` pattern.
+    Honesty caveat: one cam = one segment sample — scope the claim per instrumented segment.
+  - **Competitive whitespace — RESEARCHED 2026-07-08 (verdict: OPEN + on-brand):** nobody — local or
+    national — publishes a *scored, event+weather-driven local* traffic forecast. Google/TomTom/INRIX do
+    generic typical-day prediction; DriveNC/511 + Ray do current-state cameras/conditions only (Ray does
+    NO road forecast). The scoring layer is the differentiator. ⚠️ **WataugaOnline.com is a respected
+    local incumbent** (ad-hoc "allow extra time" alerts + beloved FB community) — position as systematic/
+    complementary.
+  - **Grading (research-confirmed, maps onto `scripts/scoring.py`):** travel-time **MAE per corridor** +
+    **Brier score** for binary "will it be jammed?" + **Brier Skill Score vs. a naive typical-day
+    baseline** (the "free beats the baseline" story). Score per condition (game day / leaf Sat / ordinary
+    Tue), not one blended number. Actuals = a traffic API now → camera-CV later. We grade Google's
+    predicted ETAs alongside ours.
+  - **Phasing:** **v1 road-condition forecast (existing snow/ice/temp data, no cameras or traffic API
+    needed) → v2 traffic forecast (traffic API actuals) → v3 camera-CV ground truth (Pi5+Hailo) → v4
+    parking.** "Will roads be bad tomorrow AM?" fills a gap every local channel leaves open.
+  - **Demand + corridors:** App State game days (Thu-night worst), move-in, leaf season (mid–late Oct),
+    winter closures — along US-321 (Boone↔Blowing Rock), NC-105 bypass, US-421/Boone Mtn, King St.
+  - **Data sources — RESEARCHED 2026-07-08 (govt stack is FREE + covers our roads):** DriveNC v2 API (free
+    key: event, snowandice, cameras, messagesign; 10/60s), WZDx work zones (no key), AADT counts fully
+    open (186 Watauga segments), NPS Blue Ridge Parkway alerts (free key), NWS (api.weather.gov). Live
+    congestion: **TomTom 2,500/day free (commercial OK)** best free pick; Waze unavailable; no DOT cams in
+    Boone; no public RWIS/plow feeds. Demand signal = **App State football ICS (free, auto-updating)** +
+    fixed festival/leaf/ski calendar. Two free keys to get first: DriveNC + NPS. v1 & v2 ~$0/mo.
+  - ▶ **FULL DESIGN: `planning/specs/2026-07-08-traffic-road-forecast-design.md`** (product, phasing,
+    data table, grading model, cameras, CV, costs, privacy/honesty, repo integration). **v1 IMPLEMENTATION
+    PLAN: `planning/plans/2026-07-08-roads-forecast-v1.md`** — 8 TDD tasks, execution-ready. ⚠️ executor
+    must request free DriveNC + NPS keys and verify DriveNC field names against the live keyed API.
+  - ✅ **OWNER DECISIONS (2026-07-08):** v1-first · own `/roads` product · build the v3 cameras.
+  - **v4 parking** folded into the design (§2a); no live occupancy feed exists for Boone/App State →
+    cameras are the buildable path; best real dataset = parking citations via NC public-records request
+    (owner actions listed in the design doc).
+- [ ] **RESTART 2026-07-25 (owner):** (a) **v2-first near-term phasing** — traffic forecast live by late
+      Aug (App State football) / firmly by early Oct (leaf season); v1 winter-roads still ships before
+      first snow (~Nov). (b) **Lodging demand adopted as a v2 signal** — and per owner 07-25: use **FREE
+      sources to track lodging PRICES in Watauga/mostly Boone** (nightly rates for future dates as a live
+      demand read; dynamic pricing makes price itself the signal). Research prep:
+      `planning/research/2026-07-25-traffic-forecast-review-prep.md` (+ free-source vetting appended).
+      Spec stays DRAFT until owner ratifies the deltas in review.
+- [ ] **[NEXT]** Owner review: ratify v2-first spec deltas; then execute (v2 traffic forecast build;
+      v1 roads plan on its before-first-snow clock). The lodging-demand signal SPLIT OUT 2026-07-25
+      into its own mini-project (next section) per owner — the tourism forecast shares demand
+      elements (events, weather, lodging index) with traffic v2.
+
+## Tourism forecast (mini-project, owner-blessed 2026-07-25; v0 capture BUILT same day)
+Owner: free lodging-price tracking as a tourist-demand signal, its own mini-project "we can provide
+to people," possibly part of a larger tourism forecast sharing elements with the traffic forecast.
+Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting + live verification:
+`planning/research/2026-07-25-traffic-forecast-review-prep.md` §1c.
+- [x] **Free-source vetting (2026-07-25, two research agents + live tests).** Winner: **Xotelo**
+      (keyless TripAdvisor OTA-rates API, $0) — `/rates` + `/heatmap` verified live for High Country
+      hotels; `/list`+`/search` broken/gated so hotel keys harvest from public URL slugs. STR side:
+      **AirROI** is the only real fit (market future-pacing endpoint, Boone/Blowing Rock verified,
+      ~$6–15/mo) but ToS needs an owner email (derived-index republication + retention waiver).
+      Travelpayouts/Hotellook = free posture-clean backup (owner signup). SerpApi free tier =
+      benchmark only (no legal shield + Google DMCA suit). Amadeus self-service is DEAD (portal
+      decommissioned 2026-07-17). MakCorps/Zyla/Bright Data/PriceLabs/AirDNA-free/Key Data/Beyond/
+      Wheelhouse: OUT.
+- [x] **v0 capture BUILT 2026-07-25 (PR pending).** `scripts/capture_lodging_demand.py` (stdlib,
+      fail-closed, always exits 0) + `data/demand/roster.json` — **23 hotels (13 Boone, 10 Blowing
+      Rock), every key live-verified before inclusion** (house provenance rule; 3 Blowing Rock inns
+      excluded — no OTA rates on the feed, recorded with reasons). Daily: per-hotel 30-day
+      cheap/avg/high heatmap + min-OTA rates for next Fri / next Sat / Sat-after. Output
+      `data/demand/{date}.json` with derived per-town median min-rate + "high-share" per date (the
+      index seeds; published number = OUR computation, never a vendor reprint). Wired into
+      `daily_capture.yml` (continue-on-error). 6 new pytest (226 total green).
+- [ ] **v1 page** (`/tourism` or report-franchise slug — owner call): Busy-ness Index headline +
+      30-day heat calendar + weekend rate trend + event/weather overlays. GATE: ~4–6 weeks of
+      baseline (~Labor Day if v0 ships now — in time for leaf season). Grade the index itself later
+      (vs occupancy tax / traffic actuals) — on-brand.
+- [ ] **Owner (optional, upgrades the signal):** (a) email AirROI re: Redistribution Addendum +
+      retention waiver (adds the dominant STR segment's booking pace); (b) free Travelpayouts signup
+      → token as GH secret (posture-clean backup feed); (c) later: Banner Elk / Beech Mtn hotels for
+      the ski-season read.
+
+## Public feed + API (owner-directed 2026-07-25 — spec DRAFT, awaiting owner sign-off)
+Owner: "an API or RSS to share," with display options — **1/3/5-day horizons · by town when live ·
+level of detail.** Spec: `planning/specs/2026-07-25-public-feed-api-design.md` (`/api/v1/*` route
+handlers: forecast/today/scores/verdict/towns + tourism later; prerendered RSS variants
+`/feed/{town}/forecast-{N}day.xml` + daily verdict feed; CORS open; `/api` docs page).
+- [ ] **Owner sign-offs needed:** (1) CC BY 4.0 data license (prerequisite — repo has no LICENSE;
+      ties off the parked Dataset-license decision); (2) expose not-yet-gated towns in the API early
+      vs hold to the same ≥9-scored-days gate as pages (rec: same gate everywhere); (3) whether
+      "options for people to display" also means an embeddable widget (v2 candidate).
+- [ ] Build after sign-off: API + Boone feeds first; town feed variants land with the P1 town pages
+      (~2026-07-28 gate); tourism endpoint with tourism v1.
 
 ## Click tracking (PR #117 `analytics-click-tracking` — ✅ MERGED 2026-07-07)
 Owner chose both tools, sitewide: Microsoft Clarity (heatmaps/recordings) + GA4 custom click events.
