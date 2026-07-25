@@ -1,0 +1,92 @@
+{
+  "date": "2026-07-24",
+  "location": "Foscoe",
+  "location_slug": "foscoe",
+  "actuals": {
+    "date": "2026-07-24",
+    "fetched_at": "2026-07-25T07:11:22.983436-04:00",
+    "location": "Foscoe",
+    "location_slug": "foscoe",
+    "high_f": 65.1,
+    "low_f": 58.6,
+    "wind_mph": 6.1,
+    "gust_mph": 15.4,
+    "precip_type": "rain",
+    "rain_in": 0.402,
+    "snow_in": 0.0,
+    "precip_in": 0.402,
+    "weather_code": 63,
+    "conditions": "Moderate rain",
+    "category": "rain"
+  },
+  "sources": {
+    "raysweather": {
+      "prediction": {
+        "date": "2026-07-24",
+        "high_f": 67,
+        "low_f": 60,
+        "golfballs": 1,
+        "fields_provided": [
+          "high",
+          "low"
+        ]
+      },
+      "score": {
+        "score": 60.0,
+        "grade": {
+          "verdict": "meh",
+          "ray_count": 3
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": false,
+          "precip_type": false,
+          "precip_amount": false
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 30.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 67,
+            "actual": 65.1,
+            "error": 1.9
+          },
+          "low_temp": {
+            "points": 30.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 60,
+            "actual": 58.6,
+            "error": 1.4
+          },
+          "wind": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 6.1,
+            "error": null
+          },
+          "precip_type": {
+            "points": null,
+            "max": 10,
+            "scored": false,
+            "predicted": null,
+            "actual": "rain"
+          },
+          "precip_amount": {
+            "points": null,
+            "max": 10,
+            "scored": false,
+            "predicted": null,
+            "actual": 0.402,
+            "error": null,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}

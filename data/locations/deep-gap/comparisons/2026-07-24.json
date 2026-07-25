@@ -1,0 +1,92 @@
+{
+  "date": "2026-07-24",
+  "location": "Deep Gap",
+  "location_slug": "deep-gap",
+  "actuals": {
+    "date": "2026-07-24",
+    "fetched_at": "2026-07-25T07:11:19.777396-04:00",
+    "location": "Deep Gap",
+    "location_slug": "deep-gap",
+    "high_f": 65.9,
+    "low_f": 58.7,
+    "wind_mph": 5.3,
+    "gust_mph": 13.9,
+    "precip_type": "rain",
+    "rain_in": 0.437,
+    "snow_in": 0.0,
+    "precip_in": 0.437,
+    "weather_code": 63,
+    "conditions": "Moderate rain",
+    "category": "rain"
+  },
+  "sources": {
+    "raysweather": {
+      "prediction": {
+        "date": "2026-07-24",
+        "high_f": 66,
+        "low_f": 59,
+        "golfballs": 1,
+        "fields_provided": [
+          "high",
+          "low"
+        ]
+      },
+      "score": {
+        "score": 60.0,
+        "grade": {
+          "verdict": "meh",
+          "ray_count": 3
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": false,
+          "precip_type": false,
+          "precip_amount": false
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 30.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 66,
+            "actual": 65.9,
+            "error": 0.1
+          },
+          "low_temp": {
+            "points": 30.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 59,
+            "actual": 58.7,
+            "error": 0.3
+          },
+          "wind": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 5.3,
+            "error": null
+          },
+          "precip_type": {
+            "points": null,
+            "max": 10,
+            "scored": false,
+            "predicted": null,
+            "actual": "rain"
+          },
+          "precip_amount": {
+            "points": null,
+            "max": 10,
+            "scored": false,
+            "predicted": null,
+            "actual": 0.437,
+            "error": null,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}
