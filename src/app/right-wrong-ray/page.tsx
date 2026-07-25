@@ -72,6 +72,7 @@ const datasetJsonLd = {
     "Daily accuracy scores comparing Ray's Weather, Open-Meteo, and other forecasts for Boone and Deep Gap, NC against verified actual conditions.",
   "creator": { "@type": "Organization", "name": "Dave's Sweater", "url": "https://davessweater.com" },
   "isAccessibleForFree": true,
+  "license": "https://creativecommons.org/licenses/by/4.0/",
   "url": "https://davessweater.com/right-wrong-ray",
   "keywords": ["weather forecast accuracy", "Boone NC weather", "Ray's Weather", "Open-Meteo"],
   "distribution": [

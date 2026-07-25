@@ -47,14 +47,42 @@ const nextConfig: NextConfig = {
   // Next's tracer only bundles files it can see statically, so any route that
   // renders in a Lambda rather than at build (e.g. a future revalidate window)
   // would otherwise get an empty reader. Ship the content with every function.
+  //
+  // The /api/v1/* handlers and /widget are DYNAMIC (they read query params, so
+  // they cannot be force-static) and read committed data/ JSON at request time.
+  // The tracer can't see those runtime reads statically, so the files must be
+  // declared here or the Lambda ships without them. We include only *.json
+  // (the ~20 MB of datasets) — never the 180 MB of prediction screenshots. The
+  // RSS feeds under /feed are force-static and read data at build, so they need
+  // no entry here.
   outputFileTracingIncludes: {
     "/*": ["./src/content/**/*"],
+    "/api/v1/forecast": ["./data/**/*.json"],
+    "/api/v1/today": ["./data/**/*.json"],
+    "/api/v1/scores": ["./data/**/*.json"],
+    "/api/v1/verdict": ["./data/**/*.json"],
+    "/api/v1/towns": ["./data/**/*.json"],
+    "/widget": ["./data/**/*.json"],
   },
   async headers() {
+    // The embeddable widget MUST be framable on third-party sites, so the
+    // clickjacking-protection X-Frame-Options: DENY (correct everywhere else)
+    // would break it. /widget gets the same hardening minus that header, plus a
+    // CSP frame-ancestors that explicitly permits framing anywhere. The global
+    // rule excludes the /widget page (but still covers /widget.js, a plain
+    // script that is never framed).
+    const framableHeaders = [
+      ...securityHeaders.filter((h) => h.key !== "X-Frame-Options"),
+      { key: "Content-Security-Policy", value: "frame-ancestors *" },
+    ];
     return [
       {
-        source: "/(.*)",
+        source: "/((?!widget(?:$|/)).*)",
         headers: securityHeaders,
+      },
+      {
+        source: "/widget",
+        headers: framableHeaders,
       },
     ];
   },

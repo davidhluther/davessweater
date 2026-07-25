@@ -11,6 +11,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = ["", "/right-wrong-ray", "/shop"].map((r) => ({
     url: `${base}${r}`, changeFrequency: "daily" as const, priority: r === "" ? 1 : 0.7,
   }));
+  // The free-data hub (JSON API, RSS feeds, widget docs).
+  const apiRoute = { url: `${base}/api`, changeFrequency: "monthly" as const, priority: 0.6 };
   // The resources hub and its category pages (old /blog and /videos 301 here).
   const resourceRoutes = ["/resources", ...CATEGORIES.map((c) => c.href)].map((r) => ({
     url: `${base}${r}`, changeFrequency: "weekly" as const, priority: 0.6,
@@ -30,5 +32,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const, priority: 0.6,
     };
   });
-  return [...routes, ...resourceRoutes, ...staticPages, ...postRoutes];
+  return [...routes, apiRoute, ...resourceRoutes, ...staticPages, ...postRoutes];
 }

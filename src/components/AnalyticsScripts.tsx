@@ -2,6 +2,7 @@
 import Script from "next/script";
 import Clarity from "@microsoft/clarity";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import ClickTracker from "@/components/ClickTracker";
 
 // GA4 + Clarity + Meta Pixel + the click tracker, gated behind the ds_track=off cookie
@@ -13,6 +14,7 @@ import ClickTracker from "@/components/ClickTracker";
 // server-side in RootLayout and passed in, since that's a static build-time
 // value, not a per-request dynamic API.
 export default function AnalyticsScripts({ clarityId }: { clarityId?: string }) {
+  const pathname = usePathname();
   const [enabled, setEnabled] = useState<boolean | null>(null);
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect */
@@ -30,6 +32,9 @@ export default function AnalyticsScripts({ clarityId }: { clarityId?: string }) 
     if (enabled && clarityId) Clarity.init(clarityId);
   }, [enabled, clarityId]);
 
+  // The embeddable widget runs on third-party pages — it must stay light and
+  // private, so no analytics ever mount there (owner rule for /widget).
+  if (pathname?.startsWith("/widget")) return null;
   if (!enabled) return null;
   return (
     <>

@@ -17,7 +17,15 @@ import IphoneShot from "@/components/IphoneShot";
 import { copy } from "@/content/copy";
 
 export const metadata = {
-  alternates: { canonical: "/" },
+  alternates: {
+    canonical: "/",
+    // RSS autodiscovery — Boone's 3-day forecast is the site default feed.
+    types: {
+      "application/rss+xml": [
+        { url: "/feed/boone/forecast-3day.xml", title: "Dave's Sweater | Boone 3-day forecast" },
+      ],
+    },
+  },
 };
 
 export default async function HomePage() {
