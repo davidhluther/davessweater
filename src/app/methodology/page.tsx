@@ -4,6 +4,7 @@ import JsonLd from "@/components/JsonLd";
 import CoverageMatrix from "@/components/CoverageMatrix";
 import { getScores } from "@/lib/data";
 import { getLeadtimeScores, warmBiasRange } from "@/lib/leadtime";
+import { getRoadsForecast } from "@/lib/roads";
 
 export const metadata = {
   title: "How we score weather forecast accuracy",
@@ -31,7 +32,7 @@ const jsonLd = [
     // substantive rubric change was the trace-band type credit (2026-07-18).
     // Bump dateModified when the scoring model changes.
     "datePublished": "2026-06-26",
-    "dateModified": "2026-07-18",
+    "dateModified": "2026-07-25",
     "isAccessibleForFree": true,
     "author": { "@type": "Organization", "name": "Dave's Sweater" },
     "publisher": { "@type": "Organization", "name": "Dave's Sweater", "url": "https://davessweater.com" },
@@ -49,7 +50,20 @@ const jsonLd = [
 ];
 
 export default async function Page() {
-  const [scores, leadtime] = await Promise.all([getScores(), getLeadtimeScores()]);
+  const [scores, leadtime, roads] = await Promise.all([
+    getScores(),
+    getLeadtimeScores(),
+    getRoadsForecast(),
+  ]);
+  // Road rubric numbers rendered from the committed forecast so the page shows
+  // the exact thresholds the pipeline ran (never hand-copied). Fallback to the
+  // defaults in scripts/roads.py if the artifact is missing.
+  const rr = roads?.rubric ?? {};
+  const num = (k: string, d: number) => (typeof rr[k] === "number" ? rr[k] : d);
+  const hazardSnow = num("hazard_snow_in", 2.0);
+  const refreezeLow = num("refreeze_low_f", 30);
+  const slushySnow = num("slushy_snow_in", 0.1);
+  const wetRain = num("wet_rain_in", 0.1);
   // Ray's warm-bias disclosure, computed at build from the lead-time artifact
   // (never hardcoded — the daily run moves it). Null (sentence omitted) when
   // the data is absent or no longer warm at every horizon.
@@ -273,6 +287,56 @@ export default async function Page() {
         <p className="mt-3 max-w-2xl text-sm text-muted">
           The actuals behind every lead are the same Open-Meteo archive described above, and the caveat there
           applies to lead-time scoring too.
+        </p>
+      </SectionBand>
+
+      <SectionBand id="roads" tone="surface">
+        <h2 className="font-display text-xl font-bold">Grading the road-condition forecast</h2>
+        <p className="mt-1 max-w-2xl text-sm text-muted">
+          The{" "}
+          <Link href="/roads" className="text-teal underline underline-offset-2">road-condition forecast</Link>{" "}
+          uses no new data. It reads the snow, ice, and temperature we already forecast and sorts each day onto
+          one of five ordered surface levels, best to worst: Clear, Wet, Slushy, Icy, Hazardous. The exact
+          thresholds, the same numbers the code runs:
+        </p>
+        <ul className="mt-2 max-w-2xl space-y-1 text-sm text-muted">
+          <li>
+            <strong className="text-foreground">Hazardous</strong> &mdash; {hazardSnow}&Prime; or more of
+            forecast snow, or freezing rain (rain falling into sub-freezing air).
+          </li>
+          <li>
+            <strong className="text-foreground">Icy</strong>{" "}&mdash; any snow or rain with an overnight low at or
+            below {refreezeLow}&deg;F, when a wet surface can refreeze into black ice.
+          </li>
+          <li>
+            <strong className="text-foreground">Slushy</strong> &mdash; {slushySnow}&Prime; or more of snow above
+            that refreeze line.
+          </li>
+          <li>
+            <strong className="text-foreground">Wet</strong> &mdash; {wetRain}&Prime; or more of rain with no
+            freeze expected.
+          </li>
+          <li>
+            <strong className="text-foreground">Clear</strong>{" "}&mdash; dry, or only a trace.
+          </li>
+        </ul>
+        <p className="mt-3 max-w-2xl text-sm text-muted">
+          Scoring is ordinal, because the levels are ordered. An exact call scores 100, and every level of
+          distance between the forecast and what happened costs 25 points: one level off is 75, two is 50, and
+          so on to a floor of zero. Calling Icy when it was Slushy is a near miss; calling Clear when it was
+          Hazardous is not.
+        </p>
+        <p className="mt-3 max-w-2xl text-sm text-muted">
+          The actual comes from NCDOT&apos;s{" "}
+          <a href="https://drivenc.gov" rel="nofollow noopener" className="text-teal underline underline-offset-2">
+            DriveNC
+          </a>{" "}
+          road-condition report for Division 11 (Watauga, Avery, and Ashe), reduced to the worst surface it
+          lists that day. Two honesty notes, in the spirit of the weather caveat above. Those categories are
+          entered by hand by people in the field, not a sensor, so the actual is softer than a measured number.
+          And this is one public agency grading against another&apos;s report; a future phase adds our own
+          roadside cameras as an independent ground truth, the same arc as the weather station. Off-season the
+          report reads &quot;No Report&quot; and the forecast simply accrues no scored days until winter.
         </p>
       </SectionBand>
 
