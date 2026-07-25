@@ -1084,11 +1084,25 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
         dining index, paid tier (owner calls). ⚠️ HARD CONSTRAINT: contributed data is private —
         NEVER in the public repo (pilot = owner-side storage; v1 needs Supabase/private store).
         OWNER ACTION to start the pilot: name 2–3 businesses willing to share a daily number.
-  - [ ] **Bookings/dining data + Google pricing — research DISPATCHED 2026-07-25:** Yelp Fusion
-        current tiers, TripAdvisor Content API, OpenTable/Resy availability (expect: partner-only),
-        official Places popular-times (expect: not exposed; scraping libs ToS-barred), BestTime.app,
-        + Google Maps Platform current free volumes/cost for future-departure predicted ETAs (the
-        "grade Google" rival lane) incl. caching/derived-works ToS. Results → registry/spec.
+  - [x] **Bookings/dining data + Google pricing — RESEARCHED 2026-07-25 (verdicts recorded).**
+        DINING: every third-party avenue is OUT — Yelp Fusion (no demand fields, no free tier,
+        anti-redistribution terms), TripAdvisor Content API (5k/mo free BUT reviews-only + terms
+        forbid derived public indexes), OpenTable/Resy/Tock (partner-only, no public feed),
+        Google popular-times (not in the official API; scraper libs violate GMP ToS),
+        Placer/SafeGraph/SevenRooms (enterprise). Sole real signal = **BestTime.app** ($29–99/mo,
+        Boone coverage unproven — optional owner spot-check with their free test account).
+        → **Confirms the Business Demand Partner reframe: contributed business history is the only
+        clean dining-demand source, and it's better data anyway.**
+        GOOGLE: Routes API computeRoutes w/ future departureTime = Pro SKU, **5,000 free
+        calls/mo — our ~1.5–3k/mo volume is $0** (card-on-file billing account required). **BUT GMP
+        ToS §3.2.3 (No Caching / No Creating Content From Google Maps Content) likely bars storing
+        ETAs + publishing a "grade Google" scoreboard.** DECISION (orchestrator, per autonomous
+        directive): **drop the grade-Google lane; no Google billing signup needed.** Our scoreboard
+        grades OUR model vs OUR actuals; if a rival-prediction lane is ever wanted, build it on an
+        open engine (OpenRouteService free 2k req/day, or self-hosted OSRM/Valhalla) whose terms
+        permit storage + derived analysis. ⚠️ Follow-up flag: read TomTom's display/storage terms
+        for committed flow snapshots in a public repo (same class of question; TomTom free tier is
+        "commercial OK" per 07-08 research, redistribution wording unchecked).
   - [x] **Keys UNBLOCKED 2026-07-25 — owner supplied DriveNC + NPS + TomTom; all three
         live-verified** + stored as GH secrets. DriveNC v2 shape confirmed:
         `drivenc.gov/api/v2/get/{event,roadconditions,cameras}?key=` (roadconditions =
