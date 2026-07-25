@@ -135,6 +135,11 @@ jobs:
         run: python scripts/capture_wiki_attention.py
         continue-on-error: true
 
+      # USGS river gauges (public domain): recreation-demand + flood-risk axis.
+      - name: Capture river gauges (USGS)
+        run: python scripts/capture_river_gauges.py
+        continue-on-error: true
+
       # Busy-ness Index v0: 14-day forward regional demand score built from the
       # hotel, STR, events, alerts, and forecast captures above. Fail-soft; exits 0.
       - name: Compute Busy-ness Index (tourism forecast v0)
@@ -145,7 +150,7 @@ jobs:
         run: |
           git config user.name "DavesSweaterBot"
           git config user.email "bot@davessweater.com"
-          git add data/predictions/ data/locations/ data/demand/ data/alerts/ data/events/ data/attention/ data/substack_feed.json data/fireworks_forecast.json data/roads_forecast.json data/road_conditions/
+          git add data/predictions/ data/locations/ data/demand/ data/alerts/ data/events/ data/attention/ data/rivers/ data/substack_feed.json data/fireworks_forecast.json data/roads_forecast.json data/road_conditions/
           git commit -m "Daily capture $(date +%Y-%m-%d)" || echo "No changes to commit"
           git pull origin main --no-rebase -X ours || true
           git push origin main || (sleep 5 && git pull origin main --no-rebase -X ours && git push origin main)
