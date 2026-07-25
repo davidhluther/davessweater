@@ -933,7 +933,11 @@ Brief: `DISAVOW-GA4-HANDOFF.md`. Both tasks are DS-owned follow-ups.
       (the live tag fires + collects). ✅ **CLOSED 2026-07-25 — owner corrected the GA4 admin situation**
       (stream ownership confirmed / mis-added Corpay property handled). Context: marketing-baseline-log.md
       Q6 (pigasus-group).
-- [~] **Disavow file REFRESHED + ready — awaiting David's upload (his account click, not silent).**
+- [~] **Disavow — owner reports "seems done" 2026-07-25 (GSC Top-linking-sites now shows 1 site);
+      PENDING definitive confirmation.** The links report can't confirm a disavow (disavowed domains
+      still appear there by design) — confirm at search.google.com/search-console/disavow-links on
+      the DOMAIN property: if a file (308 domains) is listed with an upload date, stamp that date in
+      `planning/seo/davessweater-disavow-notes.md` Submission log and close this. Prior state:
       Re-audited `sc-domain:davessweater.com` backlinks via Ahrefs 2026-07-20: profile grew 250 → **308**
       referring domains, still **0 dofollow / 0 organic traffic across ALL 308** (100% the same SEO/PBN spam
       net; 300/308 Ahrefs-flagged, the other 8 obvious by name). Appended the **58 new** spam domains to
@@ -1046,21 +1050,34 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
       baseline (~Labor Day if v0 ships now — in time for leaf season). Grade the index itself later
       (vs occupancy tax / traffic actuals) — on-brand.
 - [ ] **Owner (optional, upgrades the signal):** (a) email AirROI re: Redistribution Addendum +
-      retention waiver (adds the dominant STR segment's booking pace); (b) free Travelpayouts signup
-      → token as GH secret (posture-clean backup feed); (c) later: Banner Elk / Beech Mtn hotels for
-      the ski-season read.
+      retention waiver (adds the dominant STR segment's booking pace) — draft email + steps provided
+      2026-07-25; (b) free Travelpayouts signup → token as GH secret `TRAVELPAYOUTS_TOKEN`
+      (posture-clean backup feed); (c) later: Banner Elk / Beech Mtn hotels for the ski-season read.
+- [ ] **Leaf-season forecaster feeds tourism (owner-directed 2026-07-25; spec §3b).** No leaf
+      forecaster exists yet — but the pipeline already holds the raw material: 18 places spanning
+      1,001–5,436 ft with daily temps. Build a per-town peak-color window model (elevation +
+      temperature accumulation), publish + GRADE it (scored leaf forecast, 18 gradable predictions),
+      and feed predicted peak weekends into the Busy-ness Index as an up-weight — cross-confirmed
+      against lodging high-share (model says peak Oct 17 + 95% of hotels price it high = confident
+      "slammed" call). Also shared with traffic v2 (US-321/Parkway corridors). Draft model target:
+      mid-Sept (no new capture needed; temps already accrue).
 
 ## Public feed + API (owner-directed 2026-07-25 — spec DRAFT, awaiting owner sign-off)
 Owner: "an API or RSS to share," with display options — **1/3/5-day horizons · by town when live ·
 level of detail.** Spec: `planning/specs/2026-07-25-public-feed-api-design.md` (`/api/v1/*` route
 handlers: forecast/today/scores/verdict/towns + tourism later; prerendered RSS variants
 `/feed/{town}/forecast-{N}day.xml` + daily verdict feed; CORS open; `/api` docs page).
-- [ ] **Owner sign-offs needed:** (1) CC BY 4.0 data license (prerequisite — repo has no LICENSE;
-      ties off the parked Dataset-license decision); (2) expose not-yet-gated towns in the API early
-      vs hold to the same ≥9-scored-days gate as pages (rec: same gate everywhere); (3) whether
-      "options for people to display" also means an embeddable widget (v2 candidate).
-- [ ] Build after sign-off: API + Boone feeds first; town feed variants land with the P1 town pages
-      (~2026-07-28 gate); tourism endpoint with tourism v1.
+- [x] **Owner sign-offs GIVEN 2026-07-25:** CC BY 4.0 data license APPROVED ("do the 4.0" — ties off
+      the parked Dataset-license decision) · embeddable widget APPROVED ("do the widget") · town
+      gating = same ≥9-scored-days gate everywhere (rec adopted, not overridden).
+- [ ] **BUILD IN FLIGHT 2026-07-25** (dispatched to an implementation agent, branch
+      `feat/public-feed-api-widget`): data/LICENSE (CC BY 4.0) + Dataset JSON-LD license property ·
+      `/api/v1/{forecast,today,scores,verdict,towns}` (days=1|3|5, town, detail=summary|full; CORS
+      open; license+attribution in every response) · prerendered RSS `/feed/{town}/forecast-{N}day.xml`
+      + `/feed/{town}/verdict.xml` · `/widget` route + `public/widget.js` (iframe embed, no
+      analytics in the embed, CC BY attribution line doubles as the backlink) · `/api` docs page.
+      Orchestrator verifies (incl. mandatory 390px mobile check) before PR. Tourism endpoint joins
+      with tourism v1.
 
 ## Click tracking (PR #117 `analytics-click-tracking` — ✅ MERGED 2026-07-07)
 Owner chose both tools, sitewide: Microsoft Clarity (heatmaps/recordings) + GA4 custom click events.
