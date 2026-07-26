@@ -3,6 +3,7 @@ import Link from "next/link";
 import parse from "html-react-parser";
 import { getBlogPosts, getBlogPost, postSlug, postCategoryOf } from "@/lib/data";
 import { sanitizePostHtml } from "@/lib/html";
+import { fmtLongDate } from "@/lib/dates";
 import { CATEGORIES } from "@/content/resources";
 import { SITE_BASE, breadcrumbs, faqPage } from "@/lib/schema";
 import SectionBand from "@/components/SectionBand";
@@ -71,7 +72,7 @@ export default async function Page({ params }: { params: Promise<{ category: str
           &larr; All {def?.label.toLowerCase() ?? "resources"}
         </Link>
         <h1 className="mt-3 font-display text-3xl font-extrabold text-foreground">{post.title}</h1>
-        {post.date && <p className="mt-1 text-sm text-muted">{post.date}</p>}
+        {post.date && <p className="mt-1 text-sm text-muted">{fmtLongDate(post.date)}</p>}
         {post.toc && post.toc.length > 1 && (
           <nav aria-label="On this page" className="mt-6 rounded-xl border border-border bg-foreground/[0.02] p-4">
             <p className="mb-2 text-xs font-bold uppercase tracking-wider text-muted">On this page</p>

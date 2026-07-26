@@ -1,0 +1,38 @@
+name: "🚨 Freshness Sentinel"
+
+# Independent of the daily_capture / daily_compare jobs on purpose: their own
+# in-run health check (check_capture_health.py) only fires if they actually run.
+# If a cron is silently skipped (Actions outage, a disabled workflow, a bad
+# schedule edit) nothing runs, so nothing fails, and the site goes stale with
+# every other check still green - the 2026-07-02 failure mode. This workflow
+# runs on its own late-morning schedule and reads the committed data instead,
+# so a skipped run still gets caught.
+#
+# Scheduled comfortably after both capture crons (currently ~10:00/10:30 UTC)
+# regardless of which cron time is authoritative, and off the top of the hour
+# per GitHub's guidance to avoid the most congested minute.
+#
+# No untrusted input reaches this workflow (schedule + manual dispatch only,
+# no PR/issue-triggered event data), and it never writes to the repo.
+on:
+  schedule:
+    - cron: '30 16 * * *'  # late morning Eastern, safely after the daily captures
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Read-only: this must never commit. It only reads data/ and exits
+      # non-zero (a loud red run + notification) when the pipeline looks stale.
+      - name: Check pipeline freshness
+        run: python scripts/check_freshness.py

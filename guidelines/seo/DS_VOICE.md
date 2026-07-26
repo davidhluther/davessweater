@@ -3,9 +3,11 @@
 > **DRAFT - UNCONFIRMED stub.** Condensed from this repo's own docs (`CLAUDE.md`
 > premise-and-voice section; `planning/specs/2026-07-02-seo-aio-program-design.md`
 > §7). The owner must review before this file is treated as the authoritative voice
-> guide. The spec's full guideline stack (this file plus `DS_CONTENT_STRUCTURE.md`
-> and `DS_WRITING_QUALITY.md`, including satire-lane rules from the Master Idea
-> Tracker) is still to be built — this stub does not replace that work.
+> guide. Its siblings, `DS_CONTENT_STRUCTURE.md` (page structure, headings,
+> internal linking) and `DS_WRITING_QUALITY.md` (sentence-level rules layered on
+> the universal styleguide), are now built alongside this file — the three
+> together are the spec's full guideline stack. Same caveat applies: draft,
+> pending owner review.
 
 ## Voice (as already stated in CLAUDE.md)
 
