@@ -704,11 +704,17 @@ model only.
         only because Ray makes fewer trace-day "none" calls). No double-penalty: a trace miss now costs 4 pts
         total. 5 new pytest cases; 200 py tests green; history rescored (`rescore_history.py`, 100 files;
         consistency test green); `/methodology` + `CLAUDE.md` updated. New avgs: Open-Meteo 92.80, Ray 72.28.
-  - [~] **Remaining (the actual recalibration) — DECIDED 2026-07-26, IMPLEMENTATION IN FLIGHT.** Owner
-        chose the GENTLER register: `TEMP_TOL=1.0, TEMP_SLOPE=3.0` + merged 20-pt precip (Ray ~22% Wrong
-        days, not the -4 slope's ~40%). Implementation dispatched same day (branch
-        `feat/scoring-recalibration`; full-history + per-town rescore, /methodology + CLAUDE.md updates,
-        memo-match verification gate). Modeling background: full-history
+  - [x] **Remaining (the actual recalibration) — ✅ SHIPPED + LIVE 2026-07-26 (PR #146).** Owner chose the
+        GENTLER register: `TEMP_TOL=1.0`, slope held at 3.0, + merged 20-pt `precip` field
+        (`scoring.py:_precip_20`; dry day = amount-vs-zero over 20, wet day = 10 identification + 10
+        amount, wrong-form cap 5, omission-forfeit + trace-band preserved). Full history + all 17 towns +
+        leadtime rescored; breakdown/coverage key collapsed to `precip`; /methodology + CLAUDE.md updated.
+        Implementation matched the memo's runner-up column exactly (all 11 sources, temp lever); fairness
+        re-verified on the shipped build (0 wins-by-omission; Ray ON the pack's error-drop line, r=0.895).
+        New standings live on prod (from rescored scores.json): Ray 68.8 (was 73.2; Wrong days 31/140 =
+        22.1%, matching the runner-up's predicted ~22%), Open-Meteo 89.8, DSI 95.2 (31-0-0); rank order
+        preserved.
+        392 py + 256 vitest green. Modeling background: full-history
         analysis memo: `planning/analysis/2026-07-26-recalibration-modeling.md` (local-only). Findings: the
         clustering is a TEMP-saturation artifact (60/100 pts, ~60% of good-source days maxed at the 2°F
         window); merged 20-pt precip is nearly inert here (+0.0..+0.6 — a coherence change, not a
