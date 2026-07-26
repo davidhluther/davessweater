@@ -5,6 +5,7 @@ import CoverageMatrix from "@/components/CoverageMatrix";
 import { getScores } from "@/lib/data";
 import { getLeadtimeScores, warmBiasRange } from "@/lib/leadtime";
 import { getRoadsForecast } from "@/lib/roads";
+import { MIN_SCORED_DAYS } from "@/lib/gating";
 
 export const metadata = {
   title: "How we score weather forecast accuracy",
@@ -254,6 +255,26 @@ export default async function Page() {
         </p>
       </SectionBand>
 
+      <SectionBand id="locations" tone="light">
+        <h2 className="font-display text-xl font-bold">Every town, its own numbers</h2>
+        <p className="mt-1 max-w-2xl text-sm text-muted">
+          Boone is the flagship, but we grade a{" "}
+          <Link href="/weather" className="text-teal underline underline-offset-2">forecast for each town</Link>{" "}
+          we track, and every one stands on its own. The same 100-point rubric runs unchanged from town to
+          town &mdash; no per-town tuning &mdash; but each town&apos;s forecasts are graded against that
+          town&apos;s own actuals: the Open-Meteo historical archive read at that town&apos;s own coordinates,
+          not Boone&apos;s. A forecast for a 5,400-foot ridge is scored against what happened on that ridge.
+        </p>
+        <p className="mt-3 max-w-2xl text-sm text-muted">
+          We never blend towns into one average. A combined score would mix places of very different forecast
+          difficulty, and the whole point is that each place is real. A new town launches provisional and stays
+          that way until it crosses {MIN_SCORED_DAYS} scored days &mdash; the same gate every forecast source
+          on the site clears before its record is called established &mdash; then it ranks like the rest. The
+          future Boone weather station upgrades Boone&apos;s actuals only; every other town keeps the archive as
+          its ground truth.
+        </p>
+      </SectionBand>
+
       <SectionBand tone="surface">
         <h2 className="font-display text-xl font-bold">Grading forecasts by lead time</h2>
         <p className="mt-1 max-w-2xl text-sm text-muted">
@@ -352,7 +373,7 @@ export default async function Page() {
             the 118-day review of Ray&apos;s Weather
           </Link>
           ,{" "}
-          <Link href="/resources/articles/rays-weather-report-card-june-2026" className="text-teal underline underline-offset-2">
+          <Link href="/report-card/2026-06" className="text-teal underline underline-offset-2">
             the June 2026 report card
           </Link>
           , or{" "}

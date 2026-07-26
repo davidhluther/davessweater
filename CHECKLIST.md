@@ -474,7 +474,7 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       automatically via its `workflow_run` trigger); fresh on prod ~15 min later.
 - [ ] **Watch the 2026-07-03 10:00 UTC firing** — if GHA skips again, move both crons off the top of the
       hour (:07/:37), the standard mitigation for contended slots.
-- [~] **Freshness sentinel — BUILT 2026-07-26 (PR #144, awaiting owner merge).** `scripts/check_freshness.py`
+- [x] **Freshness sentinel — ✅ MERGED 2026-07-26 (PR #144).** `scripts/check_freshness.py`
       + `.github/workflows/freshness_sentinel.yml` (16:30 UTC + manual dispatch, read-only, fails red):
       checks BOTH today's `data/predictions/` capture exists AND newest comparison ≤2 days old. 14 new
       pytest, verified in passing + simulated-failing states.
@@ -704,7 +704,11 @@ model only.
         only because Ray makes fewer trace-day "none" calls). No double-penalty: a trace miss now costs 4 pts
         total. 5 new pytest cases; 200 py tests green; history rescored (`rescore_history.py`, 100 files;
         consistency test green); `/methodology` + `CLAUDE.md` updated. New avgs: Open-Meteo 92.80, Ray 72.28.
-  - [~] **Remaining (the actual recalibration) — MODELED 2026-07-26, OWNER DECISION PENDING.** Full-history
+  - [~] **Remaining (the actual recalibration) — DECIDED 2026-07-26, IMPLEMENTATION IN FLIGHT.** Owner
+        chose the GENTLER register: `TEMP_TOL=1.0, TEMP_SLOPE=3.0` + merged 20-pt precip (Ray ~22% Wrong
+        days, not the -4 slope's ~40%). Implementation dispatched same day (branch
+        `feat/scoring-recalibration`; full-history + per-town rescore, /methodology + CLAUDE.md updates,
+        memo-match verification gate). Modeling background: full-history
         analysis memo: `planning/analysis/2026-07-26-recalibration-modeling.md` (local-only). Findings: the
         clustering is a TEMP-saturation artifact (60/100 pts, ~60% of good-source days maxed at the 2°F
         window); merged 20-pt precip is nearly inert here (+0.0..+0.6 — a coherence change, not a
@@ -799,7 +803,8 @@ model only.
         reasons — spec §9** (station sites ≠ towns; High Country identity; teardown-post
         credibility; thin-content risk on a cold-start domain; git-pipeline strain at 600
         files/day).
-  - [~] **P1 pages — BUILT 2026-07-26 ahead of the gate (PR #145, awaiting owner merge).** `/weather`
+  - [x] **P1 pages — ✅ MERGED + LIVE 2026-07-26 (PR #145; /weather + town page + June-redirect all
+        verified 200/308 on prod).** `/weather`
         hub + `/weather/{slug}` + `/right-wrong-ray/{slug}` + server-rendered TownSwitcher (real links,
         no client toggle; Boone routes to legacy `/` URLs, no boone twin). Below MIN_SCORED_DAYS(9) a
         town renders provisional ("Tracking since {date} | N of 9 days"), crosses automatically — no
@@ -845,7 +850,7 @@ model only.
 - [x] Logo: Ray's-style white wordmark + white circle behind Dave's face (AI-recolored → `public/assets/logo-white.png`).
 - [ ] Copy / sweater-terminology polish.
 - [ ] Make scoring methodology visible/defensible on the site (claims = tracked data, not assertion).
-- [~] Update `README.md` — REWRITTEN 2026-07-26 for Next.js/Vercel reality (PR #144, awaiting owner merge).
+- [x] Update `README.md` — ✅ REWRITTEN + MERGED 2026-07-26 (PR #144).
 - [ ] Fourthwall: contact support about the Storefront API 403; if fixed, switch back from the
       Merchant Center RSS feed for richer product data.
 - [x] **Shop products were unclickable — ✅ FIXED (PR #118, merged 2026-07-07).** Clicking a product opened a
@@ -913,7 +918,7 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
       first-shell times were never captured ("I don't have them. Ignore."). Draft stays staged in
       `planning/seo/` in case 2027 revives the concept (the observe-live checklist item below repeats
       annually).
-- [~] **Guideline stack (spec §7) — COMPLETED 2026-07-26 (PR #144, awaiting owner merge + review).**
+- [~] **Guideline stack (spec §7) — ✅ MERGED 2026-07-26 (PR #144); owner review of all three docs pending.**
       `DS_CONTENT_STRUCTURE.md` (answer-first/franchise patterns from the real fireworks/GMHG pages) +
       `DS_WRITING_QUALITY.md` (layered on the universal styleguide, never loosens it) written;
       `DS_VOICE.md` stub note reconciled. Owner review of all three still pending.
@@ -928,7 +933,8 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
       paragraph. Owner reviews drafts before publish (house rule). ⚠️ Owner mentioned "Keytastic"
       (set up for Pigasus) — nothing by that name exists in any repo/skill/connector; awaiting
       owner clarification (noted in map §5).
-- [~] **Report Card franchise route — BUILT 2026-07-26 (PR #143, awaiting owner merge).** `/report-card`
+- [x] **Report Card franchise route — ✅ MERGED + LIVE 2026-07-26 (PR #143; June URL 308s to
+      /report-card/2026-06 on prod, verified).** `/report-card`
       hub + `/report-card/{yyyy-mm}` (SSG); cards are native posts flagged `category: report-card` +
       `reportMonth: YYYY-MM` — a new .md lands automatically, no per-month code (July card auto-lands
       Aug 1). Direct single-hop 308s from BOTH `/blog/{slug}` and `/resources/articles/{slug}`; June card
@@ -940,7 +946,7 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
       draft AND publish as soon as Aug 1** (no separate review gate for this one). **Report-card titles are Title Case** ("Ray's Weather
       Report Card: July 2026") — as are ALL blog-post titles now (the four live posts were retitled
       2026-07-08; H2/H3 stay sentence case).
-- [~] **Post detail date format — FIXED 2026-07-26 (PR #144, awaiting owner merge).** THREE raw-ISO renders
+- [x] **Post detail date format — ✅ MERGED 2026-07-26 (PR #144).** THREE raw-ISO renders
       found (detail page + category listing + videos listing), all now `fmtLongDate()`; verified in built HTML.
 
 ## Disavow submission + GA4 verification (2026-07-20, routed from PG IA 2 per David)
@@ -1233,8 +1239,8 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
       retention waiver (adds the dominant STR segment's booking pace) — draft email + steps provided
       2026-07-25; (b) free Travelpayouts signup → token as GH secret `TRAVELPAYOUTS_TOKEN`
       (posture-clean backup feed); (c) later: Banner Elk / Beech Mtn hotels for the ski-season read.
-- [~] **Leaf-season forecaster — DRAFT MODEL BUILT 2026-07-26, ~7 weeks ahead of target (PR #142,
-      awaiting owner merge).** `scripts/leaf_model.py` (pure stdlib) + `predict_leaf.py` → `data/leaf/
+- [~] **Leaf-season forecaster — ✅ DRAFT MODEL MERGED 2026-07-26, ~7 weeks ahead of target (PR #142;
+      mid-Sept + October follow-ups below still open).** `scripts/leaf_model.py` (pure stdlib) + `predict_leaf.py` → `data/leaf/
       predictions.json` w/ per-prediction `basis` provenance; Open-Meteo archive inputs cached under
       `data/leaf/inputs/` (~2.7 MB, committed for offline reproducibility). Model: Oct-6 photoperiod
       anchor + 6.5 days/1,000 ft elevation lapse + bounded Sept-temp anomaly (±7 days, degrades to

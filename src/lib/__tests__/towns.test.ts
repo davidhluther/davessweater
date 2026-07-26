@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { buildForecast5FromCaptures, scoredDays } from "@/lib/towns";
+import { buildForecast5FromCaptures, scoredDays, firstScoredDate, townTodayForecasts } from "@/lib/towns";
+import type { Forecast5Day } from "@/lib/forecast5";
 import { compositeForecast } from "@/lib/composite";
 
 describe("scoredDays", () => {
@@ -7,6 +8,43 @@ describe("scoredDays", () => {
     expect(scoredDays(null)).toBe(0);
     expect(scoredDays({ entries: [{}, {}, {}], totals: {} })).toBe(3);
     expect(scoredDays({ entries: [], totals: {} })).toBe(0);
+  });
+});
+
+describe("firstScoredDate", () => {
+  it("returns the earliest scoreboard date regardless of entry order", () => {
+    const scores = { totals: {}, entries: [
+      { date: "2026-07-20" }, { date: "2026-07-18" }, { date: "2026-07-19" },
+    ] };
+    expect(firstScoredDate(scores)).toBe("2026-07-18");
+  });
+  it("returns null when there are no dated entries", () => {
+    expect(firstScoredDate(null)).toBeNull();
+    expect(firstScoredDate({ totals: {}, entries: [{}] })).toBeNull();
+  });
+});
+
+describe("townTodayForecasts", () => {
+  const f5: Forecast5Day = {
+    generated_at: "2026-07-25T12:00:00",
+    location: "Blowing Rock",
+    days: [
+      { date: "2026-07-25", sources: { openmeteo: { label: "Open-Meteo", high_f: 73, low_f: 62, wind: "10 mph", precip_type: "rain" } } },
+      { date: "2026-07-26", sources: { openmeteo: { label: "Open-Meteo", high_f: 77, low_f: 64, wind: "11 mph", precip_type: "none" } } },
+    ],
+  };
+  it("returns the first day on or after the clock, shaped as LatestForecasts", () => {
+    const lf = townTodayForecasts(f5, "2026-07-26");
+    expect(lf).not.toBeNull();
+    expect(lf!.date).toBe("2026-07-26");
+    expect(lf!.sources.openmeteo.high_f).toBe(77);
+  });
+  it("falls back to the first available day when all are in the past", () => {
+    expect(townTodayForecasts(f5, "2026-08-01")!.date).toBe("2026-07-25");
+  });
+  it("tolerates a null or empty artifact", () => {
+    expect(townTodayForecasts(null)).toBeNull();
+    expect(townTodayForecasts({ generated_at: "", location: "", days: [] })).toBeNull();
   });
 });
 

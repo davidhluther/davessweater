@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getVideos } from "@/lib/feeds";
+import { fmtLongDate } from "@/lib/dates";
 import { CATEGORIES } from "@/content/resources";
 import { breadcrumbs, collectionPage } from "@/lib/schema";
 import SectionBand from "@/components/SectionBand";
@@ -55,7 +56,7 @@ export default async function Page() {
               )}
               <div className="p-4">
                 <h2 className="font-semibold text-foreground">{v.title}</h2>
-                <p className="mt-0.5 text-xs text-muted">{v.date}</p>
+                <p className="mt-0.5 text-xs text-muted">{fmtLongDate(v.date)}</p>
               </div>
             </a>
           ))}
