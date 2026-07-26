@@ -48,21 +48,20 @@
         ]
       },
       "score": {
-        "score": 91.2,
+        "score": 85.2,
         "grade": {
           "verdict": "right",
-          "ray_count": 5
+          "ray_count": 4
         },
         "coverage": {
           "high_temp": true,
           "low_temp": true,
           "wind": true,
-          "precip_type": true,
-          "precip_amount": true
+          "precip": true
         },
         "breakdown": {
           "high_temp": {
-            "points": 29.4,
+            "points": 26.4,
             "max": 30,
             "scored": true,
             "predicted": 50.9,
@@ -70,7 +69,7 @@
             "error": 2.2
           },
           "low_temp": {
-            "points": 27.6,
+            "points": 24.6,
             "max": 30,
             "scored": true,
             "predicted": 34.6,
@@ -85,16 +84,9 @@
             "actual": 17.2,
             "error": 5.9
           },
-          "precip_type": {
-            "points": 10.0,
-            "max": 10,
-            "scored": true,
-            "predicted": "rain",
-            "actual": "rain"
-          },
-          "precip_amount": {
-            "points": 10.0,
-            "max": 10,
+          "precip": {
+            "points": 20.0,
+            "max": 20,
             "scored": true,
             "predicted": 0.146,
             "actual": 0.106,

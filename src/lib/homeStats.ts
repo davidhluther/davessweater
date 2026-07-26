@@ -156,7 +156,9 @@ export interface WhyStats {
 
 export function whyStats(scores: Scores | null): WhyStats {
   const h = heroStats(scores);
-  const raysPrecip = scores?.coverage?.raysweather?.precip_amount;
+  // Merged precip coverage (2026-07-26); its flag = whether Ray answered the
+  // numeric amount, exactly the old precip_amount semantics this stat relies on.
+  const raysPrecip = scores?.coverage?.raysweather?.precip;
   return {
     trackedDays: h.trackingDays,
     freeLabel: h.trackingBestFree?.label ?? "Open-Meteo",

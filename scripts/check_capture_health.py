@@ -36,12 +36,16 @@ EST = ZoneInfo("America/New_York")
 # (Catching a subtle *sustained* wind-parser regression, vs a one-off forfeit,
 # needs a rolling coverage-delta check — a worthwhile follow-up, not this guard.)
 MANDATORY = {
-    "openmeteo": ["high_temp", "low_temp", "wind", "precip_type"],
+    "openmeteo": ["high_temp", "low_temp", "wind", "precip"],
     "raysweather": ["high_temp", "low_temp"],
 }
 
+# Coverage was split into precip_type + precip_amount before the 2026-07-26
+# recalibration; the merged 20-pt field is a single "precip" coverage key whose
+# flag tracks whether the numeric amount was answered (Open-Meteo always answers
+# it; Ray's forfeits it on wet-forecast days, exactly as precip_amount did).
 FIELD_LABEL = {"high_temp": "high", "low_temp": "low", "wind": "wind",
-               "precip_type": "precip type", "precip_amount": "precip amount"}
+               "precip": "precip"}
 
 
 def evaluate(comp):

@@ -60,11 +60,21 @@ GitHub Actions run the **data** pipeline and commit `data/` to `main`; each push
 
 | Category      | Max Points | Tolerance        | Penalty                |
 |---------------|-----------|------------------|------------------------|
-| High temp     | 30        | within 2°F = full | -3 pts per °F beyond  |
-| Low temp      | 30        | within 2°F = full | -3 pts per °F beyond  |
+| High temp     | 30        | within 1°F = full | -3 pts per °F beyond  |
+| Low temp      | 30        | within 1°F = full | -3 pts per °F beyond  |
 | Wind speed    | 20        | within 3 mph = full | -2 pts per mph beyond (interval midpoint + a 0.5× range-width vagueness tax) |
-| Precip type   | 10        | exact = 10; right category / wrong form = 4; trace-band none-vs-precip miss = 6 | 0 otherwise |
-| Precip amount | 10        | snow-aware (rain ±0.1", snow ±max(1", 20%)) | rain -20/in, snow -2/in |
+| Precip        | 20        | **dry day:** predicted amount vs 0" scored over the full 20 (type & amount encode the same fact — no double count). **wet day:** 10 identification (exact form = 10; right category / wrong form = 4; trace-band none-vs-precip = 6) + 10 amount, snow-aware (rain ±0.1", snow ±max(1", 20%)) | amount rain -20/in, snow -2/in; amount **capped at 5** when a real form is misnamed; amount **forfeited** (0) when precip is named but the total is omitted |
+
+**Scoring recalibration (2026-07-26):** the temperature full-credit window tightened from **2°F to 1°F**
+(slope unchanged at -3 pts/°F — the owner chose the gentler register over -4), because a 2°F window let temperature
+saturate ~60% of the scale and the automated sources became indistinguishable in the 90s. Separately, the old
+precip **type (10)** + **amount (10)** fields were **merged into one 20-pt `precip` field** (`scoring.py:_precip_20`)
+so a single wet/dry fact is never graded twice: on a dry day the whole 20 is the predicted amount scored against
+zero; on a precip day it is 10-pt form identification + 10-pt amount, with the wrong-form cap and omission-forfeit
+above. The **implied-zero** and **trace-band** rules below are preserved as sub-components of the merged field. The
+breakdown/coverage key `precip_type`+`precip_amount` collapsed to a single `precip` key (coverage tracks whether the
+numeric amount was answered — the old `precip_amount` semantics). Rescored across all history + every town via
+`rescore_history.py`.
 
 **Precip & the implied-zero rule (2026-06-30):** scored out of a fixed 100. A forecast of **"no precip"** is a
 zero-inch amount forecast — scored as such, so a source that says "no rain" earns the amount points on dry days.
@@ -83,8 +93,9 @@ Fix: a none-vs-precip type disagreement earns **6/10** (`TYPE_TRACE_CREDIT` in `
 precip side's amounts are inside the amount tolerances (`_is_trace`), in either direction. A source that names
 precip but omits the total cannot claim the band (no gain by omission — Ray's wet-forecast days unchanged). Not
 tuned against Ray: source-blind, lifted all 10 sources (+0.56 to +1.26 avg; Ray +0.56, Open-Meteo +1.08). History
-rescored via `rescore_history.py`. This narrows the trace incoherence only; the broader recalibration (merged
-20-pt precip, temp-band tightening) stays open in `CHECKLIST.md`.
+rescored via `rescore_history.py`. This narrowed the trace incoherence only; the broader recalibration (merged
+20-pt precip, temp-band tightening) shipped 2026-07-26 — see the recalibration note above. The trace-band credit
+now lives inside the merged field as part of its 10-pt identification sub-score.
 
 **Capture-day low recovery (2026-07-01):** Met.no and OpenWeatherMap derive the daily low as `min()` over their
 sub-daily timeseries. On the capture day (~midday) that series no longer covers the pre-dawn hours, so its "low"

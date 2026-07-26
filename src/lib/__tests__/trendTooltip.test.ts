@@ -7,8 +7,8 @@ const comparisons = [{
   sources: {
     openmeteo:   { score: { score: 98.3, breakdown: {} } },
     raysweather: { score: { score: 39.6, breakdown: {
-      high_temp:     { points: 12, max: 30, scored: true, predicted: 84, actual: 78.6, error: 5.4 },
-      precip_amount: { points: null, max: 10, scored: false, predicted: null, actual: 0.26, error: null, unit: "in_liquid" },
+      high_temp: { points: 12, max: 30, scored: true, predicted: 84, actual: 78.6, error: 5.4 },
+      precip:    { points: null, max: 20, scored: false, predicted: null, actual: 0.26, error: null, unit: "in_liquid" },
     } } },
   },
 }] as never;
@@ -26,7 +26,7 @@ describe("buildTooltipMap", () => {
     expect(high.published).toBe(true);
     expect(high.predicted).toBe(84);
     expect(high.error).toBe(5.4);
-    const precip = misses.find((x) => x.field === "precip_amount")!;
+    const precip = misses.find((x) => x.field === "precip")!;
     expect(precip.published).toBe(false);
   });
 });

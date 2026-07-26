@@ -106,11 +106,12 @@ def export():
                 "pts_high_temp": breakdown.get("high_temp", {}).get("points"),
                 "pts_low_temp": breakdown.get("low_temp", {}).get("points"),
                 "pts_wind": breakdown.get("wind", {}).get("points"),
-                "pts_precipitation": breakdown.get("precipitation", {}).get("points"),
-                "err_high_f": breakdown.get("high_temp", {}).get("error_f"),
-                "err_low_f": breakdown.get("low_temp", {}).get("error_f"),
-                "err_wind_mph": breakdown.get("wind", {}).get("error_mph"),
-                "err_precip_in": breakdown.get("precipitation", {}).get("error_in"),
+                # Merged 20-pt precip field (2026-07-26); was two 10-pt columns.
+                "pts_precipitation": breakdown.get("precip", {}).get("points"),
+                "err_high_f": breakdown.get("high_temp", {}).get("error"),
+                "err_low_f": breakdown.get("low_temp", {}).get("error"),
+                "err_wind_mph": breakdown.get("wind", {}).get("error"),
+                "err_precip_in": breakdown.get("precip", {}).get("error"),
                 # Sweater
                 "sweater_answer": sweater.get("answer"),
                 "sweater_layers": sweater.get("layers"),

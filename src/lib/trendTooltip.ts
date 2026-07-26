@@ -2,7 +2,7 @@ import type { Comparison, ScoreBreakdownField } from "@/lib/types";
 import { actualLines } from "@/lib/homeStats";
 
 const FIELD_LABELS: Record<string, string> = {
-  high_temp: "High", low_temp: "Low", wind: "Wind", precip_type: "Precip", precip_amount: "Precip amount",
+  high_temp: "High", low_temp: "Low", wind: "Wind", precip: "Precip",
 };
 
 export interface RayMiss {

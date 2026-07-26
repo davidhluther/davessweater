@@ -5,8 +5,8 @@ const FIELDS: Array<{ key: string; label: string; unit: string }> = [
   { key: "high_temp", label: "High temp", unit: "°" },
   { key: "low_temp", label: "Low temp", unit: "°" },
   { key: "wind", label: "Wind", unit: " mph" },
-  { key: "precip_type", label: "Precip type", unit: "" },
-  { key: "precip_amount", label: "Precip amount", unit: '"' },
+  // Merged 20-pt precip field (2026-07-26): one row (was Precip type + amount).
+  { key: "precip", label: "Precip", unit: '"' },
 ];
 
 function fmt(v: number | string | null | undefined, unit: string): string {

@@ -84,13 +84,13 @@ def test_no_ghost_comparison_when_nothing_scoreable(tmp_path):
 def test_rebuild_scores_matches_boone_shape(tmp_path):
     _write_pred(tmp_path, "testville", "2026-07-10", "openmeteo", [_row("2026-07-10")])
     _write_pred(tmp_path, "testville", "2026-07-10", "nws",
-                [_row("2026-07-10", high_f=90)])  # 10°F miss -> 30-(8*3)=6 -> 76
+                [_row("2026-07-10", high_f=90)])  # 10°F miss -> 30-(9*3)=3 -> 73 (1°F window)
     score_location_date(LOC, "2026-07-10", ACTUALS, base=tmp_path)
     scores = rebuild_scores(LOC, base=tmp_path)
     assert scores["location_slug"] == "testville"
     assert scores["totals"]["openmeteo"]["days"] == 1
     assert scores["totals"]["openmeteo"]["total_score"] == 100.0
-    assert scores["totals"]["nws"]["right"] == 1  # 76 -> "right" band
+    assert scores["totals"]["nws"]["meh"] == 1  # 73 -> "meh" band
     assert scores["entries"][0]["date"] == "2026-07-10"
     # entries-vs-totals invariant, same as tests/test_scores_consistency.py
     for src, t in scores["totals"].items():

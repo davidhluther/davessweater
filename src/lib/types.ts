@@ -20,7 +20,10 @@ export interface Prediction {
   members?: string[]; member_count?: number;
 }
 
-export type CoverageField = "high_temp" | "low_temp" | "wind" | "precip_type" | "precip_amount";
+// Merged 20-pt precip field (recalibrated 2026-07-26): precip_type + precip_amount
+// collapsed into one "precip" coverage/breakdown key. Its coverage flag tracks
+// whether the numeric amount was answered (the old precip_amount semantics).
+export type CoverageField = "high_temp" | "low_temp" | "wind" | "precip";
 
 export interface CoverageStat { provided: number; days: number; }
 
