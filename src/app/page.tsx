@@ -14,6 +14,7 @@ import WhyTimeline from "@/components/WhyTimeline";
 import HeadToHeadCard from "@/components/HeadToHeadCard";
 import LiveConditions from "@/components/LiveConditions";
 import IphoneShot from "@/components/IphoneShot";
+import AlsoTracking from "@/components/AlsoTracking";
 import { copy } from "@/content/copy";
 
 export const metadata = {
@@ -66,6 +67,7 @@ export default async function HomePage() {
           <div className="rounded-2xl border border-border bg-surface px-4 py-6 sm:px-8 sm:py-8">
             <FiveDayStrip />
           </div>
+          <AlsoTracking />
         </div>
       </SectionBand>
 
@@ -83,7 +85,7 @@ export default async function HomePage() {
                   Is Ray&apos;s Weather Accurate? 118 Days Scored
                 </Link>
                 {" | "}
-                <Link href="/resources/articles/rays-weather-report-card-june-2026" className="text-teal underline underline-offset-2">
+                <Link href="/report-card/2026-06" className="text-teal underline underline-offset-2">
                   Ray&apos;s Weather Report Card: June 2026
                 </Link>
               </p>

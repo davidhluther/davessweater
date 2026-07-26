@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { getForecast5Day, stripDays } from "@/lib/forecast5";
-import { getLeadtimeScores, compositeMemberMaePair } from "@/lib/leadtime";
+import { getForecast5Day, stripDays, type Forecast5Day } from "@/lib/forecast5";
+import { getLeadtimeScores, compositeMemberMaePair, type LeadtimeScores } from "@/lib/leadtime";
 import RainTimingBar from "@/components/RainTimingBar";
 
 // The consumer half of the Today module: the week ahead for a person who just
@@ -48,8 +48,16 @@ function confidenceMeter(confidence: "high" | "medium" | "low") {
   );
 }
 
-export default async function FiveDayStrip() {
-  const [f5, scores] = await Promise.all([getForecast5Day(), getLeadtimeScores()]);
+// Boone self-fetches (no props). A town page passes its assembled 5-day
+// artifact and a scoreboard link to its own board; towns have no lead-time
+// artifact, so `leadtime` is null there and the MAE footnote is simply omitted.
+export default async function FiveDayStrip(
+  { data, leadtime, scoreboardHref = "/right-wrong-ray" }:
+  { data?: Forecast5Day | null; leadtime?: LeadtimeScores | null; scoreboardHref?: string } = {},
+) {
+  const [f5, scores] = data !== undefined
+    ? [data, leadtime ?? null]
+    : await Promise.all([getForecast5Day(), getLeadtimeScores()]);
   const days = stripDays(f5);
   // Fewer than 2 consensus days is not a strip — render nothing (including no
   // divider) rather than a broken half-strip.
@@ -142,7 +150,7 @@ export default async function FiveDayStrip() {
           </p>
         ) : null}
         <p className="mt-1.5 text-xs">
-          <Link href="/right-wrong-ray" className="text-teal underline underline-offset-2">See the scoreboard</Link>
+          <Link href={scoreboardHref} className="text-teal underline underline-offset-2">See the scoreboard</Link>
         </p>
     </div>
   );

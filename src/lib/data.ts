@@ -163,40 +163,81 @@ function parseFaqs(md: string): { q: string; a: string }[] {
   return faqs;
 }
 
+// A report card carries the same shape as a blog post plus the year-month it
+// grades, which is its permanent URL segment (/report-card/{reportMonth}).
+export interface ReportCard extends BlogPost {
+  reportMonth: string; // "YYYY-MM"
+}
+
+// One parsed native post plus the raw frontmatter fields that decide where it
+// lives. `rawCategory === "report-card"` shelves it in the report-card
+// franchise instead of the Articles/News blog; `reportMonth` is its URL segment.
+interface NativeEntry { post: BlogPost; rawCategory: string; reportMonth?: string }
+
 // Native posts authored as markdown in src/content/posts/. Unlike Substack
 // feed posts they carry an explicit slug + category; the body renders to HTML
-// and then flows through the same sanitizer as feed content.
-async function getNativePosts(): Promise<BlogPost[]> {
+// and then flows through the same sanitizer as feed content. This is the single
+// markdown path — both the blog pipeline and the report-card franchise read it.
+async function readNativePosts(): Promise<NativeEntry[]> {
   if (!existsSync(POSTS_DIR)) return [];
   // .md = hand-authored posts; .mdoc = Keystatic (CMS) posts. Both are YAML
   // frontmatter + a markdown-compatible body, so one reader serves both.
   const files = (await readdir(POSTS_DIR)).filter((f) => f.endsWith(".md") || f.endsWith(".mdoc"));
-  const out: BlogPost[] = [];
+  const out: NativeEntry[] = [];
   for (const f of files) {
     const { data, body } = parseFrontmatter(await readFile(join(POSTS_DIR, f), "utf8"));
     // Keystatic stores the slug as the filename and doesn't write a `slug:` key,
     // so fall back to the filename when the frontmatter omits it.
     const slug = data.slug || f.replace(/\.(md|mdoc)$/, "");
     if (!slug || !data.title) continue;
-    const category = data.category === "news" ? "news" : "articles";
+    const rawCategory = data.category || "articles";
+    const reportMonth = data.reportMonth || undefined;
+    const isCard = rawCategory === "report-card";
+    // Blog posts split into two shelves; report cards leave the blog entirely.
+    const category: "articles" | "news" = rawCategory === "news" ? "news" : "articles";
     const bodyNoH1 = stripLeadingH1(body);
     const headings = parseHeadings(bodyNoH1);
     const rendered = marked.parse(bodyNoH1, { async: false }) as string;
+    const link = isCard && reportMonth ? `/report-card/${reportMonth}` : `/resources/${category}/${slug}`;
     out.push({
-      title: data.title,
-      slug,
-      category,
-      date: data.date,
-      summary: data.summary,
-      metaTitle: data.metaTitle,
-      metaDescription: data.metaDescription,
-      link: `/resources/${category}/${data.slug}`,
-      content: injectHeadingIds(rendered, headings),
-      toc: buildToc(headings),
-      faqs: parseFaqs(body),
+      post: {
+        title: data.title,
+        slug,
+        category: isCard ? undefined : category,
+        date: data.date,
+        summary: data.summary,
+        metaTitle: data.metaTitle,
+        metaDescription: data.metaDescription,
+        link,
+        content: injectHeadingIds(rendered, headings),
+        toc: buildToc(headings),
+        faqs: parseFaqs(body),
+      },
+      rawCategory,
+      reportMonth,
     });
   }
   return out;
+}
+
+// Blog posts only — report cards are excluded so they never leak into the
+// Articles/News lists, the resources hub counts, or the post sitemap routes.
+async function getNativePosts(): Promise<BlogPost[]> {
+  return (await readNativePosts()).filter((e) => e.rawCategory !== "report-card").map((e) => e.post);
+}
+
+// The report-card franchise, newest month first. A new card lands here
+// automatically the moment its .md file appears with `category: report-card`
+// and a `reportMonth: YYYY-MM` — no code change per month.
+export async function getReportCards(): Promise<ReportCard[]> {
+  return (await readNativePosts())
+    .filter((e) => e.rawCategory === "report-card" && e.reportMonth)
+    .map((e) => ({ ...e.post, reportMonth: e.reportMonth! }))
+    .sort((a, b) => b.reportMonth.localeCompare(a.reportMonth));
+}
+
+export async function getReportCard(month: string): Promise<ReportCard | null> {
+  return (await getReportCards()).find((c) => c.reportMonth === month) ?? null;
 }
 
 export async function getBlogPosts(): Promise<BlogPost[]> {

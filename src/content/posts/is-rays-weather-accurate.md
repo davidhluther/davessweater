@@ -95,7 +95,7 @@ Ray's best June day was June 24, 2026, at 90.7, a top-tier score by any forecast
 
 ### Ray's worst stretches and the 23 Wrong days
 
-The other side of the ledger is the 23 of 118 days graded Wrong (under 60). Ray's worst June day was June 2, 2026, at 26.1, the kind of day that pulls a monthly average down hard. Across June's 29 scored days, Ray's averaged 73.3 (Right-Meh-Wrong 14-11-4) against Open-Meteo's 92.3 and Apple's 88.0, a June gap of 19.0 points. The month-by-month detail is in [Ray's Weather report card for June 2026](/resources/articles/rays-weather-report-card-june-2026).
+The other side of the ledger is the 23 of 118 days graded Wrong (under 60). Ray's worst June day was June 2, 2026, at 26.1, the kind of day that pulls a monthly average down hard. Across June's 29 scored days, Ray's averaged 73.3 (Right-Meh-Wrong 14-11-4) against Open-Meteo's 92.3 and Apple's 88.0, a June gap of 19.0 points. The month-by-month detail is in [Ray's Weather report card for June 2026](/report-card/2026-06).
 
 ## What is the most accurate forecast for Boone, NC?
 

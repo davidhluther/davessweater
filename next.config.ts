@@ -21,7 +21,18 @@ function nativePostRedirects() {
     const category = /^category:\s*["']?([\w-]+)/m.exec(head)?.[1] ?? "news";
     // CMS (.mdoc) posts store the slug as the filename, not a frontmatter key.
     const slug = /^slug:\s*["']?([\w-]+)/m.exec(head)?.[1] ?? f.replace(/\.(md|mdoc)$/, "");
-    if (category !== "news") {
+    if (category === "report-card") {
+      // Report cards live at /report-card/<yyyy-mm>, not under /resources. Emit
+      // DIRECT single-hop redirects from both the /blog/<slug> legacy path and
+      // the /resources/articles/<slug> URL the franchise's first card shipped
+      // at — direct, so /blog never chains through the articles URL (itself a
+      // redirect). No destination without a month, so skip if it's missing.
+      const reportMonth = /^reportMonth:\s*["']?([\d-]+)/m.exec(head)?.[1];
+      if (!reportMonth) continue;
+      const dest = `/report-card/${reportMonth}`;
+      out.push({ source: `/blog/${slug}`, destination: dest, permanent: true });
+      out.push({ source: `/resources/articles/${slug}`, destination: dest, permanent: true });
+    } else if (category !== "news") {
       out.push({ source: `/blog/${slug}`, destination: `/resources/${category}/${slug}`, permanent: true });
     }
   }
