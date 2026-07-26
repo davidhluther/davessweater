@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBlogPosts, postSlug, postCategoryOf } from "@/lib/data";
+import { fmtLongDate } from "@/lib/dates";
 import { CATEGORIES, type PostCategory } from "@/content/resources";
 import { breadcrumbs, collectionPage } from "@/lib/schema";
 import SectionBand from "@/components/SectionBand";
@@ -77,7 +78,7 @@ export default async function Page({ params }: { params: Promise<{ category: str
                     {p.title}
                   </Link>
                 </h2>
-                {p.date && <p className="mt-0.5 text-xs text-muted">{p.date}</p>}
+                {p.date && <p className="mt-0.5 text-xs text-muted">{fmtLongDate(p.date)}</p>}
                 {p.summary && <p className="mt-1 text-sm text-muted">{p.summary}</p>}
               </li>
             );
