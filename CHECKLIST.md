@@ -1233,14 +1233,21 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
       retention waiver (adds the dominant STR segment's booking pace) — draft email + steps provided
       2026-07-25; (b) free Travelpayouts signup → token as GH secret `TRAVELPAYOUTS_TOKEN`
       (posture-clean backup feed); (c) later: Banner Elk / Beech Mtn hotels for the ski-season read.
-- [ ] **Leaf-season forecaster feeds tourism (owner-directed 2026-07-25; spec §3b).** No leaf
-      forecaster exists yet — but the pipeline already holds the raw material: 18 places spanning
-      1,001–5,436 ft with daily temps. Build a per-town peak-color window model (elevation +
-      temperature accumulation), publish + GRADE it (scored leaf forecast, 18 gradable predictions),
-      and feed predicted peak weekends into the Busy-ness Index as an up-weight — cross-confirmed
-      against lodging high-share (model says peak Oct 17 + 95% of hotels price it high = confident
-      "slammed" call). Also shared with traffic v2 (US-321/Parkway corridors). Draft model target:
-      mid-Sept (no new capture needed; temps already accrue).
+- [~] **Leaf-season forecaster — DRAFT MODEL BUILT 2026-07-26, ~7 weeks ahead of target (PR #142,
+      awaiting owner merge).** `scripts/leaf_model.py` (pure stdlib) + `predict_leaf.py` → `data/leaf/
+      predictions.json` w/ per-prediction `basis` provenance; Open-Meteo archive inputs cached under
+      `data/leaf/inputs/` (~2.7 MB, committed for offline reproducibility). Model: Oct-6 photoperiod
+      anchor + 6.5 days/1,000 ft elevation lapse + bounded Sept-temp anomaly (±7 days, degrades to
+      climatology pre-Sept); window ±5 days; every constant hand-traceable. 2024/2025 hindcast: all
+      elevation bands hit their windows (high bands within 1-2 days) — validates the gradient, not yet
+      day-level interannual skill. Grading scheme implemented NOW (day error + window-hit + 0-100 score);
+      23 new tests (374 py green). 2026 sanity: Beech Oct 3 / Boone Oct 17 / Wilkesboro Nov 1. Ships
+      silent — no Actions wiring, no page. FOLLOW-UPS: (a) **mid-Sept: re-run `predict_leaf.py --refresh`**
+      once Sept temps accrue (activates the thermal term before windows go public); (b) **October:
+      capture observed peaks by eye** from the registry grading sources into a scorer-ingestible file —
+      decide format then; (c) Boone's elevation is hardcoded (not in locations.json) — fine for now.
+      Original intent (unchanged): feed predicted peak weekends into the Busy-ness Index up-weight +
+      traffic v2 corridors; cross-confirm against lodging high-share.
 
 - [x] **left917.net partner event feed — SHIPPED 2026-07-25 (PR #141, owner-directed).**
       left917.net = independent High Country news/events site (Watauga/Ashe/Avery) that plans to
