@@ -1,0 +1,84 @@
+{
+  "date": "2026-07-25",
+  "location": "Foscoe",
+  "location_slug": "foscoe",
+  "actuals": {
+    "date": "2026-07-25",
+    "fetched_at": "2026-07-26T07:28:44.080751-04:00",
+    "location": "Foscoe",
+    "location_slug": "foscoe",
+    "high_f": 71.8,
+    "low_f": 62.4,
+    "wind_mph": 8.8,
+    "gust_mph": 23.0,
+    "precip_type": "rain",
+    "rain_in": 0.232,
+    "snow_in": 0.0,
+    "precip_in": 0.232,
+    "weather_code": 61,
+    "conditions": "Slight rain",
+    "category": "rain"
+  },
+  "sources": {
+    "raysweather": {
+      "prediction": {
+        "date": "2026-07-25",
+        "high_f": 75,
+        "low_f": 60,
+        "golfballs": 3,
+        "fields_provided": [
+          "high",
+          "low"
+        ]
+      },
+      "score": {
+        "score": 49.2,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": false,
+          "precip": false
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 23.4,
+            "max": 30,
+            "scored": true,
+            "predicted": 75,
+            "actual": 71.8,
+            "error": 3.2
+          },
+          "low_temp": {
+            "points": 25.8,
+            "max": 30,
+            "scored": true,
+            "predicted": 60,
+            "actual": 62.4,
+            "error": 2.4
+          },
+          "wind": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 8.8,
+            "error": null
+          },
+          "precip": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 0.232,
+            "error": null,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}

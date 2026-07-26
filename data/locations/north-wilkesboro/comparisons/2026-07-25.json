@@ -1,0 +1,84 @@
+{
+  "date": "2026-07-25",
+  "location": "North Wilkesboro",
+  "location_slug": "north-wilkesboro",
+  "actuals": {
+    "date": "2026-07-25",
+    "fetched_at": "2026-07-26T07:29:09.061634-04:00",
+    "location": "North Wilkesboro",
+    "location_slug": "north-wilkesboro",
+    "high_f": 78.3,
+    "low_f": 66.8,
+    "wind_mph": 3.9,
+    "gust_mph": 10.5,
+    "precip_type": "rain",
+    "rain_in": 0.173,
+    "snow_in": 0.0,
+    "precip_in": 0.173,
+    "weather_code": 55,
+    "conditions": "Dense drizzle",
+    "category": "drizzle"
+  },
+  "sources": {
+    "raysweather": {
+      "prediction": {
+        "date": "2026-07-25",
+        "high_f": 80,
+        "low_f": 65,
+        "golfballs": 3,
+        "fields_provided": [
+          "high",
+          "low"
+        ]
+      },
+      "score": {
+        "score": 55.5,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": false,
+          "precip": false
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 27.9,
+            "max": 30,
+            "scored": true,
+            "predicted": 80,
+            "actual": 78.3,
+            "error": 1.7
+          },
+          "low_temp": {
+            "points": 27.6,
+            "max": 30,
+            "scored": true,
+            "predicted": 65,
+            "actual": 66.8,
+            "error": 1.8
+          },
+          "wind": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 3.9,
+            "error": null
+          },
+          "precip": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 0.173,
+            "error": null,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}

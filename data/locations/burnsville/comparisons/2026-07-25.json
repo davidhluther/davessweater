@@ -1,0 +1,84 @@
+{
+  "date": "2026-07-25",
+  "location": "Burnsville",
+  "location_slug": "burnsville",
+  "actuals": {
+    "date": "2026-07-25",
+    "fetched_at": "2026-07-26T07:29:10.787645-04:00",
+    "location": "Burnsville",
+    "location_slug": "burnsville",
+    "high_f": 73.6,
+    "low_f": 64.4,
+    "wind_mph": 7.1,
+    "gust_mph": 21.7,
+    "precip_type": "rain",
+    "rain_in": 0.122,
+    "snow_in": 0.0,
+    "precip_in": 0.122,
+    "weather_code": 55,
+    "conditions": "Dense drizzle",
+    "category": "drizzle"
+  },
+  "sources": {
+    "raysweather": {
+      "prediction": {
+        "date": "2026-07-25",
+        "high_f": 77,
+        "low_f": 62,
+        "golfballs": 3,
+        "fields_provided": [
+          "high",
+          "low"
+        ]
+      },
+      "score": {
+        "score": 48.6,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": false,
+          "precip": false
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 22.8,
+            "max": 30,
+            "scored": true,
+            "predicted": 77,
+            "actual": 73.6,
+            "error": 3.4
+          },
+          "low_temp": {
+            "points": 25.8,
+            "max": 30,
+            "scored": true,
+            "predicted": 62,
+            "actual": 64.4,
+            "error": 2.4
+          },
+          "wind": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 7.1,
+            "error": null
+          },
+          "precip": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 0.122,
+            "error": null,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}

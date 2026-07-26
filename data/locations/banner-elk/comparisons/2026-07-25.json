@@ -1,0 +1,84 @@
+{
+  "date": "2026-07-25",
+  "location": "Banner Elk",
+  "location_slug": "banner-elk",
+  "actuals": {
+    "date": "2026-07-25",
+    "fetched_at": "2026-07-26T07:28:21.170705-04:00",
+    "location": "Banner Elk",
+    "location_slug": "banner-elk",
+    "high_f": 69.3,
+    "low_f": 61.1,
+    "wind_mph": 8.7,
+    "gust_mph": 22.6,
+    "precip_type": "rain",
+    "rain_in": 0.331,
+    "snow_in": 0.0,
+    "precip_in": 0.331,
+    "weather_code": 63,
+    "conditions": "Moderate rain",
+    "category": "rain"
+  },
+  "sources": {
+    "raysweather": {
+      "prediction": {
+        "date": "2026-07-25",
+        "high_f": 71,
+        "low_f": 58,
+        "golfballs": 3,
+        "fields_provided": [
+          "high",
+          "low"
+        ]
+      },
+      "score": {
+        "score": 51.6,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": false,
+          "precip": false
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 27.9,
+            "max": 30,
+            "scored": true,
+            "predicted": 71,
+            "actual": 69.3,
+            "error": 1.7
+          },
+          "low_temp": {
+            "points": 23.7,
+            "max": 30,
+            "scored": true,
+            "predicted": 58,
+            "actual": 61.1,
+            "error": 3.1
+          },
+          "wind": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 8.7,
+            "error": null
+          },
+          "precip": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 0.331,
+            "error": null,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}
