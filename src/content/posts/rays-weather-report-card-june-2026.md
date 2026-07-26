@@ -1,7 +1,8 @@
 ---
 title: "Ray's Weather Report Card: June 2026"
 slug: rays-weather-report-card-june-2026
-category: articles
+category: report-card
+reportMonth: 2026-06
 date: 2026-07-02
 summary: "June 2026 scored: Open-Meteo 92.3, Apple 88.0, Ray's 73.3. The monthly forecast-accuracy report card for Boone, NC."
 metaTitle: "Ray's Weather Report Card: June 2026"
