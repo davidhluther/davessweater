@@ -14,6 +14,7 @@ import WhyTimeline from "@/components/WhyTimeline";
 import HeadToHeadCard from "@/components/HeadToHeadCard";
 import LiveConditions from "@/components/LiveConditions";
 import IphoneShot from "@/components/IphoneShot";
+import AlsoTracking from "@/components/AlsoTracking";
 import { copy } from "@/content/copy";
 
 export const metadata = {
@@ -66,6 +67,7 @@ export default async function HomePage() {
           <div className="rounded-2xl border border-border bg-surface px-4 py-6 sm:px-8 sm:py-8">
             <FiveDayStrip />
           </div>
+          <AlsoTracking />
         </div>
       </SectionBand>
 

@@ -14,7 +14,7 @@
 import { readFile, readdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import type { Scores, Comparison } from "@/lib/types";
+import type { Scores, Comparison, LatestForecasts } from "@/lib/types";
 import type { Forecast5Day } from "@/lib/forecast5";
 import type { ForecastDisplay } from "@/lib/types";
 import { MIN_SCORED_DAYS } from "@/lib/gating";
@@ -100,6 +100,16 @@ export async function getTownScores(slug: string): Promise<Scores | null> {
 // is the metric the public gate reads (MIN_SCORED_DAYS). Boone always clears it.
 export function scoredDays(scores: Scores | null): number {
   return Array.isArray(scores?.entries) ? scores!.entries.length : 0;
+}
+
+// The earliest date on a town's scoreboard — the "tracking since" the provisional
+// board discloses while a town is still gathering days toward the gate.
+export function firstScoredDate(scores: Scores | null): string | null {
+  const dates = (scores?.entries ?? [])
+    .map((e) => (typeof e.date === "string" ? e.date : ""))
+    .filter(Boolean)
+    .sort();
+  return dates[0] ?? null;
 }
 
 export async function isTownPublic(slug: string): Promise<boolean> {
@@ -222,4 +232,17 @@ export async function getTownForecast5(slug: string): Promise<Forecast5Day | nul
   if (!captures.length) return null;
   const town = await getTown(slug);
   return buildForecast5FromCaptures(captures, town?.name ?? slug, `${latest}T12:00:00`);
+}
+
+// The "today" slice of a town's 5-day artifact, shaped as a LatestForecasts so it
+// feeds compositeForecast() and the UpcomingForecasts table unchanged — the same
+// per-source rows the homepage renders for Boone, at the town's coordinates. The
+// day chosen is the first one on/after `today` (America/New_York, the site's
+// clock); the artifact is built from a midday capture, so its leading day may
+// already be in the past. Falls back to the first available day.
+export function townTodayForecasts(f5: Forecast5Day | null, today?: string): LatestForecasts | null {
+  if (!f5 || !Array.isArray(f5.days) || !f5.days.length) return null;
+  const clock = today ?? new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+  const day = f5.days.find((d) => d.date >= clock) ?? f5.days[0];
+  return { date: day.date, sources: day.sources };
 }

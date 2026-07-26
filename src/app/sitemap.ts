@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getBlogPosts, getReportCards, postSlug, postCategoryOf } from "@/lib/data";
+import { allTowns } from "@/lib/towns";
 import { CATEGORIES } from "@/content/resources";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -33,6 +34,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const, priority: 0.6,
     };
   });
+  // Multi-location: the /weather hub plus a forecast + accuracy-board URL for
+  // every registered town. Ships from day one with self-canonical entries (the
+  // two http-era GSC lessons); Boone is deliberately excluded — it keeps `/` and
+  // the root /right-wrong-ray, with no /weather/boone twin. New towns appear here
+  // automatically as the registry grows.
+  const towns = await allTowns();
+  const townSlugs = towns.filter((t) => t.slug !== "boone").map((t) => t.slug);
+  const weatherHub = { url: `${base}/weather`, changeFrequency: "daily" as const, priority: 0.7 };
+  const townRoutes = townSlugs.flatMap((slug) => [
+    { url: `${base}/weather/${slug}`, changeFrequency: "daily" as const, priority: 0.7 },
+    { url: `${base}/right-wrong-ray/${slug}`, changeFrequency: "daily" as const, priority: 0.7 },
+  ]);
   // The report-card franchise hub + one URL per graded month. Cards are their
   // own home now (excluded from posts above), so they appear here once, never
   // also under /resources/articles.
@@ -44,5 +57,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const, priority: 0.7,
     })),
   ];
-  return [...routes, apiRoute, ...resourceRoutes, ...staticPages, ...postRoutes, ...reportCardRoutes];
+  return [...routes, weatherHub, apiRoute, ...resourceRoutes, ...staticPages, ...townRoutes, ...postRoutes, ...reportCardRoutes];
 }
