@@ -1222,6 +1222,19 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
       "slammed" call). Also shared with traffic v2 (US-321/Parkway corridors). Draft model target:
       mid-Sept (no new capture needed; temps already accrue).
 
+- [x] **left917.net partner event feed — SHIPPED 2026-07-25 (PR #141, owner-directed).**
+      left917.net = independent High Country news/events site (Watauga/Ashe/Avery) that plans to
+      use DS as its weather service. Their published /calendar.ics (hourly TTL, 510 events day-one)
+      is now an eleventh daily feed — the hyperlocal community layer (Instagram-sourced happenings,
+      Ashe/Avery venues) nothing else carries. Consumes the PUBLISHED feed only; their richer
+      internal /api/items (cancellation flags, counties, editorial picks) + FastAPI surface exist —
+      ask in the owner's courtesy ping. UIDs embed source URLs → dedup vs campus.json is trivial
+      (they aggregate Localist too). RECIPROCITY: their weather integration = our /api/v1/forecast
+      + widget.js (built 07-25) — the first external consumer of the public surface.
+  - [ ] **Owner courtesy ping to the left917 operator** (message drafted 2026-07-25, in session
+        notes): confirm they're happy with our daily ICS pull + attribution, offer the API/widget
+        for their weather, and ask whether we may use /api/items.
+
 ## Public feed + API (owner-directed 2026-07-25 — spec DRAFT, awaiting owner sign-off)
 Owner: "an API or RSS to share," with display options — **1/3/5-day horizons · by town when live ·
 level of detail.** Spec: `planning/specs/2026-07-25-public-feed-api-design.md` (`/api/v1/*` route
