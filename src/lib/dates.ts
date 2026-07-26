@@ -15,3 +15,11 @@ export function fmtShortDate(d: string): string {
     month: "short", day: "numeric",
   });
 }
+
+// "June 2026" from a "YYYY-MM" month key (the report-card URL segment). Same
+// noon anchor to dodge the UTC-midnight off-by-one.
+export function fmtLongMonth(ym: string): string {
+  return new Date(ym + "-01T12:00:00").toLocaleDateString("en-US", {
+    month: "long", year: "numeric",
+  });
+}

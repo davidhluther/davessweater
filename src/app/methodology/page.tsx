@@ -374,7 +374,7 @@ export default async function Page() {
             the 118-day review of Ray&apos;s Weather
           </Link>
           ,{" "}
-          <Link href="/resources/articles/rays-weather-report-card-june-2026" className="text-teal underline underline-offset-2">
+          <Link href="/report-card/2026-06" className="text-teal underline underline-offset-2">
             the June 2026 report card
           </Link>
           , or{" "}

@@ -59,7 +59,7 @@ Seven other free sources have short samples so far (nine scored days each, so tr
 
 ### Why the gap holds: about 21 points a day
 
-The gap isn't a one-week fluke. [June 2026 alone ran 29 scored days](/resources/articles/rays-weather-report-card-june-2026): Open-Meteo 92.3, Apple 88.0, Ray's 73.3, a 19.0-point June gap. Ray's best June day landed at 90.7 on June 24; his worst hit 26.1 on June 2. Part of the spread is structural: Ray's Weather never publishes a numeric precip amount, so under the implied-zero rule he forfeits the precip-amount field on wet-forecast days and earns it on dry ones. If you want the fuller version, [the full 118-day review of Ray's Weather](/resources/articles/is-rays-weather-accurate) has the deeper breakdown.
+The gap isn't a one-week fluke. [June 2026 alone ran 29 scored days](/report-card/2026-06): Open-Meteo 92.3, Apple 88.0, Ray's 73.3, a 19.0-point June gap. Ray's best June day landed at 90.7 on June 24; his worst hit 26.1 on June 2. Part of the spread is structural: Ray's Weather never publishes a numeric precip amount, so under the implied-zero rule he forfeits the precip-amount field on wet-forecast days and earns it on dry ones. If you want the fuller version, [the full 118-day review of Ray's Weather](/resources/articles/is-rays-weather-accurate) has the deeper breakdown.
 
 ## What's the whole stack, and why is it this cheap?
 

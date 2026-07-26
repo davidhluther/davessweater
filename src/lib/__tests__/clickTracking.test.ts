@@ -66,7 +66,7 @@ describe("buildClickEventParams", () => {
 
   it("carries the current page path through unchanged", () => {
     const p = buildClickEventParams(
-      { tagName: "a", text: "Report card", href: "/resources/articles/rays-weather-report-card-june-2026" },
+      { tagName: "a", text: "Report card", href: "/report-card/2026-06" },
       "/resources/articles/is-rays-weather-accurate"
     );
     expect(p?.page_path).toBe("/resources/articles/is-rays-weather-accurate");

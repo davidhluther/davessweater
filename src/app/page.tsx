@@ -85,7 +85,7 @@ export default async function HomePage() {
                   Is Ray&apos;s Weather Accurate? 118 Days Scored
                 </Link>
                 {" | "}
-                <Link href="/resources/articles/rays-weather-report-card-june-2026" className="text-teal underline underline-offset-2">
+                <Link href="/report-card/2026-06" className="text-teal underline underline-offset-2">
                   Ray&apos;s Weather Report Card: June 2026
                 </Link>
               </p>

@@ -1,11 +1,12 @@
 import type { MetadataRoute } from "next";
-import { getBlogPosts, postSlug, postCategoryOf } from "@/lib/data";
+import { getBlogPosts, getReportCards, postSlug, postCategoryOf } from "@/lib/data";
 import { allTowns } from "@/lib/towns";
 import { CATEGORIES } from "@/content/resources";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = "https://davessweater.com";
   const posts = await getBlogPosts();
+  const reportCards = await getReportCards();
   // No blanket lastModified: stamping every URL with the build date (daily,
   // since data commits rebuild the site) teaches Google to distrust it. Posts
   // carry their real dates; everything else omits the field honestly.
@@ -45,5 +46,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/weather/${slug}`, changeFrequency: "daily" as const, priority: 0.7 },
     { url: `${base}/right-wrong-ray/${slug}`, changeFrequency: "daily" as const, priority: 0.7 },
   ]);
-  return [...routes, weatherHub, apiRoute, ...resourceRoutes, ...staticPages, ...townRoutes, ...postRoutes];
+  // The report-card franchise hub + one URL per graded month. Cards are their
+  // own home now (excluded from posts above), so they appear here once, never
+  // also under /resources/articles.
+  const reportCardRoutes = [
+    { url: `${base}/report-card`, changeFrequency: "monthly" as const, priority: 0.7 },
+    ...reportCards.map((c) => ({
+      url: `${base}/report-card/${c.reportMonth}`,
+      ...(c.date ? { lastModified: new Date(c.date) } : {}),
+      changeFrequency: "monthly" as const, priority: 0.7,
+    })),
+  ];
+  return [...routes, weatherHub, apiRoute, ...resourceRoutes, ...staticPages, ...townRoutes, ...postRoutes, ...reportCardRoutes];
 }
