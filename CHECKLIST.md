@@ -704,7 +704,11 @@ model only.
         only because Ray makes fewer trace-day "none" calls). No double-penalty: a trace miss now costs 4 pts
         total. 5 new pytest cases; 200 py tests green; history rescored (`rescore_history.py`, 100 files;
         consistency test green); `/methodology` + `CLAUDE.md` updated. New avgs: Open-Meteo 92.80, Ray 72.28.
-  - [~] **Remaining (the actual recalibration) — MODELED 2026-07-26, OWNER DECISION PENDING.** Full-history
+  - [~] **Remaining (the actual recalibration) — DECIDED 2026-07-26, IMPLEMENTATION IN FLIGHT.** Owner
+        chose the GENTLER register: `TEMP_TOL=1.0, TEMP_SLOPE=3.0` + merged 20-pt precip (Ray ~22% Wrong
+        days, not the -4 slope's ~40%). Implementation dispatched same day (branch
+        `feat/scoring-recalibration`; full-history + per-town rescore, /methodology + CLAUDE.md updates,
+        memo-match verification gate). Modeling background: full-history
         analysis memo: `planning/analysis/2026-07-26-recalibration-modeling.md` (local-only). Findings: the
         clustering is a TEMP-saturation artifact (60/100 pts, ~60% of good-source days maxed at the 2°F
         window); merged 20-pt precip is nearly inert here (+0.0..+0.6 — a coherence change, not a
