@@ -10,16 +10,16 @@ import check_capture_health as h
 
 def _sd(*fields):
     """A scored source that covers exactly the given coverage fields."""
-    all_fields = ["high_temp", "low_temp", "wind", "precip_type", "precip_amount"]
+    all_fields = ["high_temp", "low_temp", "wind", "precip"]
     return {"score": {"coverage": {f: (f in fields) for f in all_fields}}}
 
 
-FULL = ("high_temp", "low_temp", "wind", "precip_type", "precip_amount")
+FULL = ("high_temp", "low_temp", "wind", "precip")
 HEALTHY = {
     "sources": {
         "openmeteo": _sd(*FULL),
-        "raysweather": _sd("high_temp", "low_temp", "wind", "precip_type"),  # no amount = expected
-        "metno": _sd("high_temp", "low_temp", "wind", "precip_type"),
+        "raysweather": _sd("high_temp", "low_temp", "wind"),  # no precip amount = expected
+        "metno": _sd("high_temp", "low_temp", "wind", "precip"),
     }
 }
 
@@ -37,14 +37,14 @@ def test_rays_qualitative_wind_or_missing_precip_type_is_allowed():
 
 
 def test_rays_missing_high_is_flagged():
-    comp = {"sources": {**HEALTHY["sources"], "raysweather": _sd("low_temp", "wind", "precip_type")}}
+    comp = {"sources": {**HEALTHY["sources"], "raysweather": _sd("low_temp", "wind", "precip")}}
     assert any("raysweather" in p and "high" in p for p in h.evaluate(comp)[0])
 
 
 def test_openmeteo_field_drop_is_flagged():
     # Open-Meteo is a machine source; a dropped field is a real capture/parse fail.
     comp = {"sources": {**HEALTHY["sources"],
-                        "openmeteo": _sd("high_temp", "low_temp", "precip_type", "precip_amount")}}
+                        "openmeteo": _sd("high_temp", "low_temp", "precip")}}
     assert any("openmeteo" in p and "wind" in p for p in h.evaluate(comp)[0])
 
 
@@ -158,7 +158,7 @@ def test_a_one_off_forfeit_is_not_flagged():
 
 def test_a_field_the_source_never_reliably_provides_is_not_flagged():
     # Ray never gives a numeric precip amount — a permanent forfeit, not a drift.
-    s = _rays_series(precip_amount=[False] * 40)
+    s = _rays_series(precip=[False] * 40)
     assert h.drift_findings(s) == []
 
 

@@ -30,10 +30,11 @@ const jsonLd = [
       "The 100-point model, the NWS qualitative-wind mapping, and where the actual weather comes from.",
     "about": "Weather forecast accuracy scoring methodology",
     // Real dates from the changelog: page shipped with R4 (2026-06-26); last
-    // substantive rubric change was the trace-band type credit (2026-07-18).
-    // Bump dateModified when the scoring model changes.
+    // substantive rubric change was the recalibration (2026-07-26): 1°F temp
+    // window + merged 20-pt precip field. Bump dateModified when the scoring
+    // model changes.
     "datePublished": "2026-06-26",
-    "dateModified": "2026-07-25",
+    "dateModified": "2026-07-26",
     "isAccessibleForFree": true,
     "author": { "@type": "Organization", "name": "Dave's Sweater" },
     "publisher": { "@type": "Organization", "name": "Dave's Sweater", "url": "https://davessweater.com" },
@@ -83,7 +84,7 @@ export default async function Page() {
       <SectionBand tone="light">
         <h2 className="font-display text-xl font-bold">The 100-point model</h2>
         <p className="mb-3 mt-1 text-sm text-muted">
-          Each day we compare a forecast to the actual recorded conditions across five fields. Closer to the
+          Each day we compare a forecast to the actual recorded conditions across four fields. Closer to the
           truth earns more points, out of 100:
         </p>
         <div className="overflow-x-auto">
@@ -99,12 +100,12 @@ export default async function Page() {
               <tr className="border-b border-border/60">
                 <td className="py-2 pr-3 font-medium">High temp</td>
                 <td className="py-2 pr-3 tabular-nums">30</td>
-                <td className="py-2">within 2&deg;F of actual, then &minus;3 pts per &deg;F beyond.</td>
+                <td className="py-2">within 1&deg;F of actual, then &minus;3 pts per &deg;F beyond.</td>
               </tr>
               <tr className="border-b border-border/60">
                 <td className="py-2 pr-3 font-medium">Low temp</td>
                 <td className="py-2 pr-3 tabular-nums">30</td>
-                <td className="py-2">within 2&deg;F of actual, then &minus;3 pts per &deg;F beyond.</td>
+                <td className="py-2">within 1&deg;F of actual, then &minus;3 pts per &deg;F beyond.</td>
               </tr>
               <tr className="border-b border-border/60">
                 <td className="py-2 pr-3 font-medium">Wind</td>
@@ -116,23 +117,21 @@ export default async function Page() {
                   has zero width and pays no tax.
                 </td>
               </tr>
-              <tr className="border-b border-border/60">
-                <td className="py-2 pr-3 font-medium">Precip type</td>
-                <td className="py-2 pr-3 tabular-nums">10</td>
-                <td className="py-2">
-                  exact match (rain, snow, mixed, or none) = 10. Right that <em>something</em> falls but wrong
-                  form, say rain when it snowed, = 4. A miss inside the trace band = 6: when the disagreement
-                  between &quot;none&quot; and &quot;precip&quot; involves an amount the row below already treats
-                  as zero (rain of 0.1&Prime; or less, snow of 1&Prime; or less), the call was nearly right, and
-                  a forecast is never graded fully wrong on type while fully right on amount. Otherwise 0.
-                </td>
-              </tr>
               <tr>
-                <td className="py-2 pr-3 font-medium">Precip amount</td>
-                <td className="py-2 pr-3 tabular-nums">10</td>
+                <td className="py-2 pr-3 font-medium">Precip</td>
+                <td className="py-2 pr-3 tabular-nums">20</td>
                 <td className="py-2">
-                  rain within 0.1&Prime;, then &minus;2 pts per extra 0.1&Prime;. Snow uses a coarser tolerance of
-                  1&Prime; or 20% of the actual, whichever is larger, because snow totals are noisier.
+                  One field for what fell and how much &mdash; type and amount are graded together so the same
+                  wet-or-dry fact is never scored twice. On a <em>dry</em> day the whole 20 measures the predicted
+                  amount against zero: predict no precip and none falls, full marks. On a <em>wet</em> day it
+                  splits into 10 for identifying the form (rain, snow, or mixed) and 10 for the amount &mdash;
+                  rain within 0.1&Prime;, then &minus;2 pts per extra 0.1&Prime;; snow within 1&Prime; or 20% of
+                  the actual, whichever is larger, because snow totals are noisier. Naming the wrong form, say
+                  rain when it snowed, caps the amount half at 5. A miss inside the trace band still earns 6 of
+                  the 10 identification points: when the only disagreement between &quot;none&quot; and
+                  &quot;precip&quot; is an amount small enough to count as zero (rain of 0.1&Prime; or less, snow
+                  of 1&Prime; or less), the call was nearly right, and no forecast is graded fully wrong on the
+                  form while fully right on the total.
                 </td>
               </tr>
             </tbody>

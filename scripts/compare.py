@@ -692,7 +692,7 @@ def _update_running_scores(date, comparison):
     date's comparison file is already on disk when this runs, so it is included."""
     scores_path = DATA_DIR / "scores.json"
     comp_dir = DATA_DIR / "comparisons"
-    cov_fields = ["high_temp", "low_temp", "wind", "precip_type", "precip_amount"]
+    cov_fields = ["high_temp", "low_temp", "wind", "precip"]
 
     entries, totals, coverage = [], {}, {}
     for comp_file in sorted(comp_dir.glob("*.json")):

@@ -35,21 +35,20 @@
         "wind_mph": 28.7
       },
       "score": {
-        "score": 63.3,
+        "score": 57.3,
         "grade": {
-          "verdict": "meh",
-          "ray_count": 3
+          "verdict": "wrong",
+          "ray_count": 2
         },
         "coverage": {
           "high_temp": true,
           "low_temp": true,
           "wind": true,
-          "precip_type": true,
-          "precip_amount": true
+          "precip": true
         },
         "breakdown": {
           "high_temp": {
-            "points": 29.7,
+            "points": 26.7,
             "max": 30,
             "scored": true,
             "predicted": 58.1,
@@ -57,7 +56,7 @@
             "error": 2.1
           },
           "low_temp": {
-            "points": 9.6,
+            "points": 6.6,
             "max": 30,
             "scored": true,
             "predicted": 30.9,
@@ -72,16 +71,9 @@
             "actual": 26.0,
             "error": 2.7
           },
-          "precip_type": {
+          "precip": {
             "points": 4.0,
-            "max": 10,
-            "scored": true,
-            "predicted": "snow",
-            "actual": "rain"
-          },
-          "precip_amount": {
-            "points": 0.0,
-            "max": 10,
+            "max": 20,
             "scored": true,
             "predicted": 0.606,
             "actual": 1.276,
@@ -103,21 +95,20 @@
         "precip_type": "mixed"
       },
       "score": {
-        "score": 41.3,
+        "score": 35.3,
         "grade": {
           "verdict": "wrong",
-          "ray_count": 2
+          "ray_count": 1
         },
         "coverage": {
           "high_temp": true,
           "low_temp": true,
           "wind": true,
-          "precip_type": true,
-          "precip_amount": false
+          "precip": false
         },
         "breakdown": {
           "high_temp": {
-            "points": 9.0,
+            "points": 6.0,
             "max": 30,
             "scored": true,
             "predicted": 47.0,
@@ -125,7 +116,7 @@
             "error": 9.0
           },
           "low_temp": {
-            "points": 24.3,
+            "points": 21.3,
             "max": 30,
             "scored": true,
             "predicted": 26.0,
@@ -140,17 +131,10 @@
             "actual": 26.0,
             "error": 6.0
           },
-          "precip_type": {
+          "precip": {
             "points": 4.0,
-            "max": 10,
+            "max": 20,
             "scored": true,
-            "predicted": "mixed",
-            "actual": "rain"
-          },
-          "precip_amount": {
-            "points": null,
-            "max": 10,
-            "scored": false,
             "predicted": null,
             "actual": 1.276,
             "error": null,
@@ -173,17 +157,16 @@
       },
       "source": "iPhone Shortcut",
       "score": {
-        "score": 42.3,
+        "score": 39.3,
         "grade": {
           "verdict": "wrong",
-          "ray_count": 2
+          "ray_count": 1
         },
         "coverage": {
           "high_temp": true,
           "low_temp": true,
           "wind": true,
-          "precip_type": true,
-          "precip_amount": true
+          "precip": true
         },
         "breakdown": {
           "high_temp": {
@@ -195,7 +178,7 @@
             "error": 1.0
           },
           "low_temp": {
-            "points": 12.3,
+            "points": 9.3,
             "max": 30,
             "scored": true,
             "predicted": 30,
@@ -210,16 +193,9 @@
             "actual": 26.0,
             "error": 3.0
           },
-          "precip_type": {
+          "precip": {
             "points": 0.0,
-            "max": 10,
-            "scored": true,
-            "predicted": "none",
-            "actual": "rain"
-          },
-          "precip_amount": {
-            "points": 0.0,
-            "max": 10,
+            "max": 20,
             "scored": true,
             "predicted": 0.0,
             "actual": 1.276,

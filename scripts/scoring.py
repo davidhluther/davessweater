@@ -1,12 +1,24 @@
 """Pure scoring engine for Dave's Sweater — the coupled, snow-aware model.
 No I/O. Inputs are normalized prediction/actual dicts (see plan contract)."""
 
-TEMP_TOL, TEMP_SLOPE = 2.0, 3.0
+# Temperature (recalibrated 2026-07-26): the full-credit window tightened from
+# 2°F to 1°F so temperature stops saturating the scale (a day-ahead high within
+# 2°F used to earn the full 30 ~60% of the time, freezing 60% of the 100 points).
+# Slope stays at -3 pts/°F beyond the window — the owner chose the gentler
+# register over -4. 1°F is the "essentially perfect" threshold.
+TEMP_TOL, TEMP_SLOPE = 1.0, 3.0
 WIND_TOL, WIND_SLOPE = 3.0, 2.0
 WIND_WIDTH_K = 0.5  # vagueness tax: half the forecast-range width is added to the error
 RAIN_TOL, RAIN_SLOPE = 0.1, 20.0
 SNOW_MIN_TOL, SNOW_PCT, SNOW_SLOPE = 1.0, 0.20, 2.0
 TYPE_TRACE_CREDIT = 6.0  # none-vs-precip disagreement inside the amount tolerances
+
+# Merged 20-pt precip field (recalibrated 2026-07-26). Precip type + amount are
+# fused into one field so the same wet/dry fact is not graded twice. Sub-maxes on
+# a precip day: 10-pt identification + 10-pt amount. On a dry day the whole 20 is
+# a single amount-band-vs-zero (type and amount encode the same fact there).
+PRECIP_MAX = 20.0
+WRONG_FORM_AMOUNT_CAP = 5.0  # cap amount credit when a real precip form is misnamed
 
 
 def precip_type(rain_in, snow_in):
@@ -85,29 +97,75 @@ def _type_points(pred, actual, pred_type, actual_type):
     return 0.0
 
 
-def _amount_points(pred, actual, actual_type):
+def _amount_points(pred, actual, actual_type, maxpts=10.0):
+    """Amount accuracy over `maxpts` (default the 10-pt precip-day sub-max; the
+    merged field's dry-day path calls it with maxpts=PRECIP_MAX to score the
+    amount band against zero over the full 20)."""
     fp = pred.get("fields_provided", [])
     if actual_type == "none":
         parts = []
         if "rain_amount" in fp:
-            parts.append(_band(pred.get("rain_in"), 0.0, 10, RAIN_TOL, RAIN_SLOPE))
+            parts.append(_band(pred.get("rain_in"), 0.0, maxpts, RAIN_TOL, RAIN_SLOPE))
         if "snow_amount" in fp:
-            parts.append(_band(pred.get("snow_in"), 0.0, 10, _snow_tol(0), SNOW_SLOPE))
+            parts.append(_band(pred.get("snow_in"), 0.0, maxpts, _snow_tol(0), SNOW_SLOPE))
         return round(sum(parts) / len(parts), 1) if parts else None
     if actual_type == "rain":
         if "rain_amount" not in fp:
             return None
-        return _band(pred.get("rain_in"), actual.get("rain_in"), 10, RAIN_TOL, RAIN_SLOPE)
+        return _band(pred.get("rain_in"), actual.get("rain_in"), maxpts, RAIN_TOL, RAIN_SLOPE)
     if actual_type == "snow":
         if "snow_amount" not in fp:
             return None
-        return _band(pred.get("snow_in"), actual.get("snow_in"), 10, _snow_tol(actual.get("snow_in")), SNOW_SLOPE)
+        return _band(pred.get("snow_in"), actual.get("snow_in"), maxpts, _snow_tol(actual.get("snow_in")), SNOW_SLOPE)
+    half = maxpts / 2.0
     parts = []
     if "rain_amount" in fp:
-        parts.append(_band(pred.get("rain_in"), actual.get("rain_in"), 5, RAIN_TOL, RAIN_SLOPE))
+        parts.append(_band(pred.get("rain_in"), actual.get("rain_in"), half, RAIN_TOL, RAIN_SLOPE))
     if "snow_amount" in fp:
-        parts.append(_band(pred.get("snow_in"), actual.get("snow_in"), 5, _snow_tol(actual.get("snow_in")), SNOW_SLOPE))
+        parts.append(_band(pred.get("snow_in"), actual.get("snow_in"), half, _snow_tol(actual.get("snow_in")), SNOW_SLOPE))
     return round(sum(parts), 1) if parts else None
+
+
+def _precip_20(pred, actual, pred_type, actual_type):
+    """The merged 20-pt precip field. Returns (points, amount_answered).
+
+    Folds the old precip_type (10) + precip_amount (10) into one field so a
+    single wet/dry fact is never graded twice.
+
+    - Dry day: score the predicted amount against zero over the full 20 — on a
+      dry day the type and the amount encode the same fact, so there is no
+      separate type sub-score to double-count it. A source that named precip but
+      gave no numeric amount can't be scored on the band, so it falls back to the
+      type judgement (trace credit included) scaled ×2 to the 20-pt field; a
+      "none" forecast always carries an implied-zero amount (compare._to_contract)
+      and so earns the full band on a dry day.
+    - Precip day: 10-pt identification (the old _type_points, incl. the trace-band
+      credit) + a 10-pt amount. The amount is capped at 5 when a real precip form
+      is misnamed (you shouldn't bank amount accuracy while calling snow "rain"),
+      and forfeited to 0 when the source named precip but omitted the total (no
+      gain by omission — identification points are still kept).
+
+    `amount_answered` is True iff the amount sub-component was scored; it drives
+    the merged field's coverage and matches the old precip_amount coverage
+    exactly (so the "Ray never publishes a precip amount" disclosure is intact).
+    A none-vs-trace disagreement is NOT treated as a misnamed form: the trace-band
+    credit already handles the partial type call, and the amount-vs-observed stays
+    honest (predicting 0" when a trace fell is an accurate amount)."""
+    fp = pred.get("fields_provided", [])
+    if "precip_type" not in fp:
+        return None, False  # source published no precip forecast at all
+    if actual_type == "none":
+        amt = _amount_points(pred, actual, actual_type, PRECIP_MAX)
+        if amt is not None:
+            return amt, True
+        return round(_type_points(pred, actual, pred_type, actual_type) * 2, 1), False
+    ident = _type_points(pred, actual, pred_type, actual_type)  # 0..10
+    amt = _amount_points(pred, actual, actual_type)             # 0..10 or None (forfeit)
+    if amt is None:
+        return round(ident, 1), False
+    if pred_type != actual_type and pred_type in _PRECIP_TYPES:
+        amt = min(amt, WRONG_FORM_AMOUNT_CAP)
+    return round(ident + amt, 1), True
 
 
 def _score_grade(score):
@@ -148,6 +206,14 @@ def _amount_bd(pred, actual, actual_type, points):
             "predicted": predicted, "actual": observed, "error": _delta(predicted, observed), "unit": unit}
 
 
+def _precip_bd(pred, actual, actual_type, points):
+    """Merged precip breakdown row (max 20). Predicted/actual mirror the amount
+    comparison — the informative axis — with the type call folded into `points`."""
+    bd = _amount_bd(pred, actual, actual_type, points)
+    bd["max"] = 20
+    return bd
+
+
 def score_prediction(pred, actual):
     fp = pred.get("fields_provided", [])
     actual_type = precip_type(actual.get("rain_in"), actual.get("snow_in"))
@@ -155,8 +221,7 @@ def score_prediction(pred, actual):
     high = _band(pred.get("high_f"), actual.get("high_f"), 30, TEMP_TOL, TEMP_SLOPE) if "high" in fp else None
     low = _band(pred.get("low_f"), actual.get("low_f"), 30, TEMP_TOL, TEMP_SLOPE) if "low" in fp else None
     wind = _wind_points(pred, actual)
-    ptype = _type_points(pred, actual, pred.get("precip_type"), actual_type) if "precip_type" in fp else None
-    pamt = _amount_points(pred, actual, actual_type)
+    precip, precip_amount_answered = _precip_20(pred, actual, pred.get("precip_type"), actual_type)
 
     iv = _wind_interval(pred) if "wind" in fp else None
     if iv is None:
@@ -166,20 +231,24 @@ def score_prediction(pred, actual):
         wind_mid = (lo + hi) / 2.0
         wind_predicted = f"{lo}-{hi}" if lo != hi else wind_mid
 
-    total = round(sum((p or 0) for p in (high, low, wind, ptype, pamt)), 1)
+    total = round(sum((p or 0) for p in (high, low, wind, precip)), 1)
     breakdown = {
         "high_temp": _bd(high, 30, pred.get("high_f") if "high" in fp else None, actual.get("high_f")),
         "low_temp": _bd(low, 30, pred.get("low_f") if "low" in fp else None, actual.get("low_f")),
         "wind": {"points": wind, "max": 20, "scored": wind is not None,
                  "predicted": wind_predicted, "actual": actual.get("wind_mph"),
                  "error": _delta(wind_mid, actual.get("wind_mph"))},
-        "precip_type": {"points": ptype, "max": 10, "scored": ptype is not None,
-                        "predicted": pred.get("precip_type") if "precip_type" in fp else None, "actual": actual_type},
-        "precip_amount": _amount_bd(pred, actual, actual_type, pamt),
+        "precip": _precip_bd(pred, actual, actual_type, precip),
     }
+    # Coverage is "points is not None" for every field except precip, whose
+    # coverage tracks whether the AMOUNT sub-component was answered (the axis with
+    # real variation — a source can earn identification points while forfeiting
+    # the amount, so the merged field stays "scored" but its coverage is False).
+    coverage = {k: v["points"] is not None for k, v in breakdown.items()}
+    coverage["precip"] = precip_amount_answered
     return {
         "score": total,
         "grade": _score_grade(total),
-        "coverage": {k: v["points"] is not None for k, v in breakdown.items()},
+        "coverage": coverage,
         "breakdown": breakdown,
     }

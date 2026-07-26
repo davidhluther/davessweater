@@ -8,8 +8,8 @@ const FIELDS: { field: CoverageField; label: string }[] = [
   { field: "high_temp", label: "High temp" },
   { field: "low_temp", label: "Low temp" },
   { field: "wind", label: "Wind" },
-  { field: "precip_type", label: "Precip type" },
-  { field: "precip_amount", label: "Precip amount" },
+  // Merged 20-pt precip field; coverage = whether the numeric amount was answered.
+  { field: "precip", label: "Precip" },
 ];
 
 export type CoverageKind = "full" | "partial" | "omission";

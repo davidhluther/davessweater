@@ -22,14 +22,14 @@ export default function CoverageMatrix({ scores }: { scores: Scores | null }) {
       {/* Matrix grid — hidden on mobile */}
       <div className="hidden overflow-hidden rounded-lg border border-border md:block">
         <div role="table" className="text-sm">
-          <div role="row" className="grid grid-cols-[7rem_repeat(5,1fr)] border-b border-border bg-surface">
+          <div role="row" className="grid grid-cols-[7rem_repeat(4,1fr)] border-b border-border bg-surface">
             <span role="columnheader" className="px-3 py-2 font-medium">Source</span>
             {fields.map((c) => (
               <span role="columnheader" key={c.field} className="px-2 py-2 text-center text-xs text-muted">{c.label}</span>
             ))}
           </div>
           {rows.map((r) => (
-            <div role="row" key={r.key} className="grid grid-cols-[7rem_repeat(5,1fr)] items-center border-b border-border last:border-0">
+            <div role="row" key={r.key} className="grid grid-cols-[7rem_repeat(4,1fr)] items-center border-b border-border last:border-0">
               <span role="rowheader" className={`px-3 py-2 font-medium ${r.isFree ? "text-green-700" : "text-orange-600"}`}>{r.label}</span>
               {r.cells.map((c) => (
                 <span role="cell" key={c.field} className="px-2 py-2 text-center"

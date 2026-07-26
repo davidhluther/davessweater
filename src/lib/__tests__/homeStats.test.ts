@@ -134,7 +134,7 @@ describe("whyStats", () => {
       { date: "2026-06-24", openmeteo: 92, raysweather: 70 },
     ],
     totals: {},
-    coverage: { raysweather: { precip_amount: { provided: 0, days: 2 } } },
+    coverage: { raysweather: { precip: { provided: 0, days: 2 } } },
   };
 
   it("bundles the five beat stats from the tracking window + coverage", () => {

@@ -27,7 +27,7 @@ from scoring import score_prediction
 
 EST = ZoneInfo("America/New_York")
 SWEEP_DAYS = 14
-COV_FIELDS = ["high_temp", "low_temp", "wind", "precip_type", "precip_amount"]
+COV_FIELDS = ["high_temp", "low_temp", "wind", "precip"]
 
 
 def archive_url(lat, lon, date):
