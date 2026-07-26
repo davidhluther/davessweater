@@ -140,6 +140,12 @@ jobs:
         run: python scripts/capture_river_gauges.py
         continue-on-error: true
 
+      # left917.net published event calendar (partner site; hyperlocal community
+      # layer for Watauga/Ashe/Avery). Their ICS TTL is hourly; daily is polite.
+      - name: Capture left917 events (partner ICS)
+        run: python scripts/capture_left917_events.py
+        continue-on-error: true
+
       # Calibration: Blue Ridge Parkway monthly visitation (NPS Stats API,
       # keyless). Self-gates to one pull a month (the 3rd); exits 0 otherwise.
       - name: Capture NPS Blue Ridge Parkway visitation (monthly)
