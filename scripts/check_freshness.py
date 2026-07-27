@@ -82,10 +82,37 @@ def check_comparison_freshness(today: str):
     return True, f"comparisons: newest is {newest}, {age} day(s) old — ok"
 
 
+def check_town_captures(today: str):
+    """True if every registered town has today's openmeteo_forecast.json.
+
+    Added 2026-07-27 after a five-day silent partial-sweep: capture_locations
+    died mid-loop on one fetch (a sys.exit inside fetch_json) and the
+    continue-on-error step kept the workflow green, so most towns scored only
+    Ray (his 7-day capture coasts over gaps) while the other nine sources went
+    dark. The sentinel is the backstop that makes that loud within hours.
+    Strict on purpose: with per-fetch retries now in the capture path, a
+    missing town marker means something real broke, not a blip.
+    """
+    loc_root = DATA_DIR / "locations"
+    if not loc_root.is_dir():
+        return True, "towns: no locations registry — nothing to check"
+    towns = sorted(p.name for p in loc_root.iterdir()
+                   if p.is_dir() and (p / "predictions").is_dir())
+    if not towns:
+        return True, "towns: no town prediction dirs yet — nothing to check"
+    missing = [t for t in towns
+               if not (loc_root / t / "predictions" / today / "openmeteo_forecast.json").exists()]
+    if missing:
+        return False, (f"towns: MISSING today's ({today}) capture for {len(missing)}/{len(towns)}: "
+                       + ", ".join(missing))
+    return True, f"towns: all {len(towns)} towns captured today ({today})"
+
+
 def run_checks(today: str):
     """Pure check: given a reference date string, return (problems, report_lines)."""
     problems, lines = [], []
-    for ok, msg in (check_today_capture(today), check_comparison_freshness(today)):
+    for ok, msg in (check_today_capture(today), check_comparison_freshness(today),
+                    check_town_captures(today)):
         lines.append(("  OK   " if ok else "  FAIL ") + msg)
         if not ok:
             problems.append(msg)

@@ -10,6 +10,7 @@ import argparse
 import json
 import os
 import sys
+import time
 from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
 from pathlib import Path
@@ -85,15 +86,27 @@ def weather_category(code):
         return "storm"
 
 
-def fetch_json(url):
-    """Simple URL fetch that works without requests library."""
+def fetch_json(url, attempts=3):
+    """Simple URL fetch that works without requests library.
+
+    Retries transient failures, then RAISES (never sys.exit): callers looping
+    over many towns/sources must be able to catch a single bad fetch. The
+    2026-07-27 sweep-killer was a sys.exit(1) here escaping capture_locations'
+    per-source `except Exception` as SystemExit and taking down all 33 captures
+    on one SSL handshake timeout.
+    """
     req = Request(url, headers={"User-Agent": "DavesSweater/1.0"})
-    try:
-        with urlopen(req, timeout=15) as resp:
-            return json.loads(resp.read().decode())
-    except URLError as e:
-        print(f"  ERROR fetching {url}: {e}")
-        sys.exit(1)
+    last_err = None
+    for i in range(attempts):
+        try:
+            with urlopen(req, timeout=15) as resp:
+                return json.loads(resp.read().decode())
+        except (URLError, TimeoutError, OSError) as e:
+            last_err = e
+            print(f"  ERROR fetching {url} (attempt {i + 1}/{attempts}): {e}")
+            if i < attempts - 1:
+                time.sleep(1 + 2 * i)
+    raise last_err
 
 
 def capture_forecast():

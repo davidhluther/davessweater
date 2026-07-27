@@ -82,8 +82,12 @@ jobs:
 
       # M5 P0 (silent): per-town captures at each registry location's own
       # coordinates. Best-effort — a town or source failing never blocks Boone.
-      - name: Capture location forecasts (Blowing Rock, Deep Gap)
-        run: python scripts/capture_locations.py
+      # --fill-missing makes the step idempotent: a re-run (manual dispatch
+      # after a partial sweep) only fetches what's absent for today, never
+      # overwriting the morning's successful captures. On a normal first run
+      # nothing exists yet, so behavior is identical.
+      - name: Capture location forecasts (all registry towns)
+        run: python scripts/capture_locations.py --fill-missing
         continue-on-error: true
         env:
           OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}

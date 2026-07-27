@@ -103,7 +103,7 @@ def test_healthy_pipeline_has_no_problems(tmp_path, monkeypatch):
     _touch(tmp_path / "comparisons" / "2026-07-24.json")
     problems, lines = f.run_checks("2026-07-25")
     assert problems == []
-    assert len(lines) == 2
+    assert len(lines) == 3  # capture + comparisons + towns (town check added 2026-07-27)
 
 
 def test_skipped_cron_fails_both_checks(tmp_path, monkeypatch):
@@ -124,3 +124,40 @@ def test_partial_failure_flags_only_the_broken_check(tmp_path, monkeypatch):
     _touch(tmp_path / "comparisons" / "2026-07-24.json")
     problems, _ = f.run_checks("2026-07-25")
     assert problems == []
+
+
+# ── check_town_captures (added 2026-07-27 after the partial-sweep incident) ──
+def test_town_captures_all_present_passes(tmp_path, monkeypatch):
+    monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    for t in ("banner-elk", "todd"):
+        _touch(tmp_path / "locations" / t / "predictions" / "2026-07-27" / "openmeteo_forecast.json")
+    ok, msg = f.check_town_captures("2026-07-27")
+    assert ok
+    assert "all 2 towns" in msg
+
+
+def test_town_captures_partial_sweep_fails_and_names_towns(tmp_path, monkeypatch):
+    # The exact 2026-07-27 failure: some towns captured before the sweep died,
+    # the rest silently got nothing (Ray-only scoring for five days).
+    monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    _touch(tmp_path / "locations" / "bakersville" / "predictions" / "2026-07-27" / "openmeteo_forecast.json")
+    _touch(tmp_path / "locations" / "banner-elk" / "predictions" / "2026-07-26" / "openmeteo_forecast.json")
+    ok, msg = f.check_town_captures("2026-07-27")
+    assert not ok
+    assert "1/2" in msg
+    assert "banner-elk" in msg
+
+
+def test_town_captures_no_registry_is_ok(tmp_path, monkeypatch):
+    monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    ok, msg = f.check_town_captures("2026-07-27")
+    assert ok
+
+
+def test_run_checks_includes_town_check(tmp_path, monkeypatch):
+    monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    _touch(tmp_path / "predictions" / "2026-07-27" / "openmeteo_forecast.json")
+    _touch(tmp_path / "comparisons" / "2026-07-26.json")
+    _touch(tmp_path / "locations" / "vilas" / "predictions" / "2026-07-20" / "openmeteo_forecast.json")
+    problems, lines = f.run_checks("2026-07-27")
+    assert any("towns" in p for p in problems)

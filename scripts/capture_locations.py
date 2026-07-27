@@ -70,12 +70,20 @@ def normalize_openmeteo_daily(daily_raw):
     return rows
 
 
-def capture_location(loc, today=None):
-    """Capture all sources for one town. Returns {source_key: ok_bool}."""
+def capture_location(loc, today=None, fill_missing=False):
+    """Capture all sources for one town. Returns {source_key: ok_bool}.
+
+    fill_missing: only capture sources whose file for today doesn't exist yet —
+    the recovery mode after a partial sweep (keeps the original captures'
+    timestamps; a late re-fetch replaces nothing that already succeeded).
+    """
     today = today or datetime.now(EST).strftime("%Y-%m-%d")
     out = location_dir(loc["slug"]) / "predictions" / today
     out.mkdir(parents=True, exist_ok=True)
     results = {}
+
+    def have(key):
+        return (out / f"{key}_forecast.json").exists()
 
     def write(key, label, daily):
         payload = {"source": key, "label": label,
@@ -84,19 +92,27 @@ def capture_location(loc, today=None):
                    "daily": daily}
         (out / f"{key}_forecast.json").write_text(json.dumps(payload, indent=2))
 
-    try:
-        raw = fetch_json(openmeteo_forecast_url(loc["lat"], loc["lon"]))
-        write("openmeteo", "Open-Meteo", normalize_openmeteo_daily(raw.get("daily", {})))
+    if fill_missing and have("openmeteo"):
+        print(f"  HAVE {loc['slug']}/openmeteo")
         results["openmeteo"] = True
-        print(f"  OK   {loc['slug']}/openmeteo")
-    except Exception as e:  # noqa: BLE001
-        results["openmeteo"] = False
-        print(f"  FAIL {loc['slug']}/openmeteo: {type(e).__name__}: {e}")
+    else:
+        try:
+            raw = fetch_json(openmeteo_forecast_url(loc["lat"], loc["lon"]))
+            write("openmeteo", "Open-Meteo", normalize_openmeteo_daily(raw.get("daily", {})))
+            results["openmeteo"] = True
+            print(f"  OK   {loc['slug']}/openmeteo")
+        except Exception as e:  # noqa: BLE001
+            results["openmeteo"] = False
+            print(f"  FAIL {loc['slug']}/openmeteo: {type(e).__name__}: {e}")
 
     avail = {s["key"] for s in available_sources()}
     for s in SOURCES:
         if s["key"] not in avail:
             print(f"  SKIP {loc['slug']}/{s['key']} (no creds)")
+            continue
+        if fill_missing and have(s["key"]):
+            print(f"  HAVE {loc['slug']}/{s['key']}")
+            results[s["key"]] = True
             continue
         try:
             mod = importlib.import_module(s["module"])
@@ -111,9 +127,20 @@ def capture_location(loc, today=None):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser(description="Capture forecasts for every registry town.")
+    ap.add_argument("--fill-missing", action="store_true",
+                    help="only fetch sources missing for today (post-partial-sweep recovery)")
+    args = ap.parse_args()
+    failed = 0
     for loc in load_locations():
         print(f"[{loc['slug']}] capturing at ({loc['lat']}, {loc['lon']})")
-        capture_location(loc)
+        results = capture_location(loc, fill_missing=args.fill_missing)
+        failed += sum(1 for ok in results.values() if not ok)
+    if failed:
+        print(f"DONE with {failed} failed captures (partial sweep — sources retried internally).")
+        sys.exit(1)
+    print("DONE — full sweep.")
 
 
 if __name__ == "__main__":
