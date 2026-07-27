@@ -859,6 +859,23 @@ model only.
         `TownWayfinder` one-liner directly under the homepage hero ("Not in Boone?" → /weather
         hub); lower AlsoTracking list retained as the single full-weight list. 257 vitest/lint/
         build green; 390px verified.
+  - [x] **Ray's town precip credit — ✅ MERGED 2026-07-27 (PR #149). We were UNDER-crediting him.**
+        Owner challenged the draft's "town feeds" claim ("I don't want to seem brutally biased") →
+        verification at source found our own capture was DROPPING the per-day sky icon his town
+        pages publish, so Ray forfeited the whole 20-pt precip field in every town every day.
+        VERIFIED AT SOURCE (raysweather.com public tRPC `weather.station.blurbs`): icons are
+        genuinely per-town (North Wilkesboro `Ovc_Thunderstorms` vs mountain towns
+        `Sct_ThunderShowers`, same day); the endpoint also serves PAST dates as-issued (his own
+        Archives), so a fair historical backfill was possible. Fix: vetted icon→type vocabulary
+        (`01_Dry`→none, `02_Rain`/`03_Lightning`→rain, `04_Snow`→snow, unknown→honest forfeit,
+        logged), capture stores raw icons + derived type, one-shot backfill patched the whole
+        capture era, all towns rescored. **Ray 53.1 → 63.1 mean (every town rose, none fell);
+        every other source moved 0.0 and Boone untouched** (verified independently by DS IA, not
+        just reported). Wind stays an honest forfeit — VERIFIED his wind line is one identical
+        regional string ("NW wind 5-15 mph" on Boone AND Banner Elk today, 1,001-5,436 ft).
+        424 py + 257 vitest green. **Lesson: when a rival's number looks bad, audit our capture
+        before publishing the number.** The announcement draft now tells on us for this in
+        its own section — the strongest available answer to the bias worry.
 
 ### Homepage design backlog (owner review, 2026-07-01 — banked, not yet actioned)
 - [ ] **iPhone shot: find it a new home; the Today module owns above-the-fold long-term.** The Apple
