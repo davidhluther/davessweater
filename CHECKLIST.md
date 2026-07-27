@@ -828,9 +828,24 @@ model only.
         elevation span now 1,001→5,436 ft. Live captures verified for all six + Ray rows for five.
         Test sanity box widened to the five-county footprint. **Tomorrow.io quota now 18/25 per
         hour — the NEXT town batch must space or subset that source.**
-  - [ ] **Watch 2026-07-19/20 crons:** first unattended runs of location capture + Ray per-town +
-        location scoring across all 17 towns (scoring no-ops until the archive posts; first scored
-        days ~07-21..23).
+  - [x] **Watch 2026-07-19/20 crons — CLOSED 2026-07-27 by incident.** The watch was warranted:
+        **five-day silent partial-sweep found + fixed 2026-07-27** (owner spotted Ray-only Banner Elk
+        card). Root cause: `fetch_json` sys.exit(1)'d on failure → SystemExit escaped
+        capture_locations' per-source `except Exception` → one SSL handshake timeout killed all 33
+        town captures; continue-on-error kept the workflow green. 07-21..26: most towns scored
+        Ray-only (his 7-day capture coasts gaps); only 07-19/20/22 got all 10 sources. FIXED
+        (commit 636de3a0): fetch_json retries ×3 then RAISES; capture_locations `--fill-missing`
+        recovery mode + loud exit-1 summary; daily_capture uses --fill-missing (idempotent);
+        **freshness sentinel now checks every town's daily capture** (strict, names missing towns).
+        Recovered 07-27 keyless captures for all 17 towns (keyed sources for 07-27 + the 07-21..26
+        days are honest gaps — point-in-time forecasts can't be recaptured; deliberately did NOT
+        re-run the capture workflow to avoid overwriting Boone's morning captures). DSI town accrual
+        resumes 07-28. +8 tests (399 py green).
+  - [ ] **Board nicety (owner screenshot, 2026-07-27):** on a day where only ONE source scored
+        (the Ray-only gap days), the "day's best" chip still renders — best-of-one reads as a
+        joke at Ray's expense we didn't intend. Suppress day's-best/day's-worst when a town-day
+        has <2 scored sources (`lib/board.ts` / `ScoredDayCard`). Small, fold into the next
+        town-pages PR.
 
 ### Homepage design backlog (owner review, 2026-07-01 — banked, not yet actioned)
 - [ ] **iPhone shot: find it a new home; the Today module owns above-the-fold long-term.** The Apple
