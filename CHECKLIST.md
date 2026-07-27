@@ -481,6 +481,14 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
 - [x] **Vercel webhook coalescing (lesson):** back-to-back merges to main can leave the second merge
       undeployed — no build, no failure, just absent (#105 needed a manually created git-source deployment).
       Leave a beat between merges, or confirm a deployment exists per merge.
+  - [ ] **Recurred TWICE 2026-07-26/27** (#144+#142 batch; then #148 after #147) — both times caught
+        only by probing prod for the new build's content, both recovered by pushing another commit.
+        "Leave a beat" is not a fix. **Durable fix needs one owner click:** create a Deploy Hook in
+        Vercel (Project → Settings → Git → Deploy Hooks, branch main) and add its URL as GH secret
+        `VERCEL_DEPLOY_HOOK`; then we add a tiny workflow that, a few minutes after each push to
+        main, asks Vercel whether a deployment exists for that SHA and POSTs the hook if not —
+        coalescing becomes self-healing. Until then: after any merge, verify prod actually serves
+        the change before calling it live (probe for new content, not just 200s).
 - [x] **Stale local `.vercel` cleaned (owner-delegated):** the main checkout still carried GitHub-Pages-era
       settings (python build → `docs/`); backed up, removed, re-linked fresh (project/org IDs only). The
       matching *dashboard* overrides remain an owner click (see Deployment notes in `CLAUDE.md`).
