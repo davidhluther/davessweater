@@ -31,19 +31,22 @@ jobs:
         env:
           TOMTOM_API_KEY: ${{ secrets.TOMTOM_API_KEY }}
 
-      # Predict→grade loop, ONCE a day, on the first (12:07 UTC) run only. All
-      # four crons share this job, so gate on the UTC hour — reliable because
-      # only the '7 12 * * *' cron fires in the 12:00 UTC hour. (A
-      # workflow_dispatch triggers the model only if dispatched during that
-      # hour; acceptable.) Grade yesterday BEFORE forecasting today. Both
-      # scripts are fail-soft and exit 0; the trailing `|| true` guards the step.
+      # Predict→grade loop, ONCE a day, on whichever run happens to be the
+      # day's first. The old gate ("UTC hour == 12") silently skipped every
+      # day 07-26/27 because GitHub fired the 12:07 cron at 13:49 and 15:08 —
+      # cron delays routinely exceed the hour window. Gate on the OUTPUT
+      # instead: run iff today's forecast file doesn't exist yet, which any
+      # delayed (or manually dispatched) run satisfies exactly once per day.
+      # Grade yesterday BEFORE forecasting today. Both scripts are fail-soft;
+      # the trailing `|| true` guards the step.
       - name: Grade yesterday, then forecast today + tomorrow (first daily run only)
         run: |
-          if [ "$(date -u +%H)" = "12" ]; then
+          today="$(TZ=America/New_York date +%F)"
+          if [ ! -f "data/traffic/forecast/${today}.json" ]; then
             python scripts/compare_traffic.py || true
             python scripts/forecast_traffic.py || true
           else
-            echo "Not the 12:00 UTC run (hour=$(date -u +%H)); skipping traffic model."
+            echo "Forecast for ${today} already exists; skipping traffic model."
           fi
         continue-on-error: true
 

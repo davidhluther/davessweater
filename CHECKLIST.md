@@ -1170,6 +1170,16 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
         Sep 5 opener: ~6-week graded track record before anything publishes. v0 documented
         simplifications: event multipliers uniform across windows; town-based corridor matching
         (registry `corridors` taxonomy differs from actuals slugs — unify later).
+    - [x] **Silent-skip incident FOUND + FIXED 2026-07-27:** the model's "UTC hour == 12" gate
+          never fired — GitHub ran the 12:07 cron at 13:49 and 15:08 (delays exceed the hour
+          window), so 07-26/27 produced no forecast and nothing was graded. Gate replaced with an
+          OUTPUT check (run iff today's forecast file is absent — delay-proof, once/day, dispatch-
+          friendly). Caught up locally: **day-one 07-25 forecast graded** (12 pairs, ratio MAE
+          0.064, Brier 0.068 overall; King St the roughest at MAE 0.20 on the concert Saturday) +
+          07-27 forecast generated (3 actuals days now seed baselines). 07-26 forecast is honestly
+          absent (never generated — that day is a gap, not backfilled). LESSON (pattern for all
+          shared-cron workflows): never gate a step on wall-clock hour; gate on whether its
+          output exists.
   - [~] **NCDOT continuous-count historical data — EMAIL SENT by owner 2026-07-25; awaiting
         Traffic Survey Group reply.** Hourly volumes 24/365, public/clean; unknown whether a
         continuous station sits on our corridors. If it lands: years of labeled hours joinable to
