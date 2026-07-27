@@ -87,6 +87,32 @@ export async function getTown(slug: string): Promise<Town | null> {
   return towns.find((t) => t.slug === slug) ?? null;
 }
 
+/** A serializable nav entry for the client header/menus: name + the weather-surface
+ *  URL (Boone keeps `/`, every other town is `/weather/{slug}`). */
+export interface TownNavItem {
+  slug: string;
+  name: string;
+  href: string;
+}
+
+/**
+ * The town list the site chrome links to, Boone first then the rest alphabetical.
+ * Sourced entirely from the registry so the nav can never drift from the tracked
+ * set. Returns plain data (no fs handles) so a client component can render it.
+ */
+export async function weatherNavTowns(): Promise<TownNavItem[]> {
+  const towns = await allTowns();
+  const boone = towns.find((t) => t.slug === "boone")!;
+  const others = towns
+    .filter((t) => t.slug !== "boone")
+    .sort((a, b) => a.name.localeCompare(b.name));
+  return [boone, ...others].map((t) => ({
+    slug: t.slug,
+    name: t.name,
+    href: t.slug === "boone" ? "/" : `/weather/${t.slug}`,
+  }));
+}
+
 /** Base data directory for a town's committed JSON. */
 function townBase(slug: string): string {
   return slug === "boone" ? DATA : join(DATA, "locations", slug);

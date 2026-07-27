@@ -15,6 +15,7 @@ import HeadToHeadCard from "@/components/HeadToHeadCard";
 import LiveConditions from "@/components/LiveConditions";
 import IphoneShot from "@/components/IphoneShot";
 import AlsoTracking from "@/components/AlsoTracking";
+import TownWayfinder from "@/components/TownWayfinder";
 import { copy } from "@/content/copy";
 
 export const metadata = {
@@ -43,6 +44,7 @@ export default async function HomePage() {
   return (
     <>
       <Hero stats={stats} forecasters={composite?.sources ?? []} />
+      <TownWayfinder />
       <GmhgBanner />
       <FireworksBanner />
 

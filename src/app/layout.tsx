@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { weatherNavTowns } from "@/lib/towns";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ChromeGate from "@/components/ChromeGate";
@@ -53,7 +54,8 @@ const siteJsonLd = [
   },
 ];
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const towns = await weatherNavTowns();
   return (
     <html lang="en" className={cn("antialiased", inter.variable, spaceGrotesk.variable)}>
       <body className="flex min-h-screen flex-col">
@@ -64,7 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         <JsonLd data={siteJsonLd} />
-        <ChromeGate><SiteHeader /></ChromeGate>
+        <ChromeGate><SiteHeader towns={towns} /></ChromeGate>
         <main id="main" className="flex-1">{children}</main>
         <ChromeGate><SiteFooter /></ChromeGate>
         <TrackingOptOut />

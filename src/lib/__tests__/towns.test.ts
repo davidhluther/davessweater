@@ -1,7 +1,25 @@
 import { describe, it, expect } from "vitest";
-import { buildForecast5FromCaptures, scoredDays, firstScoredDate, townTodayForecasts } from "@/lib/towns";
+import { buildForecast5FromCaptures, scoredDays, firstScoredDate, townTodayForecasts, weatherNavTowns } from "@/lib/towns";
 import type { Forecast5Day } from "@/lib/forecast5";
 import { compositeForecast } from "@/lib/composite";
+
+describe("weatherNavTowns", () => {
+  it("lists Boone first (routed to /), then the rest alphabetical with /weather hrefs", async () => {
+    const nav = await weatherNavTowns();
+    expect(nav.length).toBeGreaterThan(1);
+    // Boone leads and keeps its legacy root URL.
+    expect(nav[0]).toMatchObject({ slug: "boone", href: "/" });
+    const others = nav.slice(1);
+    // Every non-Boone town points at its /weather/{slug} page.
+    for (const t of others) {
+      expect(t.href).toBe(`/weather/${t.slug}`);
+      expect(t.slug).not.toBe("boone");
+    }
+    // Alphabetical by name after Boone.
+    const names = others.map((t) => t.name);
+    expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b)));
+  });
+});
 
 describe("scoredDays", () => {
   it("counts scoreboard entries, tolerating missing data", () => {
