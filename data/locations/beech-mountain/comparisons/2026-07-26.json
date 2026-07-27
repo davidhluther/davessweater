@@ -1,0 +1,84 @@
+{
+  "date": "2026-07-26",
+  "location": "Beech Mountain",
+  "location_slug": "beech-mountain",
+  "actuals": {
+    "date": "2026-07-26",
+    "fetched_at": "2026-07-27T09:24:38.556400-04:00",
+    "location": "Beech Mountain",
+    "location_slug": "beech-mountain",
+    "high_f": 67.9,
+    "low_f": 56.4,
+    "wind_mph": 7.9,
+    "gust_mph": 20.4,
+    "precip_type": "rain",
+    "rain_in": 0.169,
+    "snow_in": 0.0,
+    "precip_in": 0.169,
+    "weather_code": 55,
+    "conditions": "Dense drizzle",
+    "category": "drizzle"
+  },
+  "sources": {
+    "raysweather": {
+      "prediction": {
+        "date": "2026-07-26",
+        "high_f": 70,
+        "low_f": 59,
+        "golfballs": 3,
+        "fields_provided": [
+          "high",
+          "low"
+        ]
+      },
+      "score": {
+        "score": 51.9,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": false,
+          "precip": false
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 26.7,
+            "max": 30,
+            "scored": true,
+            "predicted": 70,
+            "actual": 67.9,
+            "error": 2.1
+          },
+          "low_temp": {
+            "points": 25.2,
+            "max": 30,
+            "scored": true,
+            "predicted": 59,
+            "actual": 56.4,
+            "error": 2.6
+          },
+          "wind": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 7.9,
+            "error": null
+          },
+          "precip": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 0.169,
+            "error": null,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}
