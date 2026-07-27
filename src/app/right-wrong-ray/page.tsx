@@ -294,7 +294,7 @@ export default async function Page() {
 
             {scored.map(({ key, label, iconSrc, iconChar, price, e }, i) => {
               const s = e.score.score;
-              const isBest = i === 0;
+              const isBest = i === 0 && scored.length >= 2;
               const isWorst = markWorst && i === scored.length - 1;
               const f = predFields(e);
               return (
@@ -365,8 +365,9 @@ export default async function Page() {
           </>
         ) : <p className="text-muted">No comparison yet.</p>}
         <p className="mt-5 text-xs italic text-muted">
-          Each forecast is scored out of 100 across five fields — high temp (30), low temp (30), wind (20,
-          scored as a range when the source gives one), precip type (10) and precip amount (10) — by closeness
+          Each forecast is scored out of 100 across four fields — high temp (30), low temp (30), wind (20,
+          scored as a range when the source gives one) and precipitation (20, form and amount graded
+          together, snow-aware) — by closeness
           to the actual recorded conditions. A forecast of &ldquo;no rain&rdquo; counts as a zero-inch prediction
           (scored); predicting rain with no stated total leaves the amount blank (no credit).
           When day scores tie, the smaller summed miss across the graded fields takes

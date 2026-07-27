@@ -207,7 +207,7 @@ export default async function TownTrackerPage({ params }: { params: Promise<{ sl
               <ScoredDayCard
                 key={s.key}
                 source={s}
-                isBest={i === 0}
+                isBest={i === 0 && scored.length >= 2}
                 isWorst={markWorst && i === scored.length - 1}
                 anchorId={s.key === "raysweather" ? "rays-latest" : undefined}
               />
@@ -215,9 +215,9 @@ export default async function TownTrackerPage({ params }: { params: Promise<{ sl
           </>
         ) : <p className="text-muted">No comparison yet.</p>}
         <p className="mt-5 text-xs italic text-muted">
-          Each forecast is scored out of 100 across five fields — high temp (30), low temp (30), wind (20,
-          scored as a range when the source gives one), precip type (10) and precip amount (10) — by closeness
-          to the actual recorded conditions. Same rubric for every town.
+          Each forecast is scored out of 100 across four fields — high temp (30), low temp (30), wind (20,
+          scored as a range when the source gives one) and precipitation (20, form and amount graded
+          together, snow-aware) — by closeness to the actual recorded conditions. Same rubric for every town.
         </p>
         <p className="mt-2 text-xs">
           <Link href="/methodology" className="text-teal underline underline-offset-2">Full methodology</Link>
