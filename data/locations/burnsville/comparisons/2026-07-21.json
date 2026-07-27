@@ -28,20 +28,24 @@
         "golfballs": 4,
         "fields_provided": [
           "high",
-          "low"
-        ]
+          "low",
+          "precip_type"
+        ],
+        "icon_day": "Day/01_Dry/03_Sct_Clouds.png",
+        "icon_night": "Night/03_Lightning/01_Sct_Thundershower.png",
+        "precip_type": "none"
       },
       "score": {
-        "score": 51.0,
+        "score": 61.0,
         "grade": {
-          "verdict": "wrong",
-          "ray_count": 2
+          "verdict": "meh",
+          "ray_count": 3
         },
         "coverage": {
           "high_temp": true,
           "low_temp": true,
           "wind": false,
-          "precip": false
+          "precip": true
         },
         "breakdown": {
           "high_temp": {
@@ -69,12 +73,12 @@
             "error": null
           },
           "precip": {
-            "points": null,
+            "points": 10.0,
             "max": 20,
-            "scored": false,
-            "predicted": null,
+            "scored": true,
+            "predicted": 0.0,
             "actual": 0.102,
-            "error": null,
+            "error": 0.102,
             "unit": "in_liquid"
           }
         }

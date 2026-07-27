@@ -219,6 +219,16 @@ export default async function TownTrackerPage({ params }: { params: Promise<{ sl
           scored as a range when the source gives one) and precipitation (20, form and amount graded
           together, snow-aware) — by closeness to the actual recorded conditions. Same rubric for every town.
         </p>
+        {hasRay && (
+          <p className="mt-2 text-xs italic text-muted">
+            Ray&apos;s Weather publishes a per-town high, low and sky icon, so his town boards are graded on
+            those — the icon is read as his precipitation call (a dry icon scores as a no-rain forecast, a
+            rain or storm icon as rain). His wind text is one identical regional string across every town, so
+            wind stays an honest forfeit here rather than a stamped guess. See the{" "}
+            <Link href="/methodology#locations" className="text-teal underline underline-offset-2">methodology</Link>{" "}
+            for the icon mapping.
+          </p>
+        )}
         <p className="mt-2 text-xs">
           <Link href="/methodology" className="text-teal underline underline-offset-2">Full methodology</Link>
           {" | "}

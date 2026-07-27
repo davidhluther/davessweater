@@ -30,11 +30,12 @@ const jsonLd = [
       "The 100-point model, the NWS qualitative-wind mapping, and where the actual weather comes from.",
     "about": "Weather forecast accuracy scoring methodology",
     // Real dates from the changelog: page shipped with R4 (2026-06-26); last
-    // substantive rubric change was the recalibration (2026-07-26): 1°F temp
-    // window + merged 20-pt precip field. Bump dateModified when the scoring
-    // model changes.
+    // substantive change was crediting Ray's per-town sky icon as his
+    // precipitation call on the town boards (2026-07-27); the recalibration
+    // (2026-07-26) added the 1°F temp window + merged 20-pt precip field. Bump
+    // dateModified when the scoring model or a documented grading rule changes.
     "datePublished": "2026-06-26",
-    "dateModified": "2026-07-26",
+    "dateModified": "2026-07-27",
     "isAccessibleForFree": true,
     "author": { "@type": "Organization", "name": "Dave's Sweater" },
     "publisher": { "@type": "Organization", "name": "Dave's Sweater", "url": "https://davessweater.com" },
@@ -272,6 +273,16 @@ export default async function Page() {
           on the site clears before its record is called established &mdash; then it ranks like the rest. The
           future Boone weather station upgrades Boone&apos;s actuals only; every other town keeps the archive as
           its ground truth.
+        </p>
+        <p className="mt-3 max-w-2xl text-sm text-muted">
+          Ray&apos;s Weather gives each town its own high, low and sky icon, so his town boards are graded on
+          all three. We read the icon as his precipitation call &mdash; a dry icon counts as a no-rain forecast
+          (and earns the amount points on days it stays dry), a rain or thunderstorm icon as rain &mdash; and
+          the mapping is a fixed, source-blind lookup from his icon families (dry, rain, lightning, snow); an
+          icon we don&apos;t recognize is forfeited, never guessed. His wind, by contrast, is a single regional
+          sentence repeated verbatim on every town page, so we don&apos;t grade town wind against it: an honest
+          forfeit beats a stamped number. Numeric precip amount he still never publishes, so on wet days he
+          earns the form call and forfeits the amount, exactly as on the Boone board.
         </p>
       </SectionBand>
 
