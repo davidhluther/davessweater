@@ -841,11 +841,16 @@ model only.
         days are honest gaps — point-in-time forecasts can't be recaptured; deliberately did NOT
         re-run the capture workflow to avoid overwriting Boone's morning captures). DSI town accrual
         resumes 07-28. +8 tests (399 py green).
-  - [ ] **Board nicety (owner screenshot, 2026-07-27):** on a day where only ONE source scored
-        (the Ray-only gap days), the "day's best" chip still renders — best-of-one reads as a
-        joke at Ray's expense we didn't intend. Suppress day's-best/day's-worst when a town-day
-        has <2 scored sources (`lib/board.ts` / `ScoredDayCard`). Small, fold into the next
-        town-pages PR.
+  - [x] **Board nicety — ✅ MERGED 2026-07-27 (PR #148).** Day's-best/worst chips suppressed on
+        <2-source days (both Boone + town boards); ALSO caught + fixed both boards' scoring
+        footnotes still describing the retired five-field precip split (missed by #146's consumer
+        sweep — the town board shipped in a parallel branch). Verified in dev on the Ray-only
+        Banner Elk day.
+  - [x] **Town discoverability — ✅ MERGED 2026-07-27 (PR #147, owner-directed).** "Towns" nav
+        dropdown (registry-fed two-column panel, Resources disclosure pattern, Boone-first) +
+        `TownWayfinder` one-liner directly under the homepage hero ("Not in Boone?" → /weather
+        hub); lower AlsoTracking list retained as the single full-weight list. 257 vitest/lint/
+        build green; 390px verified.
 
 ### Homepage design backlog (owner review, 2026-07-01 — banked, not yet actioned)
 - [ ] **iPhone shot: find it a new home; the Today module owns above-the-fold long-term.** The Apple
