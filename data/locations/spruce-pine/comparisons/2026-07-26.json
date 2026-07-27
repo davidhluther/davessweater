@@ -1,0 +1,84 @@
+{
+  "date": "2026-07-26",
+  "location": "Spruce Pine",
+  "location_slug": "spruce-pine",
+  "actuals": {
+    "date": "2026-07-26",
+    "fetched_at": "2026-07-27T09:04:59.326539-04:00",
+    "location": "Spruce Pine",
+    "location_slug": "spruce-pine",
+    "high_f": 79.3,
+    "low_f": 64.0,
+    "wind_mph": 8.9,
+    "gust_mph": 20.4,
+    "precip_type": "rain",
+    "rain_in": 0.157,
+    "snow_in": 0.0,
+    "precip_in": 0.157,
+    "weather_code": 55,
+    "conditions": "Dense drizzle",
+    "category": "drizzle"
+  },
+  "sources": {
+    "raysweather": {
+      "prediction": {
+        "date": "2026-07-26",
+        "high_f": 82,
+        "low_f": 63,
+        "golfballs": 3,
+        "fields_provided": [
+          "high",
+          "low"
+        ]
+      },
+      "score": {
+        "score": 54.9,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": false,
+          "precip": false
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 24.9,
+            "max": 30,
+            "scored": true,
+            "predicted": 82,
+            "actual": 79.3,
+            "error": 2.7
+          },
+          "low_temp": {
+            "points": 30.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 63,
+            "actual": 64.0,
+            "error": 1.0
+          },
+          "wind": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 8.9,
+            "error": null
+          },
+          "precip": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 0.157,
+            "error": null,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "date": "2026-07-26",
+  "location": "West Jefferson",
+  "location_slug": "west-jefferson",
+  "actuals": {
+    "date": "2026-07-26",
+    "fetched_at": "2026-07-27T09:04:35.318331-04:00",
+    "location": "West Jefferson",
+    "location_slug": "west-jefferson",
+    "high_f": 79.0,
+    "low_f": 62.8,
+    "wind_mph": 8.3,
+    "gust_mph": 15.7,
+    "precip_type": "rain",
+    "rain_in": 0.252,
+    "snow_in": 0.0,
+    "precip_in": 0.252,
+    "weather_code": 61,
+    "conditions": "Slight rain",
+    "category": "rain"
+  },
+  "sources": {
+    "raysweather": {
+      "prediction": {
+        "date": "2026-07-26",
+        "high_f": 78,
+        "low_f": 61,
+        "golfballs": 3,
+        "fields_provided": [
+          "high",
+          "low"
+        ]
+      },
+      "score": {
+        "score": 57.6,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": false,
+          "precip": false
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 30.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 78,
+            "actual": 79.0,
+            "error": 1.0
+          },
+          "low_temp": {
+            "points": 27.6,
+            "max": 30,
+            "scored": true,
+            "predicted": 61,
+            "actual": 62.8,
+            "error": 1.8
+          },
+          "wind": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 8.3,
+            "error": null
+          },
+          "precip": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 0.252,
+            "error": null,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}

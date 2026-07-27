@@ -1,0 +1,84 @@
+{
+  "date": "2026-07-26",
+  "location": "Vilas",
+  "location_slug": "vilas",
+  "actuals": {
+    "date": "2026-07-26",
+    "fetched_at": "2026-07-27T09:04:30.553428-04:00",
+    "location": "Vilas",
+    "location_slug": "vilas",
+    "high_f": 77.2,
+    "low_f": 64.7,
+    "wind_mph": 8.5,
+    "gust_mph": 20.4,
+    "precip_type": "rain",
+    "rain_in": 0.15,
+    "snow_in": 0.0,
+    "precip_in": 0.15,
+    "weather_code": 53,
+    "conditions": "Moderate drizzle",
+    "category": "drizzle"
+  },
+  "sources": {
+    "raysweather": {
+      "prediction": {
+        "date": "2026-07-26",
+        "high_f": 79,
+        "low_f": 63,
+        "golfballs": 3,
+        "fields_provided": [
+          "high",
+          "low"
+        ]
+      },
+      "score": {
+        "score": 55.5,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": false,
+          "precip": false
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 27.6,
+            "max": 30,
+            "scored": true,
+            "predicted": 79,
+            "actual": 77.2,
+            "error": 1.8
+          },
+          "low_temp": {
+            "points": 27.9,
+            "max": 30,
+            "scored": true,
+            "predicted": 63,
+            "actual": 64.7,
+            "error": 1.7
+          },
+          "wind": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 8.5,
+            "error": null
+          },
+          "precip": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 0.15,
+            "error": null,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}
