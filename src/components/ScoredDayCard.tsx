@@ -33,8 +33,12 @@ export default function ScoredDayCard(
               day&apos;s best
             </span>
           )}
+          {/* Both badges tint with the base hue and set the text in the AA-safe
+              dark token. Tinting with orange-600 itself darkened the pill under
+              its own text (4.48:1); off the base orange it clears at 4.7:1,
+              the same band as its green sibling's 4.8:1. */}
           {isWorst && (
-            <span className="rounded-full border border-orange-600/40 bg-orange-600/10 px-2.5 py-0.5 text-xs font-semibold text-orange-600">
+            <span className="rounded-full border border-orange/30 bg-orange/10 px-2.5 py-0.5 text-xs font-semibold text-orange-600">
               day&apos;s worst
             </span>
           )}
