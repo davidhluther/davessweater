@@ -136,21 +136,14 @@ export default async function FiveDayStrip(
           ))}
         </div>
 
-        {anyHourly ? (
-          <p className="mt-2 text-[0.65rem] text-muted/80">
-            Bars show the hourly chance of rain, 6a–10p (Open-Meteo). Taller, solid bars = heavier odds.
-          </p>
-        ) : null}
-
-        {maePair ? (
-          <p className="mt-3 text-xs text-muted">
-            Measured against actuals, the forecasts behind this consensus have missed the next-day high by ±{maePair.a.mae}°F on
-            average; day 5 runs ±{maePair.b.mae}°F. <span className="text-muted/60">|</span>{" "}
-            <Link href="/methodology" className="text-teal underline underline-offset-2">How we grade</Link>
-          </p>
-        ) : null}
-        <p className="mt-1.5 text-xs">
+        {/* The bar-chart legend and the lead-time MAE sentence used to sit here.
+            Both were removed 2026-07-27 (owner: "they don't need that much
+            detail") — the accuracy numbers live on the scoreboard and
+            /methodology, which these two links reach. */}
+        <p className="mt-3 text-xs">
           <Link href={scoreboardHref} className="text-teal underline underline-offset-2">See the scoreboard</Link>
+          <span className="mx-1.5 text-muted/60">|</span>
+          <Link href="/methodology" className="text-teal underline underline-offset-2">How we grade</Link>
         </p>
     </div>
   );

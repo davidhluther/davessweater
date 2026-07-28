@@ -31,7 +31,7 @@ export const copy = {
   index: {
     title: "Dave's Sweater Index",
     // `n` is the number of forecasters averaged together.
-    footnote: (n: number) => `the average of ${n} independent (and free) forecasters`,
+    footnote: (n: number) => `The average of ${n} independent (and free) forecasters`,
     tagline: "The forecast belongs to everybody. The sweater call is yours.",
   },
 

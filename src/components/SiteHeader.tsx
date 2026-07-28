@@ -11,13 +11,16 @@ import type { TownNavItem } from "@/lib/towns";
 const primary = [
   { href: "/", label: "Today" },
   { href: "/right-wrong-ray", label: "Right/Wrong Ray" },
-  { href: "/roads", label: "Roads" },
 ];
 const resources = [
   { href: "/resources/articles", label: "Articles" },
   { href: "/resources/news", label: "News & Updates" },
   { href: "/resources/videos", label: "Videos" },
   { href: "/resources/reports", label: "Reports" },
+  // Roads moved out of the top nav 2026-07-27 (owner): it is a seasonal tool
+  // that reads "Clear" all summer, so it does not earn prime nav real estate
+  // until winter. It keeps its URL and its place among the tools here.
+  { href: "/roads", label: "Road Conditions" },
   // The free JSON API, RSS feeds, and CC BY 4.0 dataset. It lived at a footer
   // link only, which buried the most on-thesis thing the site offers.
   { href: "/api", label: "Free Data and API" },
