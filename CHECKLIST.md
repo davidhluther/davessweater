@@ -697,6 +697,52 @@ model only.
 - [x] 172 vitest / lint / build green (31 routes); hero dek, tagline, and /about all verified in
       prerendered HTML.
 
+## NEXT BUILD: design/template consistency gate (IA brief, 2026-07-28)
+Brief: `IA-BRIEF-2026-07-28-design-consistency-gate.md` (repo root, from OVERALL IA at David's
+direction). Diagnosis: rapid feature bursts (PRs #129–#152 across three days) add pages, routes,
+and widgets that never get fitted to the site's design/template, and nothing corrects the drift
+until David notices by reading a page. **Fix the system, not the pages.**
+
+**The principle: new work must FIT the template or CHANGE the template deliberately in the same
+PR, with reasoning. Divergence-by-omission is the failure mode this kills.**
+
+- [~] **GATE — David's manual correction pass must land first** (in progress 2026-07-27/28; the
+      corrected state IS the seed of the standard, so codifying earlier would enshrine the
+      patchwork). Correction pass so far: nav trim (Videos hidden, Reports→"Reports and Tools",
+      Roads folded in), footer trim, homepage town toggle, 5-day detail cut, precip labels as
+      words, R/M/W legend, reading cards, typographic quotes ×17, stat-caption capitalization,
+      attribution backlink. STILL OPEN in the pass: forecaster logos on one line, drop the
+      Open-Meteo hero card, remove the Apple Weather spot, article cadence decision.
+- [ ] **Layer 1 — `docs/DESIGN-STANDARD.md`.** Walk the corrected site and codify: the page shell
+      (layout/partials every page extends); navigation/discovery registration rules (a new route
+      must register in nav/hubs/indexes — /weather hub, report-card franchise — so pages can't
+      become orphans); typography, spacing, color as NAMED TOKENS with a rule against hardcoded
+      one-offs; component patterns (cards, tables, charts/scoreboards, callouts) each pointing at
+      its canonical implementation so new pages reuse rather than re-invent; responsiveness +
+      asset conventions; and a **page-inventory table** (every route → template → conformance
+      status) that doubles as the sweep scoreboard.
+- [ ] **Layer 2 — `/design-check` skill** in `.claude/skills/`, run against a PR's changed
+      pages/components BEFORE merge. Mechanical where possible (extends the shell? registered in
+      nav? tokens not hardcoded? reuses canonical components?), judged against DESIGN-STANDARD.md
+      otherwise; returns pass or a concrete fix-list. **Wire it so it actually runs:** a CLAUDE.md
+      rule giving it the same standing as tests in the definition of done, the rule mirrored here,
+      and a PR-template checkbox if one exists. When a feature legitimately needs a NEW pattern,
+      the PR updates DESIGN-STANDARD.md in the same change — that is the "change deliberately"
+      branch, not an exemption.
+- [ ] **Layer 3 — periodic conformance sweep** after each feature burst (or weekly; DS IA's call
+      given the daily workflow cadence): sweep the full inventory, update the scoreboard, file
+      nonconformances as checklist fixes. Same predict→grade discipline the weather layer runs on
+      — design conformance gets a graded track record.
+- [ ] **First sweep baselines the scoreboard**; residue the manual pass missed becomes fix-list #1.
+
+RELATED, already in flight and complementary (copy, not layout): the blocking **copy-lint**
+(`scripts/copy_lint.py` + pytest, branch `feat/copy-lint`) enforces the writing styleguide
+mechanically — colons, em-dashes, straight quotes in JSX, label/table capitalization, and
+JSX adjacent-tag missing spaces. Same philosophy one layer down; DESIGN-STANDARD should reference
+it rather than duplicate its rules. Also in flight: `feat/type-scale` (one named heading scale
+applied site-wide), which is effectively the first piece of Layer 1 and should be folded into the
+standard when it lands.
+
 ## To do — site (pre-station, outstanding)
 
 - [ ] **Scoring recalibration — the big one (owner-flagged 2026-07-02).** Clustered 90s = weak
