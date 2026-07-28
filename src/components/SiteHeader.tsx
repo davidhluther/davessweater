@@ -26,6 +26,11 @@ export default function SiteHeader({ towns }: { towns: TownNavItem[] }) {
   const [open, setOpen] = useState(false);       // mobile sheet
   const [drop, setDrop] = useState(false);       // desktop resources menu
   const [townDrop, setTownDrop] = useState(false); // desktop towns menu
+  // The mobile sheet keeps the 18-town list COLLAPSED by default. Rendering it
+  // flat pushed the sheet far past the viewport, and because the header is
+  // sticky the overflow was unreachable — the menu looked permanently open and
+  // refused to scroll (owner-reported 2026-07-27).
+  const [townsMobile, setTownsMobile] = useState(false);
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
   // A town link is current only on its own page (Boone's page is "/").
   const townActive = (t: TownNavItem) => (t.href === "/" ? pathname === "/" : pathname === t.href);
@@ -143,7 +148,7 @@ export default function SiteHeader({ towns }: { towns: TownNavItem[] }) {
         </button>
       </div>
       {open && (
-        <nav className="flex flex-col gap-1 border-t border-white/15 px-4 py-2 md:hidden">
+        <nav className="flex max-h-[calc(100dvh-4rem)] flex-col gap-1 overflow-y-auto overscroll-contain border-t border-white/15 px-4 py-2 md:hidden">
           {primary.map((l) => (
             <Link key={l.href} href={l.href} onClick={() => setOpen(false)}
               className={cn("rounded-md px-3 py-3 text-sm font-medium",
@@ -151,23 +156,34 @@ export default function SiteHeader({ towns }: { towns: TownNavItem[] }) {
               {l.label}
             </Link>
           ))}
-          <Link href="/weather" onClick={() => setOpen(false)}
-            className={cn("rounded-md px-3 py-3 text-sm font-medium",
-              isActive("/weather") ? "bg-orange-600 text-white" : "text-white/80 hover:bg-white/10")}>
-            Towns
-          </Link>
-          <Link href="/weather" onClick={() => setOpen(false)}
-            className={cn("rounded-md py-3 pl-8 pr-3 text-sm font-medium",
-              pathname === "/weather" ? "bg-orange-600 text-white" : "text-white/70 hover:bg-white/10")}>
-            All towns
-          </Link>
-          {towns.map((t) => (
-            <Link key={t.slug} href={t.href} onClick={() => setOpen(false)}
-              className={cn("rounded-md py-3 pl-8 pr-3 text-sm font-medium",
-                townActive(t) ? "bg-orange-600 text-white" : "text-white/70 hover:bg-white/10")}>
-              {t.name}
+          <div className="flex items-center">
+            <Link href="/weather" onClick={() => setOpen(false)}
+              className={cn("flex-1 rounded-md px-3 py-3 text-sm font-medium",
+                isActive("/weather") ? "bg-orange-600 text-white" : "text-white/80 hover:bg-white/10")}>
+              Towns
             </Link>
-          ))}
+            <button type="button" aria-label={townsMobile ? "Hide town list" : "Show town list"}
+              aria-expanded={townsMobile} onClick={() => setTownsMobile((v) => !v)}
+              className="inline-flex size-11 items-center justify-center rounded-md text-white/80 hover:bg-white/10">
+              <ChevronDown className={cn("size-4 transition-transform", townsMobile && "rotate-180")} />
+            </button>
+          </div>
+          {townsMobile && (
+            <>
+              <Link href="/weather" onClick={() => setOpen(false)}
+                className={cn("rounded-md py-3 pl-8 pr-3 text-sm font-medium",
+                  pathname === "/weather" ? "bg-orange-600 text-white" : "text-white/70 hover:bg-white/10")}>
+                All towns
+              </Link>
+              {towns.map((t) => (
+                <Link key={t.slug} href={t.href} onClick={() => setOpen(false)}
+                  className={cn("rounded-md py-3 pl-8 pr-3 text-sm font-medium",
+                    townActive(t) ? "bg-orange-600 text-white" : "text-white/70 hover:bg-white/10")}>
+                  {t.name}
+                </Link>
+              ))}
+            </>
+          )}
           <Link href="/resources" onClick={() => setOpen(false)}
             className={cn("rounded-md px-3 py-3 text-sm font-medium",
               isActive("/resources") ? "bg-orange-600 text-white" : "text-white/80 hover:bg-white/10")}>
