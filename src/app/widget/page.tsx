@@ -12,6 +12,7 @@ import HeightReporter from "./HeightReporter";
 import { parseDays, parseDetail, sweaterShort, SITE_BASE } from "@/lib/publicFeed";
 import { getTown, isTownPublic, getTownForecast5 } from "@/lib/towns";
 import { stripDays } from "@/lib/forecast5";
+import { showsChance } from "@/lib/composite";
 import { fmtLongDate } from "@/lib/dates";
 
 // Keep embeds out of the index — the canonical experience is the site itself.
@@ -121,7 +122,11 @@ export default async function WidgetPage({
                     <span className="text-white/60"> / {d.low}&deg;</span>
                   </span>
                   <span className="text-white/80">
-                    {d.precip === "none" ? "No precip" : d.precipProb != null ? `${d.precipProb}% ${d.precip === "snow" ? "snow" : d.precip === "mixed" ? "mix" : "rain"}` : d.precipLabel}
+                    {d.precip === "none"
+                      // A dry day keeps its chance when there is one — same rule
+                      // as the site's own headline (showsChance).
+                      ? showsChance(d.precipProb) ? `No precip | ${d.precipProb}% chance` : "No precip"
+                      : d.precipProb != null ? `${d.precipProb}% ${d.precip === "snow" ? "snow" : d.precip === "mixed" ? "mix" : "rain"}` : d.precipLabel}
                   </span>
                   <span className="rounded-full bg-teal-700 px-2 py-0.5 text-[11px] text-orange-300">
                     {d.sweaters} {d.sweaters === 1 ? "sweater" : "sweaters"}

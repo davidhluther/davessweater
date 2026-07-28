@@ -72,6 +72,7 @@ export default async function FiveDayStrip(
   // rather than imply five separately-uncertain days.
   const showConfidence = days.some((d) => d.confidence !== "low");
   const anyHourly = days.some((d) => d.hourly?.length);
+  const anyChance = days.some((d) => d.precip !== "none" && d.precipProb != null);
   return (
     <div className="text-center">
         <h2 className="font-display text-lg font-bold sm:text-xl">
@@ -139,6 +140,15 @@ export default async function FiveDayStrip(
         {anyHourly ? (
           <p className="mt-2 text-[0.65rem] text-muted/80">
             Bars show the hourly chance of rain, 6a–10p (Open-Meteo). Taller, solid bars = heavier odds.
+          </p>
+        ) : null}
+
+        {/* The rule, not a number: how many forecasters publish a chance varies
+            by day, so a single N here would be wrong on most of the cards. The
+            exact per-day count ships in the JSON API instead. */}
+        {anyChance ? (
+          <p className="mt-2 text-[0.65rem] text-muted/80">
+            A day&apos;s chance is the median of the forecasts that publish one, not the highest.
           </p>
         ) : null}
 

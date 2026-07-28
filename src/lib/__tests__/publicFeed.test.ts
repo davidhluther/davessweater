@@ -87,6 +87,16 @@ describe("forecastLine", () => {
       "High 74 | Low 55 | Rain likely | 2 sweaters",
     );
   });
+  it("keeps a dry day's chance instead of stopping at 'No precip'", () => {
+    expect(forecastLine(stripDay({ precip: "none", precipProb: 8, sweaters: 1 }))).toBe(
+      "High 74 | Low 55 | No precip | 8% chance | 1 sweater",
+    );
+  });
+  it("drops a flat 0% — it says the same thing as 'No precip' twice", () => {
+    expect(forecastLine(stripDay({ precip: "none", precipProb: 0, sweaters: 1 }))).toBe(
+      "High 74 | Low 55 | No precip | 1 sweater",
+    );
+  });
 });
 
 describe("toApiDay", () => {
@@ -99,11 +109,18 @@ describe("toApiDay", () => {
       low_f: 55,
       precip_type: "none",
       precip_chance: null,
+      precip_chance_sources: null,
       sweaters: 2,
       sweater_summary: "Maybe a sweater",
       dsi_sources: 8,
     });
     expect(d.summary).toContain("High 74");
+  });
+
+  it("carries how many forecasters published a chance alongside the chance", () => {
+    const d = toApiDay(stripDay({ precipProb: 45, precipProbCount: 6 }));
+    expect(d.precip_chance).toBe(45);
+    expect(d.precip_chance_sources).toBe(6);
   });
 });
 

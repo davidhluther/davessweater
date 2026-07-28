@@ -30,6 +30,13 @@ export const copy = {
     title: "Dave's Sweater Index",
     // `n` is the number of forecasters averaged together.
     footnote: (n: number) => `the average of ${n} independent (and free) forecasters`,
+    // `n` is how many of those forecasters publish a chance of precip. The
+    // number shown is their median rather than their average — see
+    // precipChance() in src/lib/composite.ts for why. Only rendered when at
+    // least one publishes one; Met.no and Ray's publish none, and we don't
+    // invent one for them.
+    chanceFootnote: (n: number) =>
+      `chance is the median of the ${n} that publish one`,
     tagline: "The forecast belongs to everybody. The sweater call is yours.",
   },
 
