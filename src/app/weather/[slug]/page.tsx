@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!town || slug === "boone") return {};
   const title = `${town.name}, NC weather — multi-source forecast, graded`;
   const description =
-    `The forecast for ${town.name}, NC from every source we track, blended into one consensus and graded daily against ${town.name}'s own actuals. Not a stamped regional copy — its own data at its own coordinates.`;
+    `The forecast for ${town.name}, NC from every source we track, blended into one consensus and graded daily against ${town.name}'s own actuals. Its own data at its own coordinates, not a stamped regional copy.`;
   return {
     title,
     description,
@@ -113,8 +113,9 @@ export default async function TownWeatherPage({ params }: { params: Promise<{ sl
           </div>
           <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">{town.name} weather</h1>
           <p className="mt-2 max-w-2xl text-sm text-white/70">
-            A real {town.name} forecast, not a stamped regional copy: every source we track, at {town.name}&apos;s
-            own coordinates, blended into one consensus and graded daily against {town.name}&apos;s own actuals.
+            A real {town.name} forecast, not a stamped regional copy. Every source we track, pulled at{" "}
+            {town.name}&apos;s own coordinates, blended into one consensus and graded daily against{" "}
+            {town.name}&apos;s own actuals.
           </p>
           <div className="mt-5">
             <div className="mb-2 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-white/60">Switch town</div>
