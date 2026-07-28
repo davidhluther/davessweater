@@ -13,20 +13,28 @@ subset of styleguide rules that are mechanically decidable on UI copy:
   COLON_SENTENCE  error  lowercase complete sentence after a sentence-internal colon
                          (AP violation; styleguide Tier 4 + owner rule 2026-07-18)
   COLON_LABEL     error  lowercase "label: value" skeleton in prose or a list item
+  COLON_SKELETON  warn   the same skeleton with a capitalized label
   COLON_FRAGMENT  warn   any other lowercase-after-colon in prose (flagged for review)
   COLON_BUDGET    warn   >3 sentence-internal colons in one file's body prose
   EMDASH          error  em-dash in a user-facing string under src/ (DS practice is
                          to avoid them in UI copy; empty-cell placeholders exempt)
   EMDASH_DENSITY  warn   markdown posts over the universal 1-per-200-words ceiling
   NAV_CASE        error  a nav/category label set that isn't uniformly Title Case
+  CELL_CASE       error  a table cell whose text starts lowercase
+  CAPTION_CASE    error  a stat caption or standalone label that starts lowercase
+  JSX_SPACING     error  words that run together at an element boundary
+  JSX_QUOTES      error  straight quotes in rendered JSX text (nothing converts them)
   VOCAB           error  Tier 1 banned vocabulary, puffery, or formulaic transitions
+
+Severity is the design. Errors are the unambiguous mechanical cases; every judgment
+call is a warning, because a linter that forces bad rewrites gets switched off.
 
 Word lists are NOT duplicated here. They are read from the canonical shared file
 (~/Projects/shared-skills/seo/seo-validate/data/style_rules.json, the same JSON
 validate_article.py consumes); a missing file is a loud failure, never a fork.
 
 Usage:
-    python3 scripts/copy_lint.py              # lint src/ (default)
+    python3 scripts/copy_lint.py              # the shipped copy (see DEFAULT_TARGETS)
     python3 scripts/copy_lint.py PATH...      # lint specific files or dirs
     python3 scripts/copy_lint.py --dump       # print every extracted string
     python3 scripts/copy_lint.py --json       # machine-readable findings
@@ -130,10 +138,13 @@ class Snippet:
     line: int
     text: str  # HTML entities decoded, JSX expressions stripped
     raw: str  # as written in the file
-    role: str  # prose | heading | label | list_item | data
+    role: str  # prose | heading | label | list_item | cell | data
     origin: str  # jsx | string | md
     src: str = field(default="", repr=False)  # whole file, for line lookup
     span: tuple[int, int] = field(default=(0, 0), repr=False)
+    parent: str = ""  # immediate enclosing element (JSX only)
+    solitary: bool = False  # the parent element's only text node
+    cell_first: bool = False  # leads a <td>/<th>
 
     def line_of(self, pattern: str, nth: int = 0) -> int:
         """Line of the nth match of `pattern` inside this snippet's source span.
@@ -295,14 +306,17 @@ def _sub_expression(m: re.Match) -> str:
     if len(inner) >= 2 and inner[0] == inner[-1] and inner[0] in "\"'":
         return inner[1:-1]
     return _PLACEHOLDER_TOKEN
+_CELL_TAGS = {"td", "th"}
 _BLOCK_TAGS = {
-    "p", "li", "td", "th", "button", "a", "summary", "figcaption", "caption",
+    "p", "li", "button", "a", "summary", "figcaption", "caption",
     "dt", "dd", "blockquote", "label", "option",
-}
+} | _CELL_TAGS
 _HEADING_TAGS = {"h1", "h2", "h3", "h4", "h5", "h6", "title", "legend"}
-_STACK_TAGS = _BLOCK_TAGS | _HEADING_TAGS | {
-    "div", "span", "section", "ul", "ol", "table", "tbody", "thead", "tr",
-    "strong", "em", "small", "header", "footer", "main", "nav", "aside", "figure",
+_INLINE_TAGS = {"span", "em", "strong", "small", "b", "i", "sup", "sub", "abbr",
+                "a", "Link", "code"}
+_STACK_TAGS = _BLOCK_TAGS | _HEADING_TAGS | _INLINE_TAGS | {
+    "div", "section", "ul", "ol", "table", "tbody", "thead", "tr",
+    "header", "footer", "main", "nav", "aside", "figure",
 }
 _TAG_RE = re.compile(r"<(/?)([a-zA-Z][\w.-]*)((?:[^<>\"']|\"[^\"]*\"|'[^']*')*?)(/?)>")
 # Tags whose contents are code, not copy.
@@ -319,15 +333,22 @@ def _role_from_stack(stack: list[str]) -> str:
             return "heading"
         if tag == "li":
             return "list_item"
+        if tag in _CELL_TAGS:
+            return "cell"
         if tag in _BLOCK_TAGS:
             return "prose"
     return "prose"
 
 
 def extract_jsx_text(rel: str, src: str) -> list[Snippet]:
-    """Text nodes between JSX tags, with the enclosing element's role."""
+    """Text nodes between JSX tags, with the enclosing element's role.
+
+    Frames track each open element instance so a text node knows its immediate
+    parent, whether it is that parent's only text (a caption or cell label
+    rather than a phrase inside a sentence), and whether it leads a table cell.
+    """
     snippets: list[Snippet] = []
-    stack: list[str] = []
+    frames: list[dict] = []
     opaque = 0
     prev_end = 0
     for m in _TAG_RE.finditer(src):
@@ -336,6 +357,7 @@ def extract_jsx_text(rel: str, src: str) -> list[Snippet]:
             cleaned = _JSX_EXPR.sub(_sub_expression, chunk)
             decoded = html.unescape(cleaned)
             flat = " ".join(decoded.split())
+            stack = [f["name"] for f in frames]
             if (
                 stack  # real JSX text always sits inside an element; a bare
                 # `Record<string, DayPlan>` type annotation does not
@@ -345,28 +367,39 @@ def extract_jsx_text(rel: str, src: str) -> list[Snippet]:
                 and "{" not in flat
             ):
                 lead = len(chunk) - len(chunk.lstrip())
-                snippets.append(
-                    Snippet(
-                        path=rel,
-                        line=_line_of(src, prev_end + lead),
-                        text=flat,
-                        raw=" ".join(chunk.split()),
-                        role=_role_from_stack(stack),
-                        origin="jsx",
-                        src=src,
-                        span=(prev_end + lead, m.start()),
-                    )
+                snip = Snippet(
+                    path=rel,
+                    line=_line_of(src, prev_end + lead),
+                    text=flat,
+                    raw=" ".join(chunk.split()),
+                    role=_role_from_stack(stack),
+                    origin="jsx",
+                    src=src,
+                    span=(prev_end + lead, m.start()),
+                    parent=frames[-1]["name"],
                 )
+                frames[-1]["texts"].append(snip)
+                for frame in reversed(frames):
+                    if frame["name"] in _CELL_TAGS:
+                        snip.cell_first = not frame["cell_seen"]
+                        frame["cell_seen"] = True
+                        break
+                snippets.append(snip)
         closing, name, _attrs, self_closing = m.groups()
         if name in _OPAQUE_TAGS and not self_closing:
             opaque = max(0, opaque - 1) if closing else opaque + 1
         if name in _STACK_TAGS:
             if closing:
-                if name in stack:
-                    while stack and stack.pop() != name:
-                        pass
+                names = [f["name"] for f in frames]
+                if name in names:
+                    while frames:
+                        frame = frames.pop()
+                        for text in frame["texts"]:
+                            text.solitary = len(frame["texts"]) == 1
+                        if frame["name"] == name:
+                            break
             elif not self_closing:
-                stack.append(name)
+                frames.append({"name": name, "texts": [], "cell_seen": False})
         prev_end = m.end()
     return snippets
 
@@ -876,6 +909,170 @@ def rule_nav_case(files: list[Path]) -> list[Finding]:
     return findings
 
 
+# A domain, URL, or handle keeps its own casing.
+_DOMAINISH = re.compile(r"^(?:https?://|www\.|@)|^[a-z0-9][a-z0-9.-]*\.[a-z]{2,}$")
+
+
+def rule_label_case(snips: list[Snippet]) -> list[Finding]:
+    """Labels, table cells, and stat captions start capitalized.
+
+    Sibling label sets drift out of case agreement one edit at a time (the
+    /right-wrong-ray stat row read "season avg / 100 | graded Right | days
+    scored"). Requiring a capital on every one of them keeps a set consistent
+    by construction, which is the only version of "consistent" a linter can
+    enforce without guessing which sibling is the odd one out.
+    """
+    findings: list[Finding] = []
+    for s in snips:
+        if s.origin != "jsx" or not s.text[:1].islower():
+            continue
+        if s.role == "cell" and s.cell_first and s.parent in _CELL_TAGS:
+            findings.append(
+                Finding(s.path, s.line, "CELL_CASE", "error",
+                        f'table cell starts lowercase - cells are labels, not sentence '
+                        f'continuations: "{s.text[:60]}"', s.text))
+        elif (
+            s.parent == "div"
+            and s.solitary
+            and len(s.text.split()) <= 6
+            and s.text[-1] not in ".?!:"
+            and not _DOMAINISH.match(s.text)
+        ):
+            findings.append(
+                Finding(s.path, s.line, "CAPTION_CASE", "error",
+                        f'caption/label starts lowercase - capitalize it so a sibling set '
+                        f'stays consistent: "{s.text[:60]}"', s.text))
+    return findings
+
+
+# Elements that carry their own horizontal spacing, or sit in a flex/grid row
+# that spaces them, don't need a text space between them.
+_SPACING_CLASS = re.compile(r"\b(?:mx|mr|ml|px|pr|pl|gap|gap-x|space-x)-")
+_LAID_OUT = re.compile(r"\b(?:flex|grid|gap-|space-x-|justify-|items-)")
+_WORDY = re.compile(r"[A-Za-z0-9]")
+_ENTITY = re.compile(r"&(?:[A-Za-z][A-Za-z0-9]*|#\d+);")
+
+
+def _spacing_finding(rel: str, src: str, pos: int, message: str) -> Finding:
+    context = " ".join(src[max(0, pos - 45) : pos + 45].split())
+    return Finding(rel, _line_of(src, pos), "JSX_SPACING", "error",
+                   f'{message} - insert an explicit {{" "}}: "{context}"', "")
+
+
+def rule_jsx_spacing(files: list[Path]) -> list[Finding]:
+    """Words that run together at an element boundary.
+
+    JSX strips whitespace that touches a newline, so `</span>\\n(the bold line)`
+    ships as "Index(the bold line)" and `as a\\n<em>range</em>` ships as
+    "as arange". Both have reached production. The fix is an explicit `{" "}`.
+
+    Exempt: a boundary where CSS already provides the gap (the element carries
+    its own margin/padding, or its parent is a flex/grid row).
+    """
+    findings: list[Finding] = []
+    for path in files:
+        if path.suffix != ".tsx":
+            continue
+        rel = _rel(path)
+        src = strip_comments(path.read_text(encoding="utf-8"))
+        stack: list[tuple[str, str]] = []
+        opaque = 0
+        prev_end = 0
+        prev_tag: tuple[str, str, bool] | None = None  # name, attrs, was_closing
+        for m in _TAG_RE.finditer(src):
+            chunk = src[prev_end : m.start()]
+            closing, name, attrs, self_closing = m.groups()
+            parent_attrs = stack[-1][1] if stack else ""
+            laid_out = bool(_LAID_OUT.search(parent_attrs))
+            if not opaque and chunk and _WORDY.search(chunk):
+                # A text node that carries an HTML entity AND wraps across lines
+                # loses its LEADING space in this toolchain, so `</em> is scored
+                # ... 5&ndash;15 mph` ships as "rangeis scored" even though the
+                # source has a space. A single-line node keeps it. Verified
+                # against a production build, Next 16 / SWC, 2026-07-28.
+                # An interpolation splits the run into separate text nodes, so
+                # only the segment up to the first `{` is the node in question.
+                first_node = chunk.split("{", 1)[0]
+                if (
+                    prev_tag
+                    and (prev_tag[2] or prev_tag[0] not in _STACK_TAGS)
+                    and first_node[:1] == " "
+                    and _ENTITY.search(first_node)
+                    and "\n" in first_node
+                ):
+                    findings.append(_spacing_finding(
+                        rel, src, prev_end,
+                        f"the space after </{prev_tag[0]}> is dropped at build time "
+                        "(this text node carries an HTML entity and wraps lines)"))
+                # left boundary: a closing tag running into this text
+                elif prev_tag and prev_tag[2]:
+                    head = chunk[: len(chunk) - len(chunk.lstrip())]
+                    body = chunk.lstrip()
+                    joined = head == "" or "\n" in head
+                    if (
+                        joined
+                        and body[:1]
+                        and (body[0].isalnum() or body[0] == "(")
+                        and not _SPACING_CLASS.search(prev_tag[1])
+                        and not laid_out
+                    ):
+                        findings.append(_spacing_finding(
+                            rel, src, prev_end,
+                            f"</{prev_tag[0]}> runs into the next word"))
+                # right boundary: this text running into an opening inline tag
+                if (
+                    not closing
+                    and name in _INLINE_TAGS
+                    and chunk.rstrip()[-1:].isalnum()
+                    and "\n" in chunk[len(chunk.rstrip()) :]
+                    and not _SPACING_CLASS.search(attrs)
+                    and not laid_out
+                ):
+                    findings.append(_spacing_finding(
+                        rel, src, m.start(), f"text runs into <{name}>"))
+            if name in _OPAQUE_TAGS and not self_closing:
+                opaque = max(0, opaque - 1) if closing else opaque + 1
+            closed_attrs = attrs
+            if name in _STACK_TAGS:
+                if closing:
+                    if name in [s[0] for s in stack]:
+                        while stack:
+                            popped = stack.pop()
+                            if popped[0] == name:
+                                # the element's own classes, not the closing tag's
+                                closed_attrs = popped[1]
+                                break
+                elif not self_closing:
+                    stack.append((name, attrs))
+            prev_tag = (name, closed_attrs, bool(closing))
+            prev_end = m.end()
+    return findings
+
+
+# Straight quotes render as straight marks in the display face; the owner
+# caught `What counts as &quot;actual&quot;` shipping with slanted marks on
+# both sides. Markdown gets smart quotes from marked-smartypants at render;
+# JSX gets nothing, so it has to be written with the real entities.
+_STRAIGHT_QUOTE = re.compile(r"&quot;|&#0*34;|\"")
+
+
+def rule_jsx_quotes(snips: list[Snippet]) -> list[Finding]:
+    findings: list[Finding] = []
+    for s in snips:
+        if s.origin != "jsx":
+            continue
+        seg = s.src[s.span[0] : s.span[1]] if s.src else s.raw
+        # `{" "}` spacers are code, not copy; blank them without moving offsets
+        seg = _JSX_EXPR.sub(lambda m: " " * len(m.group(0)), seg)
+        for m in _STRAIGHT_QUOTE.finditer(seg):
+            findings.append(
+                Finding(s.path, _line_of(s.src, s.span[0] + m.start()) if s.src else s.line,
+                        "JSX_QUOTES", "error",
+                        "straight quote in rendered text - use &ldquo;/&rdquo; (nothing "
+                        f'converts quotes in JSX): "{s.text[:60]}"', s.text))
+    return findings
+
+
 def rule_vocab(snips: list[Snippet], terms: list[tuple[str, str]]) -> list[Finding]:
     findings: list[Finding] = []
     for s in snips:
@@ -926,7 +1123,8 @@ def lint(paths: list[Path], rules: dict | None = None) -> list[Finding]:
     for path in files:
         snips.extend(extract_file(path))
     findings = rule_colons(snips) + rule_emdash(snips) + rule_vocab(snips, terms)
-    findings += rule_nav_case(files)
+    findings += rule_label_case(snips) + rule_jsx_quotes(snips)
+    findings += rule_nav_case(files) + rule_jsx_spacing(files)
     return sorted(findings, key=lambda f: (f.path, f.line, f.code))
 
 

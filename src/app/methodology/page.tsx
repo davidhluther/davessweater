@@ -101,19 +101,19 @@ export default async function Page() {
               <tr className="border-b border-border/60">
                 <td className="py-2 pr-3 font-medium">High temp</td>
                 <td className="py-2 pr-3 tabular-nums">30</td>
-                <td className="py-2">within 1&deg;F of actual, then &minus;3 pts per &deg;F beyond.</td>
+                <td className="py-2">Within 1&deg;F of actual, then &minus;3 pts per &deg;F beyond.</td>
               </tr>
               <tr className="border-b border-border/60">
                 <td className="py-2 pr-3 font-medium">Low temp</td>
                 <td className="py-2 pr-3 tabular-nums">30</td>
-                <td className="py-2">within 1&deg;F of actual, then &minus;3 pts per &deg;F beyond.</td>
+                <td className="py-2">Within 1&deg;F of actual, then &minus;3 pts per &deg;F beyond.</td>
               </tr>
               <tr className="border-b border-border/60">
                 <td className="py-2 pr-3 font-medium">Wind</td>
                 <td className="py-2 pr-3 tabular-nums">20</td>
                 <td className="py-2">
-                  within 3 mph of actual, then &minus;2 pts per mph beyond. A forecast given as a{" "}
-                  <em>range</em> is scored at its midpoint, then taxed by half the range width for vagueness. A
+                  Within 3 mph of actual, then &minus;2 pts per mph beyond. A forecast given as a{" "}
+                  <em>range</em>{" "}is scored at its midpoint, then taxed by half the range width for vagueness. A
                   5&ndash;15 mph range scores lower than a precise 10 mph for the same midpoint. A single number
                   has zero width and pays no tax.
                 </td>
@@ -124,7 +124,7 @@ export default async function Page() {
                 <td className="py-2">
                   One field for what fell and how much. Type and amount are graded together so the same
                   wet-or-dry fact is never scored twice. On a <em>dry</em> day the whole 20 measures the predicted
-                  amount against zero. Predict no precip and none falls, full marks. On a <em>wet</em> day it
+                  amount against zero. Predict no precip and none falls, full marks. On a <em>wet</em>{" "}day it
                   splits into 10 for identifying the form (rain, snow, or mixed) and 10 for the amount. Rain earns
                   full credit within 0.1&Prime;, then &minus;2 pts per extra 0.1&Prime;; snow within 1&Prime; or 20% of
                   the actual, whichever is larger, because snow totals are noisier. Naming the wrong form, say

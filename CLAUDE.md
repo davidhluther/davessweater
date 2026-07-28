@@ -197,6 +197,30 @@ titles and the owner's "different fonts and sizes and bolding" complaint.
   (`[&_h2]:…`), which can only compose utilities — they mirror the scale by hand.
   Keep them in sync.
 
+**Copy lint — run before shipping UI copy; it blocks the test suite (owner rule, 2026-07-28):**
+
+```bash
+python3 scripts/copy_lint.py            # the shipped copy: src/app, src/components, src/content
+python3 scripts/copy_lint.py --dump     # every user-facing string it can see
+```
+
+`scripts/copy_lint.py` pulls the user-facing strings out of the codebase (JSX text nodes, prose
+string literals, metadata titles/descriptions, aria-labels, native posts) and enforces the
+mechanically-decidable parts of the writing styleguide: AP colon capitalization, lowercase
+"label: value" skeletons, em-dashes in UI copy, Title Case across nav/category label sets,
+capitalized table cells and stat captions, straight quotes in JSX, words that run together at an
+element boundary, and the Tier 1 banned vocabulary. `tests/test_copy_lint.py` runs it over the
+real `src/` tree and **fails pytest on any error**, because the rules existed as prose for months
+and the owner still kept catching violations by reading the live page. Banned-word lists are read
+from the canonical shared `style_rules.json` (`~/Projects/shared-skills/seo/seo-validate/data/`),
+never copied in. The rule list and its reasoning live in the script's docstring; the DS-specific
+notes are in `guidelines/seo/DS_WRITING_QUALITY.md`.
+
+One rule worth knowing before you write JSX: a text node that carries an HTML entity **and** wraps
+across source lines loses its leading space at build time, so `<em>range</em> is scored ...
+5&ndash;15 mph` ships as "rangeis scored". Use an explicit `{" "}` at that boundary. The linter
+catches it; verified against a production build (Next 16 / SWC).
+
 ```bash
 # Run the site (Next.js)
 npm install && npm run dev   # http://localhost:3000  (build: npm run build · test: npm test)

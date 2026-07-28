@@ -6,13 +6,35 @@ DS-specific requirements on top.** Read the universal styleguide first:
 `~/Projects/shared-skills/writing-styleguide.md`. See `DS_CONTENT_STRUCTURE.md` for
 page-shape rules and `DS_VOICE.md` for tone.
 
-## Validator
+## Validators
 
-Run before every draft is considered done:
+Two of them. The article validator judges a draft; the copy lint guards what is
+already on the site.
+
+**Drafts** — run before every draft is considered done:
 
 ```bash
 python3 ~/Projects/shared-skills/seo/seo-validate/scripts/validate_article.py <draft.md>
 ```
+
+**Shipped UI copy** — `scripts/copy_lint.py` (this repo), and it **blocks**:
+
+```bash
+python3 scripts/copy_lint.py
+```
+
+It reads the user-facing strings out of `src/` (JSX text, prose literals, metadata,
+aria-labels, native posts) and errors on AP colon violations, lowercase
+"label: value" skeletons, em-dashes in UI copy, nav/category label sets that break
+Title Case, lowercase table cells and stat captions, straight quotes in JSX, words
+running together at an element boundary, and Tier 1 banned vocabulary.
+`tests/test_copy_lint.py` runs it over the real tree, so a violation fails
+`python3 -m pytest tests/` rather than waiting for the owner to catch it by reading
+the page — which is what kept happening while these rules lived only in prose
+(the styleguide's own 2026-07-18 changelog asks every project to adopt this check).
+Its word lists come from the shared `style_rules.json`; it never forks a copy.
+Warnings (colon budget, lowercase-after-colon fragments, markdown em-dash density)
+are advisory and do not block — read them, don't ignore them.
 
 Fixes the mechanical stuff — vocabulary bans, puffery, colon/em-dash counts,
 repetition, blog-structure checks. Blocks on errors per spec §7 ("Validator...

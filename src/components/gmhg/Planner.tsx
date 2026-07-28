@@ -369,7 +369,7 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
                       <div className="text-xs font-semibold tabular-nums">{num(fc.tempMaxF)}°/{num(fc.tempMinF)}°</div>
                       <div className="text-[0.6rem] text-muted">Rain {num(fc.precipProbMaxPct)}%</div>
                     </>
-                  ) : <div className="text-[0.6rem] text-muted">n/a</div>}
+                  ) : <div className="text-[0.6rem] text-muted">N/A</div>}
                 </button>
               );
             })}
