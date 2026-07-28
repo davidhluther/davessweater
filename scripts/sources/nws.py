@@ -17,12 +17,14 @@ def _wind_mph(wind_speed_str):
     return float(m.group(1)) if m else None
 
 
-_SNOW_PAT = re.compile(
-    r"\b(snow|flurr|sleet|ice|icy|wintry|blizzard|freezing)\b", re.I
-)
-_RAIN_PAT = re.compile(
-    r"\b(rain|shower|thunder|thunderstorm|drizzle|sprinkle)\b", re.I
-)
+# Prefix matches, deliberately. NWS publishes these words in the plural at
+# least as often as the singular ("Showers", "Thunderstorms", "Flurries"), and
+# a trailing \b would exclude exactly those forms.
+_SNOW_PAT = re.compile(r"\b(snow|flurr|sleet|ic[ey]|wintry|blizzard|freezing)", re.I)
+_RAIN_PAT = re.compile(r"\b(rain|thunder|drizzle|sprinkle)", re.I)
+# "Shower" names precipitation without naming its form: a snow shower is snow,
+# a bare shower is rain.
+_SHOWER_PAT = re.compile(r"\bshower", re.I)
 
 
 def _precip_type(short_forecast, detailed_forecast):
@@ -30,6 +32,8 @@ def _precip_type(short_forecast, detailed_forecast):
     text = " ".join(filter(None, [short_forecast, detailed_forecast]))
     has_snow = bool(_SNOW_PAT.search(text))
     has_rain = bool(_RAIN_PAT.search(text))
+    if _SHOWER_PAT.search(text) and not has_snow:
+        has_rain = True
     if has_snow and has_rain:
         return "mixed"
     if has_snow:
@@ -63,7 +67,9 @@ def normalize_periods(periods):
         date = p["startTime"][:10]
         high_f = float(p["temperature"])
         wind_mph = _wind_mph(p.get("windSpeed"))
-        ptype = _precip_type(p.get("shortForecast"), p.get("detailedForecast"))
+        short = p.get("shortForecast")
+        detailed = p.get("detailedForecast")
+        ptype = _precip_type(short, detailed)
 
         days.append({
             "date": date,
@@ -74,6 +80,11 @@ def normalize_periods(periods):
             "rain_in": None,
             "snow_in": None,
             "fields_provided": ["high", "low", "wind", "precip_type"],
+            # Kept verbatim, and deliberately out of fields_provided: precip_type
+            # is a lossy read of this text, so storing only the verdict strands
+            # history whenever the classifier changes. Replay with _precip_type().
+            "short_forecast": short,
+            "detailed_forecast": detailed,
         })
     return days
 

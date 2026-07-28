@@ -493,6 +493,41 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       settings (python build → `docs/`); backed up, removed, re-linked fresh (project/org IDs only). The
       matching *dashboard* overrides remain an owner click (see Deployment notes in `CLAUDE.md`).
 
+## NWS precip-type classifier bug (found 2026-07-27) — fix landed, history call pending
+- [x] **Root cause:** `scripts/sources/nws.py` matched precip words with a trailing `\b`
+      (`\b(rain|shower|thunder|…)\b`), so every **plural** form NWS actually publishes silently failed —
+      "Showers", "Thunderstorms", "Flurries", "Sprinkles". `_precip_type()` returned `"none"` for a
+      forecast that plainly called for showers. Present since the adapter shipped in #60 — never correct.
+      Verified live against `api.weather.gov/gridpoints/RNK/17,16/forecast`.
+- [x] **Fixed:** patterns are now prefix matches (no trailing `\b`). "Shower" was also split into its own
+      form-neutral token — with a naive prefix fix "Snow Showers" would have flipped to `mixed`, so a
+      shower counts as rain only when the text doesn't name snow — which is exactly how Ray's own
+      `capture_rays.py:_parse_precip_type` already did it, so the NWS adapter was the lone outlier.
+      24 new tests in `tests/test_nws.py` (plural forms, singular regression, dry-text false positives,
+      text persistence). Full bar green: 449 pytest, 257 vitest, lint, build. Live re-check: 2 of 7
+      forecast periods reclassified.
+- [x] **DECIDED 2026-07-27 (owner): leave the history as-is; record the caveat in git only — no site-facing
+      note.** History is NOT repairable by rescore, and no rescore is needed for this fix: captures store the
+      *classified* `precip_type`, never the raw text, and `rescore_history.py` re-scores that stored value —
+      it would faithfully re-apply the current rubric to the same wrong input. `api.weather.gov` serves only
+      the current forecast; there is no historical endpoint. The pre-fix rows cannot be corrected from
+      anything we hold.
+      Affected: **33 scored NWS rows in Boone, 19 of them `none` on a day that was actually wet**; 38 town
+      rows, worst-hit blowing-rock (7 of 9). Distortion cuts both ways — naming rain forfeits the amount, so
+      on trace days `"none"` scored *better*. Illustrative net if every suspect row had said rain: Boone
+      **+0.8** avg (82.13 → 82.93), towns up to **+4.09** (blowing-rock); individual days swing ±10.
+      Rejected: unscoring the suspect rows (would also unscore legitimately dry forecasts — we can't tell
+      which), and IEM text recovery (high effort, imperfect, a different product than the gridpoint text).
+- [x] **Raw forecast text now persisted (the durable fix).** `normalize_periods` keeps `short_forecast` /
+      `detailed_forecast` verbatim on every NWS row, deliberately *out* of `fields_provided` (not a scored
+      field; `_to_contract` ignores unknown keys). The next classifier change can be **replayed** against
+      history instead of stranded. Covered by 4 tests, one of which asserts the stored text re-derives the
+      stored `precip_type`; verified end-to-end against the live API.
+- [ ] **One pre-fix row still lands today:** `data/predictions/2026-07-27/nws_forecast.json` recorded
+      2026-07-28 as `none` while the live API says "Chance Showers And Thunderstorms" (PoP 50). It scores at
+      06:30 EDT 2026-07-28. Re-capturing can't reproduce the 07-27 morning text, so it's not a clean fix —
+      recommend letting it stand, consistent with the ruling above. Flag if you'd rather re-capture.
+
 ## Promotion-readiness audit — RAN 2026-06-25 → risk register
 Multi-agent audit (Dims 1–4, adversarially verified) complete. 24 findings → 22 verified + 2 critic → a
 12-entry prioritized register. **Full detail: `planning/audits/2026-06-25-promotion-readiness-risk-register.md`.**
