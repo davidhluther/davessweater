@@ -70,6 +70,52 @@ export function sweaterShort(count: number): string {
 const precipWord = (precip: string): string =>
   precip === "snow" ? "snow" : precip === "mixed" ? "wintry mix" : "rain";
 
+// ── Widget display ─────────────────────────────────────────────────────────
+// The embeddable card carries forecast detail, not the sweater verdict (owner,
+// 2026-07-28: "let's drop the sweaters from this altogether and have all of the
+// other forecast data"). These are its two text formatters.
+
+/**
+ * The precip clause for one day, or null when there is nothing honest to say.
+ *
+ * Three cases, and the third is the interesting one:
+ *   dry day                  → the consensus label ("No precip"). The site's
+ *                              implied-zero rule makes that a real claim.
+ *   wet day with a chance    → "59% chance of rain".
+ *   wet day with NO chance   → null.
+ *
+ * That last case is not laziness. StripDay.summary is written by
+ * forecast5.summarize(), which needs a probability before it will call a day
+ * wet — so a town whose sources publish a precip TYPE but no probability gets
+ * a "Dry, warm, breezy" summary. Printing "Rain likely" beside it would put
+ * two contradicting claims on one small card. Several towns are in exactly
+ * that state today (only Open-Meteo publishes `precip_prob`), so this is the
+ * common path, not an edge case.
+ */
+export function precipChanceLabel(day: StripDay): string | null {
+  if (day.precip === "none") return day.precipLabel;
+  if (typeof day.precipProb === "number") return `${day.precipProb}% chance of ${precipWord(day.precip)}`;
+  return null;
+}
+
+/**
+ * "Waning gibbous, 62% lit" — the phase name from lib/solar plus its
+ * illuminated fraction. New and full carry no percentage: the name already
+ * states it, and "Full moon, 100% lit" is the same fact twice.
+ *
+ * The name and the fraction are computed independently, so the night before a
+ * full moon is genuinely a 99.6%-lit waxing gibbous — which naive rounding
+ * prints as "Waxing gibbous, 100% lit", a card contradicting itself. Clamping
+ * the printed integer to 1–99 for every in-between phase is the more accurate
+ * reading, not a fudge: it is not yet full, and it is no longer new.
+ */
+export function moonSummary(name: string, fraction: number): string {
+  const label = name.charAt(0).toUpperCase() + name.slice(1);
+  if (name === "new moon" || name === "full moon") return label;
+  const pct = Math.min(99, Math.max(1, Math.round(fraction * 100)));
+  return `${label}, ${pct}% lit`;
+}
+
 /**
  * One compact, human, single-line summary of a day, brand pipe-separated:
  *   "High 74 | Low 55 | 40% rain | 2 sweaters"

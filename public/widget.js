@@ -33,7 +33,10 @@
   var town = self.getAttribute("data-town") || "boone";
   var days = self.getAttribute("data-days") || "3";
   var detail = self.getAttribute("data-detail") || "summary";
-  var fallbackHeight = parseInt(self.getAttribute("data-height") || "320", 10);
+  // Only used if the postMessage sizing never lands (JS-blocked, sandboxed
+  // iframe). Raised 320 → 400 with the 2026-07-28 rebuild: the card now carries
+  // today's block, the days ahead, an almanac line, and two links.
+  var fallbackHeight = parseInt(self.getAttribute("data-height") || "400", 10);
 
   // Unique id so a page embedding several widgets sizes each independently.
   var id = "dsw-" + Math.random().toString(36).slice(2, 10);
