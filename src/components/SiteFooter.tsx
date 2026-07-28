@@ -13,7 +13,7 @@ export default function SiteFooter() {
           <span className="mx-2">|</span>
           <Link href="/methodology" className="text-white/85 underline underline-offset-2">How we score it</Link>
           <span className="mx-2">|</span>
-          <Link href="/api" className="text-white/85 underline underline-offset-2">Free data and API</Link>
+          <Link href="/api" className="text-white/85 underline underline-offset-2">Free Data and API</Link>
           <span className="mx-2">|</span>Not affiliated with or endorsed by Ray&apos;s Weather. We just check the math.
         </div>
       </div>

@@ -17,7 +17,9 @@ export const copy = {
     headlineLead: "The free forecasts keep beating the one ",
     headlineEmphasis: "you pay for.",
     iphoneAside: "A better forecast may already be in your pocket.",
-    // The one-line thesis under the headline. `dekLink` renders as a link to /about.
+    // The one-line thesis under the headline. `dekLink` renders as a link to
+    // /shop — the sweater is the one thing here with a price on it, so the
+    // ownership joke lands on the shop rather than the About page.
     dekLead: "Scored daily, published free, because nobody owns the weather. ",
     dekLink: "A sweater, you can own.",
     ctaPrimary: "See the full scoreboard",
