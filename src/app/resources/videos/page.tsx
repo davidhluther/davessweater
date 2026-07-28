@@ -36,8 +36,8 @@ export default async function Page() {
           &larr; All resources
         </Link>
       </p>
-      <h1 className="mt-3 mb-1 font-display text-2xl font-bold text-foreground">Videos</h1>
-      <p className="mb-6 text-sm text-muted">The forecast, but with moving pictures.</p>
+      <h1 className="mt-3 mb-1 ds-h1 text-foreground">Videos</h1>
+      <p className="mb-6 ds-body text-muted">The forecast, but with moving pictures.</p>
       {videos.length === 0 ? (
         <p className="text-muted">No videos yet — check back soon.</p>
       ) : (
@@ -55,8 +55,8 @@ export default async function Page() {
                 <img src={v.thumb} alt="" className="aspect-video w-full object-cover" />
               )}
               <div className="p-4">
-                <h2 className="font-semibold text-foreground">{v.title}</h2>
-                <p className="mt-0.5 text-xs text-muted">{fmtLongDate(v.date)}</p>
+                <h2 className="ds-h3 text-foreground">{v.title}</h2>
+                <p className="mt-0.5 ds-caption">{fmtLongDate(v.date)}</p>
               </div>
             </a>
           ))}

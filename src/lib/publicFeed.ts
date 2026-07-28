@@ -12,11 +12,24 @@ import { fmtLongDate } from "@/lib/dates";
 // ── License / attribution (CC BY 4.0 — owner decision 2026-07-25) ──────────
 export const LICENSE_URL = "https://creativecommons.org/licenses/by/4.0/";
 export const LICENSE_NAME = "CC BY 4.0";
-export const ATTRIBUTION = "Data: Dave's Sweater (davessweater.com), CC BY 4.0";
+export const ATTRIBUTION = "Data by Dave's Sweater, CC BY 4.0";
 export const SITE_BASE = "https://davessweater.com";
 
-/** Every JSON API response carries these two fields (owner requirement). */
-export const LICENSE_FIELDS = { license: LICENSE_URL, attribution: ATTRIBUTION } as const;
+/** Ready-to-paste attribution markup. CC BY requires credit with a link to the
+ *  source, so we hand reusers the exact anchor we want back (owner, 2026-07-27:
+ *  the attribution should carry a "Dave's Sweater" backlink). Reusers who paste
+ *  this satisfy the license and link the brand name in one step. */
+export const ATTRIBUTION_HTML =
+  `Data by <a href="${SITE_BASE}">Dave's Sweater</a>, ` +
+  `licensed under <a href="${LICENSE_URL}">CC BY 4.0</a>`;
+
+/** Every JSON API response carries these fields (owner requirement). */
+export const LICENSE_FIELDS = {
+  license: LICENSE_URL,
+  attribution: ATTRIBUTION,
+  attribution_html: ATTRIBUTION_HTML,
+  source: SITE_BASE,
+} as const;
 
 // ── Display-option validation (days = 1|3|5 default 3; detail default summary)
 export const VALID_DAYS = [1, 3, 5] as const;
@@ -57,6 +70,52 @@ export function sweaterShort(count: number): string {
 
 const precipWord = (precip: string): string =>
   precip === "snow" ? "snow" : precip === "mixed" ? "wintry mix" : "rain";
+
+// ── Widget display ─────────────────────────────────────────────────────────
+// The embeddable card carries forecast detail, not the sweater verdict (owner,
+// 2026-07-28: "let's drop the sweaters from this altogether and have all of the
+// other forecast data"). These are its two text formatters.
+
+/**
+ * The precip clause for one day, or null when there is nothing honest to say.
+ *
+ * Three cases, and the third is the interesting one:
+ *   dry day                  → the consensus label ("No precip"). The site's
+ *                              implied-zero rule makes that a real claim.
+ *   wet day with a chance    → "59% chance of rain".
+ *   wet day with NO chance   → null.
+ *
+ * That last case is not laziness. StripDay.summary is written by
+ * forecast5.summarize(), which needs a probability before it will call a day
+ * wet — so a town whose sources publish a precip TYPE but no probability gets
+ * a "Dry, warm, breezy" summary. Printing "Rain likely" beside it would put
+ * two contradicting claims on one small card. Several towns are in exactly
+ * that state today (only Open-Meteo publishes `precip_prob`), so this is the
+ * common path, not an edge case.
+ */
+export function precipChanceLabel(day: StripDay): string | null {
+  if (day.precip === "none") return day.precipLabel;
+  if (typeof day.precipProb === "number") return `${day.precipProb}% chance of ${precipWord(day.precip)}`;
+  return null;
+}
+
+/**
+ * "Waning gibbous, 62% lit" — the phase name from lib/solar plus its
+ * illuminated fraction. New and full carry no percentage: the name already
+ * states it, and "Full moon, 100% lit" is the same fact twice.
+ *
+ * The name and the fraction are computed independently, so the night before a
+ * full moon is genuinely a 99.6%-lit waxing gibbous — which naive rounding
+ * prints as "Waxing gibbous, 100% lit", a card contradicting itself. Clamping
+ * the printed integer to 1–99 for every in-between phase is the more accurate
+ * reading, not a fudge: it is not yet full, and it is no longer new.
+ */
+export function moonSummary(name: string, fraction: number): string {
+  const label = name.charAt(0).toUpperCase() + name.slice(1);
+  if (name === "new moon" || name === "full moon") return label;
+  const pct = Math.min(99, Math.max(1, Math.round(fraction * 100)));
+  return `${label}, ${pct}% lit`;
+}
 
 /**
  * One compact, human, single-line summary of a day, brand pipe-separated:

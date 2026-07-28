@@ -5,6 +5,8 @@ import {
   parseDays,
   parseDetail,
   sweaterShort,
+  precipChanceLabel,
+  moonSummary,
   forecastLine,
   toApiDay,
   buildRss,
@@ -67,6 +69,52 @@ describe("sweaterShort", () => {
     expect(sweaterShort(2)).toBe("Maybe a sweater");
     expect(sweaterShort(3)).toBe("Sweater weather");
     expect(sweaterShort(5)).toBe("Serious sweater weather");
+  });
+});
+
+// The embeddable widget's two formatters. The widget carries NO sweater copy
+// (owner, 2026-07-28), so these are the labels that replaced it.
+describe("precipChanceLabel", () => {
+  it("states the chance and the precip word when a source publishes one", () => {
+    expect(precipChanceLabel(stripDay({ precip: "rain", precipProb: 59 }))).toBe("59% chance of rain");
+    expect(precipChanceLabel(stripDay({ precip: "snow", precipProb: 70 }))).toBe("70% chance of snow");
+    expect(precipChanceLabel(stripDay({ precip: "mixed", precipProb: 30 }))).toBe("30% chance of wintry mix");
+  });
+  it("says nothing on a wet day no source quantified, rather than contradict the summary", () => {
+    // forecast5.summarize() needs a probability before it calls a day wet, so
+    // this day's summary reads "Dry, warm" — "Rain likely" beside it would be
+    // two contradicting claims on one card.
+    expect(
+      precipChanceLabel(stripDay({ precip: "rain", precipProb: undefined, precipLabel: "Rain likely", summary: "Dry, warm" })),
+    ).toBeNull();
+    expect(precipChanceLabel(stripDay({ precip: "snow", precipProb: undefined }))).toBeNull();
+  });
+  it("reads the dry label on a dry day, chance or not", () => {
+    expect(precipChanceLabel(stripDay({ precip: "none", precipLabel: "No precip", precipProb: undefined })))
+      .toBe("No precip");
+    expect(precipChanceLabel(stripDay({ precip: "none", precipLabel: "No precip", precipProb: 4 })))
+      .toBe("No precip");
+  });
+  it("never emits an undefined percentage", () => {
+    for (const p of ["rain", "snow", "mixed", "none"]) {
+      const out = precipChanceLabel(stripDay({ precip: p, precipProb: undefined }));
+      if (out !== null) expect(out).not.toMatch(/undefined|NaN/);
+    }
+  });
+});
+
+describe("moonSummary", () => {
+  it("capitalizes the phase and states how much is lit", () => {
+    expect(moonSummary("waning gibbous", 0.617)).toBe("Waning gibbous, 62% lit");
+    expect(moonSummary("first quarter", 0.5)).toBe("First quarter, 50% lit");
+  });
+  it("omits the percentage where the name already states it", () => {
+    expect(moonSummary("new moon", 0.004)).toBe("New moon");
+    expect(moonSummary("full moon", 0.998)).toBe("Full moon");
+  });
+  it("never lets an in-between phase round to a self-contradicting 100% or 0%", () => {
+    expect(moonSummary("waxing gibbous", 0.9963)).toBe("Waxing gibbous, 99% lit");
+    expect(moonSummary("waning crescent", 0.0021)).toBe("Waning crescent, 1% lit");
   });
 });
 

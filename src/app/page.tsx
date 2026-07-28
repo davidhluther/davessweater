@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getScores, getLatestComparison, getComparisonWindow, getLatestForecasts } from "@/lib/data";
 import { heroStats, trendSeries, headToHead, whyStats } from "@/lib/homeStats";
 import { compositeForecast } from "@/lib/composite";
@@ -15,7 +14,6 @@ import HeadToHeadCard from "@/components/HeadToHeadCard";
 import LiveConditions from "@/components/LiveConditions";
 import IphoneShot from "@/components/IphoneShot";
 import AlsoTracking from "@/components/AlsoTracking";
-import TownWayfinder from "@/components/TownWayfinder";
 import { copy } from "@/content/copy";
 
 export const metadata = {
@@ -43,8 +41,10 @@ export default async function HomePage() {
 
   return (
     <>
+      {/* The town band that used to sit here moved INTO the header 2026-07-28
+          (owner): the picker is now in the nav bar, so it reaches every page
+          instead of the homepage only, and the control exists exactly once. */}
       <Hero stats={stats} forecasters={composite?.sources ?? []} />
-      <TownWayfinder />
       <GmhgBanner />
       <FireworksBanner />
 
@@ -57,7 +57,7 @@ export default async function HomePage() {
           <div className="rounded-2xl border border-border bg-surface px-4 py-6 sm:px-8 sm:py-8">
             <CompositeForecast />
             <div className="my-6 border-t border-border" />
-            <h2 className="mb-3 text-center font-display text-lg font-bold sm:text-xl">Sweater Weather Index</h2>
+            <h2 className="mb-3 text-center ds-h3">Sweater Weather Index</h2>
             <LiveConditions
               initialScore={sw.sweater_count ?? 0}
               initialVerdict={sw.detail ?? sw.answer ?? ""}
@@ -77,24 +77,17 @@ export default async function HomePage() {
 
       {h2h && (
         <SectionBand tone="surface">
-          <h2 className="mb-3 font-display text-lg font-bold sm:text-xl">Yesterday in Boone | {fmtLongDate(h2h.date)}</h2>
+          <h2 className="mb-3 ds-h3">Yesterday in Boone | {fmtLongDate(h2h.date)}</h2>
           <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-start">
             <div>
               <HeadToHeadCard h={h2h} />
-              <p className="mt-3 text-xs text-muted">
-                The longer story:{" "}
-                <Link href="/resources/articles/is-rays-weather-accurate" className="text-teal underline underline-offset-2">
-                  Is Ray&apos;s Weather Accurate? 118 Days Scored
-                </Link>
-                {" | "}
-                <Link href="/report-card/2026-06" className="text-teal underline underline-offset-2">
-                  Ray&apos;s Weather Report Card: June 2026
-                </Link>
-              </p>
+              {/* The two long-form reads moved to /right-wrong-ray's header as
+                  cards (owner, 2026-07-27) — one home, not a plain link list
+                  repeated on two pages. */}
             </div>
             <figure className="mx-auto shrink-0 md:mx-0">
               <IphoneShot />
-              <figcaption className="mt-2 max-w-[13rem] text-xs text-muted">{copy.hero.iphoneAside}</figcaption>
+              <figcaption className="mt-2 max-w-[13rem] ds-caption">{copy.hero.iphoneAside}</figcaption>
             </figure>
           </div>
         </SectionBand>

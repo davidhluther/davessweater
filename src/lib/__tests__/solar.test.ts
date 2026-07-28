@@ -17,6 +17,18 @@ const BOONE = { lat: 36.2168, lon: -81.6746 };
 describe("BUILD GATE: Boone July 4, 2026 dusk window", () => {
   const p = solarPacket({ ...BOONE, date: "2026-07-04", tz: NY_TZ });
 
+  // Added 2026-07-28 with the widget's almanac line. Boone's July sunrise is
+  // ~6:15 AM EDT = 10:15 UTC the SAME day — the mirror-image zone check to the
+  // sunset bound below, so a UTC/local slip can't hide in the morning half.
+  it("sunrise falls between 6:00 and 6:30 AM EDT (10:00–10:30 UTC July 4)", () => {
+    expect(p.sunrise).not.toBeNull();
+    const t = p.sunrise!.getTime();
+    expect(t).toBeGreaterThanOrEqual(Date.UTC(2026, 6, 4, 10, 0));
+    expect(t).toBeLessThanOrEqual(Date.UTC(2026, 6, 4, 10, 30));
+    expect(fmtTime(p.sunrise, NY_TZ)).toMatch(/^6:\d\d AM$/);
+    expect(p.sunrise!.getTime()).toBeLessThan(p.sunset!.getTime());
+  });
+
   it("sunset falls between 8:30 and 9:00 PM EDT (00:30–01:00 UTC July 5)", () => {
     expect(p.sunset).not.toBeNull();
     const t = p.sunset!.getTime();

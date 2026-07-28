@@ -14,18 +14,18 @@ export default function CompositeHeadline({ composite: c }: { composite: Composi
   const chance = showsChance(c.precipProb);
   return (
     <div className="text-center">
-      <div className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted">
+      <div className="ds-kicker text-muted">
         {copy.index.title} | {c.dateLabel}
       </div>
-      <div className="mt-1 font-display text-2xl font-bold text-foreground sm:text-3xl">
+      <div className="mt-1 ds-stat text-foreground">
         High {c.high}° {pipe} Low {c.low}° {pipe} {precipLabelFor(c.precip, chance)}
         {chance ? <> {pipe} {c.precipProb}% chance</> : null}
       </div>
-      <div className="mt-1 text-xs text-muted">
+      <div className="mt-1 ds-caption">
         {copy.index.footnote(c.count)}
         {chance && c.precipProbCount ? ` | ${copy.index.chanceFootnote(c.precipProbCount)}` : ""}
       </div>
-      <div className="mt-1 text-xs italic text-muted">{copy.index.tagline}</div>
+      <div className="mt-1 ds-caption italic">{copy.index.tagline}</div>
     </div>
   );
 }

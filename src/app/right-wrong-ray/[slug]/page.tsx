@@ -127,10 +127,10 @@ export default async function TownTrackerPage({ params }: { params: Promise<{ sl
 
       <section className="w-full bg-teal-700 text-white">
         <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:py-12">
-          <div className="text-xs font-bold uppercase tracking-wider text-orange-300">
+          <div className="ds-kicker text-orange-300">
             {isPublic ? `${days} days on the record` : `Tracking since ${since ? fmtLongDate(since) : "recently"} | ${days} of ${MIN_SCORED_DAYS} days`}
           </div>
-          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+          <h1 className="mt-1 ds-h1">
             Right Ray / Wrong Ray <span className="text-white/60">|</span> {town.name}
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-white/70">
@@ -151,7 +151,7 @@ export default async function TownTrackerPage({ params }: { params: Promise<{ sl
             </Link>
           </p>
           <div className="mt-5">
-            <div className="mb-2 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-white/60">Switch town</div>
+            <div className="mb-2 ds-kicker text-white/60">Switch town</div>
             <TownSwitcher current={slug} base="right-wrong-ray" />
           </div>
         </div>
@@ -171,14 +171,19 @@ export default async function TownTrackerPage({ params }: { params: Promise<{ sl
       {rows.length > 0 && (
         <section className="w-full bg-teal-900 text-white [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px]">
           <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
-            <h2 className="font-display mb-1 text-2xl font-bold">{town.name} Scoreboard</h2>
+            <h2 className="mb-1 ds-h2">{town.name} Scoreboard</h2>
             <p className="mb-4 text-sm text-white/70">
               Every forecaster we track for {town.name}, ranked by average &mdash; our own{" "}
               <span className="font-semibold text-white/90">Dave&apos;s Sweater Index</span> (marked{" "}
               <span className="font-semibold text-emerald-300">ours</span>) graded right in the mix.
             </p>
             <SortableScoreTable rows={rows} />
-            <p className="mt-3 text-xs text-white/70">R = graded Right (75+) | M = Meh (60&ndash;74) | W = graded Wrong (under 60). Trend = 7-day rolling average on the 0&ndash;100 scale.</p>
+            <dl className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/70">
+              <div className="flex items-center gap-1.5"><dt className="font-semibold text-white">R</dt><dd>Right, 75+</dd></div>
+              <div className="flex items-center gap-1.5"><dt className="font-semibold text-white">M</dt><dd>Meh, 60 to 74</dd></div>
+              <div className="flex items-center gap-1.5"><dt className="font-semibold text-white">W</dt><dd>Wrong, under 60</dd></div>
+              <div className="flex items-center gap-1.5"><dt className="font-semibold text-white">Trend</dt><dd>7-day rolling average</dd></div>
+            </dl>
           </div>
         </section>
       )}
@@ -186,19 +191,19 @@ export default async function TownTrackerPage({ params }: { params: Promise<{ sl
       <SectionBand tone="surface">
         {comp ? (
           <>
-            <h2 className="font-display text-2xl font-bold">
+            <h2 className="ds-h2">
               Latest scored day{comp.date ? <span className="text-muted"> | {fmtLongDate(comp.date)}</span> : null}
             </h2>
-            <p className="mt-1 text-sm text-muted">
+            <p className="mt-1 ds-body text-muted">
               {town.name}&apos;s forecasts, graded against what the sky actually did. The math is under each score.
             </p>
 
             {a && (
               <div className="mt-4 rounded-2xl bg-teal-900 p-5 text-white sm:p-6 [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px]">
-                <div className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-white/60">
+                <div className="ds-kicker text-white/60">
                   What actually happened
                 </div>
-                <div className="mt-1.5 font-display text-lg font-bold sm:text-2xl">{actualMain}</div>
+                <div className="mt-1.5 ds-stat">{actualMain}</div>
                 {actualCond && <div className="mt-1 text-sm text-white/70">{actualCond}</div>}
               </div>
             )}
@@ -238,7 +243,7 @@ export default async function TownTrackerPage({ params }: { params: Promise<{ sl
 
       {today && (
         <SectionBand tone="light">
-          <h2 className="font-display mb-1 text-2xl font-bold">What they&apos;re predicting for {town.name}</h2>
+          <h2 className="mb-1 ds-h2">What they&apos;re predicting for {town.name}</h2>
           <UpcomingForecasts data={today} provisional={provisionalKeys} />
         </SectionBand>
       )}

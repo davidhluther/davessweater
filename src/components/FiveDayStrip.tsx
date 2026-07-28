@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { getForecast5Day, stripDays, type Forecast5Day } from "@/lib/forecast5";
-import { getLeadtimeScores, compositeMemberMaePair, type LeadtimeScores } from "@/lib/leadtime";
 import RainTimingBar from "@/components/RainTimingBar";
 
 // The consumer half of the Today module: the week ahead for a person who just
@@ -43,6 +42,9 @@ function confidenceMeter(confidence: "high" | "medium" | "low") {
           <span key={i} className={cn("h-1 w-2 rounded-[1px]", i < filled ? "bg-teal" : "bg-border")} />
         ))}
       </div>
+      {/* Off the ds-kicker scale on purpose: this is a legend inside a dense
+          day card that has to fit five items on a phone row, not a titling
+          kicker. Same for the weekday and temperature below. */}
       <span className="text-[0.55rem] uppercase tracking-wide text-muted/70">agreement</span>
     </div>
   );
@@ -52,12 +54,12 @@ function confidenceMeter(confidence: "high" | "medium" | "low") {
 // artifact and a scoreboard link to its own board; towns have no lead-time
 // artifact, so `leadtime` is null there and the MAE footnote is simply omitted.
 export default async function FiveDayStrip(
-  { data, leadtime, scoreboardHref = "/right-wrong-ray" }:
-  { data?: Forecast5Day | null; leadtime?: LeadtimeScores | null; scoreboardHref?: string } = {},
+  { data, scoreboardHref = "/right-wrong-ray" }:
+  { data?: Forecast5Day | null; scoreboardHref?: string } = {},
 ) {
-  const [f5, scores] = data !== undefined
-    ? [data, leadtime ?? null]
-    : await Promise.all([getForecast5Day(), getLeadtimeScores()]);
+  // The lead-time scores fed the MAE footnote that was removed 2026-07-27; the
+  // strip now needs only the forecast itself.
+  const f5 = data !== undefined ? data : await getForecast5Day();
   const days = stripDays(f5);
   // Fewer than 2 consensus days is not a strip — render nothing (including no
   // divider) rather than a broken half-strip.
@@ -65,17 +67,14 @@ export default async function FiveDayStrip(
   // Day-1 vs day-5 miss over the SAME member set (sources scored at both
   // leads), so the two numbers are comparable — not an artifact of short-
   // horizon sources dropping out of one side.
-  const maePair = scores ? compositeMemberMaePair(scores, 1, 5) : null;
   // The agreement meter only earns its space when it actually differentiates
   // the days. A week where the sources disagree wide on every day (all "low")
   // is a flat column of one-bar meters that says nothing — drop it entirely
   // rather than imply five separately-uncertain days.
   const showConfidence = days.some((d) => d.confidence !== "low");
-  const anyHourly = days.some((d) => d.hourly?.length);
-  const anyChance = days.some((d) => d.precip !== "none" && d.precipProb != null);
   return (
     <div className="text-center">
-        <h2 className="font-display text-lg font-bold sm:text-xl">
+        <h2 className="ds-h3">
           The 5-day <span className="font-normal text-muted/50">|</span> {f5.location}
         </h2>
 
@@ -137,30 +136,14 @@ export default async function FiveDayStrip(
           ))}
         </div>
 
-        {anyHourly ? (
-          <p className="mt-2 text-[0.65rem] text-muted/80">
-            Bars show the hourly chance of rain, 6a–10p (Open-Meteo). Taller, solid bars = heavier odds.
-          </p>
-        ) : null}
-
-        {/* The rule, not a number: how many forecasters publish a chance varies
-            by day, so a single N here would be wrong on most of the cards. The
-            exact per-day count ships in the JSON API instead. */}
-        {anyChance ? (
-          <p className="mt-2 text-[0.65rem] text-muted/80">
-            A day&apos;s chance is the median of the forecasts that publish one, not the highest.
-          </p>
-        ) : null}
-
-        {maePair ? (
-          <p className="mt-3 text-xs text-muted">
-            Measured against actuals, the forecasts behind this consensus have missed the next-day high by ±{maePair.a.mae}°F on
-            average; day 5 runs ±{maePair.b.mae}°F. <span className="text-muted/60">|</span>{" "}
-            <Link href="/methodology" className="text-teal underline underline-offset-2">How we grade</Link>
-          </p>
-        ) : null}
-        <p className="mt-1.5 text-xs">
+        {/* The bar-chart legend and the lead-time MAE sentence used to sit here.
+            Both were removed 2026-07-27 (owner: "they don't need that much
+            detail") — the accuracy numbers live on the scoreboard and
+            /methodology, which these two links reach. */}
+        <p className="mt-3 text-xs">
           <Link href={scoreboardHref} className="text-teal underline underline-offset-2">See the scoreboard</Link>
+          <span className="mx-1.5 text-muted/60">|</span>
+          <Link href="/methodology" className="text-teal underline underline-offset-2">How we grade</Link>
         </p>
     </div>
   );

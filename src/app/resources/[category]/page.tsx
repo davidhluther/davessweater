@@ -60,8 +60,8 @@ export default async function Page({ params }: { params: Promise<{ category: str
           &larr; All resources
         </Link>
       </p>
-      <h1 className="mt-3 mb-1 font-display text-2xl font-bold text-foreground">{def.label}</h1>
-      <p className="mb-6 text-sm text-muted">{def.blurb}</p>
+      <h1 className="mt-3 mb-1 ds-h1 text-foreground">{def.label}</h1>
+      <p className="mb-6 ds-body text-muted">{def.blurb}</p>
       {posts.length === 0 ? (
         <p className="text-muted">No {noun} yet — check back soon.</p>
       ) : (
@@ -70,7 +70,7 @@ export default async function Page({ params }: { params: Promise<{ category: str
             const slug = postSlug(p);
             return (
               <li key={slug} className="border-b border-border pb-5 last:border-0">
-                <h2 className="text-xl font-semibold">
+                <h2 className="ds-h3">
                   <Link
                     href={`/resources/${category}/${slug}`}
                     className="text-orange-600 hover:underline underline-offset-2"
@@ -78,8 +78,8 @@ export default async function Page({ params }: { params: Promise<{ category: str
                     {p.title}
                   </Link>
                 </h2>
-                {p.date && <p className="mt-0.5 text-xs text-muted">{fmtLongDate(p.date)}</p>}
-                {p.summary && <p className="mt-1 text-sm text-muted">{p.summary}</p>}
+                {p.date && <p className="mt-0.5 ds-caption">{fmtLongDate(p.date)}</p>}
+                {p.summary && <p className="mt-1 ds-body text-muted">{p.summary}</p>}
               </li>
             );
           })}

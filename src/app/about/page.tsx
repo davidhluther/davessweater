@@ -49,8 +49,8 @@ export default function Page() {
 
       <section className="w-full bg-teal-700 text-white">
         <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:py-12">
-          <div className="text-xs font-bold uppercase tracking-wider text-orange-300">About</div>
-          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+          <div className="ds-kicker text-orange-300">About</div>
+          <h1 className="mt-1 ds-h1">
             A service, not a business
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-white/70">
@@ -61,7 +61,7 @@ export default function Page() {
       </section>
 
       <SectionBand tone="light">
-        <h2 className="font-display text-xl font-bold">The short version</h2>
+        <h2 className="ds-h2">The short version</h2>
         <p className="mt-2 max-w-2xl text-sm">
           Every day around midday we capture what each forecaster predicts for Boone. The next day, the sky
           settles the question, and everyone gets graded on the same open 100-point rubric. The scores, the
@@ -72,7 +72,7 @@ export default function Page() {
       </SectionBand>
 
       <SectionBand tone="surface">
-        <h2 className="font-display text-xl font-bold">The name</h2>
+        <h2 className="ds-h2">The name</h2>
         <p className="mt-2 max-w-2xl text-sm">
           Ray&apos;s Weather. Dave&apos;s Sweater. Say them fast, and that&apos;s the entry fee of the joke.
           But the sweater earns its place. Nobody owns the weather — not us, and not anyone selling it back
@@ -80,14 +80,14 @@ export default function Page() {
           for one is the single part of any forecast that&apos;s actually about you, which is why our index
           answers that question first and leaves the meteorology jargon out of it.
         </p>
-        <p className="mt-3 max-w-2xl text-sm text-muted">
+        <p className="mt-3 max-w-2xl ds-body text-muted">
           (<Link href="/shop" className="text-teal underline underline-offset-2">The Realest Dave&apos;s Sweater Quarter-Zip</Link>{" "}
           exists, and it is, fittingly, the only thing around here with a price on it.)
         </p>
       </SectionBand>
 
       <SectionBand tone="light">
-        <h2 className="font-display text-xl font-bold">Why it&apos;s free</h2>
+        <h2 className="ds-h2">Why it&apos;s free</h2>
         <p className="mt-2 max-w-2xl text-sm">
           This site costs about $12 a year to run, which is the price of the domain. The data behind every
           forecast we track is public — satellites, models, and stations your taxes already paid for.
@@ -98,7 +98,7 @@ export default function Page() {
       </SectionBand>
 
       <SectionBand tone="surface">
-        <h2 className="font-display text-xl font-bold">Held to the same standard</h2>
+        <h2 className="ds-h2">Held to the same standard</h2>
         <p className="mt-2 max-w-2xl text-sm">
           The rubric that grades Ray&apos;s Weather grades every source we track, including the ones we
           like. When our own weather station goes up in Boone, its readings join the same page, under the
@@ -109,7 +109,7 @@ export default function Page() {
       </SectionBand>
 
       <SectionBand tone="light">
-        <h2 className="font-display text-xl font-bold">Beyond the weather</h2>
+        <h2 className="ds-h2">Beyond the weather</h2>
         <p className="mt-2 max-w-2xl text-sm">
           The same habit — find the public data, vet it, hand it over — built the{" "}
           <Link href="/reports/fireworks-fourth-july-2026" className="text-teal underline underline-offset-2">
@@ -122,7 +122,7 @@ export default function Page() {
           . More of that is coming. If there&apos;s a High Country question that public data could answer
           and nobody has bothered to, Dave wants to hear about it.
         </p>
-        <p className="mt-4 max-w-2xl text-xs text-muted">
+        <p className="mt-4 max-w-2xl ds-caption">
           Not affiliated with or endorsed by Ray&apos;s Weather. Satire, with receipts.
         </p>
       </SectionBand>

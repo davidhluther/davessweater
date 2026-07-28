@@ -17,7 +17,9 @@ export const copy = {
     headlineLead: "The free forecasts keep beating the one ",
     headlineEmphasis: "you pay for.",
     iphoneAside: "A better forecast may already be in your pocket.",
-    // The one-line thesis under the headline. `dekLink` renders as a link to /about.
+    // The one-line thesis under the headline. `dekLink` renders as a link to
+    // /shop — the sweater is the one thing here with a price on it, so the
+    // ownership joke lands on the shop rather than the About page.
     dekLead: "Scored daily, published free, because nobody owns the weather. ",
     dekLink: "A sweater, you can own.",
     ctaPrimary: "See the full scoreboard",
@@ -29,14 +31,14 @@ export const copy = {
   index: {
     title: "Dave's Sweater Index",
     // `n` is the number of forecasters averaged together.
-    footnote: (n: number) => `the average of ${n} independent (and free) forecasters`,
+    footnote: (n: number) => `The average of ${n} independent (and free) forecasters`,
     // `n` is how many of those forecasters publish a chance of precip. The
     // number shown is their median rather than their average — see
     // precipChance() in src/lib/composite.ts for why. Only rendered when at
     // least one publishes one; Met.no and Ray's publish none, and we don't
     // invent one for them.
     chanceFootnote: (n: number) =>
-      `chance is the median of the ${n} that publish one`,
+      `Chance is the median of the ${n} that publish one`,
     tagline: "The forecast belongs to everybody. The sweater call is yours.",
   },
 

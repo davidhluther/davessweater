@@ -11,8 +11,14 @@ import { allTowns } from "@/lib/towns";
 // `base` selects which surface we're switching within:
 //   "weather"         → hub is /weather, town pages /weather/{slug}, Boone → /
 //   "right-wrong-ray" → tracker /right-wrong-ray, town pages /right-wrong-ray/{slug}
+// `tone` matches the band it sits on: "dark" for the teal hero bands on town
+// pages, "light" for the homepage selector strip between the hero and the body.
 export default async function TownSwitcher(
-  { current, base }: { current: string; base: "weather" | "right-wrong-ray" },
+  { current, base, tone = "dark" }: {
+    current: string;
+    base: "weather" | "right-wrong-ray";
+    tone?: "dark" | "light";
+  },
 ) {
   const towns = await allTowns();
   const boone = towns.find((t) => t.slug === "boone")!;
@@ -39,7 +45,9 @@ export default async function TownSwitcher(
               "inline-flex min-h-8 items-center rounded-full px-3 text-xs font-semibold transition-colors",
               active
                 ? "bg-orange-600 text-white"
-                : "border border-white/25 text-white/80 hover:bg-white/10 hover:text-white"
+                : tone === "light"
+                  ? "border border-border text-foreground/75 hover:bg-foreground/5 hover:text-foreground"
+                  : "border border-white/25 text-white/80 hover:bg-white/10 hover:text-white"
             )}
           >
             {t.name}

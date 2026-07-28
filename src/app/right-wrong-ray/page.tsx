@@ -158,10 +158,10 @@ export default async function Page() {
       {/* Branded page header: same band language as the homepage hero, none of its furniture */}
       <section className="w-full bg-teal-700 text-white">
         <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:py-12">
-          <div className="text-xs font-bold uppercase tracking-wider text-orange-300">
+          <div className="ds-kicker text-orange-300">
             Tracked daily | {trackingDays} days on the record
           </div>
-          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">Right Ray / Wrong Ray</h1>
+          <h1 className="mt-1 ds-h1">Right Ray / Wrong Ray</h1>
           <p className="mt-2 max-w-2xl text-sm text-white/70">
             Every forecast is a claim about tomorrow. This scoreboard grades every one we track — free
             and paid alike — against what the sky actually did. Same rubric for everybody.
@@ -178,6 +178,30 @@ export default async function Page() {
               How we score it
             </Link>
           </p>
+          {/* The two long-form reads. They used to trail the page as a plain
+              "The longer story:" line under the rubric footnote; moved up and
+              given card treatment 2026-07-27 (owner) so the analysis is offered
+              where a reader is deciding whether the scoreboard is credible. */}
+          <div className="mt-6 grid gap-2 sm:grid-cols-2 sm:max-w-2xl">
+            <Link href="/resources/articles/is-rays-weather-accurate"
+              className="group rounded-xl border border-white/20 bg-white/5 p-3 transition-colors hover:border-white/40 hover:bg-white/10">
+              <div className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-orange-300">
+                The long read
+              </div>
+              <div className="mt-1 text-sm font-bold text-white">
+                Is Ray&apos;s Weather Accurate? 118 Days Scored
+              </div>
+            </Link>
+            <Link href="/report-card/2026-06"
+              className="group rounded-xl border border-white/20 bg-white/5 p-3 transition-colors hover:border-white/40 hover:bg-white/10">
+              <div className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-orange-300">
+                Monthly report card
+              </div>
+              <div className="mt-1 text-sm font-bold text-white">
+                Ray&apos;s Weather Report Card: June 2026
+              </div>
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -186,9 +210,9 @@ export default async function Page() {
       {dsiRow && (
         <section className="w-full bg-surface text-foreground">
           <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
-            <div className="text-xs font-bold uppercase tracking-wider text-muted">Our forecast</div>
+            <div className="ds-kicker text-muted">Our forecast</div>
             <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <h2 className="font-display text-2xl font-bold sm:text-3xl">
+              <h2 className="ds-h2">
                 Dave&apos;s Sweater Index
               </h2>
               {dsiRank && (
@@ -197,28 +221,29 @@ export default async function Page() {
                 </span>
               )}
             </div>
-            <p className="mt-2 max-w-2xl text-sm text-muted">
-              Our own forecast: the free forecasters below, averaged into one number &mdash; then graded by the
-              exact same rubric as every one of them. No résumé, no paywall, just the consensus.
+            <p className="mt-2 max-w-2xl ds-body text-muted">
+              Our own forecast, built from the free forecasters below and graded by the exact same rubric as
+              every one of them. It is not a plain average. The rules that combine them are published, and
+              they are why it outscores its own members. No résumé, no paywall.
             </p>
             <div className="mt-5 grid grid-cols-3 gap-3 sm:max-w-md">
               <div className="rounded-xl border border-border bg-background px-3 py-3">
-                <div className="font-display text-2xl font-bold sm:text-3xl tabular-nums">{dsiRow.avg.toFixed(1)}</div>
-                <div className="mt-0.5 text-xs text-muted">season avg / 100</div>
+                <div className="ds-stat">{dsiRow.avg.toFixed(1)}</div>
+                <div className="mt-0.5 ds-caption">Season avg / 100</div>
               </div>
               <div className="rounded-xl border border-border bg-background px-3 py-3">
-                <div className="font-display text-2xl font-bold sm:text-3xl tabular-nums">{dsiRow.record.split(" ")[0]}</div>
-                <div className="mt-0.5 text-xs text-muted">graded Right</div>
+                <div className="ds-stat">{dsiRow.record.split(" ")[0]}</div>
+                <div className="mt-0.5 ds-caption">Graded Right</div>
               </div>
               <div className="rounded-xl border border-border bg-background px-3 py-3">
-                <div className="font-display text-2xl font-bold sm:text-3xl tabular-nums">{dsiRow.days}</div>
-                <div className="mt-0.5 text-xs text-muted">days scored</div>
+                <div className="ds-stat">{dsiRow.days}</div>
+                <div className="mt-0.5 ds-caption">Days scored</div>
               </div>
             </div>
             {dsiScored && (
-              <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
+              <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 ds-body text-muted">
                 <span className="font-semibold text-foreground">Latest scored day:</span>
-                <span className="font-display text-xl font-bold tabular-nums text-foreground">{dsiScored.score.score.toFixed(1)}<span className="text-sm font-normal text-muted">/100</span></span>
+                <span className="ds-stat text-xl text-foreground">{dsiScored.score.score.toFixed(1)}<span className="text-sm font-normal text-muted">/100</span></span>
                 {typeof dsiDay?.prediction?.member_count === "number" && (
                   <span>from {dsiDay.prediction.member_count} forecasters</span>
                 )}
@@ -234,7 +259,7 @@ export default async function Page() {
       {rows.length > 0 && (
         <section className="w-full bg-teal-900 text-white [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px]">
           <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
-            <h2 className="font-display mb-1 text-2xl font-bold">Season Scoreboard</h2>
+            <h2 className="mb-1 ds-h2">Season Scoreboard</h2>
             <p className="mb-4 text-sm text-white/70">
               Every forecaster we track, ranked by season average &mdash; our own{" "}
               <span className="font-semibold text-white/90">Dave&apos;s Sweater Index</span> (marked{" "}
@@ -242,7 +267,12 @@ export default async function Page() {
               is merit-based.
             </p>
             <SortableScoreTable rows={rows} />
-            <p className="mt-3 text-xs text-white/70">R = graded Right (75+) | M = Meh (60&ndash;74) | W = graded Wrong (under 60). Trend = 7-day rolling average on the 0&ndash;100 scale.</p>
+            <dl className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/70">
+              <div className="flex items-center gap-1.5"><dt className="font-semibold text-white">R</dt><dd>Right, 75+</dd></div>
+              <div className="flex items-center gap-1.5"><dt className="font-semibold text-white">M</dt><dd>Meh, 60 to 74</dd></div>
+              <div className="flex items-center gap-1.5"><dt className="font-semibold text-white">W</dt><dd>Wrong, under 60</dd></div>
+              <div className="flex items-center gap-1.5"><dt className="font-semibold text-white">Trend</dt><dd>7-day rolling average</dd></div>
+            </dl>
           </div>
         </section>
       )}
@@ -252,15 +282,15 @@ export default async function Page() {
           holds enough data to draw a comparison. */}
       {decay && (
         <SectionBand tone="dark">
-          <h2 className="font-display mb-1 text-2xl font-bold">How far out can you trust a forecast?</h2>
+          <h2 className="mb-1 ds-h2">How far out can you trust a forecast?</h2>
           {/* data-dependent claim — re-verify against leadtime_scores when editing */}
           <p className="mb-4 max-w-2xl text-sm text-white/70">
             The same 100-point grading, applied to the forecast each source published up to five days
             ahead. The free forecasts win at every horizon, and the gap widens at days 3 and 4: Ray&apos;s
             extended days publish fewer scoreable fields, and under the published rules a blank earns
-            nothing. Our own <span className="font-semibold text-white">Dave&apos;s Sweater Index</span> (the
-            bold white line) stays near the top clear out to day five &mdash; a consensus barely fades when
-            no single source has to carry it.
+            nothing. Our own <span className="font-semibold text-white">Dave&apos;s Sweater Index</span>{" "}
+            (the bold white line) stays near the top clear out to day five, because a consensus barely fades
+            when no single source has to carry it.
           </p>
           <AccuracyDecayChart series={decay} />
           <p className="mt-2 text-xs">
@@ -274,20 +304,20 @@ export default async function Page() {
       <SectionBand tone="surface">
         {comp ? (
           <>
-            <h2 className="font-display text-2xl font-bold">
+            <h2 className="ds-h2">
               Latest scored day{comp.date ? <span className="text-muted"> | {fmtLongDate(comp.date)}</span> : null}
             </h2>
-            <p className="mt-1 text-sm text-muted">
+            <p className="mt-1 ds-body text-muted">
               Yesterday&apos;s forecasts, graded against what the sky actually did. The math is under each score.
             </p>
 
             {/* The reference every card below is judged against */}
             {a && (
               <div className="mt-4 rounded-2xl bg-teal-900 p-5 text-white sm:p-6 [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px]">
-                <div className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-white/60">
+                <div className="ds-kicker text-white/60">
                   What actually happened
                 </div>
-                <div className="mt-1.5 font-display text-lg font-bold sm:text-2xl">{actualMain}</div>
+                <div className="mt-1.5 ds-stat">{actualMain}</div>
                 {actualCond && <div className="mt-1 text-sm text-white/70">{actualCond}</div>}
               </div>
             )}
@@ -311,7 +341,7 @@ export default async function Page() {
                       ) : iconChar ? (
                         <span aria-hidden="true">{iconChar}</span>
                       ) : null}
-                      <span className="font-display text-base font-bold sm:text-lg">{label}</span>
+                      <span className="ds-h4">{label}</span>
                       {isBest && (
                         <span className="rounded-full border border-green/30 bg-green/10 px-2.5 py-0.5 text-xs font-semibold text-green-700">
                           day&apos;s best
@@ -328,7 +358,7 @@ export default async function Page() {
                     </span>
                     <span className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
                       <VerdictScale score={s} />
-                      <span className="font-display text-2xl font-bold sm:text-3xl">
+                      <span className="ds-stat">
                         {s.toFixed(1)}<span className="text-sm font-normal text-muted">/100</span>
                       </span>
                     </span>
@@ -338,15 +368,15 @@ export default async function Page() {
                   </div>
                   <div className="mt-4 grid grid-cols-3 gap-3 border-t border-border pt-4 text-sm">
                     <div>
-                      <div className="text-xs text-muted">Predicted hi / lo</div>
+                      <div className="ds-caption">Predicted hi / lo</div>
                       <div className="mt-0.5 font-medium">{f.hiLo}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-muted">Wind</div>
+                      <div className="ds-caption">Wind</div>
                       <div className="mt-0.5 font-medium">{f.wind}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-muted">Rain</div>
+                      <div className="ds-caption">Rain</div>
                       <div className="mt-0.5 font-medium">{f.rain}</div>
                     </div>
                   </div>
@@ -364,32 +394,18 @@ export default async function Page() {
             })}
           </>
         ) : <p className="text-muted">No comparison yet.</p>}
-        <p className="mt-5 text-xs italic text-muted">
-          Each forecast is scored out of 100 across four fields — high temp (30), low temp (30), wind (20,
-          scored as a range when the source gives one) and precipitation (20, form and amount graded
-          together, snow-aware) — by closeness
-          to the actual recorded conditions. A forecast of &ldquo;no rain&rdquo; counts as a zero-inch prediction
-          (scored); predicting rain with no stated total leaves the amount blank (no credit).
-          When day scores tie, the smaller summed miss across the graded fields takes
-          &ldquo;day&apos;s best&rdquo; and the larger takes &ldquo;day&apos;s worst.&rdquo;
-        </p>
-        <p className="mt-2 text-xs">
+        {/* Collapsed 2026-07-27 (owner: "we have too much... this needs to feel
+            like a cleaner website"). The full rubric, the implied-zero rule and
+            the tie-break all live on /methodology, one link away. */}
+        <p className="mt-5 ds-caption">
+          Every forecast is scored out of 100 on temperature, wind, and precipitation, against what actually
+          happened.{" "}
           <Link href="/methodology" className="text-teal underline underline-offset-2">Full methodology</Link>
-        </p>
-        <p className="mt-2 text-xs text-muted">
-          The longer story:{" "}
-          <Link href="/resources/articles/is-rays-weather-accurate" className="text-teal underline underline-offset-2">
-            Is Ray&apos;s Weather Accurate? 118 Days Scored
-          </Link>
-          {" | "}
-          <Link href="/report-card/2026-06" className="text-teal underline underline-offset-2">
-            Ray&apos;s Weather Report Card: June 2026
-          </Link>
         </p>
       </SectionBand>
 
       <SectionBand tone="light">
-        <h2 className="font-display mb-1 text-2xl font-bold">What they&apos;re predicting now</h2>
+        <h2 className="mb-1 ds-h2">What they&apos;re predicting now</h2>
         <UpcomingForecasts data={forecasts} provisional={provisionalKeys} />
       </SectionBand>
 
