@@ -97,3 +97,30 @@ def test_rebuild_scores_matches_boone_shape(tmp_path):
         evals = [e[src] for e in scores["entries"] if isinstance(e.get(src), (int, float))]
         assert len(evals) == t["days"]
         assert abs(sum(evals) - t["total_score"]) < 0.5
+
+
+# ── precip probability (owner-flagged 2026-07-27: towns showed only "dry") ────
+def test_town_normalizer_keeps_precip_probability():
+    """The town Open-Meteo URL has always requested precipitation_probability_max,
+    but the normalizer dropped it, so town pages could only say dry/rain with no
+    chance while Boone showed a percentage from the identical feed."""
+    from capture_locations import normalize_openmeteo_daily
+    raw = {
+        "time": ["2026-07-28"], "temperature_2m_max": [81], "temperature_2m_min": [64],
+        "precipitation_sum": [0.2], "snowfall_sum": [0], "weather_code": [61],
+        "wind_speed_10m_max": [9], "precipitation_probability_max": [70],
+    }
+    row = normalize_openmeteo_daily(raw)[0]
+    assert row["precip_prob"] == 70
+    assert row["precip_type"] == "rain"
+
+
+def test_town_normalizer_precip_probability_absent_is_none():
+    """A feed without the field forfeits honestly rather than implying 0% chance."""
+    from capture_locations import normalize_openmeteo_daily
+    raw = {
+        "time": ["2026-07-28"], "temperature_2m_max": [81], "temperature_2m_min": [64],
+        "precipitation_sum": [0], "snowfall_sum": [0], "weather_code": [0],
+        "wind_speed_10m_max": [9],
+    }
+    assert normalize_openmeteo_daily(raw)[0]["precip_prob"] is None

@@ -46,6 +46,11 @@ def normalize_openmeteo_daily(daily_raw):
     snowfall = daily_raw.get("snowfall_sum", [])
     codes = daily_raw.get("weather_code", [])
     wind = daily_raw.get("wind_speed_10m_max", [])
+    # The URL has always requested precipitation_probability_max, but this
+    # normalizer dropped it — so town pages could only ever say "dry" or "rain"
+    # with no chance attached, while Boone showed "40% rain" from the identical
+    # feed (owner-flagged 2026-07-27: "we're looking like RR now").
+    precip_prob = daily_raw.get("precipitation_probability_max", [])
     for i in range(len(dates)):
         code = codes[i] if i < len(codes) else 0
         rain_in = round(precip[i] or 0, 3) if i < len(precip) else 0.0
@@ -62,6 +67,7 @@ def normalize_openmeteo_daily(daily_raw):
             "rain_in": rain_in,
             "snow_in": snow_in,
             "precip_in": round(rain_in + snow_in, 3),
+            "precip_prob": precip_prob[i] if i < len(precip_prob) else None,
             "weather_code": code,
             "conditions": WMO_CODES.get(code, "Unknown"),
             "category": weather_category(code),
