@@ -4,7 +4,7 @@ Env: GOOGLE_WEATHER_API_KEY
 Endpoint: https://weather.googleapis.com/v1/forecast/days:lookup
 """
 import os
-from sources import http_get_json, LAT, LON, derive_type
+from sources import http_get_json, LAT, LON, derive_type, max_percent
 
 _ENDPOINT = "https://weather.googleapis.com/v1/forecast/days:lookup"
 
@@ -70,6 +70,16 @@ def normalize_days(forecast_days):
             # PRECIPITATION_TYPE_UNSPECIFIED or any unrecognised value — derive from amounts.
             precip_type = derive_type(rain_in, snow_in)
 
+        # Probability lives on each day PART, not on the day — the API has no
+        # whole-day figure — so the day's chance is the higher of daytime and
+        # nighttime (PrecipitationProbability.percent, an integer 0-100). That
+        # matches how the other adapters collapse sub-daily readings, and how
+        # the low temp for this row already spans the night.
+        precip_prob = max_percent([
+            (((part.get("precipitation") or {}).get("probability") or {}).get("percent"))
+            for part in (dtf, fd.get("nighttimeForecast") or {})
+        ])
+
         # NOTE: snowQpf.quantity is snow LIQUID-WATER-EQUIVALENT (not depth).
         # It cannot be claimed as a scoreable snow depth, so "snow_amount" is
         # NOT listed in fields_provided.  snow_in is still computed above for
@@ -82,6 +92,7 @@ def normalize_days(forecast_days):
             "precip_type": precip_type,
             "rain_in": rain_in,
             "snow_in": snow_in,
+            "precip_prob": precip_prob,
             "fields_provided": ["high", "low", "wind", "precip_type", "rain_amount"],
         })
 

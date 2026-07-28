@@ -83,6 +83,15 @@ def normalize_timeseries(timeseries):
             "precip_type": precip_type,
             "rain_in": rain_in,
             "snow_in": None,  # compact endpoint gives liquid mm, not snow depth
+            # Met.no forfeits the chance of precip, honestly. Locationforecast
+            # 2.0 publishes `probability_of_precipitation` only inside its
+            # Nordic in-house model area; verified live 2026-07-27 at Boone
+            # (36.2168, -81.6746) against BOTH the compact and the complete
+            # products — neither carries the key here, only precipitation_amount.
+            # We do NOT synthesize one from the amount: an amount is a different
+            # claim, and inventing a probability would be the one thing this
+            # site exists to call out.
+            "precip_prob": None,
             "fields_provided": ["high", "low", "wind", "precip_type", "rain_amount"],
         })
 

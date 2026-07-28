@@ -744,13 +744,24 @@ def _wind_display(contract):
     return f"{round(w)} mph" if w is not None else None
 
 
-def _forecast_display(contract):
-    return {
+def _forecast_display(contract, pred=None):
+    """The per-source display row the site renders.
+
+    `pred` is the raw capture row the contract came from, when there is one.
+    precip_prob rides on the raw capture rather than the scoring contract
+    because it is a DISPLAY field — nothing grades a probability — so
+    _to_contract() deliberately doesn't carry it. Omitted entirely when the
+    source publishes none; never zero-filled.
+    """
+    out = {
         "high_f": contract.get("high_f"),
         "low_f": contract.get("low_f"),
         "wind": _wind_display(contract),
         "precip_type": contract.get("precip_type"),
     }
+    if pred is not None and pred.get("precip_prob") is not None:
+        out["precip_prob"] = pred["precip_prob"]
+    return out
 
 
 def _has_captures(pred_dir):
@@ -802,7 +813,7 @@ def build_latest_forecasts():
         for day in json.load(open(om)).get("daily", []):
             if day.get("date") == date:
                 c = _to_contract(day)
-                sources["openmeteo"] = _forecast_display(c)
+                sources["openmeteo"] = _forecast_display(c, day)
                 member_contracts["openmeteo"] = c
                 break
 
@@ -848,7 +859,7 @@ def build_latest_forecasts():
             if day.get("date") == date:
                 day = _fix_bucket_low(key, date, day)
                 c = _to_contract(day)
-                sources[key] = _forecast_display(c)
+                sources[key] = _forecast_display(c, day)
                 member_contracts[key] = c
                 break
 
@@ -940,10 +951,7 @@ def build_forecast_5day():
             return None
 
     def _put(d, key, pred):
-        entry = _forecast_display(_to_contract(pred))
-        if pred.get("precip_prob") is not None:
-            entry["precip_prob"] = pred["precip_prob"]
-        days.setdefault(d, {})[key] = entry
+        days.setdefault(d, {})[key] = _forecast_display(_to_contract(pred), pred)
 
     hourly_by_date = {}  # date -> [{hour, prob, inches}] across the daytime window
     om = _load(pred_dir / "openmeteo_forecast.json")

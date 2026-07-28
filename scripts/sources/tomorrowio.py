@@ -33,14 +33,28 @@ missing key does not.
 
 snowAccumulation(/Sum) in imperial mode is snow DEPTH in inches.
 
+Precip probability: the core data layer is "precipitationProbability" (percent
+0-100 — "the chance of >0.01 in. of liquid equivalent precipitation ... over a
+specific period of time"). Tomorrow.io's aggregated timesteps suffix such fields
+Max/Min/Avg, so the 1d timestep is expected to carry
+"precipitationProbabilityMax". We read Max first (the same day-max statistic
+every other adapter reduces to), then Avg, then the bare key — the same
+tolerant read as the accumulation fields above, for the same reason: the exact
+spelling varies by plan tier and API version, and we could not smoke-test a live
+1d response (the key is a CI secret, not available locally). No key present ->
+None, never a guess.
+
 Env var: TOMORROW_API_KEY
 """
 
 import os
-from sources import http_get_json, LAT, LON, derive_type
+from sources import http_get_json, LAT, LON, derive_type, to_percent
 
 _BASE = "https://api.tomorrow.io/v4/weather/forecast"
 _BASE_FIELDS = ["high", "low", "wind", "precip_type"]
+# Preference order for the daily probability key — first one present wins.
+_PROB_KEYS = ("precipitationProbabilityMax", "precipitationProbabilityAvg",
+              "precipitationProbability")
 
 
 def normalize_daily(daily: list) -> list:
@@ -79,6 +93,13 @@ def normalize_daily(daily: list) -> list:
 
         precip_type = derive_type(rain_in, snow_in)
 
+        # First probability key actually present wins; absent entirely -> None.
+        precip_prob = None
+        for k in _PROB_KEYS:
+            if k in v:
+                precip_prob = to_percent(v[k])
+                break
+
         # fields_provided: only claim amounts the payload actually contained.
         fields = list(_BASE_FIELDS)
         if rain_present:
@@ -94,6 +115,7 @@ def normalize_daily(daily: list) -> list:
             "precip_type": precip_type,
             "rain_in": rain_in,
             "snow_in": snow_in,
+            "precip_prob": precip_prob,
             "fields_provided": fields,
         })
     return result

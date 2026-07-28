@@ -7,7 +7,7 @@ normalize_list() is pure and unit-testable offline.
 fetch() calls the live API at runtime.
 """
 import os
-from sources import http_get_json, LAT, LON, derive_type
+from sources import http_get_json, LAT, LON, derive_type, max_percent
 
 # mm -> inches conversion factor
 _MM_TO_IN = 1.0 / 25.4
@@ -24,6 +24,12 @@ def normalize_list(lst):
 
     Note: OWM "snow.3h" is liquid-equivalent volume in mm, not snow depth.
     We convert to inches and use it as a snow_in proxy; depth is understated.
+
+    Probability: each entry carries "pop" as a 0-1 FRACTION (docs: "The values
+    of the parameter vary between 0 and 1, where 0 is equal to 0%"). This
+    endpoint has no daily rollup, so the day's chance is the max across its
+    3-hour blocks — the same statistic Open-Meteo's precipitation_probability_max
+    reports and Visual Crossing computes for us.
     """
     # Accumulate per-day buckets
     days = {}  # date str -> dict of accumulators
@@ -38,9 +44,13 @@ def normalize_list(lst):
                 "wind_list": [],
                 "rain_mm": 0.0,
                 "snow_mm": 0.0,
+                "pops": [],
             }
 
         d = days[date]
+
+        if "pop" in entry:
+            d["pops"].append(entry["pop"])
 
         main = entry.get("main", {})
         if "temp_max" in main:
@@ -82,6 +92,9 @@ def normalize_list(lst):
             "precip_type": precip_type,
             "rain_in": rain_in,
             "snow_in": snow_in,
+            # "pop" is a 0-1 fraction, hence scale=100. Not in fields_provided:
+            # it is displayed, never scored.
+            "precip_prob": max_percent(d["pops"], scale=100),
             "fields_provided": ["high", "low", "wind", "precip_type", "rain_amount"],
         })
 
