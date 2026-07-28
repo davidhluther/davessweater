@@ -1325,9 +1325,15 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
       ask in the owner's courtesy ping. UIDs embed source URLs → dedup vs campus.json is trivial
       (they aggregate Localist too). RECIPROCITY: their weather integration = our /api/v1/forecast
       + widget.js (built 07-25) — the first external consumer of the public surface.
-  - [ ] **Owner courtesy ping to the left917 operator** (message drafted 2026-07-25, in session
-        notes): confirm they're happy with our daily ICS pull + attribution, offer the API/widget
-        for their weather, and ask whether we may use /api/items.
+  - [x] **left917 /api/items enrichment — SHIPPED (PR #153, owner call: "pull all of it /
+        whatever's best for DS").** ICS stays the spine (only it has reliable start times);
+        /api/items joins on source URL adding cancelled/counties/kind/source_name/festival_name —
+        506/506 enriched day one. Factual fields only; their editorial prose deliberately stays
+        out of this public repo.
+  - [ ] **Owner ping to the left917 operator — now OPTIONAL relationship gesture** (permission no
+        longer being asked, per owner): a friendly heads-up that DS consumes their calendar with
+        attribution + the reciprocal offer — our /api/v1/forecast + one-line widget.js whenever
+        they want DS as their weather source.
 
 ## Public feed + API (owner-directed 2026-07-25 — spec DRAFT, awaiting owner sign-off)
 Owner: "an API or RSS to share," with display options — **1/3/5-day horizons · by town when live ·
