@@ -64,7 +64,7 @@ export const copy = {
       "The data behind every forecast is public. Satellites, models, and data from stations your taxes already paid for. Credentials that gate it behind a bill don't make it truer. We find it, vet it, and hand it over. Free.",
     beat6Head: "And we publish the receipts.",
     beat6Body:
-      "One open rubric, every forecaster graded alike — ours included. And it doesn't stop at weather: dusk math for the fireworks, a day planner for the Highland Games, and more to come. Whatever's sitting out there, we'll make it useful.",
+      "One open rubric, every forecaster graded alike, ours included. And it doesn't stop at weather: dusk math for the fireworks, a day planner for the Highland Games, and more to come. Whatever's sitting out there, we'll make it useful.",
   },
 
   // The 5-day strip in the Today module.

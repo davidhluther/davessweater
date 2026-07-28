@@ -1,7 +1,7 @@
 import { CATEGORIES } from "@/content/resources";
 import { brandOgCard, OG_SIZE } from "@/lib/ogCard";
 
-export const alt = "Dave's Sweater resources — articles, news, videos, and reports.";
+export const alt = "Dave's Sweater resources: Articles, news, videos, and reports.";
 export const size = OG_SIZE;
 export const contentType = "image/png";
 

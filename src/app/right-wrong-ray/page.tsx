@@ -18,12 +18,12 @@ import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 
 export const metadata = {
-  title: "Right Ray / Wrong Ray — Boone forecast accuracy scoreboard",
+  title: "Right Ray / Wrong Ray: Boone forecast accuracy scoreboard",
   description:
-    "Daily accuracy scores for every Boone, NC forecast — Ray's Weather, Open-Meteo, Apple Weather, and seven more — graded against verified actuals on a 100-point scale.",
+    "Daily accuracy scores for every Boone, NC forecast (Ray's Weather, Open-Meteo, Apple Weather, and seven more), graded against verified actuals on a 100-point scale.",
   alternates: { canonical: "/right-wrong-ray" },
   openGraph: {
-    title: "Right Ray / Wrong Ray — Boone forecast accuracy scoreboard",
+    title: "Right Ray / Wrong Ray: Boone forecast accuracy scoreboard",
     description:
       "Who actually got Boone's weather right? Every forecast graded daily against what happened, receipts included.",
     url: "https://davessweater.com/right-wrong-ray",
@@ -163,8 +163,8 @@ export default async function Page() {
           </div>
           <h1 className="mt-1 ds-h1">Right Ray / Wrong Ray</h1>
           <p className="mt-2 max-w-2xl text-sm text-white/70">
-            Every forecast is a claim about tomorrow. This scoreboard grades every one we track — free
-            and paid alike — against what the sky actually did. Same rubric for everybody.
+            Every forecast is a claim about tomorrow. This scoreboard grades every one we track, free
+            and paid alike, against what the sky actually did. Same rubric for everybody.
           </p>
           <p className="mt-5 flex flex-wrap gap-3">
             {hasRay && (
@@ -261,9 +261,9 @@ export default async function Page() {
           <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
             <h2 className="mb-1 ds-h2">Season Scoreboard</h2>
             <p className="mb-4 text-sm text-white/70">
-              Every forecaster we track, ranked by season average &mdash; our own{" "}
+              Every forecaster we track, ranked by season average. Our own{" "}
               <span className="font-semibold text-white/90">Dave&apos;s Sweater Index</span> (marked{" "}
-              <span className="font-semibold text-emerald-300">ours</span>) graded right in the mix. The order
+              <span className="font-semibold text-emerald-300">ours</span>) is graded right in the mix. The order
               is merit-based.
             </p>
             <SortableScoreTable rows={rows} />

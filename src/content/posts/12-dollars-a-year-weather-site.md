@@ -17,7 +17,7 @@ Dave's Sweater runs on one cost: a $12/year domain. Free APIs, a daily GitHub Ac
 - Over 118 days, the best free source (Open-Meteo, 92.0 avg) beat the paid regional forecaster (Ray's Weather, 71.0 avg) by about 21 points a day
 - The stack is roughly eight free forecast APIs, one daily GitHub Actions job, a Python-stdlib pipeline, and Next.js on Vercel: no servers, no database, no employees
 - Every score is public as CSV and JSON, so you can check the bill and the receipts yourself
-- The honest caveats: this measures short-range accuracy, and "actuals" come from the Open-Meteo archive, both disclosed on the methodology page
+- The honest caveats: This measures short-range accuracy, and "actuals" come from the Open-Meteo archive, both disclosed on the methodology page
 
 ## What does it actually cost to run this weather site?
 
@@ -47,7 +47,7 @@ They already do, measured daily. Over the 118-day tracking window, Open-Meteo (f
 
 ### The 118-day scoreboard
 
-Every forecaster gets the same test: capture the forecast, then grade it against what the sky actually did. Here's the window.
+Every forecaster gets the same test: Capture the forecast, then grade it against what the sky actually did. Here's the window.
 
 | Source | Tier | Avg score | Days graded Wrong |
 | --- | --- | --- | --- |
@@ -127,7 +127,7 @@ No. The site runs on Vercel's free Hobby tier, which suits a personal, non-comme
 
 ### Is the accuracy data public and can I check it myself?
 
-Yes. Every score is published as open CSV and JSON, so you can download the raw records and re-run the math. The scoring rules live on the methodology page. The reason it's all public is simple: the credibility of the comparison depends on you being able to verify it, not just read a summary.
+Yes. Every score is published as open CSV and JSON, so you can download the raw records and re-run the math. The scoring rules live on the methodology page. The reason it's all public is simple: The credibility of the comparison depends on you being able to verify it, not just read a summary.
 
 ### Why does the paid forecaster score lower than the free ones?
 

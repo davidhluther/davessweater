@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "Free Data and API",
   description: DESCRIPTION,
   alternates: { canonical: "/api" },
-  openGraph: { title: "Free Data and API — Dave's Sweater", description: DESCRIPTION, url: `${SITE_BASE}/api` },
+  openGraph: { title: "Free Data and API | Dave's Sweater", description: DESCRIPTION, url: `${SITE_BASE}/api` },
 };
 
 interface Endpoint {

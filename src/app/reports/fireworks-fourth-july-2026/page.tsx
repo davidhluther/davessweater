@@ -160,7 +160,7 @@ function buildFaqs(views: VenueView[]): Faq[] {
     {
       id: "faq-both-shows",
       q: "Can I see both the Boone and Tweetsie shows in one night?",
-      a: `Attend both? No: Boone launches around ${booneWindow ?? "9:15–9:30 PM"} and Tweetsie fires at ${tweetsieTime}, effectively simultaneous, ten minutes apart on a road that will not be doing ten minutes that night. See more than one at once? Genuinely yes: these shows sit close as the crow flies, and from a high, open spot in Boone we have personally watched three bloom on the horizon at the same time. Distant, small, and mostly silent, but real. Pick one to attend; find elevation if you want the panorama.`,
+      a: `Attend both? No: Boone launches around ${booneWindow ?? "9:15–9:30 PM"} and Tweetsie fires at ${tweetsieTime}, effectively simultaneous, ten minutes apart on a road that will not be doing ten minutes that night. See more than one at once? Genuinely yes. These shows sit close as the crow flies, and from a high, open spot in Boone we have personally watched three bloom on the horizon at the same time. Distant, small, and mostly silent, but real. Pick one to attend; find elevation if you want the panorama.`,
     },
     {
       id: "faq-blowing-rock",
@@ -185,7 +185,7 @@ function buildFaqs(views: VenueView[]): Faq[] {
     {
       id: "faq-canceled",
       q: "Will the fireworks be canceled?",
-      a: "Two things cancel mountain fireworks: weather on the night, and fire risk in the weeks before. This year has real drought context — Boone enacted Stage 2 water restrictions effective July 1, 2026, citing extreme drought. As of our last check, though, the town has posted no burn ban and no fireworks restriction, so that is context, not a cancellation. Tweetsie shoots in light rain and pushes to the next evening only for severe weather. This page rebuilds each morning and cannot see a same-day afternoon call; before you drive, check the official source linked on each show above.",
+      a: "Two things cancel mountain fireworks: weather on the night, and fire risk in the weeks before. This year has real drought context. Boone enacted Stage 2 water restrictions effective July 1, 2026, citing extreme drought. As of our last check, though, the town has posted no burn ban and no fireworks restriction, so that is context, not a cancellation. Tweetsie shoots in light rain and pushes to the next evening only for severe weather. This page rebuilds each morning and cannot see a same-day afternoon call; before you drive, check the official source linked on each show above.",
     },
     {
       id: "faq-dusk-meaning",
@@ -767,7 +767,7 @@ export default async function Page() {
         <p className="mt-1 max-w-2xl ds-body text-muted">
           Times are computed for each launch site&apos;s coordinates with standard almanac solar geometry
           (sunset = sun&apos;s upper limb at the refracted horizon; civil twilight ends at 6° below; nautical
-          at 12°), the same convention NOAA and every printed table use. One honest caveat: those tables
+          at 12°), the same convention NOAA and every printed table use. One honest caveat. Those tables
           assume a flat horizon, and Boone does not have one; a western ridge steals some minutes of direct
           sun. Astronomical dusk, which is what fireworks care about, is unaffected. The terrain-adjusted
           version, when the sun actually drops behind Howard&apos;s Knob, is a bigger computation we are
@@ -791,7 +791,7 @@ export default async function Page() {
             </li>
             <li><strong className="text-foreground">Clear enough</strong> otherwise.</li>
             <li>
-              No data, or data older than {RUBRIC.staleAfterHours} hours: we say so and show nothing. A
+              No data, or data older than {RUBRIC.staleAfterHours} hours. We say so and show nothing. A
               stale forecast is not a forecast.
             </li>
           </ul>

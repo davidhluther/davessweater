@@ -101,19 +101,19 @@ export default async function Page() {
               <tr className="border-b border-border/60">
                 <td className="py-2 pr-3 font-medium">High temp</td>
                 <td className="py-2 pr-3 tabular-nums">30</td>
-                <td className="py-2">within 1&deg;F of actual, then &minus;3 pts per &deg;F beyond.</td>
+                <td className="py-2">Within 1&deg;F of actual, then &minus;3 pts per &deg;F beyond.</td>
               </tr>
               <tr className="border-b border-border/60">
                 <td className="py-2 pr-3 font-medium">Low temp</td>
                 <td className="py-2 pr-3 tabular-nums">30</td>
-                <td className="py-2">within 1&deg;F of actual, then &minus;3 pts per &deg;F beyond.</td>
+                <td className="py-2">Within 1&deg;F of actual, then &minus;3 pts per &deg;F beyond.</td>
               </tr>
               <tr className="border-b border-border/60">
                 <td className="py-2 pr-3 font-medium">Wind</td>
                 <td className="py-2 pr-3 tabular-nums">20</td>
                 <td className="py-2">
-                  within 3 mph of actual, then &minus;2 pts per mph beyond. A forecast given as a{" "}
-                  <em>range</em> is scored at its midpoint, then taxed by half the range width for vagueness. A
+                  Within 3 mph of actual, then &minus;2 pts per mph beyond. A forecast given as a{" "}
+                  <em>range</em>{" "}is scored at its midpoint, then taxed by half the range width for vagueness. A
                   5&ndash;15 mph range scores lower than a precise 10 mph for the same midpoint. A single number
                   has zero width and pays no tax.
                 </td>
@@ -122,14 +122,14 @@ export default async function Page() {
                 <td className="py-2 pr-3 font-medium">Precip</td>
                 <td className="py-2 pr-3 tabular-nums">20</td>
                 <td className="py-2">
-                  One field for what fell and how much &mdash; type and amount are graded together so the same
+                  One field for what fell and how much. Type and amount are graded together so the same
                   wet-or-dry fact is never scored twice. On a <em>dry</em> day the whole 20 measures the predicted
-                  amount against zero: predict no precip and none falls, full marks. On a <em>wet</em> day it
-                  splits into 10 for identifying the form (rain, snow, or mixed) and 10 for the amount &mdash;
-                  rain within 0.1&Prime;, then &minus;2 pts per extra 0.1&Prime;; snow within 1&Prime; or 20% of
+                  amount against zero. Predict no precip and none falls, full marks. On a <em>wet</em>{" "}day it
+                  splits into 10 for identifying the form (rain, snow, or mixed) and 10 for the amount. Rain earns
+                  full credit within 0.1&Prime;, then &minus;2 pts per extra 0.1&Prime;; snow within 1&Prime; or 20% of
                   the actual, whichever is larger, because snow totals are noisier. Naming the wrong form, say
                   rain when it snowed, caps the amount half at 5. A miss inside the trace band still earns 6 of
-                  the 10 identification points: when the only disagreement between &ldquo;none&rdquo; and
+                  the 10 identification points. When the only disagreement between &ldquo;none&rdquo; and
                   &ldquo;precip&rdquo; is an amount small enough to count as zero (rain of 0.1&Prime; or less, snow
                   of 1&Prime; or less), the call was nearly right, and no forecast is graded fully wrong on the
                   form while fully right on the total.
@@ -146,7 +146,7 @@ export default async function Page() {
           Every forecast is scored out of a fixed 100. The one wrinkle is the rain total. A forecast of no rain
           is a zero-inch prediction, so on a dry day it earns those points like any other right call. A forecast
           of rain with no stated total leaves the amount blank and earns nothing for it. The trace-band
-          partial credit above follows the same logic in reverse, and it also demands the number: a source
+          partial credit above follows the same logic in reverse, and it also demands the number. A source
           that predicted rain but never said how much cannot claim its miss was only a trace.
         </p>
         <p className="mt-3 max-w-2xl ds-body text-muted">
@@ -165,10 +165,10 @@ export default async function Page() {
           Service scale, then score the result as a range like any other:
         </p>
         <ul className="mt-2 grid max-w-md grid-cols-2 gap-x-6 gap-y-1 ds-body text-muted">
-          <li>calm: 0&ndash;1 mph</li>
-          <li>light: 1&ndash;7 mph</li>
-          <li>breezy: 12&ndash;20 mph</li>
-          <li>windy or gusty: 18&ndash;30 mph</li>
+          <li><strong className="text-foreground">Calm</strong> is 0&ndash;1 mph</li>
+          <li><strong className="text-foreground">Light</strong> is 1&ndash;7 mph</li>
+          <li><strong className="text-foreground">Breezy</strong> is 12&ndash;20 mph</li>
+          <li><strong className="text-foreground">Windy or gusty</strong> is 18&ndash;30 mph</li>
         </ul>
         <p className="mt-2 max-w-2xl ds-body text-muted">
           A word only counts as a wind descriptor when it sits next to the word &ldquo;wind,&rdquo; so a phrase
@@ -207,7 +207,7 @@ export default async function Page() {
       <SectionBand tone="light">
         <h2 className="ds-h2">How the Dave&apos;s Sweater Index is built</h2>
         <p className="mt-1 max-w-2xl ds-body text-muted">
-          The Dave&apos;s Sweater Index (DSI) is our own forecast &mdash; a consensus of the independent
+          The Dave&apos;s Sweater Index (DSI) is our own forecast, a consensus of the independent
           automated forecasters we track. It is not a black box, and it is graded by the same 100-point rubric
           as every source it draws on. Here is exactly how each day&apos;s number is made:
         </p>
@@ -220,12 +220,12 @@ export default async function Page() {
           </li>
           <li>
             <strong className="text-foreground">High, low, wind, amount.</strong>{" "}A straight average of the
-            members. No source is weighted above another &mdash; the point of a consensus is that independent
+            members. No source is weighted above another. The point of a consensus is that independent
             errors cancel.
           </li>
           <li>
-            <strong className="text-foreground">Precip type &mdash; the one rule.</strong>{" "}A plain majority
-            vote is the wrong tool here: rain days are the minority, and the costly miss is calling a wet day
+            <strong className="text-foreground">Precip type, the one rule.</strong>{" "}A plain majority
+            vote is the wrong tool here. Rain days are the minority, and the costly miss is calling a wet day
             &ldquo;dry.&rdquo; So a dry majority does not get to veto a credible minority. If at least a quarter
             of the members (and never fewer than two) forecast precipitation, the index forecasts precipitation;
             rain versus snow follows the majority among those callers, and a genuine rain/snow split reads
@@ -234,10 +234,10 @@ export default async function Page() {
         </ul>
         <p className="mt-2 max-w-2xl ds-body text-muted">
           That precip rule is the only place the index does anything other than average, and it uses no
-          weighting and no memory of past performance &mdash; it&apos;s a fixed rule you can apply by hand to
+          weighting and no memory of past performance. It&apos;s a fixed rule you can apply by hand to
           any day&apos;s forecasts. We adopted it because, measured across the record, it recovers the points a
           majority vote was throwing away on marginal-precipitation days. When we change how the index is built,
-          it&apos;s to make it more accurate against what the sky actually did &mdash; and the change shows up
+          it&apos;s to make it more accurate against what the sky actually did, and the change shows up
           here first.
         </p>
       </SectionBand>
@@ -262,25 +262,25 @@ export default async function Page() {
           Boone is the flagship, but we grade a{" "}
           <Link href="/weather" className="text-teal underline underline-offset-2">forecast for each town</Link>{" "}
           we track, and every one stands on its own. The same 100-point rubric runs unchanged from town to
-          town &mdash; no per-town tuning &mdash; but each town&apos;s forecasts are graded against that
+          town, with no per-town tuning, but each town&apos;s forecasts are graded against that
           town&apos;s own actuals: the Open-Meteo historical archive read at that town&apos;s own coordinates,
           not Boone&apos;s. A forecast for a 5,400-foot ridge is scored against what happened on that ridge.
         </p>
         <p className="mt-3 max-w-2xl ds-body text-muted">
           We never blend towns into one average. A combined score would mix places of very different forecast
           difficulty, and the whole point is that each place is real. A new town launches provisional and stays
-          that way until it crosses {MIN_SCORED_DAYS} scored days &mdash; the same gate every forecast source
-          on the site clears before its record is called established &mdash; then it ranks like the rest. The
+          that way until it crosses {MIN_SCORED_DAYS} scored days, the same gate every forecast source
+          on the site clears before its record is called established, and then it ranks like the rest. The
           future Boone weather station upgrades Boone&apos;s actuals only; every other town keeps the archive as
           its ground truth.
         </p>
         <p className="mt-3 max-w-2xl ds-body text-muted">
           Ray&apos;s Weather gives each town its own high, low and sky icon, so his town boards are graded on
-          all three. We read the icon as his precipitation call &mdash; a dry icon counts as a no-rain forecast
-          (and earns the amount points on days it stays dry), a rain or thunderstorm icon as rain &mdash; and
-          the mapping is a fixed, source-blind lookup from his icon families (dry, rain, lightning, snow); an
+          all three. We read the icon as his precipitation call. A dry icon counts as a no-rain forecast
+          (and earns the amount points on days it stays dry), a rain or thunderstorm icon as rain. The
+          mapping is a fixed, source-blind lookup from his icon families (dry, rain, lightning, snow); an
           icon we don&apos;t recognize is forfeited, never guessed. His wind, by contrast, is a single regional
-          sentence repeated verbatim on every town page, so we don&apos;t grade town wind against it: an honest
+          sentence repeated verbatim on every town page, so we don&apos;t grade town wind against it. An honest
           forfeit beats a stamped number. Numeric precip amount he still never publishes, so on wet days he
           earns the form call and forfeits the amount, exactly as on the Boone board.
         </p>
@@ -310,10 +310,10 @@ export default async function Page() {
         </p>
         {/* data-dependent claim — re-verify against leadtime_scores when editing */}
         <p className="mt-3 max-w-2xl ds-body text-muted">
-          Two honesty notes. The comparison is at matched elevation: his Boone station sits at 3,240 feet, our
+          Two honesty notes. The comparison is at matched elevation. His Boone station sits at 3,240 feet, our
           grading point at 3,242. And on the high temperature alone, Open-Meteo beats Ray&apos;s at every
           horizon, but by days 3 and 4 that gap narrows to a few tenths of a degree. The score gap is the
-          meaningful one: it prices the fields Ray&apos;s extended days leave unanswered.
+          meaningful one. It prices the fields Ray&apos;s extended days leave unanswered.
         </p>
         <p className="mt-3 max-w-2xl ds-body text-muted">
           The actuals behind every lead are the same Open-Meteo archive described above, and the caveat there
@@ -332,28 +332,28 @@ export default async function Page() {
         </p>
         <ul className="mt-2 max-w-2xl space-y-1 ds-body text-muted">
           <li>
-            <strong className="text-foreground">Hazardous</strong> &mdash; {hazardSnow}&Prime; or more of
+            <strong className="text-foreground">Hazardous.</strong> {hazardSnow}&Prime; or more of
             forecast snow, or freezing rain (rain falling into sub-freezing air).
           </li>
           <li>
-            <strong className="text-foreground">Icy</strong>{" "}&mdash; any snow or rain with an overnight low at or
+            <strong className="text-foreground">Icy.</strong>{" "}Any snow or rain with an overnight low at or
             below {refreezeLow}&deg;F, when a wet surface can refreeze into black ice.
           </li>
           <li>
-            <strong className="text-foreground">Slushy</strong> &mdash; {slushySnow}&Prime; or more of snow above
+            <strong className="text-foreground">Slushy.</strong> {slushySnow}&Prime; or more of snow above
             that refreeze line.
           </li>
           <li>
-            <strong className="text-foreground">Wet</strong> &mdash; {wetRain}&Prime; or more of rain with no
+            <strong className="text-foreground">Wet.</strong> {wetRain}&Prime; or more of rain with no
             freeze expected.
           </li>
           <li>
-            <strong className="text-foreground">Clear</strong>{" "}&mdash; dry, or only a trace.
+            <strong className="text-foreground">Clear.</strong>{" "}Dry, or only a trace.
           </li>
         </ul>
         <p className="mt-3 max-w-2xl ds-body text-muted">
           Scoring is ordinal, because the levels are ordered. An exact call scores 100, and every level of
-          distance between the forecast and what happened costs 25 points: one level off is 75, two is 50, and
+          distance between the forecast and what happened costs 25 points. One level off is 75, two is 50, and
           so on to a floor of zero. Calling Icy when it was Slushy is a near miss; calling Clear when it was
           Hazardous is not.
         </p>

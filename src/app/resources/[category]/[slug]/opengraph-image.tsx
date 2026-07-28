@@ -3,7 +3,7 @@ import { CATEGORIES } from "@/content/resources";
 import { fmtLongDate } from "@/lib/dates";
 import { brandOgCard, OG_SIZE } from "@/lib/ogCard";
 
-export const alt = "A Dave's Sweater post — Boone weather, scored and published free.";
+export const alt = "A Dave's Sweater post: Boone weather, scored and published free.";
 export const size = OG_SIZE;
 export const contentType = "image/png";
 

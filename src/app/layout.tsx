@@ -16,8 +16,8 @@ const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], weight: ["500", "700"],
 export const metadata: Metadata = {
   metadataBase: new URL("https://davessweater.com"),
   title: {
-    default: "Dave's Sweater — Boone's most mostly reliable weather tracker and resource",
-    template: "%s — Dave's Sweater",
+    default: "Dave's Sweater: Boone's most mostly reliable weather tracker and resource",
+    template: "%s | Dave's Sweater",
   },
   description: "The free forecasts keep beating the paid one. We score every Boone forecast against what actually happened, and keep the receipts.",
   icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
@@ -25,13 +25,13 @@ export const metadata: Metadata = {
     "google-site-verification": "Ajmlc52hA5hJQr-7WY7T9YU4Vlej8vkx1_GHmYHCAJo",
   },
   openGraph: {
-    title: "Dave's Sweater — Boone's #1 weather (service) tracker",
+    title: "Dave's Sweater: Boone's #1 weather (service) tracker",
     description: "Every Boone forecast, graded daily against what actually happened. Boone's most mostly reliable weather resource.",
     url: "https://davessweater.com", type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dave's Sweater — Boone's most mostly reliable weather tracker",
+    title: "Dave's Sweater: Boone's most mostly reliable weather tracker",
     description: "The free forecasts keep beating the paid one. We score every Boone forecast against what actually happened, and keep the receipts.",
   },
 };

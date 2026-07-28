@@ -43,7 +43,7 @@ const FAQS: Faq[] = [
   {
     id: "faq-cash",
     q: "How much is the shuttle, and can I pay by card?",
-    a: "The shuttle is $10 per seat, round trip, bought from the attendants at the lot — and they take cards now, so cash is no longer required (it still works if you prefer it). The planner totals the shuttle cost across your days and the calendar export drops a reminder the evening before.",
+    a: "The shuttle is $10 per seat, round trip, bought from the attendants at the lot, and they take cards now, so cash is no longer required (it still works if you prefer it). The planner totals the shuttle cost across your days and the calendar export drops a reminder the evening before.",
   },
   {
     id: "faq-concert",
@@ -231,7 +231,7 @@ export default async function Page() {
           </table>
         </div>
         <ul className="mt-4 max-w-2xl space-y-2 ds-body text-muted">
-          <li><strong className="text-foreground">Cards or cash.</strong> The shuttle is $10 per seat, round trip, paid at the lot — the attendants take cards now, so you no longer have to hunt down an ATM in town first.</li>
+          <li><strong className="text-foreground">Cards or cash.</strong> The shuttle is $10 per seat, round trip, paid at the lot. The attendants take cards now, so you no longer have to hunt down an ATM in town first.</li>
           <li><strong className="text-foreground">Concert nights are different.</strong> Friday and Saturday after 5 PM, the public may drive up and park on MacRae Meadows itself; gates 2 and 3 open at 6 PM, concert 6:30–10 PM. No shuttle.</li>
           <li><strong className="text-foreground">Accessible transport</strong> runs from Newland Elementary (Fri–Sun) and Avery County HS (Thu); one companion may ride along. Golf-cart help on the field from GMHG personnel.</li>
           <li><strong className="text-foreground">No pets on the Meadow.</strong> Certified ADA service animals only. Games office: (828) 733-1333.</li>
@@ -242,7 +242,7 @@ export default async function Page() {
         <h2 className="ds-h2">Good to Know Before You Go</h2>
         <ul className="mt-3 max-w-2xl space-y-2 ds-body text-muted">
           <li><strong className="text-foreground">There is an EMS and First Aid tent</strong> on the field. Find the red cross near the center of the meadow.</li>
-          <li><strong className="text-foreground">Cards work just about everywhere now.</strong> Vendors, ticket booths, and — as of this year — the shuttle all take card readers. Cash still works as a backup.</li>
+          <li><strong className="text-foreground">Cards work just about everywhere now.</strong> Vendors, ticket booths, and (as of this year) the shuttle all take card readers. Cash still works as a backup.</li>
           <li><strong className="text-foreground">There is little shelter from rain.</strong> Beyond the Patron tent, your options are the vendor tents and the trees, so pack a poncho and plan to ride out a passing shower.</li>
           <li><strong className="text-foreground">Coolers are welcome.</strong> Pack your own food and drinks.</li>
           <li><strong className="text-foreground">Bring chairs or a blanket.</strong> There is plenty of open, grassy hillside to set up and watch the field from, and a good vantage lets you take in more than one thing at once.</li>

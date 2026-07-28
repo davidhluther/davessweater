@@ -1,6 +1,6 @@
 import { brandOgCard, OG_SIZE } from "@/lib/ogCard";
 
-export const alt = "About Dave's Sweater — a free daily accountability project for Boone weather forecasts.";
+export const alt = "About Dave's Sweater: A free daily accountability project for Boone weather forecasts.";
 export const size = OG_SIZE;
 export const contentType = "image/png";
 

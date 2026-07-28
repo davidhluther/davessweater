@@ -18,7 +18,7 @@ export default function IphoneShot({ className = "" }: { className?: string }) {
             fetchPriority="high" className="w-full rounded-[1.1rem]" />
         ) : (
           <div className="flex aspect-[9/19] items-center justify-center rounded-[1.1rem] bg-surface px-3 text-center ds-caption">
-            Today&apos;s forecast isn&apos;t in yet — check back tomorrow.
+            Today&apos;s forecast isn&apos;t in yet. Check back tomorrow.
           </div>
         )}
       </div>

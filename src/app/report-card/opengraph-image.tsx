@@ -2,7 +2,7 @@ import { getReportCards } from "@/lib/data";
 import { fmtLongMonth } from "@/lib/dates";
 import { brandOgCard, OG_SIZE } from "@/lib/ogCard";
 
-export const alt = "Ray's Weather Report Card — Boone forecast accuracy, scored month by month by Dave's Sweater.";
+export const alt = "Ray's Weather Report Card: Boone forecast accuracy, scored month by month by Dave's Sweater.";
 export const size = OG_SIZE;
 export const contentType = "image/png";
 

@@ -13,12 +13,12 @@ import JsonLd from "@/components/JsonLd";
 const BASE = "https://davessweater.com";
 
 export const metadata: Metadata = {
-  title: "High Country weather — a real forecast for every town we track",
+  title: "High Country weather: A real forecast for every town we track",
   description:
     "Dave's Sweater tracks a forecast for each northwest North Carolina town at its own coordinates, blended from every source and graded daily against that town's own actuals. Fewer towns, honestly covered.",
   alternates: { canonical: "/weather" },
   openGraph: {
-    title: "High Country weather — a real forecast for every town",
+    title: "High Country weather: A real forecast for every town",
     description:
       "Each town its own forecast, each graded against its own actuals. Fewer towns, honestly covered.",
     url: `${BASE}/weather`,
@@ -101,7 +101,7 @@ export default async function WeatherHubPage() {
             A real forecast for every town we track
           </h1>
           <p className="mt-3 max-w-2xl text-sm text-white/80">
-            Dave&apos;s Sweater tracks {towns.length}{" "}towns across northwest North Carolina &mdash; each its own
+            Dave&apos;s Sweater tracks {towns.length}{" "}towns across northwest North Carolina, each with its own
             multi-source forecast at its own coordinates, each graded daily against its own actuals. Not one
             regional narrative stamped across the map: fewer towns, honestly covered. That is the whole point.
           </p>
@@ -148,7 +148,7 @@ export default async function WeatherHubPage() {
         </div>
 
         <p className="mt-6 ds-caption">
-          Towns show a provisional count until they cross {MIN_SCORED_DAYS} scored days &mdash; the same gate
+          Towns show a provisional count until they cross {MIN_SCORED_DAYS} scored days, the same gate
           every forecast source on the site clears before its record is called established. New towns appear
           here automatically as their data qualifies. Boone keeps its own{" "}
           <Link href="/" className="text-teal underline underline-offset-2">homepage</Link> and{" "}

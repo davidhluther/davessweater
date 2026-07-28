@@ -13,7 +13,7 @@ export const metadata = {
   title: "Ray's Weather Report Card",
   description: DESCRIPTION,
   alternates: { canonical: "/report-card" },
-  openGraph: { title: "Ray's Weather Report Card — Dave's Sweater", description: DESCRIPTION, url: "https://davessweater.com/report-card" },
+  openGraph: { title: "Ray's Weather Report Card | Dave's Sweater", description: DESCRIPTION, url: "https://davessweater.com/report-card" },
 };
 
 export default async function Page() {
@@ -43,7 +43,7 @@ export default async function Page() {
         Every month, scored: how each Boone forecaster did against what the weather actually did. Free, with receipts.
       </p>
       {cards.length === 0 ? (
-        <p className="text-muted">No report cards yet — check back after the month closes.</p>
+        <p className="text-muted">No report cards yet. Check back after the month closes.</p>
       ) : (
         <ul className="space-y-5">
           {cards.map((c) => (

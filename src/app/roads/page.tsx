@@ -53,7 +53,7 @@ export default async function RoadsPage() {
         <h1 className="ds-h1">High Country road conditions</h1>
         <p className="mt-2 max-w-2xl ds-body text-muted">
           Will the roads be bad tomorrow morning? We forecast the surface from the snow, ice, and temperature we
-          already track &mdash; then check ourselves against what NCDOT actually reports. Live closures and Blue
+          already track, then check ourselves against what NCDOT actually reports. Live closures and Blue
           Ridge Parkway alerts, too, for Watauga, Avery, and Ashe.
         </p>
       </SectionBand>
