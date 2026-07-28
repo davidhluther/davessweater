@@ -77,7 +77,7 @@ export default function RoadConditionsBlock({
               </ul>
             )}
             <p className="mt-3 ds-caption">
-              Our surface call from the snow, ice, and temperature we already forecast &mdash; then we{" "}
+              Our surface call from the snow, ice, and temperature we already forecast, then we{" "}
               <Link href="/methodology#roads" className="text-teal underline underline-offset-2">
                 grade ourselves
               </Link>{" "}
@@ -141,7 +141,7 @@ export default function RoadConditionsBlock({
                       {alerts.map((a, k) => (
                         <li key={`p${k}`}>
                           <span className="font-medium text-foreground">{a.title ?? "Alert"}</span>
-                          {a.category ? ` — ${a.category}` : ""}
+                          {a.category ? ` (${a.category})` : ""}
                         </li>
                       ))}
                     </ul>
@@ -192,7 +192,7 @@ export default function RoadConditionsBlock({
               Average accuracy so far:{" "}
               <strong className="text-foreground">{scores.average}/100</strong> over {scores.days.length} scored{" "}
               {scores.days.length === 1 ? "day" : "days"}.
-              {scores.days.length < MIN_SCORED_DAYS && " Still gathering data — a thin early sample, not a record yet."}
+              {scores.days.length < MIN_SCORED_DAYS && " Still gathering data. A thin early sample, not a record yet."}
             </p>
           ) : null}
         </SectionBand>

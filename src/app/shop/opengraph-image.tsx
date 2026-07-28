@@ -1,6 +1,6 @@
 import { brandOgCard, OG_SIZE } from "@/lib/ogCard";
 
-export const alt = "Dave's Sweater swag shop — shirts, mugs, and Boone weather-tracker gear.";
+export const alt = "Dave's Sweater swag shop: Shirts, mugs, and Boone weather-tracker gear.";
 export const size = OG_SIZE;
 export const contentType = "image/png";
 

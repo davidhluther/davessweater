@@ -58,7 +58,7 @@ async function forecastFeed(slug: string, days: number): Promise<string> {
     link: `${SITE_BASE}/`,
     guid: `${slug}-forecast-${d.date}`,
     pubDate: new Date(d.date + "T12:00:00"),
-    description: `${name} forecast for ${fmtLongDate(d.date)} — ${forecastLine(d)}. The Dave's Sweater Index (${d.count}-source consensus). Data licensed ${LICENSE_NAME} (${LICENSE_URL}).`,
+    description: `${name} forecast for ${fmtLongDate(d.date)}: ${forecastLine(d)}. The Dave's Sweater Index (${d.count}-source consensus). Data licensed ${LICENSE_NAME} (${LICENSE_URL}).`,
   }));
   return buildRss({
     title: `Dave's Sweater | ${name} ${days}-day forecast`,
@@ -88,7 +88,7 @@ async function verdictFeed(slug: string): Promise<string> {
           ? `Dave's Sweater Index ${r(dave)}, Ray's has no station here`
           : `Dave's Sweater Index ${r(dave)}, Ray's ${r(rays)}`;
       items.push({
-        title: `${fmtLongDate(date)}: ${scoreline} — ${call}`,
+        title: `${fmtLongDate(date)}: ${scoreline}. ${call}`,
         link: `${SITE_BASE}/right-wrong-ray`,
         guid: `${slug}-verdict-${date}`,
         pubDate: new Date(date + "T12:00:00"),
@@ -99,7 +99,7 @@ async function verdictFeed(slug: string): Promise<string> {
   return buildRss({
     title: `Dave's Sweater | ${name} Right/Wrong Ray`,
     link: `${SITE_BASE}/right-wrong-ray`,
-    description: `Yesterday's forecast-accuracy verdict for ${name}, NC — every source scored against what actually happened. Free, ${LICENSE_NAME}.`,
+    description: `Yesterday's forecast-accuracy verdict for ${name}, NC. Every source scored against what actually happened. Free, ${LICENSE_NAME}.`,
     selfUrl: `${SITE_BASE}/feed/${slug}/verdict.xml`,
     items,
     lastBuildDate: new Date(),

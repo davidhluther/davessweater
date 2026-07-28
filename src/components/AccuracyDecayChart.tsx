@@ -91,7 +91,7 @@ export default function AccuracyDecayChart({ series }: { series: ChartSeries[] }
         })}
       </div>
       <p className="mb-2 text-[0.7rem] text-white/50">
-        {picked ? `Showing ${label(picked)} — tap it again for all.` : "Tap a line or a name to isolate it."}
+        {picked ? `Showing ${label(picked)}. Tap it again for all.` : "Tap a line or a name to isolate it."}
       </p>
 
       {/* aria-label stays structural-descriptive; the editorial claim lives in
@@ -152,7 +152,7 @@ export default function AccuracyDecayChart({ series }: { series: ChartSeries[] }
           ("single day-5 row" = raysweather lead-5 n; the n>=10 floor test fails
           loudly if it ever accumulates past the floor) */}
       <p className="mt-3 text-xs text-white/60">
-        Lines stop where the data does: not every source publishes five days out, samples thin past
+        Lines stop where the data does. Not every source publishes five days out, samples thin past
         day 3, and a lead is only charted once it holds at least 10 scored days. Ray&apos;s single
         day-5 row sits out until it accumulates.
       </p>

@@ -36,7 +36,7 @@ const CONF_FILL: Record<string, number> = { high: 3, medium: 2, low: 1 };
 function confidenceMeter(confidence: "high" | "medium" | "low") {
   const filled = CONF_FILL[confidence];
   return (
-    <div className="flex items-center gap-1" role="img" aria-label={`agreement: ${confidence}`}>
+    <div className="flex items-center gap-1" role="img" aria-label={`Agreement: ${confidence}`}>
       <div className="flex gap-0.5">
         {Array.from({ length: 3 }, (_, i) => (
           <span key={i} className={cn("h-1 w-2 rounded-[1px]", i < filled ? "bg-teal" : "bg-border")} />

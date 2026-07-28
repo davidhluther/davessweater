@@ -12,7 +12,7 @@ export const metadata = {
   title: "Videos",
   description: DEF.description,
   alternates: { canonical: DEF.href },
-  openGraph: { title: "Videos — Dave's Sweater", description: DEF.description },
+  openGraph: { title: "Videos | Dave's Sweater", description: DEF.description },
 };
 
 export default async function Page() {
@@ -39,7 +39,7 @@ export default async function Page() {
       <h1 className="mt-3 mb-1 ds-h1 text-foreground">Videos</h1>
       <p className="mb-6 ds-body text-muted">The forecast, but with moving pictures.</p>
       {videos.length === 0 ? (
-        <p className="text-muted">No videos yet — check back soon.</p>
+        <p className="text-muted">No videos yet. Check back soon.</p>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {videos.map((v) => (

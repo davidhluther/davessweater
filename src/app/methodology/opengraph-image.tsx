@@ -1,6 +1,6 @@
 import { brandOgCard, OG_SIZE } from "@/lib/ogCard";
 
-export const alt = "How Dave's Sweater scores weather forecast accuracy — the 100-point model.";
+export const alt = "How Dave's Sweater scores weather forecast accuracy: The 100-point model.";
 export const size = OG_SIZE;
 export const contentType = "image/png";
 

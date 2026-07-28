@@ -8,12 +8,12 @@ import SectionBand from "@/components/SectionBand";
 import JsonLd from "@/components/JsonLd";
 
 export const metadata = {
-  title: "About — a service, not a business",
+  title: "About: A service, not a business",
   description:
     "Dave's Sweater is a free daily accountability project for Boone weather forecasts, built on public data. Nobody owns the weather; we just grade the people forecasting it.",
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "About Dave's Sweater — a service, not a business",
+    title: "About Dave's Sweater: A service, not a business",
     description:
       "Every Boone forecast graded daily on one open rubric, published free. Nobody owns the weather; we just grade the people forecasting it.",
     url: "https://davessweater.com/about",
@@ -75,7 +75,7 @@ export default function Page() {
         <h2 className="ds-h2">The name</h2>
         <p className="mt-2 max-w-2xl text-sm">
           Ray&apos;s Weather. Dave&apos;s Sweater. Say them fast, and that&apos;s the entry fee of the joke.
-          But the sweater earns its place. Nobody owns the weather — not us, and not anyone selling it back
+          But the sweater earns its place. Nobody owns the weather. Not us, and not anyone selling it back
           with a r&eacute;sum&eacute; attached. What you can own is the sweater. Whether the morning calls
           for one is the single part of any forecast that&apos;s actually about you, which is why our index
           answers that question first and leaves the meteorology jargon out of it.
@@ -90,7 +90,7 @@ export default function Page() {
         <h2 className="ds-h2">Why it&apos;s free</h2>
         <p className="mt-2 max-w-2xl text-sm">
           This site costs about $12 a year to run, which is the price of the domain. The data behind every
-          forecast we track is public — satellites, models, and stations your taxes already paid for.
+          forecast we track is public. Satellites, models, and stations your taxes already paid for.
           Charging for access to it would be the very thing this site exists to needle. So there&apos;s no
           subscription, no ad slot, no premium tier, and no plan for any. If the scoreboard saves you one
           soggy hike or one unnecessary layer, it has paid for itself.
@@ -111,7 +111,7 @@ export default function Page() {
       <SectionBand tone="light">
         <h2 className="ds-h2">Beyond the weather</h2>
         <p className="mt-2 max-w-2xl text-sm">
-          The same habit — find the public data, vet it, hand it over — built the{" "}
+          The same habit (find the public data, vet it, hand it over) built the{" "}
           <Link href="/reports/fireworks-fourth-july-2026" className="text-teal underline underline-offset-2">
             Fourth of July fireworks report
           </Link>{" "}

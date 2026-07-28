@@ -99,7 +99,7 @@ function recommendation(results: ShowResult[], sky: CheckerShowSky[], spots: Che
   for (const show of showsBySky) {
     const spot = spots.find((sp) => sp.verdicts[show.id] === "clear");
     if (spot) {
-      return `Nothing clears from your spot; the mountains win this round. The sure thing: head to ${spot.name}, which has a computed clear line on the ${show.name} Fireworks${show.verdict !== "unavailable" ? ` (${show.verdict === "clear" ? "clear" : show.verdict === "obstructed" ? "bad" : "iffy"} skies)` : ""}.`;
+      return `Nothing clears from your spot; the mountains win this round. The sure thing: Head to ${spot.name}, which has a computed clear line on the ${show.name} Fireworks${show.verdict !== "unavailable" ? ` (${show.verdict === "clear" ? "clear" : show.verdict === "obstructed" ? "bad" : "iffy"} skies)` : ""}.`;
     }
   }
   return "Nothing clears from your spot, and no tested public spot bails you out. Pick a show and attend in person.";
@@ -281,9 +281,9 @@ export default function SightlineChecker({ sky, spots }: { sky: CheckerShowSky[]
             })}
           </ul>
           <p className="mt-3 ds-caption">
-            Terrain only: the model is bare earth (USGS, about 33 ft resolution), so it cannot see your
+            Terrain only. The model is bare earth (USGS, about 33 ft resolution), so it cannot see your
             neighbor&apos;s oaks or the building across the street. &ldquo;Clear View&rdquo; means the
-            mountains aren&apos;t your problem. We store, log, and track nothing: the math runs in your
+            mountains aren&apos;t your problem. We store, log, and track nothing. The math runs in your
             browser, a typed address is converted to coordinates once by the US Census Bureau&apos;s public
             geocoder and then forgotten, and a shared location never leaves the page.
           </p>

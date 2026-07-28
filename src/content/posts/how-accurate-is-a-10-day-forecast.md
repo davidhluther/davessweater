@@ -39,10 +39,10 @@ It decays with distance, and not gently. NOAA's published curve runs from ~90% a
 |---|---|---|
 | 1–2 days | Very high | Plans: commute, outdoor work, whether you need the sweater |
 | 3–5 days | ~90% | Real decisions: travel, events, when to mow |
-| 6–7 days | ~80% | Soft planning: pack for the trend, keep checking |
+| 6–7 days | ~80% | Soft planning: Pack for the trend, keep checking |
 | 8–10 days | ~50% | Direction only: warmer or colder, wetter or drier |
 | 11–14 days | Below 50%, near the limit | Vibes: a hunch, not a forecast |
-| 15+ days | Not reliably possible | Nothing specific: see the two-week limit below |
+| 15+ days | Not reliably possible | Nothing specific: See the two-week limit below |
 
 Figures in the table are NOAA/NESDIS published skill estimates. The "what to trust it for" column is our plain-language read of them.
 
@@ -68,7 +68,7 @@ This is not a technology problem you can spend your way out of. Better satellite
 
 The free ones, at least where we've measured. Across 118 days of local tracking in Boone, the best free source (Open-Meteo) averaged 92.0 on our 100-point scale, while the paid local incumbent, Ray's Weather, averaged 71.0. That's about a 21-point gap a day, one day out, between two forecasts for the same sky.
 
-One honest caveat up front: this is short-range accuracy. We capture each forecast around midday and score it against the next day's verified actuals, so it speaks to one-day-out skill, not the 10-day decay curve above. Use it as proof that source choice matters even at close range, because it clearly does.
+One honest caveat up front: This is short-range accuracy. We capture each forecast around midday and score it against the next day's verified actuals, so it speaks to one-day-out skill, not the 10-day decay curve above. Use it as proof that source choice matters even at close range, because it clearly does.
 
 ### What our 118-day local tracker found
 
@@ -96,7 +96,7 @@ Paid didn't buy accuracy here. Ray's Weather has been the High Country's forecas
 
 Trends, not plans. A 10-day forecast reliably tells you the shape of the pattern (a warming trend, a wet stretch, a cold front lurking around day 8) and that's genuinely useful for deciding whether next week leans "sweater" or "shorts." What it can't do is promise you a dry Saturday nine days out. Read the far end for direction, then let the near-term forecast fill in the specifics as the day approaches.
 
-Practically: check the 10-day to sense the season's mood, check the 5-day to make decisions, and check tomorrow to make plans. And when two sources disagree at any range, the tiebreaker isn't the prettier app. It's the one with the better track record, which is exactly the thing nobody publishes and we do.
+Practically, check the 10-day to sense the season's mood, check the 5-day to make decisions, and check tomorrow to make plans. And when two sources disagree at any range, the tiebreaker isn't the prettier app. It's the one with the better track record, which is exactly the thing nobody publishes and we do.
 
 ## How we score forecasts, and why you can check our math
 

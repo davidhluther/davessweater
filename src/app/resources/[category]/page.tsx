@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
     title: def.label,
     description: def.description,
     alternates: { canonical: def.href },
-    openGraph: { title: `${def.label} — Dave's Sweater`, description: def.description, url: `https://davessweater.com${def.href}` },
+    openGraph: { title: `${def.label} | Dave's Sweater`, description: def.description, url: `https://davessweater.com${def.href}` },
   };
 }
 
@@ -63,7 +63,7 @@ export default async function Page({ params }: { params: Promise<{ category: str
       <h1 className="mt-3 mb-1 ds-h1 text-foreground">{def.label}</h1>
       <p className="mb-6 ds-body text-muted">{def.blurb}</p>
       {posts.length === 0 ? (
-        <p className="text-muted">No {noun} yet — check back soon.</p>
+        <p className="text-muted">No {noun} yet. Check back soon.</p>
       ) : (
         <ul className="space-y-5">
           {posts.map((p) => {

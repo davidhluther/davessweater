@@ -57,7 +57,7 @@ Actuals come from the Open-Meteo historical archive, disclosed openly on our met
 
 Ray's Weather never publishes a numeric precip amount. Under our rule, a "no precip" forecast counts as a zero-inch call, so Ray's earns the amount points on dry days he calls dry. On days he forecasts rain or snow without a number, he forfeits that field. A source cannot bank points by leaving the hard number blank. It cuts both ways, and it is the fair reading.
 
-## Ray's Weather vs the free apps: who is more accurate?
+## Ray's Weather vs the free apps: Who is more accurate?
 
 The free apps are more accurate over the 118-day window. Open-Meteo leads at 92.0 with zero Wrong days, Apple Weather follows at 88.3 with one, and Ray's trails at 71.0 with 23. The paid forecast does not beat the free ones in Boone on this record. It trails the best free option by about 21 points a day. And free here is genuinely free. [The whole tracker runs on a $12-a-year domain](/resources/articles/12-dollars-a-year-weather-site).
 
@@ -129,7 +129,7 @@ Open-Meteo, by our record, at 92.0 of 100 across 118 short-range days with no Wr
 
 ### Is Ray's Weather better than AccuWeather or the National Weather Service?
 
-We do not score AccuWeather, so we cannot rank it here. NWS we do track: it sits at 84.1 on a small, provisional nine-day sample, above Ray's 71.0. Every forecast is scored against verified actuals, not against any provider's own accuracy claims.
+We do not score AccuWeather, so we cannot rank it here. NWS we do track: It sits at 84.1 on a small, provisional nine-day sample, above Ray's 71.0. Every forecast is scored against verified actuals, not against any provider's own accuracy claims.
 
 ### Why does Ray's Weather score lower than the free apps?
 

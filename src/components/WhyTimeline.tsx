@@ -102,7 +102,7 @@ export default function WhyTimeline({
           <Beat reduce={reduce}>
             <h3 className="ds-h3">{copy.why.beat2Head}</h3>
             <p className="mt-1 text-sm text-white/70">
-              Every prediction, scored against what actually happened —{" "}
+              Every prediction, scored against what actually happened.{" "}
               <NumberTicker value={stats.trackedDays} className="font-display font-bold text-white" /> days
               and counting.
             </p>

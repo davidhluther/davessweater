@@ -32,15 +32,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const town = await getTown(slug);
   if (!town || slug === "boone") return {};
-  const title = `Right Ray / Wrong Ray — ${town.name}, NC forecast accuracy`;
+  const title = `Right Ray / Wrong Ray: ${town.name}, NC forecast accuracy`;
   const description =
-    `Daily accuracy scores for every ${town.name}, NC forecast, graded against ${town.name}'s own verified actuals on the same 100-point scale as Boone. Each town stands alone — no blended average.`;
+    `Daily accuracy scores for every ${town.name}, NC forecast, graded against ${town.name}'s own verified actuals on the same 100-point scale as Boone. Each town stands alone. No blended average.`;
   return {
     title,
     description,
     alternates: { canonical: `/right-wrong-ray/${slug}` },
     openGraph: {
-      title: `Right Ray / Wrong Ray — ${town.name}`,
+      title: `Right Ray / Wrong Ray: ${town.name}`,
       description: `Who actually gets ${town.name}'s weather right? Every forecast graded daily against what happened.`,
       url: `${BASE}/right-wrong-ray/${slug}`,
       type: "website",
@@ -161,8 +161,8 @@ export default async function TownTrackerPage({ params }: { params: Promise<{ sl
         <section className="w-full bg-amber-50 text-amber-900">
           <div className="mx-auto w-full max-w-3xl px-4 py-4 text-sm">
             <span className="font-semibold">This board is provisional.</span>{" "}
-            {town.name} has {days} of {MIN_SCORED_DAYS} scored days. The numbers below are real, just early
-            — they graduate to an established record once the count crosses {MIN_SCORED_DAYS}, the same gate
+            {town.name} has {days} of {MIN_SCORED_DAYS} scored days. The numbers below are real, just early.
+            They graduate to an established record once the count crosses {MIN_SCORED_DAYS}, the same gate
             every source on the site clears.
           </div>
         </section>
@@ -173,9 +173,9 @@ export default async function TownTrackerPage({ params }: { params: Promise<{ sl
           <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
             <h2 className="mb-1 ds-h2">{town.name} Scoreboard</h2>
             <p className="mb-4 text-sm text-white/70">
-              Every forecaster we track for {town.name}, ranked by average &mdash; our own{" "}
+              Every forecaster we track for {town.name}, ranked by average. Our own{" "}
               <span className="font-semibold text-white/90">Dave&apos;s Sweater Index</span> (marked{" "}
-              <span className="font-semibold text-emerald-300">ours</span>) graded right in the mix.
+              <span className="font-semibold text-emerald-300">ours</span>) is graded right in the mix.
             </p>
             <SortableScoreTable rows={rows} />
             <dl className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/70">
@@ -220,14 +220,15 @@ export default async function TownTrackerPage({ params }: { params: Promise<{ sl
           </>
         ) : <p className="text-muted">No comparison yet.</p>}
         <p className="mt-5 text-xs italic text-muted">
-          Each forecast is scored out of 100 across four fields — high temp (30), low temp (30), wind (20,
-          scored as a range when the source gives one) and precipitation (20, form and amount graded
-          together, snow-aware) — by closeness to the actual recorded conditions. Same rubric for every town.
+          Each forecast is scored out of 100 across four fields, by closeness to the actual recorded
+          conditions. Those fields are high temp (30), low temp (30), wind (20, scored as a range when the
+          source gives one) and precipitation (20, form and amount graded together, snow-aware). Same rubric
+          for every town.
         </p>
         {hasRay && (
           <p className="mt-2 text-xs italic text-muted">
             Ray&apos;s Weather publishes a per-town high, low and sky icon, so his town boards are graded on
-            those — the icon is read as his precipitation call (a dry icon scores as a no-rain forecast, a
+            those. The icon is read as his precipitation call (a dry icon scores as a no-rain forecast, a
             rain or storm icon as rain). His wind text is one identical regional string across every town, so
             wind stays an honest forfeit here rather than a stamped guess. See the{" "}
             <Link href="/methodology#locations" className="text-teal underline underline-offset-2">methodology</Link>{" "}

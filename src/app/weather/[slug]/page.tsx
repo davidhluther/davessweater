@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const town = await getTown(slug);
   if (!town || slug === "boone") return {};
-  const title = `${town.name}, NC weather — multi-source forecast, graded`;
+  const title = `${town.name}, NC weather: Multi-source forecast, graded`;
   const description =
     `The forecast for ${town.name}, NC from every source we track, blended into one consensus and graded daily against ${town.name}'s own actuals. Its own data at its own coordinates, not a stamped regional copy.`;
   return {

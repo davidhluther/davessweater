@@ -13,7 +13,7 @@ export const metadata = {
   title: "Reports",
   description: DEF.description,
   alternates: { canonical: DEF.href },
-  openGraph: { title: "Reports — Dave's Sweater", description: DEF.description },
+  openGraph: { title: "Reports | Dave's Sweater", description: DEF.description },
 };
 
 export default function Page() {
@@ -39,7 +39,7 @@ export default function Page() {
       <h1 className="mt-3 mb-1 ds-h1 text-foreground">Reports</h1>
       <p className="mb-6 ds-body text-muted">Data deep-dives with charts and receipts.</p>
       {REPORTS.length === 0 ? (
-        <p className="text-muted">No reports yet — check back soon.</p>
+        <p className="text-muted">No reports yet. Check back soon.</p>
       ) : (
         <ul className="space-y-5">
           {REPORTS.map((r) => (
@@ -85,7 +85,7 @@ export default function Page() {
         <h2 className="mt-1 ds-h3 text-foreground">Where should you watch from?</h2>
         <p className="mt-1 mb-3 max-w-2xl ds-body text-muted">
           Type an address (or share your location) and the report computes the terrain between you
-          and every show &mdash; which fireworks you can actually see from there, paired with that
+          and every show, showing which fireworks you can actually see from there, paired with that
           night&apos;s sky forecast.
         </p>
         <SightlineTeaser />

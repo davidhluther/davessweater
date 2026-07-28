@@ -4,12 +4,12 @@ import SectionBand from "@/components/SectionBand";
 import JsonLd from "@/components/JsonLd";
 
 export const metadata = {
-  title: "Swag Shop — Dave's Sweater merch",
+  title: "Swag Shop: Dave's Sweater merch",
   description:
     "Official Dave's Sweater merch: shirts, mugs, and other Boone weather-tracker gear at minimum price, with the mandatory $3 profit donated to charity each month.",
   alternates: { canonical: "/shop" },
   openGraph: {
-    title: "Swag Shop — Dave's Sweater merch",
+    title: "Swag Shop: Dave's Sweater merch",
     description:
       "Shirts, mugs, and other Boone weather-tracker gear at minimum price; the mandatory $3 profit goes to charity.",
     url: "https://davessweater.com/shop",
@@ -40,14 +40,14 @@ export default async function Page() {
       </p>
       {products.length === 0 ? (
         <p className="text-muted">
-          Shop is loading elsewhere —{" "}
+          Shop is loading elsewhere.{" "}
           <a
             className="text-orange-600 hover:underline underline-offset-2"
             href="https://daves-sweater-shop.fourthwall.com/"
             target="_blank"
             rel="noopener"
           >
-            visit the full shop ↗
+            Visit the full shop ↗
           </a>
           .
         </p>

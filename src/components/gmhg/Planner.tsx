@@ -597,7 +597,7 @@ function PrintSheet({
     <div className="gmhg-print hidden print:block">
       <h1 className="text-2xl font-bold">Your Grandfather Mountain Highland Games Plan, 2026</h1>
       {cost.shuttleDays > 0 && (
-        <p className="mt-1 text-sm"><strong>Shuttle total: ${cost.totalUsd}</strong> — $10/seat round trip, cards or cash at the lot.</p>
+        <p className="mt-1 text-sm"><strong>Shuttle total: ${cost.totalUsd}.</strong> $10/seat round trip, cards or cash at the lot.</p>
       )}
       <p className="mt-1 text-xs">
         {checkedAt ? `Forecast checked ${checkedAt}. ` : ""}Mountain weather changes fast; check again the morning you go.
