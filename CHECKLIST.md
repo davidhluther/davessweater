@@ -1043,6 +1043,19 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
       draft AND publish as soon as Aug 1** (no separate review gate for this one). **Report-card titles are Title Case** ("Ray's Weather
       Report Card: July 2026") — as are ALL blog-post titles now (the four live posts were retitled
       2026-07-08; H2/H3 stay sentence case).
+- [ ] **ARTICLE CADENCE — owner directive 2026-07-28: "do it honestly in the cadence."** Owner asked
+      why there are only ~4 articles and wanted more "backdated/published over time"; DS IA flagged that
+      backdating would put false dates into BlogPosting schema, the sitemap, and RSS on a site whose whole
+      premise is verifiable receipts. **Owner chose the honest path: publish a real cadence going forward,
+      dated truthfully.** Also asked, fairly: "not sure why these weren't publishing like that anyway" —
+      the answer is that no recurring publishing rhythm was ever set up; wave 1 (4 posts, 2026-07-06) was
+      a one-off and the only standing commitment since has been the monthly report card. TO BUILD: a
+      standing publish rhythm (owner to set the interval — weekly reads right for a cold-start domain),
+      a queued topic slate drawn from the existing keyword map (`planning/seo/multi-location-content-map.md`
+      + the accuracy cluster in the SEO program spec), and each post through the corpay-method pipeline
+      (brief → draft → adversarial fact-check vs scores.json → copy-lint + style validate → owner review).
+      Two drafts are ALREADY staged and unpublished: `17-high-country-towns` (announcement) and
+      `rays-66-locations-3-forecasts` (teardown) — those are the front of the queue.
 - [x] **Post detail date format — ✅ MERGED 2026-07-26 (PR #144).** THREE raw-ISO renders
       found (detail page + category listing + videos listing), all now `fmtLongDate()`; verified in built HTML.
 
