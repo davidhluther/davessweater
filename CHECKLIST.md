@@ -774,7 +774,11 @@ RELATED, already in flight and complementary (copy, not layout): the blocking **
 (`scripts/copy_lint.py` + pytest, branch `feat/copy-lint`) enforces the writing styleguide
 mechanically — colons, em-dashes, straight quotes in JSX, label/table capitalization, and
 JSX adjacent-tag missing spaces. Same philosophy one layer down; DESIGN-STANDARD should reference
-it rather than duplicate its rules. Also in flight: `feat/type-scale` (one named heading scale
+it rather than duplicate its rules. **Promotion status (2026-07-28):** the copy-lint was filed to
+`~/Projects/shared-skills/INBOX.md` as a cross-project promotion proposal and OVERALL IA is
+surfacing it to David. **DS does not build the shared version from this side** — keep consuming the
+local `scripts/copy_lint.py` until a shared copy actually exists, then switch to the reference
+pattern (never a fork). Also in flight: `feat/type-scale` (one named heading scale
 applied site-wide), which is effectively the first piece of Layer 1 and should be folded into the
 standard when it lands.
 
@@ -1319,6 +1323,23 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
           absent (never generated — that day is a gap, not backfilled). LESSON (pattern for all
           shared-cron workflows): never gate a step on wall-clock hour; gate on whether its
           output exists.
+      - [ ] **WATCH — the output-gate fix has never actually fired in CI (DS IA, 2026-07-28).** The
+            fix committed 07-27 16:40 UTC; the only Traffic Actuals runs after it (17:49, 22:14,
+            00:08) all found `forecast/2026-07-27.json` already present from the local catch-up and
+            correctly skipped. So the repaired path is still unexercised: **today's first run
+            (12:07 UTC cron, ~08:07 EDT 07-28) is its first live test.** Confirm afterward that
+            `data/traffic/forecast/2026-07-28.json` exists AND `data/traffic/comparisons/2026-07-27.json`
+            appeared (grading yesterday). If either is missing, the gate is still wrong — `gh run view`
+            the run and read the grade→forecast step. Note 07-26 stays a legitimate gap (no forecast
+            was ever generated for it, so it can never be graded); `graded_dates` should go
+            07-25 → 07-27, skipping 07-26.
+      - [x] **Sentinel now covers this failure class — PR #158 OPEN 2026-07-28 (not merged).** The
+            standalone freshness sentinel stayed green through the whole silent skip because it only
+            watched the weather pipeline. Extended with three read-only traffic checks (newest
+            forecast ≤1 day, newest comparison ≤3 days, newest actuals ≤1 day — slack sized to
+            GitHub's routine multi-hour cron delays and to the one legitimate 07-26 gap day).
+            Thresholds pinned by test against both the real passing repo state and the reconstructed
+            failing incident state. 546 pytest green. **Owner: review + merge.**
   - [~] **NCDOT continuous-count historical data — EMAIL SENT by owner 2026-07-25; awaiting
         Traffic Survey Group reply.** Hourly volumes 24/365, public/clean; unknown whether a
         continuous station sits on our corridors. If it lands: years of labeled hours joinable to
@@ -1448,9 +1469,22 @@ handlers: forecast/today/scores/verdict/towns + tourism later; prerendered RSS v
       PNGs), verified in .nft.json. 232 vitest + lint + build green; endpoints curled; RSS validates;
       mobile checked 390px (/api) + 390/300px (/widget). Deviations logged in the PR: /feed/index
       folded into /api docs; /api/v1/tourism waits for tourism v1.
-  - [~] **Post-deploy check — API half ✅ VERIFIED 2026-07-26:** prod curl `davessweater.com/api/v1/forecast`
-        returns 200 with real forecast JSON (license + attribution present; Lambda data tracing works) and
-        `feed/boone/verdict.xml` returns 200. Remaining: one real cross-origin widget embed.
+  - [x] **Post-deploy check — ✅ COMPLETE 2026-07-28 (both halves).** API half verified 2026-07-26: prod
+        curl `davessweater.com/api/v1/forecast` returns 200 with real forecast JSON (license + attribution
+        present; Lambda data tracing works) and `feed/boone/verdict.xml` returns 200; re-confirmed 07-28
+        (3-day Boone payload, 8 DSI sources). **Widget half verified 2026-07-28 (DS IA):** the documented
+        `<script src="…/widget.js" data-town="boone" data-days="3" data-detail="summary" async>` snippet
+        embedded on a genuinely cross-origin page (localhost static server → davessweater.com) renders the
+        full card — today's block, two days ahead, almanac line, both links, CC BY attribution — with
+        postMessage sizing landing correctly (following content is not overlapped) and zero console errors,
+        at desktop and 390px. First external consumer path proven end-to-end.
+        ⚠️ **Found during the check:** the widget's almanac line joins with middots
+        (`almanac.join(" · ")`, `src/app/widget/page.tsx:244`) while its own date line uses a pipe, so the
+        card contradicts itself and the 2026-07-02 "separators are pipes, swept site-wide" standard.
+        12 middots survive across 7 files (some are legitimate bullet glyphs, e.g. the fireworks `<li>`).
+        Left UNFIXED deliberately — it belongs to the owner's in-flight consistency pass and the
+        design-consistency gate brief, not a drive-by edit. `scripts/copy_lint.py` has no separator rule;
+        adding one is the durable fix.
 - [x] **API cost control + shared-data architecture (owner directive 2026-07-25; tightened to
       weekly same day).** Paid AirROI pulls gated to **Mondays only** (`is_sample_day` in
       capture_str_pacing.py, --force override) → 2 calls/wk ≈ **$0.45–0.90/mo** at quoted rates.
