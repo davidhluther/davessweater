@@ -129,8 +129,8 @@ export default async function Page() {
                   rain within 0.1&Prime;, then &minus;2 pts per extra 0.1&Prime;; snow within 1&Prime; or 20% of
                   the actual, whichever is larger, because snow totals are noisier. Naming the wrong form, say
                   rain when it snowed, caps the amount half at 5. A miss inside the trace band still earns 6 of
-                  the 10 identification points: when the only disagreement between &quot;none&quot; and
-                  &quot;precip&quot; is an amount small enough to count as zero (rain of 0.1&Prime; or less, snow
+                  the 10 identification points: when the only disagreement between &ldquo;none&rdquo; and
+                  &ldquo;precip&rdquo; is an amount small enough to count as zero (rain of 0.1&Prime; or less, snow
                   of 1&Prime; or less), the call was nearly right, and no forecast is graded fully wrong on the
                   form while fully right on the total.
                 </td>
@@ -141,7 +141,7 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="surface">
-        <h2 className="ds-h2">Saying &quot;no rain&quot; is a forecast too</h2>
+        <h2 className="ds-h2">Saying &ldquo;no rain&rdquo; is a forecast too</h2>
         <p className="mt-1 max-w-2xl ds-body text-muted">
           Every forecast is scored out of a fixed 100. The one wrinkle is the rain total. A forecast of no rain
           is a zero-inch prediction, so on a dry day it earns those points like any other right call. A forecast
@@ -171,8 +171,8 @@ export default async function Page() {
           <li>windy or gusty: 18&ndash;30 mph</li>
         </ul>
         <p className="mt-2 max-w-2xl ds-body text-muted">
-          A word only counts as a wind descriptor when it sits next to the word &quot;wind,&quot; so a phrase
-          like &quot;light rain&quot; is not read as light wind. We also strip any &quot;gusting to N&quot;
+          A word only counts as a wind descriptor when it sits next to the word &ldquo;wind,&rdquo; so a phrase
+          like &ldquo;light rain&rdquo; is not read as light wind. We also strip any &ldquo;gusting to N&rdquo;
           clause, so only sustained wind is scored.
         </p>
       </SectionBand>
@@ -243,7 +243,7 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="light">
-        <h2 className="ds-h2">What counts as &quot;actual&quot;</h2>
+        <h2 className="ds-h2">What counts as &ldquo;actual&rdquo;</h2>
         <p className="mt-1 max-w-2xl ds-body text-muted">
           The conditions we grade against come from the{" "}
           <a href="https://open-meteo.com/en/docs/historical-weather-api" className="text-teal underline underline-offset-2"
@@ -367,7 +367,7 @@ export default async function Page() {
           entered by hand by people in the field, not a sensor, so the actual is softer than a measured number.
           And this is one public agency grading against another&apos;s report; a future phase adds our own
           roadside cameras as an independent ground truth, the same arc as the weather station. Off-season the
-          report reads &quot;No Report&quot; and the forecast simply accrues no scored days until winter.
+          report reads &ldquo;No Report&rdquo; and the forecast simply accrues no scored days until winter.
         </p>
       </SectionBand>
 

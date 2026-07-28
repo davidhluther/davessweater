@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { getForecast5Day, stripDays, type Forecast5Day } from "@/lib/forecast5";
-import { getLeadtimeScores, compositeMemberMaePair, type LeadtimeScores } from "@/lib/leadtime";
 import RainTimingBar from "@/components/RainTimingBar";
 
 // The consumer half of the Today module: the week ahead for a person who just
@@ -55,12 +54,12 @@ function confidenceMeter(confidence: "high" | "medium" | "low") {
 // artifact and a scoreboard link to its own board; towns have no lead-time
 // artifact, so `leadtime` is null there and the MAE footnote is simply omitted.
 export default async function FiveDayStrip(
-  { data, leadtime, scoreboardHref = "/right-wrong-ray" }:
-  { data?: Forecast5Day | null; leadtime?: LeadtimeScores | null; scoreboardHref?: string } = {},
+  { data, scoreboardHref = "/right-wrong-ray" }:
+  { data?: Forecast5Day | null; scoreboardHref?: string } = {},
 ) {
-  const [f5, scores] = data !== undefined
-    ? [data, leadtime ?? null]
-    : await Promise.all([getForecast5Day(), getLeadtimeScores()]);
+  // The lead-time scores fed the MAE footnote that was removed 2026-07-27; the
+  // strip now needs only the forecast itself.
+  const f5 = data !== undefined ? data : await getForecast5Day();
   const days = stripDays(f5);
   // Fewer than 2 consensus days is not a strip — render nothing (including no
   // divider) rather than a broken half-strip.
@@ -68,13 +67,11 @@ export default async function FiveDayStrip(
   // Day-1 vs day-5 miss over the SAME member set (sources scored at both
   // leads), so the two numbers are comparable — not an artifact of short-
   // horizon sources dropping out of one side.
-  const maePair = scores ? compositeMemberMaePair(scores, 1, 5) : null;
   // The agreement meter only earns its space when it actually differentiates
   // the days. A week where the sources disagree wide on every day (all "low")
   // is a flat column of one-bar meters that says nothing — drop it entirely
   // rather than imply five separately-uncertain days.
   const showConfidence = days.some((d) => d.confidence !== "low");
-  const anyHourly = days.some((d) => d.hourly?.length);
   return (
     <div className="text-center">
         <h2 className="ds-h3">

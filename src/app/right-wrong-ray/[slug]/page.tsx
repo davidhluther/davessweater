@@ -178,7 +178,12 @@ export default async function TownTrackerPage({ params }: { params: Promise<{ sl
               <span className="font-semibold text-emerald-300">ours</span>) graded right in the mix.
             </p>
             <SortableScoreTable rows={rows} />
-            <p className="mt-3 text-xs text-white/70">R = graded Right (75+) | M = Meh (60&ndash;74) | W = graded Wrong (under 60). Trend = 7-day rolling average on the 0&ndash;100 scale.</p>
+            <dl className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/70">
+              <div className="flex items-center gap-1.5"><dt className="font-semibold text-white">R</dt><dd>Right, 75+</dd></div>
+              <div className="flex items-center gap-1.5"><dt className="font-semibold text-white">M</dt><dd>Meh, 60 to 74</dd></div>
+              <div className="flex items-center gap-1.5"><dt className="font-semibold text-white">W</dt><dd>Wrong, under 60</dd></div>
+              <div className="flex items-center gap-1.5"><dt className="font-semibold text-white">Trend</dt><dd>7-day rolling average</dd></div>
+            </dl>
           </div>
         </section>
       )}

@@ -13,6 +13,9 @@ const eslintConfig = defineConfig([
     "build/**",
     ".vercel/**",
     "next-env.d.ts",
+    // Agent worktrees are full checkouts of this repo; linting them double-reports
+    // every file and buries real findings (13,925 problems on 2026-07-27).
+    ".claude/worktrees/**",
   ]),
 ]);
 

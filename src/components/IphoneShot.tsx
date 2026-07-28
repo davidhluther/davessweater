@@ -28,7 +28,7 @@ export default function IphoneShot({ className = "" }: { className?: string }) {
           band it no longer sits on. */}
       {info.available && (
         <figcaption className="mt-2 text-center ds-caption">
-          <span className="text-green" aria-hidden="true">●</span> {label}
+          {label}
           {info.date ? ` | Updated ${fmt(info.date)}` : ""}
         </figcaption>
       )}

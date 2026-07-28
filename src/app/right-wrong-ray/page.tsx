@@ -178,6 +178,30 @@ export default async function Page() {
               How we score it
             </Link>
           </p>
+          {/* The two long-form reads. They used to trail the page as a plain
+              "The longer story:" line under the rubric footnote; moved up and
+              given card treatment 2026-07-27 (owner) so the analysis is offered
+              where a reader is deciding whether the scoreboard is credible. */}
+          <div className="mt-6 grid gap-2 sm:grid-cols-2 sm:max-w-2xl">
+            <Link href="/resources/articles/is-rays-weather-accurate"
+              className="group rounded-xl border border-white/20 bg-white/5 p-3 transition-colors hover:border-white/40 hover:bg-white/10">
+              <div className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-orange-300">
+                The long read
+              </div>
+              <div className="mt-1 text-sm font-bold text-white">
+                Is Ray&apos;s Weather Accurate? 118 Days Scored
+              </div>
+            </Link>
+            <Link href="/report-card/2026-06"
+              className="group rounded-xl border border-white/20 bg-white/5 p-3 transition-colors hover:border-white/40 hover:bg-white/10">
+              <div className="text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-orange-300">
+                Monthly report card
+              </div>
+              <div className="mt-1 text-sm font-bold text-white">
+                Ray&apos;s Weather Report Card: June 2026
+              </div>
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -198,21 +222,22 @@ export default async function Page() {
               )}
             </div>
             <p className="mt-2 max-w-2xl ds-body text-muted">
-              Our own forecast: the free forecasters below, averaged into one number &mdash; then graded by the
-              exact same rubric as every one of them. No résumé, no paywall, just the consensus.
+              Our own forecast, built from the free forecasters below and graded by the exact same rubric as
+              every one of them. It is not a plain average. The rules that combine them are published, and
+              they are why it outscores its own members. No résumé, no paywall.
             </p>
             <div className="mt-5 grid grid-cols-3 gap-3 sm:max-w-md">
               <div className="rounded-xl border border-border bg-background px-3 py-3">
                 <div className="ds-stat">{dsiRow.avg.toFixed(1)}</div>
-                <div className="mt-0.5 ds-caption">season avg / 100</div>
+                <div className="mt-0.5 ds-caption">Season avg / 100</div>
               </div>
               <div className="rounded-xl border border-border bg-background px-3 py-3">
                 <div className="ds-stat">{dsiRow.record.split(" ")[0]}</div>
-                <div className="mt-0.5 ds-caption">graded Right</div>
+                <div className="mt-0.5 ds-caption">Graded Right</div>
               </div>
               <div className="rounded-xl border border-border bg-background px-3 py-3">
                 <div className="ds-stat">{dsiRow.days}</div>
-                <div className="mt-0.5 ds-caption">days scored</div>
+                <div className="mt-0.5 ds-caption">Days scored</div>
               </div>
             </div>
             {dsiScored && (
@@ -242,7 +267,12 @@ export default async function Page() {
               is merit-based.
             </p>
             <SortableScoreTable rows={rows} />
-            <p className="mt-3 text-xs text-white/70">R = graded Right (75+) | M = Meh (60&ndash;74) | W = graded Wrong (under 60). Trend = 7-day rolling average on the 0&ndash;100 scale.</p>
+            <dl className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/70">
+              <div className="flex items-center gap-1.5"><dt className="font-semibold text-white">R</dt><dd>Right, 75+</dd></div>
+              <div className="flex items-center gap-1.5"><dt className="font-semibold text-white">M</dt><dd>Meh, 60 to 74</dd></div>
+              <div className="flex items-center gap-1.5"><dt className="font-semibold text-white">W</dt><dd>Wrong, under 60</dd></div>
+              <div className="flex items-center gap-1.5"><dt className="font-semibold text-white">Trend</dt><dd>7-day rolling average</dd></div>
+            </dl>
           </div>
         </section>
       )}
@@ -258,9 +288,9 @@ export default async function Page() {
             The same 100-point grading, applied to the forecast each source published up to five days
             ahead. The free forecasts win at every horizon, and the gap widens at days 3 and 4: Ray&apos;s
             extended days publish fewer scoreable fields, and under the published rules a blank earns
-            nothing. Our own <span className="font-semibold text-white">Dave&apos;s Sweater Index</span> (the
-            bold white line) stays near the top clear out to day five &mdash; a consensus barely fades when
-            no single source has to carry it.
+            nothing. Our own <span className="font-semibold text-white">Dave&apos;s Sweater Index</span>{" "}
+            (the bold white line) stays near the top clear out to day five, because a consensus barely fades
+            when no single source has to carry it.
           </p>
           <AccuracyDecayChart series={decay} />
           <p className="mt-2 text-xs">
@@ -364,27 +394,13 @@ export default async function Page() {
             })}
           </>
         ) : <p className="text-muted">No comparison yet.</p>}
-        <p className="mt-5 text-xs italic text-muted">
-          Each forecast is scored out of 100 across four fields — high temp (30), low temp (30), wind (20,
-          scored as a range when the source gives one) and precipitation (20, form and amount graded
-          together, snow-aware) — by closeness
-          to the actual recorded conditions. A forecast of &ldquo;no rain&rdquo; counts as a zero-inch prediction
-          (scored); predicting rain with no stated total leaves the amount blank (no credit).
-          When day scores tie, the smaller summed miss across the graded fields takes
-          &ldquo;day&apos;s best&rdquo; and the larger takes &ldquo;day&apos;s worst.&rdquo;
-        </p>
-        <p className="mt-2 text-xs">
+        {/* Collapsed 2026-07-27 (owner: "we have too much... this needs to feel
+            like a cleaner website"). The full rubric, the implied-zero rule and
+            the tie-break all live on /methodology, one link away. */}
+        <p className="mt-5 ds-caption">
+          Every forecast is scored out of 100 on temperature, wind, and precipitation, against what actually
+          happened.{" "}
           <Link href="/methodology" className="text-teal underline underline-offset-2">Full methodology</Link>
-        </p>
-        <p className="mt-2 ds-caption">
-          The longer story:{" "}
-          <Link href="/resources/articles/is-rays-weather-accurate" className="text-teal underline underline-offset-2">
-            Is Ray&apos;s Weather Accurate? 118 Days Scored
-          </Link>
-          {" | "}
-          <Link href="/report-card/2026-06" className="text-teal underline underline-offset-2">
-            Ray&apos;s Weather Report Card: June 2026
-          </Link>
         </p>
       </SectionBand>
 

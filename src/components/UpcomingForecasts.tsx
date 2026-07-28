@@ -12,7 +12,26 @@ function fmtDate(d: string): string {
 }
 
 const deg = (v: number | null) => (v != null ? `${Math.round(v)}°` : "—");
-const precip = (p: string | null) => (p && p !== "none" ? p : "none");
+
+// Precip labels read as words, not raw enum values. The pipeline's type vocabulary
+// is deliberately small (it has to be gradable against an observed amount), so the
+// display layer is where "none" becomes "No precip" and mixed becomes something a
+// person would say (owner, 2026-07-27: "Precip rain" needed styling and a wider
+// vocabulary). Unknown values pass through capitalized rather than being dropped.
+const PRECIP_LABEL: Record<string, string> = {
+  none: "No precip",
+  rain: "Rain",
+  snow: "Snow",
+  sleet: "Sleet",
+  mixed: "Wintry mix",
+  freezing_rain: "Freezing rain",
+  drizzle: "Drizzle",
+  storm: "Storms",
+};
+const precip = (p: string | null): string => {
+  if (!p) return "No precip";
+  return PRECIP_LABEL[p] ?? p.charAt(0).toUpperCase() + p.slice(1).replace(/_/g, " ");
+};
 
 function NewTag() {
   return (
@@ -68,9 +87,20 @@ export default function UpcomingForecasts(
           return (
             <div key={k} className="rounded-xl border border-border bg-background p-3">
               <div className="ds-h4">{f.label}{isNew(k) && <NewTag />}</div>
-              <div className="mt-1 ds-caption">Hi {deg(f.high_f)} · Lo {deg(f.low_f)}</div>
-              <div className="ds-caption">Wind {f.wind ?? "—"}</div>
-              <div className="ds-caption">Precip {precip(f.precip_type)}</div>
+              <dl className="mt-1.5 space-y-0.5 text-xs">
+                <div className="flex justify-between gap-2">
+                  <dt className="text-muted">Hi / Lo</dt>
+                  <dd className="font-medium text-foreground tabular-nums">{deg(f.high_f)} / {deg(f.low_f)}</dd>
+                </div>
+                <div className="flex justify-between gap-2">
+                  <dt className="text-muted">Wind</dt>
+                  <dd className="font-medium text-foreground tabular-nums">{f.wind ?? "—"}</dd>
+                </div>
+                <div className="flex justify-between gap-2">
+                  <dt className="text-muted">Precip</dt>
+                  <dd className="font-medium text-foreground">{precip(f.precip_type)}</dd>
+                </div>
+              </dl>
             </div>
           );
         })}

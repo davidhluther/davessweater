@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getScores, getLatestComparison, getComparisonWindow, getLatestForecasts } from "@/lib/data";
 import { heroStats, trendSeries, headToHead, whyStats } from "@/lib/homeStats";
 import { compositeForecast } from "@/lib/composite";
@@ -81,16 +80,9 @@ export default async function HomePage() {
           <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-start">
             <div>
               <HeadToHeadCard h={h2h} />
-              <p className="mt-3 ds-caption">
-                The longer story:{" "}
-                <Link href="/resources/articles/is-rays-weather-accurate" className="text-teal underline underline-offset-2">
-                  Is Ray&apos;s Weather Accurate? 118 Days Scored
-                </Link>
-                {" | "}
-                <Link href="/report-card/2026-06" className="text-teal underline underline-offset-2">
-                  Ray&apos;s Weather Report Card: June 2026
-                </Link>
-              </p>
+              {/* The two long-form reads moved to /right-wrong-ray's header as
+                  cards (owner, 2026-07-27) — one home, not a plain link list
+                  repeated on two pages. */}
             </div>
             <figure className="mx-auto shrink-0 md:mx-0">
               <IphoneShot />
