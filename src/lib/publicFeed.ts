@@ -11,11 +11,24 @@ import { fmtLongDate } from "@/lib/dates";
 // ── License / attribution (CC BY 4.0 — owner decision 2026-07-25) ──────────
 export const LICENSE_URL = "https://creativecommons.org/licenses/by/4.0/";
 export const LICENSE_NAME = "CC BY 4.0";
-export const ATTRIBUTION = "Data: Dave's Sweater (davessweater.com), CC BY 4.0";
+export const ATTRIBUTION = "Data by Dave's Sweater, CC BY 4.0";
 export const SITE_BASE = "https://davessweater.com";
 
-/** Every JSON API response carries these two fields (owner requirement). */
-export const LICENSE_FIELDS = { license: LICENSE_URL, attribution: ATTRIBUTION } as const;
+/** Ready-to-paste attribution markup. CC BY requires credit with a link to the
+ *  source, so we hand reusers the exact anchor we want back (owner, 2026-07-27:
+ *  the attribution should carry a "Dave's Sweater" backlink). Reusers who paste
+ *  this satisfy the license and link the brand name in one step. */
+export const ATTRIBUTION_HTML =
+  `Data by <a href="${SITE_BASE}">Dave's Sweater</a>, ` +
+  `licensed under <a href="${LICENSE_URL}">CC BY 4.0</a>`;
+
+/** Every JSON API response carries these fields (owner requirement). */
+export const LICENSE_FIELDS = {
+  license: LICENSE_URL,
+  attribution: ATTRIBUTION,
+  attribution_html: ATTRIBUTION_HTML,
+  source: SITE_BASE,
+} as const;
 
 // ── Display-option validation (days = 1|3|5 default 3; detail default summary)
 export const VALID_DAYS = [1, 3, 5] as const;
