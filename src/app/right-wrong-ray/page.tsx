@@ -348,7 +348,7 @@ export default async function Page() {
                         </span>
                       )}
                       {isWorst && (
-                        <span className="rounded-full border border-orange-600/40 bg-orange-600/10 px-2.5 py-0.5 text-xs font-semibold text-orange-600">
+                        <span className="rounded-full border border-orange/30 bg-orange/10 px-2.5 py-0.5 text-xs font-semibold text-orange-600">
                           day&apos;s worst
                         </span>
                       )}

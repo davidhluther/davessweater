@@ -90,7 +90,10 @@ export default function AccuracyDecayChart({ series }: { series: ChartSeries[] }
           );
         })}
       </div>
-      <p className="mb-2 text-[0.7rem] text-white/50">
+      {/* Not ds-caption: that carries text-muted, which is the light-band
+          color. On the teal bands white/70 is the small-text floor (5.6:1 on
+          teal-700); white/50 read as decorative but failed AA at 3.7:1. */}
+      <p className="mb-2 text-xs text-white/70">
         {picked ? `Showing ${label(picked)} — tap it again for all.` : "Tap a line or a name to isolate it."}
       </p>
 
