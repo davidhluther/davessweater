@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { compositeForecast, compositePrecipType, precipChance, showsChance } from "@/lib/composite";
+import {
+  compositeForecast, compositePrecipType, precipChance, precipLabelFor, showsChance,
+} from "@/lib/composite";
 import type { LatestForecasts, ForecastDisplay } from "@/lib/types";
 
 function src(
@@ -171,6 +173,27 @@ describe("precipChance", () => {
 
   it("ignores NaN and non-finite junk", () => {
     expect(precipChance([NaN, Infinity, 50])).toEqual({ pct: 50, count: 1 });
+  });
+});
+
+describe("precipLabelFor", () => {
+  it("keeps the likelihood word when there is no number to print", () => {
+    expect(precipLabelFor("rain", false)).toBe("Rain likely");
+  });
+
+  it("drops it when a chance prints beside it, so the line can't argue with itself", () => {
+    // The type call and the chance are independent, so "Rain likely | 9% chance"
+    // is reachable in production. "Rain | 9% chance" is the same facts, coherent.
+    expect(precipLabelFor("rain", true)).toBe("Rain");
+  });
+
+  it("leaves the labels that never asserted a likelihood alone", () => {
+    for (const withChance of [true, false]) {
+      expect(precipLabelFor("snow", withChance)).toBe("Snow");
+      expect(precipLabelFor("mixed", withChance)).toBe("Wintry mix");
+      expect(precipLabelFor("none", withChance)).toBe("No precip");
+      expect(precipLabelFor("hail", withChance)).toBe("hail"); // unknown key passes through
+    }
   });
 });
 

@@ -1,4 +1,4 @@
-import { showsChance, type Composite } from "@/lib/composite";
+import { precipLabelFor, showsChance, type Composite } from "@/lib/composite";
 import { copy } from "@/content/copy";
 
 // The Dave's Sweater Index headline — the consensus of the free forecasters for
@@ -18,7 +18,7 @@ export default function CompositeHeadline({ composite: c }: { composite: Composi
         {copy.index.title} | {c.dateLabel}
       </div>
       <div className="mt-1 font-display text-2xl font-bold text-foreground sm:text-3xl">
-        High {c.high}° {pipe} Low {c.low}° {pipe} {c.precipLabel}
+        High {c.high}° {pipe} Low {c.low}° {pipe} {precipLabelFor(c.precip, chance)}
         {chance ? <> {pipe} {c.precipProb}% chance</> : null}
       </div>
       <div className="mt-1 text-xs text-muted">

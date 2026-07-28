@@ -16,6 +16,25 @@ const PRECIP_LABEL: Record<string, string> = {
   none: "No precip",
 };
 
+// Same labels with the likelihood word taken out, for lines that print the
+// actual chance beside them. The type call (the credible-minority rule below)
+// and the chance (a median across a different subset of sources) are separate
+// quantities and CAN legitimately disagree — two of eight sources forecasting a
+// trace of rain reads "rain" while the median chance sits at 9%. That's real
+// signal, but "Rain likely | 9% chance" is a sentence arguing with itself, and
+// the whole site rests on not doing that. When we can print the number, the
+// word goes.
+const PRECIP_LABEL_WITH_CHANCE: Record<string, string> = {
+  ...PRECIP_LABEL,
+  rain: "Rain",
+};
+
+/** The precip label to print, given whether a chance is printed beside it. */
+export function precipLabelFor(precip: string, withChance: boolean): string {
+  const table = withChance ? PRECIP_LABEL_WITH_CHANCE : PRECIP_LABEL;
+  return table[precip] ?? precip;
+}
+
 export interface Composite {
   date: string;
   dateLabel: string;
