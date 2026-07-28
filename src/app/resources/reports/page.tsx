@@ -36,8 +36,8 @@ export default function Page() {
           &larr; All resources
         </Link>
       </p>
-      <h1 className="mt-3 mb-1 font-display text-2xl font-bold text-foreground">Reports</h1>
-      <p className="mb-6 text-sm text-muted">Data deep-dives with charts and receipts.</p>
+      <h1 className="mt-3 mb-1 ds-h1 text-foreground">Reports</h1>
+      <p className="mb-6 ds-body text-muted">Data deep-dives with charts and receipts.</p>
       {REPORTS.length === 0 ? (
         <p className="text-muted">No reports yet — check back soon.</p>
       ) : (
@@ -55,19 +55,19 @@ export default function Page() {
                   />
                 )}
                 <div>
-                  <h2 className="text-xl font-semibold">
+                  <h2 className="ds-h3">
                     <Link href={r.href} className="text-orange-600 hover:underline underline-offset-2">
                       {r.title}
                     </Link>
                   </h2>
-                  {r.date && <p className="mt-0.5 text-xs text-muted">{fmtLongDate(r.date)}</p>}
-                  {r.summary && <p className="mt-1 text-sm text-muted">{r.summary}</p>}
+                  {r.date && <p className="mt-0.5 ds-caption">{fmtLongDate(r.date)}</p>}
+                  {r.summary && <p className="mt-1 ds-body text-muted">{r.summary}</p>}
                 </div>
               </div>
               {r.href === "/reports/grandfather-mountain-highland-games-planner-2026" && (
                 <div className="mt-4 rounded-xl border border-border bg-surface p-4">
-                  <p className="text-xs font-bold uppercase tracking-wider text-orange-600">Jump straight into the planner</p>
-                  <p className="mt-1 mb-3 text-sm text-muted">Pick a day, or start with the marquee events.</p>
+                  <p className="ds-kicker text-orange-600">Jump straight into the planner</p>
+                  <p className="mt-1 mb-3 ds-body text-muted">Pick a day, or start with the marquee events.</p>
                   <GmhgPlannerTeaser />
                 </div>
               )}
@@ -79,11 +79,11 @@ export default function Page() {
           on-page checker; Check hands off to /fireworks, which auto-runs it.
           Retire (or generalize) when the season's report rotates out. */}
       <div className="mt-6 rounded-2xl border border-border bg-surface p-5">
-        <p className="text-xs font-bold uppercase tracking-wider text-orange-600">
+        <p className="ds-kicker text-orange-600">
           Try the fireworks report
         </p>
-        <h2 className="mt-1 font-display text-lg font-bold text-foreground">Where should you watch from?</h2>
-        <p className="mt-1 mb-3 max-w-2xl text-sm text-muted">
+        <h2 className="mt-1 ds-h3 text-foreground">Where should you watch from?</h2>
+        <p className="mt-1 mb-3 max-w-2xl ds-body text-muted">
           Type an address (or share your location) and the report computes the terrain between you
           and every show &mdash; which fireworks you can actually see from there, paired with that
           night&apos;s sky forecast.

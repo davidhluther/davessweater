@@ -158,10 +158,10 @@ export default async function Page() {
       {/* Branded page header: same band language as the homepage hero, none of its furniture */}
       <section className="w-full bg-teal-700 text-white">
         <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:py-12">
-          <div className="text-xs font-bold uppercase tracking-wider text-orange-300">
+          <div className="ds-kicker text-orange-300">
             Tracked daily | {trackingDays} days on the record
           </div>
-          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">Right Ray / Wrong Ray</h1>
+          <h1 className="mt-1 ds-h1">Right Ray / Wrong Ray</h1>
           <p className="mt-2 max-w-2xl text-sm text-white/70">
             Every forecast is a claim about tomorrow. This scoreboard grades every one we track — free
             and paid alike — against what the sky actually did. Same rubric for everybody.
@@ -186,9 +186,9 @@ export default async function Page() {
       {dsiRow && (
         <section className="w-full bg-surface text-foreground">
           <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
-            <div className="text-xs font-bold uppercase tracking-wider text-muted">Our forecast</div>
+            <div className="ds-kicker text-muted">Our forecast</div>
             <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <h2 className="font-display text-2xl font-bold sm:text-3xl">
+              <h2 className="ds-h2">
                 Dave&apos;s Sweater Index
               </h2>
               {dsiRank && (
@@ -197,28 +197,28 @@ export default async function Page() {
                 </span>
               )}
             </div>
-            <p className="mt-2 max-w-2xl text-sm text-muted">
+            <p className="mt-2 max-w-2xl ds-body text-muted">
               Our own forecast: the free forecasters below, averaged into one number &mdash; then graded by the
               exact same rubric as every one of them. No résumé, no paywall, just the consensus.
             </p>
             <div className="mt-5 grid grid-cols-3 gap-3 sm:max-w-md">
               <div className="rounded-xl border border-border bg-background px-3 py-3">
-                <div className="font-display text-2xl font-bold sm:text-3xl tabular-nums">{dsiRow.avg.toFixed(1)}</div>
-                <div className="mt-0.5 text-xs text-muted">season avg / 100</div>
+                <div className="ds-stat">{dsiRow.avg.toFixed(1)}</div>
+                <div className="mt-0.5 ds-caption">season avg / 100</div>
               </div>
               <div className="rounded-xl border border-border bg-background px-3 py-3">
-                <div className="font-display text-2xl font-bold sm:text-3xl tabular-nums">{dsiRow.record.split(" ")[0]}</div>
-                <div className="mt-0.5 text-xs text-muted">graded Right</div>
+                <div className="ds-stat">{dsiRow.record.split(" ")[0]}</div>
+                <div className="mt-0.5 ds-caption">graded Right</div>
               </div>
               <div className="rounded-xl border border-border bg-background px-3 py-3">
-                <div className="font-display text-2xl font-bold sm:text-3xl tabular-nums">{dsiRow.days}</div>
-                <div className="mt-0.5 text-xs text-muted">days scored</div>
+                <div className="ds-stat">{dsiRow.days}</div>
+                <div className="mt-0.5 ds-caption">days scored</div>
               </div>
             </div>
             {dsiScored && (
-              <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
+              <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 ds-body text-muted">
                 <span className="font-semibold text-foreground">Latest scored day:</span>
-                <span className="font-display text-xl font-bold tabular-nums text-foreground">{dsiScored.score.score.toFixed(1)}<span className="text-sm font-normal text-muted">/100</span></span>
+                <span className="ds-stat text-xl text-foreground">{dsiScored.score.score.toFixed(1)}<span className="text-sm font-normal text-muted">/100</span></span>
                 {typeof dsiDay?.prediction?.member_count === "number" && (
                   <span>from {dsiDay.prediction.member_count} forecasters</span>
                 )}
@@ -234,7 +234,7 @@ export default async function Page() {
       {rows.length > 0 && (
         <section className="w-full bg-teal-900 text-white [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px]">
           <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
-            <h2 className="font-display mb-1 text-2xl font-bold">Season Scoreboard</h2>
+            <h2 className="mb-1 ds-h2">Season Scoreboard</h2>
             <p className="mb-4 text-sm text-white/70">
               Every forecaster we track, ranked by season average &mdash; our own{" "}
               <span className="font-semibold text-white/90">Dave&apos;s Sweater Index</span> (marked{" "}
@@ -252,7 +252,7 @@ export default async function Page() {
           holds enough data to draw a comparison. */}
       {decay && (
         <SectionBand tone="dark">
-          <h2 className="font-display mb-1 text-2xl font-bold">How far out can you trust a forecast?</h2>
+          <h2 className="mb-1 ds-h2">How far out can you trust a forecast?</h2>
           {/* data-dependent claim — re-verify against leadtime_scores when editing */}
           <p className="mb-4 max-w-2xl text-sm text-white/70">
             The same 100-point grading, applied to the forecast each source published up to five days
@@ -274,20 +274,20 @@ export default async function Page() {
       <SectionBand tone="surface">
         {comp ? (
           <>
-            <h2 className="font-display text-2xl font-bold">
+            <h2 className="ds-h2">
               Latest scored day{comp.date ? <span className="text-muted"> | {fmtLongDate(comp.date)}</span> : null}
             </h2>
-            <p className="mt-1 text-sm text-muted">
+            <p className="mt-1 ds-body text-muted">
               Yesterday&apos;s forecasts, graded against what the sky actually did. The math is under each score.
             </p>
 
             {/* The reference every card below is judged against */}
             {a && (
               <div className="mt-4 rounded-2xl bg-teal-900 p-5 text-white sm:p-6 [background-image:radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:22px_22px]">
-                <div className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-white/60">
+                <div className="ds-kicker text-white/60">
                   What actually happened
                 </div>
-                <div className="mt-1.5 font-display text-lg font-bold sm:text-2xl">{actualMain}</div>
+                <div className="mt-1.5 ds-stat">{actualMain}</div>
                 {actualCond && <div className="mt-1 text-sm text-white/70">{actualCond}</div>}
               </div>
             )}
@@ -311,7 +311,7 @@ export default async function Page() {
                       ) : iconChar ? (
                         <span aria-hidden="true">{iconChar}</span>
                       ) : null}
-                      <span className="font-display text-base font-bold sm:text-lg">{label}</span>
+                      <span className="ds-h4">{label}</span>
                       {isBest && (
                         <span className="rounded-full border border-green/30 bg-green/10 px-2.5 py-0.5 text-xs font-semibold text-green-700">
                           day&apos;s best
@@ -328,7 +328,7 @@ export default async function Page() {
                     </span>
                     <span className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
                       <VerdictScale score={s} />
-                      <span className="font-display text-2xl font-bold sm:text-3xl">
+                      <span className="ds-stat">
                         {s.toFixed(1)}<span className="text-sm font-normal text-muted">/100</span>
                       </span>
                     </span>
@@ -338,15 +338,15 @@ export default async function Page() {
                   </div>
                   <div className="mt-4 grid grid-cols-3 gap-3 border-t border-border pt-4 text-sm">
                     <div>
-                      <div className="text-xs text-muted">Predicted hi / lo</div>
+                      <div className="ds-caption">Predicted hi / lo</div>
                       <div className="mt-0.5 font-medium">{f.hiLo}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-muted">Wind</div>
+                      <div className="ds-caption">Wind</div>
                       <div className="mt-0.5 font-medium">{f.wind}</div>
                     </div>
                     <div>
-                      <div className="text-xs text-muted">Rain</div>
+                      <div className="ds-caption">Rain</div>
                       <div className="mt-0.5 font-medium">{f.rain}</div>
                     </div>
                   </div>
@@ -376,7 +376,7 @@ export default async function Page() {
         <p className="mt-2 text-xs">
           <Link href="/methodology" className="text-teal underline underline-offset-2">Full methodology</Link>
         </p>
-        <p className="mt-2 text-xs text-muted">
+        <p className="mt-2 ds-caption">
           The longer story:{" "}
           <Link href="/resources/articles/is-rays-weather-accurate" className="text-teal underline underline-offset-2">
             Is Ray&apos;s Weather Accurate? 118 Days Scored
@@ -389,7 +389,7 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="light">
-        <h2 className="font-display mb-1 text-2xl font-bold">What they&apos;re predicting now</h2>
+        <h2 className="mb-1 ds-h2">What they&apos;re predicting now</h2>
         <UpcomingForecasts data={forecasts} provisional={provisionalKeys} />
       </SectionBand>
 

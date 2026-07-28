@@ -47,8 +47,8 @@ export default async function Page() {
           parts: CATEGORIES.map((c) => ({ name: c.schemaName, path: c.href })),
         }),
       ]} />
-      <h1 className="font-display text-2xl font-bold text-foreground">Resources</h1>
-      <p className="mt-1 text-sm text-muted">
+      <h1 className="ds-h1 text-foreground">Resources</h1>
+      <p className="mt-1 ds-body text-muted">
         Everything we publish that isn&apos;t the live forecast, collected in one place.
       </p>
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -57,9 +57,9 @@ export default async function Page() {
           return (
             <Link key={c.key} href={c.href}
               className="rounded-2xl border border-border bg-background p-5 transition hover:-translate-y-0.5 hover:shadow-lg">
-              <h2 className="font-display text-lg font-bold text-foreground">{c.label}</h2>
-              <p className="mt-1 text-sm text-muted">{c.blurb}</p>
-              <p className="mt-3 text-xs text-muted">
+              <h2 className="ds-h3 text-foreground">{c.label}</h2>
+              <p className="mt-1 ds-body text-muted">{c.blurb}</p>
+              <p className="mt-3 ds-caption">
                 {s.count}
                 {s.latest && <> | Latest: <span className="text-foreground">{s.latest}</span></>}
               </p>

@@ -66,8 +66,8 @@ export default async function Page({ params }: { params: Promise<{ month: string
         <Link href="/report-card" className="text-sm text-orange-600 hover:underline underline-offset-2">
           &larr; All report cards
         </Link>
-        <h1 className="mt-3 font-display text-3xl font-extrabold text-foreground">{card.title}</h1>
-        {card.date && <p className="mt-1 text-sm text-muted">Published {fmtLongDate(card.date)}</p>}
+        <h1 className="mt-3 ds-h1 text-foreground">{card.title}</h1>
+        {card.date && <p className="mt-1 ds-body text-muted">Published {fmtLongDate(card.date)}</p>}
         <PostBody post={card} />
       </article>
     </SectionBand>

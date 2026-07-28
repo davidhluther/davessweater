@@ -22,7 +22,7 @@ export default function SightlineTeaser() {
         >
           Use My Location
         </button>
-        <span className="hidden text-sm text-muted sm:inline">or</span>
+        <span className="hidden ds-body text-muted sm:inline">or</span>
         <form
           onSubmit={(e) => {
             e.preventDefault();

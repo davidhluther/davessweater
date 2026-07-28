@@ -43,6 +43,9 @@ function confidenceMeter(confidence: "high" | "medium" | "low") {
           <span key={i} className={cn("h-1 w-2 rounded-[1px]", i < filled ? "bg-teal" : "bg-border")} />
         ))}
       </div>
+      {/* Off the ds-kicker scale on purpose: this is a legend inside a dense
+          day card that has to fit five items on a phone row, not a titling
+          kicker. Same for the weekday and temperature below. */}
       <span className="text-[0.55rem] uppercase tracking-wide text-muted/70">agreement</span>
     </div>
   );
@@ -74,7 +77,7 @@ export default async function FiveDayStrip(
   const anyHourly = days.some((d) => d.hourly?.length);
   return (
     <div className="text-center">
-        <h2 className="font-display text-lg font-bold sm:text-xl">
+        <h2 className="ds-h3">
           The 5-day <span className="font-normal text-muted/50">|</span> {f5.location}
         </h2>
 

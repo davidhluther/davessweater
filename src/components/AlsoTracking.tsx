@@ -11,7 +11,7 @@ export default async function AlsoTracking() {
     .sort((a, b) => a.name.localeCompare(b.name));
   if (!towns.length) return null;
   return (
-    <div className="mx-auto max-w-2xl text-center text-sm text-muted">
+    <div className="mx-auto max-w-2xl text-center ds-body text-muted">
       <p>
         Dave&apos;s Sweater also tracks a real forecast for{" "}
         <Link href="/weather" className="font-medium text-teal underline underline-offset-2">

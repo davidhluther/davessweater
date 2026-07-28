@@ -11,7 +11,7 @@ export default function PostBody({ post }: { post: BlogPost }) {
     <>
       {post.toc && post.toc.length > 1 && (
         <nav aria-label="On this page" className="mt-6 rounded-xl border border-border bg-foreground/[0.02] p-4">
-          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-muted">On this page</p>
+          <p className="mb-2 ds-kicker text-muted">On this page</p>
           <ul className="space-y-1.5">
             {post.toc.map((h2) => (
               <li key={h2.id}>
@@ -40,9 +40,15 @@ export default function PostBody({ post }: { post: BlogPost }) {
       <div
         className={[
           "mt-6 max-w-none leading-relaxed text-foreground",
-          "[&_h2]:font-display [&_h2]:mt-10 [&_h2]:mb-3 [&_h2]:text-2xl [&_h2]:font-extrabold [&_h2]:scroll-mt-24 [&_h2]:border-b [&_h2]:border-border [&_h2]:pb-1.5",
-          "[&_h3]:font-display [&_h3]:mt-6 [&_h3]:mb-2 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-foreground/90 [&_h3]:scroll-mt-24",
-          "[&_h4]:mt-4 [&_h4]:mb-1 [&_h4]:font-bold",
+          // Prose headings mirror the ds-* type scale (globals.css) one step
+          // down — h2 = .ds-h2, h3 = .ds-h3, h4 = .ds-h4. They are spelled out
+          // rather than reused because an arbitrary variant (`[&_h2]:…`) can
+          // only compose utilities, not a component-layer class. Keep these
+          // values in sync with the scale; the only prose-specific additions
+          // are the rule under h2 and the softened h3 color.
+          "[&_h2]:font-display [&_h2]:mt-10 [&_h2]:mb-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:scroll-mt-24 [&_h2]:border-b [&_h2]:border-border [&_h2]:pb-1.5",
+          "[&_h3]:font-display [&_h3]:mt-6 [&_h3]:mb-2 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:sm:text-xl [&_h3]:text-foreground/90 [&_h3]:scroll-mt-24",
+          "[&_h4]:font-display [&_h4]:mt-4 [&_h4]:mb-1 [&_h4]:text-base [&_h4]:font-bold",
           "[&_p]:my-3",
           "[&_a]:text-orange-600 [&_a]:hover:underline [&_a]:underline-offset-2",
           "[&_ul]:my-3 [&_ul]:space-y-1",

@@ -17,13 +17,17 @@ export default function IphoneShot({ className = "" }: { className?: string }) {
           <img src="/screenshots/iphone_screenshot.webp" alt={`${label} for Boone, NC`}
             fetchPriority="high" className="w-full rounded-[1.1rem]" />
         ) : (
-          <div className="flex aspect-[9/19] items-center justify-center rounded-[1.1rem] bg-surface px-3 text-center text-xs text-muted">
+          <div className="flex aspect-[9/19] items-center justify-center rounded-[1.1rem] bg-surface px-3 text-center ds-caption">
             Today&apos;s forecast isn&apos;t in yet — check back tomorrow.
           </div>
         )}
       </div>
+      {/* ds-caption, not a bespoke white: this figure renders on the light
+          surface band, so the old `text-white/65` computed to 1.04:1 —
+          invisible, and axe's one serious violation. Left over from a dark
+          band it no longer sits on. */}
       {info.available && (
-        <figcaption className="mt-2 text-center text-[0.7rem] text-white/65">
+        <figcaption className="mt-2 text-center ds-caption">
           <span className="text-green" aria-hidden="true">●</span> {label}
           {info.date ? ` | Updated ${fmt(info.date)}` : ""}
         </figcaption>

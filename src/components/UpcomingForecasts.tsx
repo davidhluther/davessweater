@@ -34,7 +34,7 @@ export default function UpcomingForecasts(
   ];
   return (
     <div>
-      <p className="mb-4 text-sm text-muted">
+      <p className="mb-4 ds-body text-muted">
         Here&apos;s what each forecast says for{" "}
         <strong className="text-foreground">{fmtDate(data.date)}</strong>: Logged before the actuals exist.
         Come back once the day&apos;s in to see who was right.
@@ -67,10 +67,10 @@ export default function UpcomingForecasts(
           const f = data.sources[k];
           return (
             <div key={k} className="rounded-xl border border-border bg-background p-3">
-              <div className="font-display text-sm font-bold">{f.label}{isNew(k) && <NewTag />}</div>
-              <div className="mt-1 text-xs text-muted">Hi {deg(f.high_f)} · Lo {deg(f.low_f)}</div>
-              <div className="text-xs text-muted">Wind {f.wind ?? "—"}</div>
-              <div className="text-xs text-muted">Precip {precip(f.precip_type)}</div>
+              <div className="ds-h4">{f.label}{isNew(k) && <NewTag />}</div>
+              <div className="mt-1 ds-caption">Hi {deg(f.high_f)} · Lo {deg(f.low_f)}</div>
+              <div className="ds-caption">Wind {f.wind ?? "—"}</div>
+              <div className="ds-caption">Precip {precip(f.precip_type)}</div>
             </div>
           );
         })}

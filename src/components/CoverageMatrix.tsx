@@ -13,7 +13,7 @@ export default function CoverageMatrix({ scores }: { scores: Scores | null }) {
   const fields = rows[0].cells;
   return (
     <div className="not-prose">
-      <p className="mb-3 text-sm text-muted">
+      <p className="mb-3 ds-body text-muted">
         Green cells are fully reported fields. Dark orange marks a deliberate gap, like{" "}
         <strong className="text-foreground">Ray&apos;s, who never publishes a precip amount</strong>. Lighter
         cells are days a value was not available to scrape.
