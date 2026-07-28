@@ -697,6 +697,41 @@ model only.
 - [x] 172 vitest / lint / build green (31 routes); hero dek, tagline, and /about all verified in
       prerendered HTML.
 
+## ⚠️ BLOCKED 2026-07-28: Anthropic monthly spend limit hit
+The `fix/rays-day5-leadtime` agent died mid-run with "You've hit your monthly spend limit"
+(claude.ai/settings/usage). **Its work was lost — nothing pushed, branch never created.** Further
+background agents will fail the same way until David raises the limit or the month rolls. Items
+below that say "dispatch" are queued behind that.
+
+- [ ] **REDO: Ray's day-5 lead-time parse + rescore** (was in flight when the limit hit). Full
+      diagnosis already done and recorded here so the redo does not re-derive it: Ray publishes 7
+      days, `capture_rays.py` stores 7 rows, but **row index 5 is empty in 143 of 143 captures
+      (100%)** while row 6 parses partially (precip_type + daytime_desc, no high/low). Confirmed
+      parser bug, not a publishing gap. Consequence: `leadtime_scores.json` has raysweather n=1 at
+      lead 5 vs 138-142 at leads 0-4, so the accuracy-decay chart drops his line at day 4 and the
+      page prints "Ray's single day-5 row sits out until it accumulates" — **a false claim that
+      flatters us on a page about fair grading.** Fix the parser, backfill from saved `raw_text`
+      where it genuinely exists (never fabricate), rescore, and correct the caption to whatever is
+      true after. If recovered data changes the "free wins at every horizon" story, the copy changes
+      with it.
+
+## PERFORMANCE — PageSpeed Insights, mobile (owner-run 2026-07-28: "need to fix these too")
+Not yet triaged by DS IA; recorded verbatim from the owner's run so nothing is lost. Note the last
+perf work (PR #87, hero LCP) is a year-old context and the site has grown a lot since.
+- [ ] **Reduce unused JavaScript — est. 192 KiB** (flagged red). Likely suspects: visx bundles on
+      the trend/decay charts, framer-motion in the scrollytelling timeline, Keystatic's editor
+      route. Check whether the client islands can code-split or go server-rendered.
+- [ ] **Avoid enormous network payloads — 3,423 KiB total.** The biggest single lever on this list.
+- [ ] **Improve image delivery — est. 246 KiB.** `prepare_public.mjs` already resizes the hero
+      iPhone shot; audit the rest (logos, report photos, GMHG field map).
+- [ ] **Use efficient cache lifetimes — est. 167 KiB.**
+- [ ] **Legacy JavaScript — est. 26 KiB** (transpile targets).
+- [ ] **Forced reflow + network dependency tree** (both flagged red) and **8 long main-thread tasks**.
+- [ ] Also open from the earlier audit: the **lantern-simulation LCP artifact** (PSI lab numbers use
+      the same simulation that reported 11.8s while observed throttling reported 2.7s) — re-check
+      whether these new findings are real or partly the same modeling artifact BEFORE optimizing
+      against a number that may not reflect real users.
+
 ## NEXT BUILD: design/template consistency gate (IA brief, 2026-07-28)
 Brief: `IA-BRIEF-2026-07-28-design-consistency-gate.md` (repo root, from OVERALL IA at David's
 direction). Diagnosis: rapid feature bursts (PRs #129–#152 across three days) add pages, routes,
