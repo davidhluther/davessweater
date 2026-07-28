@@ -164,6 +164,39 @@ before it ships — 390x844 viewport (via Chrome device emulation or `next start
 horizontal overflow, wrapping, and layout of the changed elements. The owner can't easily preview mobile;
 the verifier is responsible for confirming it renders well on phones.
 
+### Type scale (owner rule, 2026-07-27)
+
+Headings, kickers, and captions use the named `ds-*` classes defined in
+`src/app/globals.css` (`@layer components`). **Never compose a fresh
+size+weight combo** — that is how the site ended up with ten different card
+titles and the owner's "different fonts and sizes and bolding" complaint.
+
+| Class | Renders | Use for |
+|---|---|---|
+| `ds-h1` | Space Grotesk bold, 3xl → 4xl at `sm` | The page title. One per page. |
+| `ds-h2` | Space Grotesk bold, 2xl | A section heading — opens a band or a major block. |
+| `ds-h3` | Space Grotesk bold, lg → xl at `sm` | A card or module title. |
+| `ds-h4` | Space Grotesk bold, base | A heading nested inside a card: FAQ question, venue, table group. |
+| `ds-kicker` | bold, xs, uppercase, tracked | The eyebrow label above a title. |
+| `ds-stat` | Space Grotesk bold, 2xl → 3xl at `sm`, tabular-nums | The numeric readout a module exists to state. |
+| `ds-body` | sm | Body prose. The site's body size is `sm`, not `base`; add `text-muted` for secondary prose. |
+| `ds-caption` | xs, muted | A footnote, caption, or source line. |
+
+- **Color is a call-site decision**, so one token works on both treatments:
+  `text-orange-300` / `text-white/70` on the dark teal bands, `text-orange-600` /
+  `text-muted` on the light body. Orange stays brand/editorial only (M2 rule).
+- **Deliberate one-offs** take a utility on the same element (`ds-stat text-4xl`).
+  Tailwind sorts `utilities` after `components`, so the utility wins — and leave a
+  comment saying why. Current exceptions: the `LiveConditions` temperature
+  (largest readout on the site), the `/widget` embed (its own compact scale — it
+  renders inside other people's pages), the GMHG print one-pager (forced to serif
+  by `.gmhg-print`), and the dense `FiveDayStrip` day cards.
+- **Not kickers:** inline badges/chips and dense-grid micro-labels. `ds-kicker` is
+  for titling labels only.
+- Article prose headings live in `PostBody.tsx` as arbitrary variants
+  (`[&_h2]:…`), which can only compose utilities — they mirror the scale by hand.
+  Keep them in sync.
+
 ```bash
 # Run the site (Next.js)
 npm install && npm run dev   # http://localhost:3000  (build: npm run build · test: npm test)

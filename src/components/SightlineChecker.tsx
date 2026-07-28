@@ -229,7 +229,7 @@ export default function SightlineChecker({ sky, spots }: { sky: CheckerShowSky[]
         >
           Use My Location
         </button>
-        <span className="text-sm text-muted">or</span>
+        <span className="ds-body text-muted">or</span>
         <form onSubmit={checkAddress} className="flex min-w-0 flex-1 gap-2">
           <input
             type="text"
@@ -249,11 +249,11 @@ export default function SightlineChecker({ sky, spots }: { sky: CheckerShowSky[]
         </form>
       </div>
 
-      {status.kind === "working" && <p className="mt-3 text-sm text-muted">{status.message}</p>}
+      {status.kind === "working" && <p className="mt-3 ds-body text-muted">{status.message}</p>}
       {status.kind === "error" && <p className="mt-3 text-sm text-orange-600">Didn&apos;t work: {status.message}.</p>}
       {status.kind === "done" && (
         <div className="mt-4">
-          <p className="text-sm text-muted">
+          <p className="ds-body text-muted">
             From <strong className="text-foreground">{status.where}</strong> (ground ≈{" "}
             {ftFromM(status.groundM)} ft, taken at the highest point within about 150 ft; find the good
             corner):
@@ -280,7 +280,7 @@ export default function SightlineChecker({ sky, spots }: { sky: CheckerShowSky[]
               );
             })}
           </ul>
-          <p className="mt-3 text-xs text-muted">
+          <p className="mt-3 ds-caption">
             Terrain only: the model is bare earth (USGS, about 33 ft resolution), so it cannot see your
             neighbor&apos;s oaks or the building across the street. &ldquo;Clear View&rdquo; means the
             mountains aren&apos;t your problem. We store, log, and track nothing: the math runs in your

@@ -10,14 +10,14 @@ export default async function CompositeForecast() {
   if (!c) return null;
   return (
     <div className="text-center">
-      <div className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted">
+      <div className="ds-kicker text-muted">
         {copy.index.title} | {c.dateLabel}
       </div>
-      <div className="mt-1 font-display text-2xl font-bold text-foreground sm:text-3xl">
+      <div className="mt-1 ds-stat text-foreground">
         High {c.high}° <span className="text-muted/60">|</span> Low {c.low}° <span className="text-muted/60">|</span> {c.precipLabel}
       </div>
-      <div className="mt-1 text-xs text-muted">{copy.index.footnote(c.count)}</div>
-      <div className="mt-1 text-xs italic text-muted">{copy.index.tagline}</div>
+      <div className="mt-1 ds-caption">{copy.index.footnote(c.count)}</div>
+      <div className="mt-1 ds-caption italic">{copy.index.tagline}</div>
     </div>
   );
 }

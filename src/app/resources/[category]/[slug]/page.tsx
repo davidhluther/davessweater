@@ -69,8 +69,8 @@ export default async function Page({ params }: { params: Promise<{ category: str
         <Link href={def?.href ?? "/resources"} className="text-sm text-orange-600 hover:underline underline-offset-2">
           &larr; All {def?.label.toLowerCase() ?? "resources"}
         </Link>
-        <h1 className="mt-3 font-display text-3xl font-extrabold text-foreground">{post.title}</h1>
-        {post.date && <p className="mt-1 text-sm text-muted">{fmtLongDate(post.date)}</p>}
+        <h1 className="mt-3 ds-h1 text-foreground">{post.title}</h1>
+        {post.date && <p className="mt-1 ds-body text-muted">{fmtLongDate(post.date)}</p>}
         <PostBody post={post} />
       </article>
     </SectionBand>

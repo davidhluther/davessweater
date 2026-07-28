@@ -28,9 +28,9 @@ function ForecastCard({ day, label }: { day: RoadDay; label: string }) {
   const tone = levelDisplay(day.level).tone;
   return (
     <div className="rounded-lg border border-border bg-background p-4">
-      <p className="text-xs font-medium uppercase tracking-wide text-muted">{label}</p>
-      <p className={`mt-1 font-display text-3xl font-bold ${TONE_TEXT[tone]}`}>{day.level}</p>
-      <p className="mt-1 text-sm text-muted">{day.reason}</p>
+      <p className="ds-kicker text-muted">{label}</p>
+      <p className={`mt-1 ds-stat ${TONE_TEXT[tone]}`}>{day.level}</p>
+      <p className="mt-1 ds-body text-muted">{day.reason}</p>
     </div>
   );
 }
@@ -57,7 +57,7 @@ export default function RoadConditionsBlock({
   return (
     <>
       <SectionBand tone="light">
-        <h2 className="font-display text-xl font-bold">Tomorrow&apos;s road-condition forecast</h2>
+        <h2 className="ds-h2">Tomorrow&apos;s road-condition forecast</h2>
         {tomorrow ? (
           <>
             <div className="mt-3">
@@ -76,7 +76,7 @@ export default function RoadConditionsBlock({
                 })}
               </ul>
             )}
-            <p className="mt-3 text-xs text-muted">
+            <p className="mt-3 ds-caption">
               Our surface call from the snow, ice, and temperature we already forecast &mdash; then we{" "}
               <Link href="/methodology#roads" className="text-teal underline underline-offset-2">
                 grade ourselves
@@ -85,15 +85,15 @@ export default function RoadConditionsBlock({
             </p>
           </>
         ) : (
-          <p className="mt-2 text-sm text-muted">No forecast available right now.</p>
+          <p className="mt-2 ds-body text-muted">No forecast available right now.</p>
         )}
       </SectionBand>
 
       <SectionBand tone="surface">
-        <h2 className="font-display text-xl font-bold">
+        <h2 className="ds-h2">
           Current conditions
           {fresh && conditions?.fetched_at && (
-            <span className="ml-2 align-middle text-xs font-normal text-muted">
+            <span className="ml-2 align-middle ds-caption font-normal">
               as of {new Date(conditions.fetched_at).toLocaleString("en-US", {
                 dateStyle: "medium",
                 timeStyle: "short",
@@ -102,7 +102,7 @@ export default function RoadConditionsBlock({
           )}
         </h2>
         {!fresh ? (
-          <p className="mt-2 text-sm text-muted">
+          <p className="mt-2 ds-body text-muted">
             Live road data is temporarily unavailable. For real-time conditions, see{" "}
             <a
               href="https://drivenc.gov"
@@ -116,15 +116,15 @@ export default function RoadConditionsBlock({
         ) : (
           <>
             {closures.length === 0 && otherIncidents.length === 0 && alerts.length === 0 ? (
-              <p className="mt-2 text-sm text-muted">
+              <p className="mt-2 ds-body text-muted">
                 No active closures, incidents, or Blue Ridge Parkway alerts reported for Watauga, Avery, or Ashe.
               </p>
             ) : (
               <div className="mt-2 space-y-4">
                 {closures.length > 0 && (
                   <div>
-                    <h3 className="text-sm font-semibold text-red-700">Road closures</h3>
-                    <ul className="mt-1 space-y-1 text-sm text-muted">
+                    <h3 className="ds-h4 text-red-700">Road closures</h3>
+                    <ul className="mt-1 space-y-1 ds-body text-muted">
                       {closures.map((i, k) => (
                         <li key={`c${k}`}>
                           <span className="font-medium text-foreground">{i.road ?? "Road"}</span>
@@ -136,8 +136,8 @@ export default function RoadConditionsBlock({
                 )}
                 {alerts.length > 0 && (
                   <div>
-                    <h3 className="text-sm font-semibold text-foreground">Blue Ridge Parkway</h3>
-                    <ul className="mt-1 space-y-1 text-sm text-muted">
+                    <h3 className="ds-h4 text-foreground">Blue Ridge Parkway</h3>
+                    <ul className="mt-1 space-y-1 ds-body text-muted">
                       {alerts.map((a, k) => (
                         <li key={`p${k}`}>
                           <span className="font-medium text-foreground">{a.title ?? "Alert"}</span>
@@ -149,10 +149,10 @@ export default function RoadConditionsBlock({
                 )}
                 {otherIncidents.length > 0 && (
                   <div>
-                    <h3 className="text-sm font-semibold text-foreground">
+                    <h3 className="ds-h4 text-foreground">
                       Roadwork &amp; incidents ({otherIncidents.length})
                     </h3>
-                    <ul className="mt-1 space-y-1 text-sm text-muted">
+                    <ul className="mt-1 space-y-1 ds-body text-muted">
                       {otherIncidents.slice(0, 8).map((i, k) => (
                         <li key={`i${k}`}>
                           <span className="font-medium text-foreground">{i.road ?? "Road"}</span>
@@ -161,7 +161,7 @@ export default function RoadConditionsBlock({
                       ))}
                     </ul>
                     {otherIncidents.length > 8 && (
-                      <p className="mt-1 text-xs text-muted">
+                      <p className="mt-1 ds-caption">
                         &hellip;and {otherIncidents.length - 8} more. Full list at DriveNC.gov.
                       </p>
                     )}
@@ -169,7 +169,7 @@ export default function RoadConditionsBlock({
                 )}
               </div>
             )}
-            <p className="mt-3 text-xs text-muted">
+            <p className="mt-3 ds-caption">
               Source: NCDOT{" "}
               <a
                 href="https://drivenc.gov"
@@ -186,9 +186,9 @@ export default function RoadConditionsBlock({
 
       {scores && scores.days.length > 0 && (
         <SectionBand tone="light">
-          <h2 className="font-display text-xl font-bold">How our road forecast is scoring</h2>
+          <h2 className="ds-h2">How our road forecast is scoring</h2>
           {scores.average != null ? (
-            <p className="mt-1 text-sm text-muted">
+            <p className="mt-1 ds-body text-muted">
               Average accuracy so far:{" "}
               <strong className="text-foreground">{scores.average}/100</strong> over {scores.days.length} scored{" "}
               {scores.days.length === 1 ? "day" : "days"}.

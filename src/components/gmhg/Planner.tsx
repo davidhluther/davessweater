@@ -280,7 +280,7 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
     <div className="mx-auto w-full max-w-3xl px-4 py-8">
       {/* How to use this */}
       <div className="print:hidden mb-5 rounded-lg border border-teal-700/20 bg-teal-50 p-4 text-sm">
-        <p className="font-display font-bold text-teal-900">How to use this</p>
+        <p className="ds-h4 text-teal-900">How to use this</p>
         <ol className="mt-1.5 ml-4 list-decimal space-y-1 text-teal-800">
           <li>Filter by type if you like, then tap the events you want, one day at a time.</li>
           <li>Your picks assemble under <a href="#your-plan" className="font-semibold text-orange-600 underline underline-offset-2">Your plan</a> below, with an arrive-by time, a field map with your stops pinned, and an itinerary for each day.</li>
@@ -348,12 +348,12 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
       {/* Compact four-day forecast, under the day selection */}
       <div className="print:hidden mt-3 rounded-xl border border-border bg-surface p-3">
         <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-          <h2 className="font-display text-sm font-bold">Weather at the field</h2>
+          <h2 className="ds-h4">Weather at the field</h2>
           {checkedAt && <span className="text-[0.7rem] text-muted">Checked {checkedAt}</span>}
         </div>
-        {fcStatus === "loading" && <p className="mt-1 text-xs text-muted">Checking the mountain forecast...</p>}
+        {fcStatus === "loading" && <p className="mt-1 ds-caption">Checking the mountain forecast...</p>}
         {fcStatus === "error" && (
-          <p className="mt-1 text-xs text-muted">Forecast unavailable right now. It runs cool, windy, and changeable up here, so pack layers and rain gear.</p>
+          <p className="mt-1 ds-caption">Forecast unavailable right now. It runs cool, windy, and changeable up here, so pack layers and rain gear.</p>
         )}
         {forecast && (
           <div className="mt-2 grid grid-cols-4 gap-1.5">
@@ -393,16 +393,16 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
 
       {/* Timeline for the active day (picking) */}
       <div className="print:hidden mt-4">
-        <h2 className="font-display text-xl font-bold">{DAY_LABEL[activeDay]}, July {Number(activeDay.slice(-2))}</h2>
+        <h2 className="ds-h2">{DAY_LABEL[activeDay]}, July {Number(activeDay.slice(-2))}</h2>
         {context.length > 0 && (
-          <p className="mt-1 text-xs text-muted">
+          <p className="mt-1 ds-caption">
             {context.map((c, i) => (
               <span key={eventId(c)}>{i > 0 && " | "}{fmtClockStr(c.start)} {c.title}</span>
             ))}
           </p>
         )}
         {slots.length === 0 ? (
-          <p className="mt-3 text-sm text-muted">No {filter !== "all" && filter !== "highlights" ? `${filter} ` : filter === "highlights" ? "highlight " : ""}events on this day.</p>
+          <p className="mt-3 ds-body text-muted">No {filter !== "all" && filter !== "highlights" ? `${filter} ` : filter === "highlights" ? "highlight " : ""}events on this day.</p>
         ) : (
           <ol className="mt-3">
             {slots.map(([start, evs], si) => {
@@ -426,7 +426,7 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
                             <span className="text-sm font-semibold text-foreground">{e.title}</span>
                             <span aria-hidden className={`mt-0.5 shrink-0 rounded px-1 text-[0.6rem] font-bold uppercase ${cl.text}`}>{cap(e.category)}</span>
                           </div>
-                          <div className="mt-0.5 text-xs text-muted">{e.venue}</div>
+                          <div className="mt-0.5 ds-caption">{e.venue}</div>
                           {badge && (
                             <div title={transitionText(badge)}
                               className={`mt-1.5 inline-block rounded px-1.5 py-0.5 text-[0.65rem] font-semibold ${STATUS_UI[badge.status].cls}`}>
@@ -448,7 +448,7 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
       {/* Consolidated plan: every selected day, stacked Thursday to Sunday */}
       <div id="your-plan" className="print:hidden mt-8 scroll-mt-20">
         <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-          <h2 className="font-display text-xl font-bold">Your plan</h2>
+          <h2 className="ds-h2">Your plan</h2>
           {planDays.length > 0 && (
             <span className="flex flex-wrap gap-2 text-sm font-medium">
               <a href="#pick" className="rounded-full border border-teal-700/30 bg-teal-50 px-2.5 py-1 text-teal-900 hover:bg-teal-100">↑ Add another day</a>
@@ -457,10 +457,10 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
           )}
         </div>
         {planDays.length === 0 ? (
-          <p className="mt-2 text-sm text-muted">Pick events above and your trip assembles here: Arrive-by times, the right lot, walk warnings, a map, and a packing list for each day.</p>
+          <p className="mt-2 ds-body text-muted">Pick events above and your trip assembles here: Arrive-by times, the right lot, walk warnings, a map, and a packing list for each day.</p>
         ) : (
           <>
-            <p className="mt-1 text-xs text-muted">
+            <p className="mt-1 ds-caption">
               &ldquo;Leave by&rdquo; times start from <strong className="text-foreground">{ORIGIN_LABELS[origin]}</strong> and include the
               drive to the lot, the shuttle line, the ride up, and the walk to your first event.
             </p>
@@ -474,14 +474,14 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
                 const packing = packingFor(fc, hasEarlyOrLate);
                 return (
                   <section key={day} className="rounded-xl border border-border bg-surface p-4">
-                    <h3 className="font-display text-base font-bold">{DAY_LABEL[day]}, July {Number(day.slice(-2))}</h3>
+                    <h3 className="ds-h4">{DAY_LABEL[day]}, July {Number(day.slice(-2))}</h3>
                     {fc && (
-                      <p className="mt-0.5 text-xs text-muted">Forecast: High {num(fc.tempMaxF)}° | Low {num(fc.tempMinF)}° | Rain {num(fc.precipProbMaxPct)}%{fc.uvIndexMax != null ? ` | UV ${num(fc.uvIndexMax)}` : ""}</p>
+                      <p className="mt-0.5 ds-caption">Forecast: High {num(fc.tempMaxF)}° | Low {num(fc.tempMinF)}° | Rain {num(fc.precipProbMaxPct)}%{fc.uvIndexMax != null ? ` | UV ${num(fc.uvIndexMax)}` : ""}</p>
                     )}
                     {plan?.concertOnly ? (
                       <p className="mt-1 text-sm text-foreground"><strong>Concert night.</strong> Drive up onto MacRae Meadows after 5 PM (gates 6 PM). No shuttle, no lot.</p>
                     ) : plan && (
-                      <p className="mt-1 text-sm text-muted">
+                      <p className="mt-1 ds-body text-muted">
                         {plan.leaveByMin != null && <>Leave {ORIGIN_LABELS[origin]} by <strong className="text-foreground tabular-nums">{fmtClock(plan.leaveByMin)}</strong> | </>}
                         {plan.lot && <>Park at <strong className="text-foreground">{plan.lot}</strong>{plan.alternateLots.length > 0 && <span className="text-muted"> (or {plan.alternateLots.join(", ")})</span>} | </>}
                         Shuttle $10/seat, cards or cash
@@ -514,7 +514,7 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
                         <FieldMap pins={pointsForDay(evs, !!plan?.concertOnly, accessible)} />
                       </div>
                     </div>
-                    <p className="mt-2 text-xs text-muted"><strong className="text-foreground">Pack:</strong> {packing}</p>
+                    <p className="mt-2 ds-caption"><strong className="text-foreground">Pack:</strong> {packing}</p>
                     {!plan?.concertOnly && last && (
                       <p className="mt-1.5 rounded bg-background px-2 py-1 text-xs font-semibold text-orange-600">
                         Last shuttle back leaves {last}. Do not get stranded on the mountain.
@@ -530,12 +530,12 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
               {cost.shuttleDays > 0 && (
                 <div className="rounded-xl border border-orange-600/30 bg-background p-4">
                   <p className="text-sm"><strong className="text-orange-600">Shuttle total: ${cost.totalUsd}</strong></p>
-                  <p className="mt-0.5 text-xs text-muted">$10 × {partySize} {partySize === 1 ? "person" : "people"} × {cost.shuttleDays} {cost.shuttleDays === 1 ? "day" : "days"}, round trip. Cards or cash at the lot.</p>
+                  <p className="mt-0.5 ds-caption">$10 × {partySize} {partySize === 1 ? "person" : "people"} × {cost.shuttleDays} {cost.shuttleDays === 1 ? "day" : "days"}, round trip. Cards or cash at the lot.</p>
                 </div>
               )}
 
               <div id="save-print" className="scroll-mt-20 space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted">Save or print your plan</p>
+                <p className="ds-kicker text-muted">Save or print your plan</p>
                 <button onClick={makeImage}
                   className="w-full rounded-lg bg-orange-600 px-3 py-2.5 text-sm font-bold text-white hover:bg-[#9a3412]">
                   Save my plan as an image
@@ -555,7 +555,7 @@ export default function Planner({ events, meta }: { events: GmhgEvent[]; meta: G
               {imgUrl && (
                 <div className="rounded-lg border border-border bg-background p-3">
                   <p className="text-sm font-semibold text-foreground">Your plan, ready to save</p>
-                  <p className="mt-0.5 text-xs text-muted">Press and hold the image to save it to your phone, or right-click and choose Save image.</p>
+                  <p className="mt-0.5 ds-caption">Press and hold the image to save it to your phone, or right-click and choose Save image.</p>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={imgUrl} alt="Your Highland Games plan" className="mt-2 w-full rounded border border-border" />
                   <div className="mt-2 flex items-center gap-3">
@@ -589,6 +589,10 @@ function PrintSheet({
 }) {
   const days = DAY_ORDER.filter((d) => events.some((e) => e.day === d));
   if (events.length === 0) return null;
+  // Print one-pager: deliberately off the ds-* ladder. The `.gmhg-print` rule
+  // in globals.css forces a serif at a legible point size for paper (the
+  // display face renders a lowercase "l" as a bare bar), so a display-face
+  // heading token here would just be overridden.
   return (
     <div className="gmhg-print hidden print:block">
       <h1 className="text-2xl font-bold">Your Grandfather Mountain Highland Games Plan, 2026</h1>

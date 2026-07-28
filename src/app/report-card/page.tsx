@@ -38,8 +38,8 @@ export default async function Page() {
           &larr; All resources
         </Link>
       </p>
-      <h1 className="mt-3 mb-1 font-display text-2xl font-bold text-foreground">Ray&apos;s Weather Report Card</h1>
-      <p className="mb-6 text-sm text-muted">
+      <h1 className="mt-3 mb-1 ds-h1 text-foreground">Ray&apos;s Weather Report Card</h1>
+      <p className="mb-6 ds-body text-muted">
         Every month, scored: how each Boone forecaster did against what the weather actually did. Free, with receipts.
       </p>
       {cards.length === 0 ? (
@@ -48,13 +48,13 @@ export default async function Page() {
         <ul className="space-y-5">
           {cards.map((c) => (
             <li key={c.reportMonth} className="border-b border-border pb-5 last:border-0">
-              <p className="text-xs font-bold uppercase tracking-wider text-orange-600">{fmtLongMonth(c.reportMonth)}</p>
-              <h2 className="mt-0.5 text-xl font-semibold">
+              <p className="ds-kicker text-orange-600">{fmtLongMonth(c.reportMonth)}</p>
+              <h2 className="mt-0.5 ds-h3">
                 <Link href={`/report-card/${c.reportMonth}`} className="text-orange-600 hover:underline underline-offset-2">
                   {c.title}
                 </Link>
               </h2>
-              {c.summary && <p className="mt-1 text-sm text-muted">{c.summary}</p>}
+              {c.summary && <p className="mt-1 ds-body text-muted">{c.summary}</p>}
             </li>
           ))}
         </ul>

@@ -168,10 +168,10 @@ export default async function Page() {
         />
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-teal-900 via-teal-900/85 to-teal-900/45" />
         <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:py-12">
-          <p className="text-xs font-bold uppercase tracking-wider text-orange-300">
+          <p className="ds-kicker text-orange-300">
             The High Country events desk | July 9–12, 2026
           </p>
-          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+          <h1 className="mt-1 ds-h1">
             Grandfather Mountain Highland Games 2026: Schedule, Parking & Day Planner
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-white/80">
@@ -202,8 +202,8 @@ export default async function Page() {
       {/* Logistics answer-blocks — the earnest facts, rendered from the dataset */}
       <div className="print:hidden">
       <SectionBand tone="surface" id="logistics" className="max-w-4xl">
-        <h2 className="font-display text-2xl font-bold">Parking, Shuttle & the 5 PM Cutover</h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
+        <h2 className="ds-h2">Parking, Shuttle & the 5 PM Cutover</h2>
+        <p className="mt-1 max-w-2xl ds-body text-muted">
           There is no general daytime parking at MacRae Meadows. You park off-site and shuttle in, and
           the lots that run change by day. Below is exactly which lots run when.
         </p>
@@ -230,7 +230,7 @@ export default async function Page() {
             </tbody>
           </table>
         </div>
-        <ul className="mt-4 max-w-2xl space-y-2 text-sm text-muted">
+        <ul className="mt-4 max-w-2xl space-y-2 ds-body text-muted">
           <li><strong className="text-foreground">Cards or cash.</strong> The shuttle is $10 per seat, round trip, paid at the lot — the attendants take cards now, so you no longer have to hunt down an ATM in town first.</li>
           <li><strong className="text-foreground">Concert nights are different.</strong> Friday and Saturday after 5 PM, the public may drive up and park on MacRae Meadows itself; gates 2 and 3 open at 6 PM, concert 6:30–10 PM. No shuttle.</li>
           <li><strong className="text-foreground">Accessible transport</strong> runs from Newland Elementary (Fri–Sun) and Avery County HS (Thu); one companion may ride along. Golf-cart help on the field from GMHG personnel.</li>
@@ -239,8 +239,8 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="light" id="good-to-know" className="max-w-3xl">
-        <h2 className="font-display text-2xl font-bold">Good to Know Before You Go</h2>
-        <ul className="mt-3 max-w-2xl space-y-2 text-sm text-muted">
+        <h2 className="ds-h2">Good to Know Before You Go</h2>
+        <ul className="mt-3 max-w-2xl space-y-2 ds-body text-muted">
           <li><strong className="text-foreground">There is an EMS and First Aid tent</strong> on the field. Find the red cross near the center of the meadow.</li>
           <li><strong className="text-foreground">Cards work just about everywhere now.</strong> Vendors, ticket booths, and — as of this year — the shuttle all take card readers. Cash still works as a backup.</li>
           <li><strong className="text-foreground">There is little shelter from rain.</strong> Beyond the Patron tent, your options are the vendor tents and the trees, so pack a poncho and plan to ride out a passing shower.</li>
@@ -251,8 +251,8 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="light" id="field-map" className="max-w-4xl">
-        <h2 className="font-display text-2xl font-bold">The MacRae Meadows Field Map</h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
+        <h2 className="ds-h2">The MacRae Meadows Field Map</h2>
+        <p className="mt-1 max-w-2xl ds-body text-muted">
           Where everything sits: The oval track and East Meadow in the center, Highland Dancing and the
           Review Stand along the top, the Celtic Groves and Alex Beaton stage and bagpiping to the east,
           and the Gaelic, Children&apos;s, and Cultural Village tents to the south. Build a plan above and
@@ -261,27 +261,27 @@ export default async function Page() {
         <div className="mt-4">
           <FieldMap />
         </div>
-        <p className="mt-2 text-xs text-muted">
+        <p className="mt-2 ds-caption">
           Official field map, courtesy of the Grandfather Mountain Highland Games (gmhg.org). The layout is
           typical from year to year; confirm on site.
         </p>
       </SectionBand>
 
       <SectionBand tone="light" id="faq" className="max-w-3xl">
-        <h2 className="font-display text-2xl font-bold">Questions People Actually Ask</h2>
+        <h2 className="ds-h2">Questions People Actually Ask</h2>
         <div className="mt-3 space-y-5">
           {FAQS.map((f) => (
             <div key={f.id} id={f.id}>
-              <h3 className="font-display text-base font-bold">{f.q}</h3>
-              <p className="mt-1 text-sm text-muted">{f.a}</p>
+              <h3 className="ds-h4">{f.q}</h3>
+              <p className="mt-1 ds-body text-muted">{f.a}</p>
             </div>
           ))}
         </div>
       </SectionBand>
 
       <SectionBand tone="surface" className="max-w-3xl">
-        <h2 className="font-display text-2xl font-bold">How the Planner Figures It</h2>
-        <p className="mt-1 text-sm text-muted">
+        <h2 className="ds-h2">How the Planner Figures It</h2>
+        <p className="mt-1 ds-body text-muted">
           Times come straight from the gmhg.org schedule (verified July 2026). Arrive-by works backward
           from your earliest pick: Drive time to the nearest running lot, the shuttle line, the ride up,
           and the walk to your first event, all named tunable estimates, surfaced as guidance rather than a
@@ -291,7 +291,7 @@ export default async function Page() {
           pulled live for MacRae Meadows’ own coordinates at about 4,300 feet, so treat the temperatures as
           directional, since the model smooths the terrain. And Grandfather, reliably, makes its own weather.
         </p>
-        <p className="mt-4 text-xs text-muted">
+        <p className="mt-4 ds-caption">
           More from the events desk:{" "}
           <Link href="/reports/fireworks-fourth-july-2026" className="text-teal underline underline-offset-2">
             the Boone Fourth of July fireworks report

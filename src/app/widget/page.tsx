@@ -100,6 +100,10 @@ export default async function WidgetPage({
         <span className="truncate font-semibold" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
           {town?.name ?? slug}
         </span>
+        {/* The embed runs its own compact scale, not the site's ds-* ladder:
+            this markup renders inside someone else's page at an iframe height
+            we advertise, so its type is sized to that box rather than to our
+            pages. Keep it self-contained. */}
         <span className="shrink-0 text-[11px] uppercase tracking-wide text-orange-300">Dave&apos;s Sweater Index</span>
       </div>
 

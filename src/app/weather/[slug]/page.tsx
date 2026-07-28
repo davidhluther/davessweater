@@ -108,17 +108,17 @@ export default async function TownWeatherPage({ params }: { params: Promise<{ sl
       {/* Hero band — same teal dialect as the tracker header, with the switcher */}
       <section className="w-full bg-teal-700 text-white">
         <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:py-12">
-          <div className="text-xs font-bold uppercase tracking-wider text-orange-300">
+          <div className="ds-kicker text-orange-300">
             {town.county ? `${town.county} County` : "High Country"} | {town.elevation_ft.toLocaleString()} ft
           </div>
-          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">{town.name} weather</h1>
+          <h1 className="mt-1 ds-h1">{town.name} weather</h1>
           <p className="mt-2 max-w-2xl text-sm text-white/70">
             A real {town.name} forecast, not a stamped regional copy. Every source we track, pulled at{" "}
             {town.name}&apos;s own coordinates, blended into one consensus and graded daily against{" "}
             {town.name}&apos;s own actuals.
           </p>
           <div className="mt-5">
-            <div className="mb-2 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-white/60">Switch town</div>
+            <div className="mb-2 ds-kicker text-white/60">Switch town</div>
             <TownSwitcher current={slug} base="weather" />
           </div>
         </div>
@@ -141,32 +141,32 @@ export default async function TownWeatherPage({ params }: { params: Promise<{ sl
             <div className="rounded-2xl border border-border bg-surface px-4 py-6 sm:px-8 sm:py-8">
               {/* Today's consensus — the Dave's Sweater Index at this town's coordinates */}
               <div className="text-center">
-                <div className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted">
+                <div className="ds-kicker text-muted">
                   {copy.index.title} | {composite.dateLabel}
                 </div>
-                <div className="mt-1 font-display text-2xl font-bold text-foreground sm:text-3xl">
+                <div className="mt-1 ds-stat text-foreground">
                   High {composite.high}° <span className="text-muted/60">|</span> Low {composite.low}° <span className="text-muted/60">|</span> {composite.precipLabel}
                 </div>
-                <div className="mt-1 text-xs text-muted">{copy.index.footnote(composite.count)}</div>
+                <div className="mt-1 ds-caption">{copy.index.footnote(composite.count)}</div>
                 <div className="mt-1 text-xs italic text-muted">{copy.index.tagline}</div>
               </div>
 
               {sweater && (
                 <>
                   <div className="my-6 border-t border-border" />
-                  <h2 className="mb-3 text-center font-display text-lg font-bold sm:text-xl">Sweater Weather Index</h2>
+                  <h2 className="mb-3 text-center ds-h3">Sweater Weather Index</h2>
                   <div className="text-center">
                     <div className="flex justify-center gap-0.5" role="img" aria-label={`${sweater.score} of 5 sweaters`}>
                       {sweaterIcons(sweater.score)}
                     </div>
                     <p className="mx-auto mt-3 max-w-md text-sm font-medium text-foreground">{sweater.verdict}</p>
-                    <p className="mt-1 text-xs text-muted">Layers to consider: {sweater.layers}</p>
+                    <p className="mt-1 ds-caption">Layers to consider: {sweater.layers}</p>
                   </div>
                 </>
               )}
             </div>
           ) : (
-            <div className="rounded-2xl border border-border bg-surface px-4 py-6 text-center text-sm text-muted sm:px-8 sm:py-8">
+            <div className="rounded-2xl border border-border bg-surface px-4 py-6 text-center ds-body text-muted sm:px-8 sm:py-8">
               Forecast capture for {town.name} is just getting started. Check back shortly.
             </div>
           )}
@@ -179,9 +179,9 @@ export default async function TownWeatherPage({ params }: { params: Promise<{ sl
 
       {today && (
         <SectionBand tone="light">
-          <h2 className="font-display mb-1 text-2xl font-bold">What they&apos;re predicting for {town.name}</h2>
+          <h2 className="mb-1 ds-h2">What they&apos;re predicting for {town.name}</h2>
           <UpcomingForecasts data={today} />
-          <p className="mt-4 text-sm text-muted">
+          <p className="mt-4 ds-body text-muted">
             See how each of these did once the day is in the books:{" "}
             <Link href={`/right-wrong-ray/${slug}`} className="text-teal underline underline-offset-2">
               {town.name}&apos;s accuracy board

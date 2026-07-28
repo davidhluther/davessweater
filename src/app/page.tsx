@@ -56,7 +56,7 @@ export default async function HomePage() {
           <div className="rounded-2xl border border-border bg-surface px-4 py-6 sm:px-8 sm:py-8">
             <CompositeForecast />
             <div className="my-6 border-t border-border" />
-            <h2 className="mb-3 text-center font-display text-lg font-bold sm:text-xl">Sweater Weather Index</h2>
+            <h2 className="mb-3 text-center ds-h3">Sweater Weather Index</h2>
             <LiveConditions
               initialScore={sw.sweater_count ?? 0}
               initialVerdict={sw.detail ?? sw.answer ?? ""}
@@ -76,7 +76,7 @@ export default async function HomePage() {
 
       {h2h && (
         <SectionBand tone="surface">
-          <h2 className="mb-3 font-display text-lg font-bold sm:text-xl">Yesterday in Boone | {fmtLongDate(h2h.date)}</h2>
+          <h2 className="mb-3 ds-h3">Yesterday in Boone | {fmtLongDate(h2h.date)}</h2>
           <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-start">
             <div>
               <HeadToHeadCard h={h2h} />
@@ -86,7 +86,7 @@ export default async function HomePage() {
             </div>
             <figure className="mx-auto shrink-0 md:mx-0">
               <IphoneShot />
-              <figcaption className="mt-2 max-w-[13rem] text-xs text-muted">{copy.hero.iphoneAside}</figcaption>
+              <figcaption className="mt-2 max-w-[13rem] ds-caption">{copy.hero.iphoneAside}</figcaption>
             </figure>
           </div>
         </SectionBand>

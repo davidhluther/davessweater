@@ -39,10 +39,16 @@ export default function LiveConditions({
   return (
     <div className="text-center">
       <div className="mb-2 flex justify-center gap-1" role="img" aria-label={`${s.score} of 5 sweaters`}>{icons(s.score)}</div>
-      <div className="font-display text-4xl font-extrabold">{s.temp}{s.high ? <span className="ml-2 align-middle font-sans text-sm font-normal text-muted">now</span> : null}</div>
-      {highLine ? <div className="mt-0.5 text-xs text-muted">{highLine}</div> : null}
+      {/* One-off size: the current temperature is the single largest readout on
+          the site — it is the answer to the question the site is named after —
+          so it takes `text-4xl` over the ds-stat token rather than the token's
+          2xl/3xl. Face, weight and lining figures still come from the scale. */}
+      <div className="ds-stat text-4xl">{s.temp}{s.high ? <span className="ml-2 align-middle font-sans text-sm font-normal text-muted">now</span> : null}</div>
+      {highLine ? <div className="mt-0.5 ds-caption">{highLine}</div> : null}
+      {/* The verdict is a sentence, not a heading — prose emphasis, so it stays
+          on the body face and off the heading ladder. */}
       <p className="mt-2.5 text-lg font-semibold">{s.verdict}</p>
-      {s.layers ? <p className="mt-0.5 text-sm text-muted"><strong>Recommended layers:</strong> {s.layers}</p> : null}
+      {s.layers ? <p className="mt-0.5 ds-body text-muted"><strong>Recommended layers:</strong> {s.layers}</p> : null}
     </div>
   );
 }
