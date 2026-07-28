@@ -229,15 +229,15 @@ export default async function Page() {
             <div className="mt-5 grid grid-cols-3 gap-3 sm:max-w-md">
               <div className="rounded-xl border border-border bg-background px-3 py-3">
                 <div className="font-display text-2xl font-bold sm:text-3xl tabular-nums">{dsiRow.avg.toFixed(1)}</div>
-                <div className="mt-0.5 text-xs text-muted">season avg / 100</div>
+                <div className="mt-0.5 text-xs text-muted">Season avg / 100</div>
               </div>
               <div className="rounded-xl border border-border bg-background px-3 py-3">
                 <div className="font-display text-2xl font-bold sm:text-3xl tabular-nums">{dsiRow.record.split(" ")[0]}</div>
-                <div className="mt-0.5 text-xs text-muted">graded Right</div>
+                <div className="mt-0.5 text-xs text-muted">Graded Right</div>
               </div>
               <div className="rounded-xl border border-border bg-background px-3 py-3">
                 <div className="font-display text-2xl font-bold sm:text-3xl tabular-nums">{dsiRow.days}</div>
-                <div className="mt-0.5 text-xs text-muted">days scored</div>
+                <div className="mt-0.5 text-xs text-muted">Days scored</div>
               </div>
             </div>
             {dsiScored && (
@@ -288,9 +288,9 @@ export default async function Page() {
             The same 100-point grading, applied to the forecast each source published up to five days
             ahead. The free forecasts win at every horizon, and the gap widens at days 3 and 4: Ray&apos;s
             extended days publish fewer scoreable fields, and under the published rules a blank earns
-            nothing. Our own <span className="font-semibold text-white">Dave&apos;s Sweater Index</span> (the
-            bold white line) stays near the top clear out to day five &mdash; a consensus barely fades when
-            no single source has to carry it.
+            nothing. Our own <span className="font-semibold text-white">Dave&apos;s Sweater Index</span>{" "}
+            (the bold white line) stays near the top clear out to day five, because a consensus barely fades
+            when no single source has to carry it.
           </p>
           <AccuracyDecayChart series={decay} />
           <p className="mt-2 text-xs">

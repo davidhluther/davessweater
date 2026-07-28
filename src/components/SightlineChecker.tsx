@@ -282,7 +282,7 @@ export default function SightlineChecker({ sky, spots }: { sky: CheckerShowSky[]
           </ul>
           <p className="mt-3 text-xs text-muted">
             Terrain only: the model is bare earth (USGS, about 33 ft resolution), so it cannot see your
-            neighbor&apos;s oaks or the building across the street. &quot;Clear View&quot; means the
+            neighbor&apos;s oaks or the building across the street. &ldquo;Clear View&rdquo; means the
             mountains aren&apos;t your problem. We store, log, and track nothing: the math runs in your
             browser, a typed address is converted to coordinates once by the US Census Bureau&apos;s public
             geocoder and then forgotten, and a shared location never leaves the page.

@@ -305,7 +305,7 @@ export default async function Page() {
             {`${SEASON.year} Fourth of July fireworks in Boone & the High Country`}
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-white/70">
-            Every listing in Watauga County says &quot;at dusk.&quot; Dusk is math: exact computed times, a
+            Every listing in Watauga County says &ldquo;at dusk.&rdquo; Dusk is math: exact computed times, a
             fireworks-specific forecast, and terrain sightlines for every show in Boone and the High Country.
           </p>
           {mode === "tonight" && tonight.length > 0 && (
@@ -327,7 +327,7 @@ export default async function Page() {
               re-verified next June.{" "}
               {nextYearPacket && (
                 <>Planning ahead: July 4, {SEASON.year + 1} sunset in Boone computes to{" "}
-                {fmtTime(nextYearPacket.sunset, NY_TZ)}. The listings will still say &quot;dusk.&quot;</>
+                {fmtTime(nextYearPacket.sunset, NY_TZ)}. The listings will still say &ldquo;dusk.&rdquo;</>
               )}
             </div>
           )}
@@ -408,7 +408,7 @@ export default async function Page() {
           {mode === "archive" ? `The ${SEASON.year} Shows` : `Boone Fireworks Forecast: Fourth of July | ${SEASON.year}`}
         </h2>
         <p className="mt-1 max-w-2xl text-sm text-muted">
-          Regular forecasts answer &quot;will it rain.&quot; Mountain fireworks die by other means (a low
+          Regular forecasts answer &ldquo;will it rain.&rdquo; Mountain fireworks die by other means (a low
           deck at burst height, valley fog, smoke over the crowd), so we call each show&apos;s sky from the
           hourly signals at its launch site.
         </p>
@@ -523,8 +523,8 @@ export default async function Page() {
         <p className="mt-3 text-sm text-white/70">
           *<strong className="text-white">Last Sun</strong>: when the sun drops behind the actual terrain
           west of each launch site (computed from a 33 ft-resolution elevation model; the flat-horizon
-          tables cannot tell you this). The field goes to shade well before the sky dims; it does not move &quot;dark
-          enough,&quot; which is sky-glow, not sunbeams.
+          tables cannot tell you this). The field goes to shade well before the sky dims; it does not move &ldquo;dark
+          enough,&rdquo; which is sky-glow, not sunbeams.
         </p>
         {boonePacket && (
           <p className="mt-3 text-sm text-white/70">
@@ -652,7 +652,7 @@ export default async function Page() {
                   {venue.officialWording === "—" ? (
                     <>No official start time published</>
                   ) : (
-                    <>Official start: &quot;{venue.officialWording}&quot;</>
+                    <>Official start: &ldquo;{venue.officialWording}&rdquo;</>
                   )}
                   {venue.clockTimeStated === null && packet.civilDuskEnd && (
                     <>, which computes to {readWindow(packet.civilDuskEnd)} here</>
@@ -803,18 +803,18 @@ export default async function Page() {
           Show details were checked against primary sources this season; while doing it, we found town
           calendar pages in three different towns still displaying 2024 or 2025 dates. Not malice, just
           copy-paste. It is also why this page checks years. Dusk math recomputes automatically every year,
-          forever. The listings will still say &quot;dusk.&quot;
+          forever. The listings will still say &ldquo;dusk.&rdquo;
         </p>
         <p className="mt-3 max-w-2xl text-sm text-muted">
           The sightline work runs on the same honesty: USGS bare-earth elevation (~33 ft resolution) via
           the open AWS terrain tiles, earth curvature with a standard refraction allowance, eye height
           ~6 ft above the local high ground, and a published ±{ftFromM50(MARGIN_NOISE_M)} ft noise band;
-          anything inside it says &quot;marginal,&quot; never a false yes. Known spots also carry an
+          anything inside it says &ldquo;marginal,&rdquo; never a false yes. Known spots also carry an
           environment tag: downtown and wooded locations pay a ~{ftFromM50(CLUTTER_PENALTY_M)} ft clutter
           allowance, because a bare-earth model that clears King Street by 40 ft has not met King
           Street&apos;s buildings. Typical municipal shells burst around {ftFromM50(BURST_TYPICAL_M)} ft
           up, finales near {ftFromM50(BURST_FINALE_M)} ft.
-          &quot;Last sun&quot; in the times table is the same terrain model pointed west: the minute the
+          &ldquo;Last sun&rdquo; in the times table is the same terrain model pointed west: the minute the
           ridgeline actually takes the sun off each launch field.
         </p>
       </SectionBand>
