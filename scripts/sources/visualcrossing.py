@@ -4,7 +4,7 @@ Keyed: reads VISUALCROSSING_KEY from env at runtime.
 fetch() -> list of normalized daily dicts (US units).
 """
 import os
-from sources import http_get_json, LAT, LON, derive_type
+from sources import http_get_json, LAT, LON, derive_type, to_percent
 
 
 def normalize_days(days):
@@ -50,6 +50,13 @@ def normalize_days(days):
         else:
             precip_type = derive_type(rain_in, snow_in)
 
+        # "precipprob (forecast only) — the likelihood of measurable
+        # precipitation ranging from 0% to 100%", already rolled up by Visual
+        # Crossing as the max of the day's hourly values, which is the same
+        # statistic every other adapter here reduces to. Absent on non-forecast
+        # (historical) pulls, where it forfeits.
+        precip_prob = to_percent(d.get("precipprob"))
+
         result.append({
             "date": date,
             "high_f": high_f,
@@ -58,6 +65,7 @@ def normalize_days(days):
             "precip_type": precip_type,
             "rain_in": rain_in,
             "snow_in": snow_in,
+            "precip_prob": precip_prob,
             "fields_provided": [
                 "high", "low", "wind", "precip_type", "rain_amount", "snow_amount"
             ],

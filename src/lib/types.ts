@@ -67,6 +67,9 @@ export interface ForecastDisplay {
   low_f: number | null;
   wind: string | null;
   precip_type: string | null;
+  /** Chance of precip, integer percent, from the sources that publish one.
+   *  Absent where the provider publishes none (Met.no, Ray's) — never zero-filled. */
+  precip_prob?: number;
 }
 export interface LatestForecasts {
   date: string;

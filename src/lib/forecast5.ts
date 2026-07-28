@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { ForecastDisplay } from "@/lib/types";
-import { compositeForecast } from "@/lib/composite";
+import { compositeForecast, precipChance } from "@/lib/composite";
 import { sweaterFromEffective } from "@/lib/sweater";
 import { fmtShortDate } from "@/lib/dates";
 
@@ -28,7 +28,7 @@ export interface Forecast5Day {
     sky?: string | null;
     /** Daytime hourly precip (6a–10p), present only on days with a real chance. */
     hourly?: RainHour[];
-    sources: Record<string, ForecastDisplay & { precip_prob?: number }>;
+    sources: Record<string, ForecastDisplay>;
   }[];
 }
 
@@ -55,8 +55,10 @@ export interface StripDay {
   sky?: string | null;
   /** Human label for the raw key. */
   precipLabel: string;
-  /** Highest precip chance among the contributing free forecasts, when any publishes one. */
+  /** Consensus precip chance (median) across the contributing free forecasts that publish one. */
   precipProb?: number;
+  /** How many contributing forecasts published a chance (≤ count). */
+  precipProbCount?: number;
   /** Short character line leading with sky + temp, qualifying precip (e.g. "Mostly sunny, warm"). */
   summary: string;
   /** Median wind across contributing sources, e.g. "12 mph". Omitted when no source publishes one. */
@@ -168,16 +170,14 @@ export function stripDays(f5: Forecast5Day | null, opts?: { max?: number; today?
     // them rather than render a one-source "composite".
     const c = compositeForecast(day);
     if (!c) continue;
-    // Chance shown is the HIGHEST precip_prob among the day's contributing
-    // free forecasts (a conservative display choice — "up to a 60% chance" —
-    // not part of scoring). Only contributing sources get a say, so Ray's and
-    // the Apple mirror can't leak a probability in. Omitted entirely when no
-    // contributor publishes one.
-    const probs = c.sources
-      .map((k) => day.sources[k]?.precip_prob)
-      .filter((p): p is number => typeof p === "number");
+    // Chance shown is the MEDIAN precip_prob across the day's contributing free
+    // forecasts — see precipChance() in src/lib/composite.ts for why a median
+    // and not the max this used to take. Only contributing sources get a say,
+    // so Ray's and the Apple mirror can't leak a probability in. Omitted
+    // entirely when no contributor publishes one.
+    const chance = precipChance(c.sources.map((k) => day.sources[k]?.precip_prob));
     const d = new Date(day.date + "T12:00:00"); // noon anchor: see src/lib/dates.ts
-    const maxProb = probs.length ? Math.max(...probs) : undefined;
+    const prob = chance?.pct;
     const windMph = medianWindMph(day.sources, c.sources);
     out.push({
       date: day.date,
@@ -188,8 +188,8 @@ export function stripDays(f5: Forecast5Day | null, opts?: { max?: number; today?
       precip: c.precip,
       ...(day.sky ? { sky: day.sky } : {}),
       precipLabel: c.precipLabel,
-      ...(maxProb != null ? { precipProb: maxProb } : {}),
-      summary: summarize(day.sky, c.high, c.precip, maxProb, windMph),
+      ...(chance ? { precipProb: chance.pct, precipProbCount: chance.count } : {}),
+      summary: summarize(day.sky, c.high, c.precip, prob, windMph),
       ...(windMph != null ? { wind: `${windMph} mph` } : {}),
       confidence: confidenceTier(day.sources, c.sources),
       // Timing bars only make sense on a day the consensus calls wet — a

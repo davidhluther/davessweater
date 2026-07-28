@@ -213,7 +213,7 @@ export function buildForecast5FromCaptures(
   location: string,
   generatedAt: string,
 ): Forecast5Day {
-  const byDate = new Map<string, Record<string, ForecastDisplay & { precip_prob?: number }>>();
+  const byDate = new Map<string, Record<string, ForecastDisplay>>();
   const order: string[] = [];
   for (const cap of captures) {
     for (const d of cap.daily ?? []) {
@@ -222,7 +222,7 @@ export function buildForecast5FromCaptures(
         byDate.set(d.date, {});
         order.push(d.date);
       }
-      const row: ForecastDisplay & { precip_prob?: number } = {
+      const row: ForecastDisplay = {
         label: cap.label ?? cap.source,
         high_f: typeof d.high_f === "number" ? d.high_f : null,
         low_f: typeof d.low_f === "number" ? d.low_f : null,

@@ -6,6 +6,7 @@
 // just shapes what a gated town returns.
 
 import type { StripDay } from "@/lib/forecast5";
+import { showsChance } from "@/lib/composite";
 import { fmtLongDate } from "@/lib/dates";
 
 // ── License / attribution (CC BY 4.0 — owner decision 2026-07-25) ──────────
@@ -120,12 +121,14 @@ export function moonSummary(name: string, fraction: number): string {
  * One compact, human, single-line summary of a day, brand pipe-separated:
  *   "High 74 | Low 55 | 40% rain | 2 sweaters"
  * Precip segment shows the consensus chance when a source publishes one, else
- * the precip label; a dry day reads "No precip". Sweater count pluralizes.
+ * the precip label. A dry day reads "No precip", and keeps its chance when
+ * there is one to keep: "No precip | 8% chance".
  */
 export function forecastLine(day: StripDay): string {
   const parts = [`High ${day.high}`, `Low ${day.low}`];
   if (day.precip === "none") {
     parts.push("No precip");
+    if (showsChance(day.precipProb)) parts.push(`${day.precipProb}% chance`);
   } else if (typeof day.precipProb === "number") {
     parts.push(`${day.precipProb}% ${precipWord(day.precip)}`);
   } else {
@@ -144,8 +147,10 @@ export interface ApiForecastDay {
   high_f: number;
   low_f: number;
   precip_type: string;
-  /** Consensus precip chance (%), when any contributing source publishes one. */
+  /** Consensus precip chance (%) — the median of the sources that publish one. */
   precip_chance: number | null;
+  /** How many of the day's forecasters published a chance (≤ dsi_sources). */
+  precip_chance_sources: number | null;
   sweaters: number;
   sweater_summary: string;
   /** The compact human line (same text the RSS items carry). */
@@ -174,6 +179,7 @@ export function toApiDay(day: StripDay): ApiForecastDay {
     low_f: day.low,
     precip_type: day.precip,
     precip_chance: typeof day.precipProb === "number" ? day.precipProb : null,
+    precip_chance_sources: typeof day.precipProbCount === "number" ? day.precipProbCount : null,
     sweaters: day.sweaters,
     sweater_summary: sweaterShort(day.sweaters),
     summary: forecastLine(day),

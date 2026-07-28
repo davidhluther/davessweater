@@ -8,7 +8,7 @@ periods[] alternates daytime / nighttime.  We pair each daytime period with
 the immediately following nighttime period for the low temperature.
 """
 import re
-from sources import http_get_json, LAT, LON
+from sources import http_get_json, LAT, LON, max_percent
 
 
 def _wind_mph(wind_speed_str):
@@ -23,6 +23,15 @@ _SNOW_PAT = re.compile(
 _RAIN_PAT = re.compile(
     r"\b(rain|shower|thunder|thunderstorm|drizzle|sprinkle)\b", re.I
 )
+
+
+def _pop(period):
+    """One period's PoP: `probabilityOfPrecipitation.value` (wmoUnit:percent).
+
+    The key is always present in the response, but its `value` is null on plenty
+    of periods — a real absence, so it forfeits rather than reading as 0%.
+    """
+    return ((period or {}).get("probabilityOfPrecipitation") or {}).get("value")
 
 
 def _precip_type(short_forecast, detailed_forecast):
@@ -55,15 +64,21 @@ def normalize_periods(periods):
 
         # Pair with the next period (the night) for low_f
         low_f = None
+        night = None
         if i + 1 < len(periods):
-            night = periods[i + 1]
-            if not night.get("isDaytime"):
+            nxt = periods[i + 1]
+            if not nxt.get("isDaytime"):
+                night = nxt
                 low_f = float(night["temperature"])
 
         date = p["startTime"][:10]
         high_f = float(p["temperature"])
         wind_mph = _wind_mph(p.get("windSpeed"))
         ptype = _precip_type(p.get("shortForecast"), p.get("detailedForecast"))
+        # The day and its paired night together span this row's calendar day
+        # (the same pairing that sources low_f from the night), so the day's
+        # chance is the max of the two periods' PoP.
+        precip_prob = max_percent([_pop(p), _pop(night)])
 
         days.append({
             "date": date,
@@ -73,6 +88,10 @@ def normalize_periods(periods):
             "precip_type": ptype,
             "rain_in": None,
             "snow_in": None,
+            "precip_prob": precip_prob,
+            # precip_prob is NOT claimed in fields_provided — nothing scores it.
+            # NWS's /forecast periods publish no numeric QPF at all (that lives
+            # in the raw gridpoint product), so the amounts stay forfeited.
             "fields_provided": ["high", "low", "wind", "precip_type"],
         })
     return days

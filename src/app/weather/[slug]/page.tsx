@@ -9,8 +9,8 @@ import { compositeForecast } from "@/lib/composite";
 import { sweaterFromEffective } from "@/lib/sweater";
 import { MIN_SCORED_DAYS } from "@/lib/gating";
 import { fmtLongDate } from "@/lib/dates";
-import { copy } from "@/content/copy";
 import SectionBand from "@/components/SectionBand";
+import CompositeHeadline from "@/components/CompositeHeadline";
 import FiveDayStrip from "@/components/FiveDayStrip";
 import UpcomingForecasts from "@/components/UpcomingForecasts";
 import TownSwitcher from "@/components/TownSwitcher";
@@ -139,17 +139,9 @@ export default async function TownWeatherPage({ params }: { params: Promise<{ sl
         <div className="mx-auto flex max-w-2xl flex-col gap-4 sm:gap-5">
           {composite ? (
             <div className="rounded-2xl border border-border bg-surface px-4 py-6 sm:px-8 sm:py-8">
-              {/* Today's consensus — the Dave's Sweater Index at this town's coordinates */}
-              <div className="text-center">
-                <div className="ds-kicker text-muted">
-                  {copy.index.title} | {composite.dateLabel}
-                </div>
-                <div className="mt-1 ds-stat text-foreground">
-                  High {composite.high}° <span className="text-muted/60">|</span> Low {composite.low}° <span className="text-muted/60">|</span> {composite.precipLabel}
-                </div>
-                <div className="mt-1 ds-caption">{copy.index.footnote(composite.count)}</div>
-                <div className="mt-1 text-xs italic text-muted">{copy.index.tagline}</div>
-              </div>
+              {/* Today's consensus — the Dave's Sweater Index at this town's
+                  coordinates, rendered by the same component as the homepage */}
+              <CompositeHeadline composite={composite} />
 
               {sweater && (
                 <>

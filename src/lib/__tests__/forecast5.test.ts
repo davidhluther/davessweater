@@ -74,12 +74,29 @@ describe("stripDays", () => {
     expect(out[1].dayLabel).toBe("Jul 12");
   });
 
-  it("precipProb is the max among contributing sources when any carries one, else omitted", () => {
+  it("precipProb is the median across contributing sources, with the contributor count", () => {
     const out = stripDays(f5, T0);
-    // max(60, 30) — metno's "none" vote still contributes its prob;
-    // raysweather's 99 is excluded with the source.
-    expect(out[0].precipProb).toBe(60);
+    // median(60, 30) = 45 — metno's "none" vote still contributes its prob,
+    // and raysweather's 99 is excluded along with the source. The old rule
+    // (max) would have published 60 here, the loudest of the three.
+    expect(out[0].precipProb).toBe(45);
+    expect(out[0].precipProbCount).toBe(2);
+    // No contributing source carries a prob -> both fields omitted, not zeroed.
     expect(out[1].precipProb).toBeUndefined();
+    expect(out[1].precipProbCount).toBeUndefined();
+  });
+
+  it("keeps single-source behavior: one contributor's number is published as-is", () => {
+    const single: Forecast5Day = {
+      generated_at: "", location: "Boone",
+      days: [{
+        date: "2026-07-10",
+        sources: { openmeteo: src(80, 60, "rain", 70), nws: src(84, 64, "rain") },
+      }],
+    };
+    const [day] = stripDays(single, T0);
+    expect(day.precipProb).toBe(70);
+    expect(day.precipProbCount).toBe(1);
   });
 
   it("sweater verdict follows the published band of the composite high", () => {

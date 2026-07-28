@@ -4,7 +4,7 @@ fetch() requires WEATHERAPI_KEY in the environment.
 normalize_forecastdays() is pure and unit-testable offline.
 """
 import os
-from sources import http_get_json, LAT, LON, derive_type
+from sources import http_get_json, LAT, LON, derive_type, max_percent
 
 
 def normalize_forecastdays(forecastday):
@@ -48,6 +48,14 @@ def normalize_forecastdays(forecastday):
         else:
             precip_type = "none"
 
+        # WeatherAPI publishes the chance already rolled up to the day, split
+        # rain vs snow ("Chance of rain as percentage" / "Chance of snow as
+        # percentage", int). One chance of *precip* is the higher of the two —
+        # they describe the same day, not two independent days. Both are
+        # forfeited together when neither key is present.
+        precip_prob = max_percent([day.get("daily_chance_of_rain"),
+                                   day.get("daily_chance_of_snow")])
+
         results.append({
             "date": date,
             "high_f": high_f,
@@ -56,6 +64,7 @@ def normalize_forecastdays(forecastday):
             "precip_type": precip_type,
             "rain_in": rain_in,
             "snow_in": snow_in,
+            "precip_prob": precip_prob,
             "fields_provided": ["high", "low", "wind", "precip_type", "rain_amount", "snow_amount"],
         })
 
