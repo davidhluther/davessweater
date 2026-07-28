@@ -40,6 +40,10 @@ export interface SolarQuery {
 
 export interface SolarPacket {
   query: Required<SolarQuery>;
+  /** Upper limb clearing the refracted sea-level horizon in the morning. Added
+   *  2026-07-28 for the embeddable widget's almanac line — same getTimes() call
+   *  the dusk fields already come from, no extra work. */
+  sunrise: Date | null;
   /** Null when the event doesn't occur that day (polar latitudes). */
   sunset: Date | null;
   civilDuskEnd: Date | null;
@@ -134,6 +138,7 @@ export function solarPacket(q: SolarQuery): SolarPacket {
   const noon = zonedTimeToUtcMs(date, 12, 0, tz);
 
   const t = SunCalc.getTimes(new Date(noon), lat, lon, elevationM);
+  const sunrise = validDate(t.sunrise);
   const sunset = validDate(t.sunset);
   const civilDuskEnd = validDate(t.dusk);
   const nauticalDuskEnd = validDate(t.nauticalDusk);
@@ -158,7 +163,7 @@ export function solarPacket(q: SolarQuery): SolarPacket {
   const illum = SunCalc.getMoonIllumination(civilDuskEnd ?? new Date(noon));
   return {
     query: { lat, lon, elevationM, date, tz },
-    sunset, civilDuskEnd, nauticalDuskEnd, astroDuskEnd,
+    sunrise, sunset, civilDuskEnd, nauticalDuskEnd, astroDuskEnd,
     moonrise, moonset,
     moon: { fraction: illum.fraction, phase: illum.phase, name: moonPhaseName(illum.phase) },
   };

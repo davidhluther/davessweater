@@ -14,7 +14,6 @@ import HeadToHeadCard from "@/components/HeadToHeadCard";
 import LiveConditions from "@/components/LiveConditions";
 import IphoneShot from "@/components/IphoneShot";
 import AlsoTracking from "@/components/AlsoTracking";
-import TownWayfinder from "@/components/TownWayfinder";
 import { copy } from "@/content/copy";
 
 export const metadata = {
@@ -42,8 +41,10 @@ export default async function HomePage() {
 
   return (
     <>
+      {/* The town band that used to sit here moved INTO the header 2026-07-28
+          (owner): the picker is now in the nav bar, so it reaches every page
+          instead of the homepage only, and the control exists exactly once. */}
       <Hero stats={stats} forecasters={composite?.sources ?? []} />
-      <TownWayfinder />
       <GmhgBanner />
       <FireworksBanner />
 

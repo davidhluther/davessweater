@@ -5,14 +5,28 @@
 // analytics (GA4/Clarity/Meta pixel/ClickTracker are suppressed for /widget in
 // AnalyticsScripts + ChromeGate) — it runs on other people's pages, so it stays
 // light and private. The footer attribution doubles as the required backlink.
+//
+// Rebuilt 2026-07-28 (owner): the sweater verdict is GONE from the embed — "we
+// shouldn't have 'no sweater' and '0 sweaters', let's drop the sweaters from
+// this altogether and have all of the other forecast data" — and the card now
+// carries real forecast density: today's consensus high/low with its conditions
+// line and precip chance, named days ahead with per-day conditions text, and an
+// almanac strip (sunrise, sunset, moon phase, river flow where a gauge honestly
+// belongs to the town). Every number comes from data we already commit; nothing
+// is fetched at view time, so an embed costs the host page one iframe and no
+// third-party calls.
 export const dynamic = "force-dynamic";
 
 import type { Metadata } from "next";
 import HeightReporter from "./HeightReporter";
-import { parseDays, parseDetail, sweaterShort, SITE_BASE } from "@/lib/publicFeed";
+import {
+  parseDays, parseDetail, precipChanceLabel, moonSummary, SITE_BASE,
+} from "@/lib/publicFeed";
 import { getTown, isTownPublic, getTownForecast5 } from "@/lib/towns";
-import { stripDays } from "@/lib/forecast5";
-import { fmtLongDate } from "@/lib/dates";
+import { getRiverForTown, formatFlow } from "@/lib/rivers";
+import { stripDays, type StripDay } from "@/lib/forecast5";
+import { solarPacket, fmtTime, localDateString, NY_TZ } from "@/lib/solar";
+import { townHrefOn } from "@/lib/townPicker";
 
 // Keep embeds out of the index — the canonical experience is the site itself.
 export const metadata: Metadata = {
@@ -20,8 +34,12 @@ export const metadata: Metadata = {
   title: "Forecast widget",
 };
 
-const weekdayShort = (date: string) =>
-  new Date(date + "T12:00:00").toLocaleDateString("en-US", { weekday: "short" });
+// Full weekday ("Tuesday") the way a forecast band names its periods; the
+// leading day is labeled "Today" instead.
+const weekdayLong = (date: string) =>
+  new Date(date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long" });
+
+const FEET_PER_METER = 0.3048;
 
 function Shell({ id, children }: { id: string; children: React.ReactNode }) {
   return (
@@ -41,13 +59,16 @@ function Shell({ id, children }: { id: string; children: React.ReactNode }) {
   );
 }
 
+// CC BY requires credit with a link back; this IS that credit, and the brand
+// backlink the license text hands reusers (lib/publicFeed ATTRIBUTION_HTML).
 function Footer() {
   return (
     <div className="border-t border-white/10 px-3 py-2 text-[11px] text-white/70">
+      Data by{" "}
       <a href={SITE_BASE} target="_blank" rel="noopener" className="text-white/90 underline underline-offset-2">
         Dave&apos;s Sweater
       </a>
-      <span className="mx-1.5">|</span>
+      , licensed{" "}
       <a
         href="https://creativecommons.org/licenses/by/4.0/"
         target="_blank"
@@ -57,6 +78,29 @@ function Footer() {
         CC BY 4.0
       </a>
     </div>
+  );
+}
+
+// One upcoming day: the period name and date on the left, the temps hard right,
+// the conditions sentence on its own line beneath. Two lines rather than one
+// wrapping row, because a 300px embed column has no room for a third column and
+// "Scattered storms, warm, breezy" must never be truncated into nonsense.
+function DayRow({ day, showWind }: { day: StripDay; showWind: boolean }) {
+  return (
+    <li className="px-3 py-2">
+      <div className="flex items-baseline gap-2">
+        <span className="min-w-0 truncate text-[0.8rem] font-semibold">{weekdayLong(day.date)}</span>
+        <span className="shrink-0 text-[10px] uppercase tracking-wide text-white/45">{day.dayLabel}</span>
+        <span className="ml-auto shrink-0 text-[0.8rem] font-semibold tabular-nums">
+          {day.high}&deg;
+          <span className="font-normal text-white/55"> / {day.low}&deg;</span>
+        </span>
+      </div>
+      <div className="mt-0.5 text-[0.72rem] leading-snug text-white/75">
+        {day.summary}
+        {showWind && day.wind ? <span className="text-white/50"> &middot; wind {day.wind}</span> : null}
+      </div>
+    </li>
   );
 }
 
@@ -92,7 +136,36 @@ export default async function WidgetPage({
   const town = await getTown(slug);
   const f5 = await getTownForecast5(slug);
   const strip = stripDays(f5, { max: nDays });
-  const byDate = new Map((f5?.days ?? []).map((d) => [d.date, d.sources]));
+  const [today, ...ahead] = strip;
+
+  // Sunrise/sunset/moon are computed, not captured — the same solarPacket the
+  // fireworks report runs on, at this town's own coordinates and elevation.
+  // Elevation is passed through as suncalc's horizon-dip observer height; it
+  // shifts the times by seconds at High Country elevations, and the sea-level
+  // horizon convention is the standard almanac one (see lib/solar's header).
+  const sun = town
+    ? solarPacket({
+        lat: town.lat,
+        lon: town.lon,
+        elevationM: town.elevation_ft * FEET_PER_METER,
+        date: localDateString(NY_TZ),
+        tz: NY_TZ,
+      })
+    : null;
+  const sunriseAt = fmtTime(sun?.sunrise ?? null, NY_TZ);
+  const sunsetAt = fmtTime(sun?.sunset ?? null, NY_TZ);
+  // Null for every town without a gauge USGS names for it — including Boone.
+  // See lib/rivers: no nearest-gauge borrowing.
+  const river = await getRiverForTown(slug);
+
+  const almanac: string[] = [];
+  if (sunriseAt) almanac.push(`Sunrise ${sunriseAt}`);
+  if (sunsetAt) almanac.push(`Sunset ${sunsetAt}`);
+  if (sun) almanac.push(moonSummary(sun.moon.name, sun.moon.fraction));
+
+  const todayPrecip = today ? precipChanceLabel(today) : null;
+  const forecastHref = SITE_BASE + townHrefOn(slug, "weather");
+  const scoreboardHref = SITE_BASE + townHrefOn(slug, "right-wrong-ray");
 
   return (
     <Shell id={id}>
@@ -103,47 +176,91 @@ export default async function WidgetPage({
         {/* The embed runs its own compact scale, not the site's ds-* ladder:
             this markup renders inside someone else's page at an iframe height
             we advertise, so its type is sized to that box rather than to our
-            pages. Keep it self-contained. */}
-        <span className="shrink-0 text-[11px] uppercase tracking-wide text-orange-300">Dave&apos;s Sweater Index</span>
+            pages. Keep it self-contained.
+            Brand name, not "Index": the card now carries almanac and river
+            lines alongside the consensus, so it is more than the index. */}
+        <span className="shrink-0 text-[11px] uppercase tracking-wide text-orange-300">Dave&apos;s Sweater</span>
       </div>
 
-      {strip.length === 0 ? (
+      {!today ? (
         <div className="px-3 py-4 text-sm text-white/85">No current forecast available.</div>
       ) : (
-        <ul className="divide-y divide-white/10">
-          {strip.map((d) => {
-            const src = byDate.get(d.date) ?? {};
-            return (
-              <li key={d.date} className="px-3 py-2">
-                <div className="flex items-baseline justify-between gap-2">
-                  <span className="text-sm font-semibold">{weekdayShort(d.date)}</span>
-                  <span className="text-[11px] text-white/60">{fmtLongDate(d.date)}</span>
+        <>
+          {/* Today, at the density the band deserves. The two numbers are
+              LABELED "high" and "low" rather than presented as a current
+              reading: this is the day's committed multi-source consensus, not a
+              live observation, and the card must not imply otherwise. */}
+          <div className="border-b border-white/10 px-3 pb-2.5 pt-2.5">
+            <div className="text-[10px] uppercase tracking-wide text-white/45">
+              Today <span className="text-white/25">|</span> {today.dayLabel}
+            </div>
+            <div className="mt-1 flex items-end gap-4">
+              <div>
+                <div className="text-[10px] uppercase tracking-wide text-white/45">High</div>
+                <div
+                  className="text-[2rem] font-bold leading-none tabular-nums"
+                  style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}
+                >
+                  {today.high}&deg;
                 </div>
-                <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-sm">
-                  <span>
-                    <span className="font-semibold">{d.high}&deg;</span>
-                    <span className="text-white/60"> / {d.low}&deg;</span>
-                  </span>
-                  <span className="text-white/80">
-                    {d.precip === "none" ? "No precip" : d.precipProb != null ? `${d.precipProb}% ${d.precip === "snow" ? "snow" : d.precip === "mixed" ? "mix" : "rain"}` : d.precipLabel}
-                  </span>
-                  <span className="rounded-full bg-teal-700 px-2 py-0.5 text-[11px] text-orange-300">
-                    {d.sweaters} {d.sweaters === 1 ? "sweater" : "sweaters"}
-                  </span>
+              </div>
+              <div>
+                <div className="text-[10px] uppercase tracking-wide text-white/45">Low</div>
+                <div
+                  className="text-[1.35rem] font-bold leading-none tabular-nums text-white/80"
+                  style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}
+                >
+                  {today.low}&deg;
                 </div>
-                <div className="mt-0.5 text-[11px] text-white/55">{sweaterShort(d.sweaters)}</div>
-                {wantFull && (
-                  <div className="mt-1 text-[11px] text-white/55">
-                    {d.count}-source consensus
-                    {d.wind ? ` | wind ${d.wind}` : ""}
-                    {Object.keys(src).length ? ` | ${Object.keys(src).length} forecasts` : ""}
-                  </div>
-                )}
-              </li>
-            );
-          })}
-        </ul>
+              </div>
+            </div>
+            <div className="mt-2 text-[0.82rem] font-medium leading-snug">{today.summary}</div>
+            {todayPrecip ? (
+              <div className="text-[0.72rem] leading-snug text-white/70">{todayPrecip}</div>
+            ) : null}
+            {wantFull ? (
+              <div className="mt-1 text-[0.68rem] text-white/50">
+                {today.count}-source consensus
+                {today.wind ? ` · wind ${today.wind}` : ""}
+                {` · ${today.confidence} agreement`}
+              </div>
+            ) : null}
+          </div>
+
+          {ahead.length ? (
+            <ul className="divide-y divide-white/10">
+              {ahead.map((d) => (
+                <DayRow key={d.date} day={d} showWind={wantFull} />
+              ))}
+            </ul>
+          ) : null}
+        </>
       )}
+
+      {/* Almanac. Sun and moon are computed for this town; the river line
+          appears only where a gauge genuinely belongs to it. */}
+      {almanac.length || river ? (
+        <div className="border-t border-white/10 bg-teal-800/60 px-3 py-2 text-[0.68rem] leading-relaxed text-white/70">
+          {almanac.length ? <div>{almanac.join(" · ")}</div> : null}
+          {river ? (
+            <div>
+              {river.river} {formatFlow(river.cfs)}
+              {river.gageFt != null ? `, ${river.gageFt} ft` : ""}
+              <span className="text-white/45"> (USGS)</span>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      <div className="flex flex-wrap gap-x-4 gap-y-1 border-t border-white/10 px-3 py-2 text-[0.72rem] font-semibold">
+        <a href={forecastHref} target="_blank" rel="noopener" className="text-orange-300 underline underline-offset-2">
+          Full forecast
+        </a>
+        <a href={scoreboardHref} target="_blank" rel="noopener" className="text-orange-300 underline underline-offset-2">
+          Forecast scoreboard
+        </a>
+      </div>
+
       <Footer />
     </Shell>
   );
