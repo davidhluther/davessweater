@@ -19,7 +19,7 @@ export default function Hero({ stats, forecasters }: { stats: HeroStats; forecas
         </h1>
         <p className="mt-2 text-sm text-white/75">
           {copy.hero.dekLead}
-          <Link href="/about" className="underline decoration-white/40 underline-offset-2 hover:decoration-white">
+          <Link href="/shop" className="underline decoration-white/40 underline-offset-2 hover:decoration-white">
             {copy.hero.dekLink}
           </Link>
         </p>

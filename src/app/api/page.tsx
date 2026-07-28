@@ -13,10 +13,10 @@ const DESCRIPTION =
   "Every Dave's Sweater dataset, free and openly licensed: a JSON API, RSS feeds, and an embeddable forecast widget. CC BY 4.0.";
 
 export const metadata: Metadata = {
-  title: "Free data and API",
+  title: "Free Data and API",
   description: DESCRIPTION,
   alternates: { canonical: "/api" },
-  openGraph: { title: "Free data and API — Dave's Sweater", description: DESCRIPTION, url: `${SITE_BASE}/api` },
+  openGraph: { title: "Free Data and API — Dave's Sweater", description: DESCRIPTION, url: `${SITE_BASE}/api` },
 };
 
 interface Endpoint {
@@ -77,9 +77,9 @@ export default async function ApiDocsPage() {
 
   return (
     <SectionBand>
-      <JsonLd data={[breadcrumbs([{ name: "Home", path: "/" }, { name: "Free data and API", path: "/api" }])]} />
+      <JsonLd data={[breadcrumbs([{ name: "Home", path: "/" }, { name: "Free Data and API", path: "/api" }])]} />
 
-      <h1 className="font-display text-2xl font-bold text-foreground">Free data and API</h1>
+      <h1 className="font-display text-2xl font-bold text-foreground">Free Data and API</h1>
       <p className="mt-2 text-sm text-muted">
         Every forecast is a claim about tomorrow, and the data behind it is public. We find it, vet it, grade it, and
         hand it back free. Here is the whole tracker as a JSON API, a set of RSS feeds, and a forecast widget you can

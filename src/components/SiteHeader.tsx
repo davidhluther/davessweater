@@ -18,6 +18,9 @@ const resources = [
   { href: "/resources/news", label: "News & Updates" },
   { href: "/resources/videos", label: "Videos" },
   { href: "/resources/reports", label: "Reports" },
+  // The free JSON API, RSS feeds, and CC BY 4.0 dataset. It lived at a footer
+  // link only, which buried the most on-thesis thing the site offers.
+  { href: "/api", label: "Free Data and API" },
 ];
 const shop = { href: "/shop", label: "Swag Shop" };
 
@@ -31,6 +34,7 @@ export default function SiteHeader({ towns }: { towns: TownNavItem[] }) {
   // sticky the overflow was unreachable — the menu looked permanently open and
   // refused to scroll (owner-reported 2026-07-27).
   const [townsMobile, setTownsMobile] = useState(false);
+  const [resourcesMobile, setResourcesMobile] = useState(false);
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
   // A town link is current only on its own page (Boone's page is "/").
   const townActive = (t: TownNavItem) => (t.href === "/" ? pathname === "/" : pathname === t.href);
@@ -184,12 +188,19 @@ export default function SiteHeader({ towns }: { towns: TownNavItem[] }) {
               ))}
             </>
           )}
-          <Link href="/resources" onClick={() => setOpen(false)}
-            className={cn("rounded-md px-3 py-3 text-sm font-medium",
-              isActive("/resources") ? "bg-orange-600 text-white" : "text-white/80 hover:bg-white/10")}>
-            Resources
-          </Link>
-          {resources.map((l) => (
+          <div className="flex items-center">
+            <Link href="/resources" onClick={() => setOpen(false)}
+              className={cn("flex-1 rounded-md px-3 py-3 text-sm font-medium",
+                isActive("/resources") ? "bg-orange-600 text-white" : "text-white/80 hover:bg-white/10")}>
+              Resources
+            </Link>
+            <button type="button" aria-label={resourcesMobile ? "Hide resources list" : "Show resources list"}
+              aria-expanded={resourcesMobile} onClick={() => setResourcesMobile((v) => !v)}
+              className="inline-flex size-11 items-center justify-center rounded-md text-white/80 hover:bg-white/10">
+              <ChevronDown className={cn("size-4 transition-transform", resourcesMobile && "rotate-180")} />
+            </button>
+          </div>
+          {resourcesMobile && resources.map((l) => (
             <Link key={l.href} href={l.href} onClick={() => setOpen(false)}
               className={cn("rounded-md py-3 pl-8 pr-3 text-sm font-medium",
                 isActive(l.href) ? "bg-orange-600 text-white" : "text-white/70 hover:bg-white/10")}>
