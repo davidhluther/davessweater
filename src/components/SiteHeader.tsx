@@ -16,12 +16,9 @@ const primary = [
 const resources = [
   { href: "/resources/articles", label: "Articles" },
   { href: "/resources/news", label: "News & Updates" },
-  { href: "/resources/videos", label: "Videos" },
-  { href: "/resources/reports", label: "Reports" },
-  // Roads moved out of the top nav 2026-07-27 (owner): it is a seasonal tool
-  // that reads "Clear" all summer, so it does not earn prime nav real estate
-  // until winter. It keeps its URL and its place among the tools here.
-  { href: "/roads", label: "Road Conditions" },
+  // Videos is hidden from the nav until there is something in it (owner,
+  // 2026-07-27) — the route still exists and still renders.
+  { href: "/resources/reports", label: "Reports and Tools" },
   // The free JSON API, RSS feeds, and CC BY 4.0 dataset. It lived at a footer
   // link only, which buried the most on-thesis thing the site offers.
   { href: "/api", label: "Free Data and API" },

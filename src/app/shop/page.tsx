@@ -32,8 +32,8 @@ export default async function Page() {
     <>
     <JsonLd data={breadcrumbJsonLd} />
     <SectionBand>
-      <h1 className="mb-2 font-display text-2xl font-bold text-foreground">Swag Shop</h1>
-      <p className="mb-6 text-sm text-muted">
+      <h1 className="mb-2 ds-h1 text-foreground">Swag Shop</h1>
+      <p className="mb-6 ds-body text-muted">
         The official Dave&apos;s Sweater merch, dropshipped so we don&apos;t keep boxes of stuff at our
         meteorological megaplex. Everything is set to the minimum price with a mandatory $3 &ldquo;profit&rdquo;
         baked in, which we donate to charity each month.

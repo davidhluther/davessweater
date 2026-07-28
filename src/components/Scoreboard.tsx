@@ -16,7 +16,7 @@ export default function Scoreboard({ sources }: { sources: SourceStat[] }) {
             <div className={cn("min-h-[2.5em] text-[0.65rem] leading-tight sm:text-xs", s.isFree ? "text-white/65" : "text-slate-300/80")}>
               {s.label}
             </div>
-            <div className={cn("font-display text-2xl font-bold sm:text-3xl",
+            <div className={cn("ds-stat",
               winner ? "text-emerald-300" : s.isFree ? "text-white" : "text-slate-300")}>
               {s.avg.toFixed(1)}
             </div>

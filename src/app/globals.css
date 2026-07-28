@@ -67,6 +67,69 @@
   }
 }
 
+/* ── Type scale ───────────────────────────────────────────────────────────
+   ONE ladder for every heading, kicker, and caption on the site. Before this
+   existed the same role was written a dozen ways — `font-display text-lg
+   font-bold`, `text-xl font-semibold`, `font-display text-2xl font-bold
+   sm:text-3xl`, `font-display text-3xl font-extrabold` — and card titles inside
+   a single module rendered at different sizes and weights (owner, 2026-07-27:
+   "different fonts and sizes and bolding"). Reach for a token here instead of
+   composing a fresh size+weight combo; composing is how the drift started.
+
+   Not a redesign: each token is the treatment the site already used most often
+   for that role. Space Grotesk (`font-display`) carries headings and numeric
+   readouts, Inter carries prose, and the ladder steps up one size at `sm` the
+   way the H1 and card titles already did.
+
+   Color stays a call-site decision so one token works on the light body and on
+   the dark teal bands: `text-orange-300` / `text-white/70` on dark,
+   `text-orange-600` / `text-muted` on light. Orange stays brand/editorial only.
+
+   These sit in `@layer components`, which Tailwind sorts BEFORE `utilities` —
+   so a utility on the same element (`ds-h2 text-xl`) still wins. That is the
+   supported way to take a deliberate one-off; leave a comment saying why. */
+
+@layer components {
+  /* Page title. One per page, and the only heading that reaches 4xl. */
+  .ds-h1 {
+    @apply font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl;
+  }
+  /* Section heading — opens a band or a major block of a page. */
+  .ds-h2 {
+    @apply font-display text-2xl font-bold;
+  }
+  /* Card / module title — the heading of a bordered card or a module. */
+  .ds-h3 {
+    @apply font-display text-lg font-bold sm:text-xl;
+  }
+  /* Sub-card title — a heading nested inside a card: FAQ question, venue,
+     table group, list row. */
+  .ds-h4 {
+    @apply font-display text-base font-bold;
+  }
+  /* Kicker / eyebrow — the uppercase tracked label above a title. Applies to
+     titling labels only; inline chips and dense-grid micro-labels (the 5-day
+     weekday, the "unconfirmed" badge) are data, not kickers. */
+  .ds-kicker {
+    @apply text-xs font-bold uppercase tracking-wider;
+  }
+  /* Numeric readout — the figure a module exists to state (a consensus high,
+     a season average). Display face, lining figures, so columns of them line
+     up and a changing number doesn't reflow its row. */
+  .ds-stat {
+    @apply font-display text-2xl font-bold tabular-nums sm:text-3xl;
+  }
+  /* Body prose. The site's body size is `sm`, not `base`; add `text-muted` for
+     secondary prose and `max-w-2xl` for long measures. */
+  .ds-body {
+    @apply text-sm;
+  }
+  /* Caption / footnote — the small line under a module, figure, or table. */
+  .ds-caption {
+    @apply text-xs text-muted;
+  }
+}
+
 /* ── Weather backdrop (`.wx`) ─────────────────────────────────────────────
    Bold ambient layer behind the hero (WeatherBackdrop.tsx). The wrapper
    carries one variant class, chosen at build time from the day's composite

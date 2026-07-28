@@ -94,10 +94,10 @@ export default async function WeatherHubPage() {
 
       <section className="w-full bg-teal-700 text-white">
         <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:py-12">
-          <div className="text-xs font-bold uppercase tracking-wider text-orange-300">
+          <div className="ds-kicker text-orange-300">
             {towns.length}{" "}towns | each its own forecast
           </div>
-          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+          <h1 className="mt-1 ds-h1">
             A real forecast for every town we track
           </h1>
           <p className="mt-3 max-w-2xl text-sm text-white/80">
@@ -115,10 +115,10 @@ export default async function WeatherHubPage() {
           className="block rounded-2xl border border-emerald-300/70 bg-surface p-5 transition hover:-translate-y-0.5 hover:shadow-lg sm:p-6"
         >
           <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-            <span className="font-display text-xl font-bold sm:text-2xl">{boone.name}</span>
+            <span className="ds-h3">{boone.name}</span>
             <StatusLine c={boone} />
           </div>
-          <div className="mt-1 text-sm text-muted">
+          <div className="mt-1 ds-body text-muted">
             {boone.county} County | {boone.elevation_ft.toLocaleString()} ft
             {boone.high != null ? <> | today High {boone.high}° / Low {boone.low}°</> : null}
           </div>
@@ -132,10 +132,10 @@ export default async function WeatherHubPage() {
               className="block rounded-2xl border border-border bg-surface p-5 transition hover:-translate-y-0.5 hover:shadow-lg"
             >
               <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                <span className="font-display text-lg font-bold">{c.name}</span>
+                <span className="ds-h3">{c.name}</span>
                 <StatusLine c={c} />
               </div>
-              <div className="mt-1 text-sm text-muted">
+              <div className="mt-1 ds-body text-muted">
                 {c.county ? `${c.county} County` : "High Country"} | {c.elevation_ft.toLocaleString()} ft
               </div>
               <div className="mt-1 text-sm">
@@ -147,7 +147,7 @@ export default async function WeatherHubPage() {
           ))}
         </div>
 
-        <p className="mt-6 text-xs text-muted">
+        <p className="mt-6 ds-caption">
           Towns show a provisional count until they cross {MIN_SCORED_DAYS} scored days &mdash; the same gate
           every forecast source on the site clears before its record is called established. New towns appear
           here automatically as their data qualifies. Boone keeps its own{" "}

@@ -75,16 +75,16 @@ export default async function Page() {
     <>
       <JsonLd data={jsonLd} />
       <SectionBand tone="surface">
-        <h1 className="font-display text-2xl font-bold sm:text-3xl">How we score it</h1>
-        <p className="mt-2 max-w-2xl text-sm text-muted">
+        <h1 className="ds-h1">How we score it</h1>
+        <p className="mt-2 max-w-2xl ds-body text-muted">
           Every score on this site is tracked data, not opinion. One rubric runs against every forecaster, every
           day. Here is what it measures, and where the actual weather comes from.
         </p>
       </SectionBand>
 
       <SectionBand tone="light">
-        <h2 className="font-display text-xl font-bold">The 100-point model</h2>
-        <p className="mb-3 mt-1 text-sm text-muted">
+        <h2 className="ds-h2">The 100-point model</h2>
+        <p className="mb-3 mt-1 ds-body text-muted">
           Each day we compare a forecast to the actual recorded conditions across four fields. Closer to the
           truth earns more points, out of 100:
         </p>
@@ -129,8 +129,8 @@ export default async function Page() {
                   rain within 0.1&Prime;, then &minus;2 pts per extra 0.1&Prime;; snow within 1&Prime; or 20% of
                   the actual, whichever is larger, because snow totals are noisier. Naming the wrong form, say
                   rain when it snowed, caps the amount half at 5. A miss inside the trace band still earns 6 of
-                  the 10 identification points: when the only disagreement between &quot;none&quot; and
-                  &quot;precip&quot; is an amount small enough to count as zero (rain of 0.1&Prime; or less, snow
+                  the 10 identification points: when the only disagreement between &ldquo;none&rdquo; and
+                  &ldquo;precip&rdquo; is an amount small enough to count as zero (rain of 0.1&Prime; or less, snow
                   of 1&Prime; or less), the call was nearly right, and no forecast is graded fully wrong on the
                   form while fully right on the total.
                 </td>
@@ -141,15 +141,15 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="surface">
-        <h2 className="font-display text-xl font-bold">Saying &quot;no rain&quot; is a forecast too</h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
+        <h2 className="ds-h2">Saying &ldquo;no rain&rdquo; is a forecast too</h2>
+        <p className="mt-1 max-w-2xl ds-body text-muted">
           Every forecast is scored out of a fixed 100. The one wrinkle is the rain total. A forecast of no rain
           is a zero-inch prediction, so on a dry day it earns those points like any other right call. A forecast
           of rain with no stated total leaves the amount blank and earns nothing for it. The trace-band
           partial credit above follows the same logic in reverse, and it also demands the number: a source
           that predicted rain but never said how much cannot claim its miss was only a trace.
         </p>
-        <p className="mt-3 max-w-2xl text-sm text-muted">
+        <p className="mt-3 max-w-2xl ds-body text-muted">
           That matters for{" "}
           <Link href="/right-wrong-ray" className="text-teal underline underline-offset-2">Ray&apos;s Weather</Link>,
           who never publishes a numeric rain total. He earns the amount points on the days he forecasts dry, and
@@ -159,33 +159,33 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="light">
-        <h2 className="font-display text-xl font-bold">When the forecast is in words</h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
+        <h2 className="ds-h2">When the forecast is in words</h2>
+        <p className="mt-1 max-w-2xl ds-body text-muted">
           Ray&apos;s often describes wind in words instead of numbers. We map those to the National Weather
           Service scale, then score the result as a range like any other:
         </p>
-        <ul className="mt-2 grid max-w-md grid-cols-2 gap-x-6 gap-y-1 text-sm text-muted">
+        <ul className="mt-2 grid max-w-md grid-cols-2 gap-x-6 gap-y-1 ds-body text-muted">
           <li>calm: 0&ndash;1 mph</li>
           <li>light: 1&ndash;7 mph</li>
           <li>breezy: 12&ndash;20 mph</li>
           <li>windy or gusty: 18&ndash;30 mph</li>
         </ul>
-        <p className="mt-2 max-w-2xl text-sm text-muted">
-          A word only counts as a wind descriptor when it sits next to the word &quot;wind,&quot; so a phrase
-          like &quot;light rain&quot; is not read as light wind. We also strip any &quot;gusting to N&quot;
+        <p className="mt-2 max-w-2xl ds-body text-muted">
+          A word only counts as a wind descriptor when it sits next to the word &ldquo;wind,&rdquo; so a phrase
+          like &ldquo;light rain&rdquo; is not read as light wind. We also strip any &ldquo;gusting to N&rdquo;
           clause, so only sustained wind is scored.
         </p>
       </SectionBand>
 
       <SectionBand tone="light">
-        <h2 className="font-display text-xl font-bold">Reading the overnight low</h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
+        <h2 className="ds-h2">Reading the overnight low</h2>
+        <p className="mt-1 max-w-2xl ds-body text-muted">
           Most services hand us a finished daily low that already covers the whole day, including the pre-dawn
           hours. Two of them, Met.no and OpenWeather, don&apos;t. We rebuild their daily low ourselves from an
           hour-by-hour feed, and by the time we capture at midday that feed no longer reaches back to the
           overnight low.
         </p>
-        <p className="mt-3 max-w-2xl text-sm text-muted">
+        <p className="mt-3 max-w-2xl ds-body text-muted">
           So for those two we read the low from the forecast they published the morning before, when the full day
           was still ahead. That is a longer lead time than the same-day number every other source gets, so if
           anything it is a slightly harder test. Sources that give us a full-day low directly are scored on it
@@ -194,9 +194,9 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="surface">
-        <h2 className="font-display text-xl font-bold">Grades</h2>
-        <p className="mt-1 text-sm text-muted">The day&apos;s score becomes a verdict:</p>
-        <ul className="mt-2 space-y-1 text-sm text-muted">
+        <h2 className="ds-h2">Grades</h2>
+        <p className="mt-1 ds-body text-muted">The day&apos;s score becomes a verdict:</p>
+        <ul className="mt-2 space-y-1 ds-body text-muted">
           <li><strong className="text-foreground">90&ndash;100</strong>: Right (5 rays)</li>
           <li><strong className="text-foreground">75&ndash;89</strong>: Right (4 rays)</li>
           <li><strong className="text-foreground">60&ndash;74</strong>: Meh (3 rays)</li>
@@ -205,13 +205,13 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="light">
-        <h2 className="font-display text-xl font-bold">How the Dave&apos;s Sweater Index is built</h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
+        <h2 className="ds-h2">How the Dave&apos;s Sweater Index is built</h2>
+        <p className="mt-1 max-w-2xl ds-body text-muted">
           The Dave&apos;s Sweater Index (DSI) is our own forecast &mdash; a consensus of the independent
           automated forecasters we track. It is not a black box, and it is graded by the same 100-point rubric
           as every source it draws on. Here is exactly how each day&apos;s number is made:
         </p>
-        <ul className="mt-2 max-w-2xl space-y-1 text-sm text-muted">
+        <ul className="mt-2 max-w-2xl space-y-1 ds-body text-muted">
           <li>
             <strong className="text-foreground">Members.</strong>{" "}Every free, automated forecaster with a
             forecast that day. Ray&apos;s Weather is excluded (it&apos;s the forecast we grade against), as is
@@ -232,7 +232,7 @@ export default async function Page() {
             &ldquo;wintry mix.&rdquo;
           </li>
         </ul>
-        <p className="mt-2 max-w-2xl text-sm text-muted">
+        <p className="mt-2 max-w-2xl ds-body text-muted">
           That precip rule is the only place the index does anything other than average, and it uses no
           weighting and no memory of past performance &mdash; it&apos;s a fixed rule you can apply by hand to
           any day&apos;s forecasts. We adopted it because, measured across the record, it recovers the points a
@@ -243,8 +243,8 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="light">
-        <h2 className="font-display text-xl font-bold">What counts as &quot;actual&quot;</h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
+        <h2 className="ds-h2">What counts as &ldquo;actual&rdquo;</h2>
+        <p className="mt-1 max-w-2xl ds-body text-muted">
           The conditions we grade against come from the{" "}
           <a href="https://open-meteo.com/en/docs/historical-weather-api" className="text-teal underline underline-offset-2"
              target="_blank" rel="noopener noreferrer">Open-Meteo historical archive</a>, a reanalysis of observed
@@ -257,8 +257,8 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand id="locations" tone="light">
-        <h2 className="font-display text-xl font-bold">Every town, its own numbers</h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
+        <h2 className="ds-h2">Every town, its own numbers</h2>
+        <p className="mt-1 max-w-2xl ds-body text-muted">
           Boone is the flagship, but we grade a{" "}
           <Link href="/weather" className="text-teal underline underline-offset-2">forecast for each town</Link>{" "}
           we track, and every one stands on its own. The same 100-point rubric runs unchanged from town to
@@ -266,7 +266,7 @@ export default async function Page() {
           town&apos;s own actuals: the Open-Meteo historical archive read at that town&apos;s own coordinates,
           not Boone&apos;s. A forecast for a 5,400-foot ridge is scored against what happened on that ridge.
         </p>
-        <p className="mt-3 max-w-2xl text-sm text-muted">
+        <p className="mt-3 max-w-2xl ds-body text-muted">
           We never blend towns into one average. A combined score would mix places of very different forecast
           difficulty, and the whole point is that each place is real. A new town launches provisional and stays
           that way until it crosses {MIN_SCORED_DAYS} scored days &mdash; the same gate every forecast source
@@ -274,7 +274,7 @@ export default async function Page() {
           future Boone weather station upgrades Boone&apos;s actuals only; every other town keeps the archive as
           its ground truth.
         </p>
-        <p className="mt-3 max-w-2xl text-sm text-muted">
+        <p className="mt-3 max-w-2xl ds-body text-muted">
           Ray&apos;s Weather gives each town its own high, low and sky icon, so his town boards are graded on
           all three. We read the icon as his precipitation call &mdash; a dry icon counts as a no-rain forecast
           (and earns the amount points on days it stays dry), a rain or thunderstorm icon as rain &mdash; and
@@ -287,8 +287,8 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="surface">
-        <h2 className="font-display text-xl font-bold">Grading forecasts by lead time</h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
+        <h2 className="ds-h2">Grading forecasts by lead time</h2>
+        <p className="mt-1 max-w-2xl ds-body text-muted">
           The daily scoreboard grades each morning&apos;s same-day forecast. We also grade every forecast at
           longer range: for a given day, the forecast each source published one to five days earlier, scored
           with the same 100-point model. Nothing about the rubric changes with distance, only the difficulty.
@@ -297,7 +297,7 @@ export default async function Page() {
         {/* data-dependent claim — re-verify against leadtime_scores when editing
             ("a single scored day" = raysweather lead-5 n; the n>=10 floor test
             fails loudly if it ever accumulates past the floor) */}
-        <p className="mt-3 max-w-2xl text-sm text-muted">
+        <p className="mt-3 max-w-2xl ds-body text-muted">
           We stop at five days, the longest horizon we can score consistently across sources. Ray&apos;s rows reliably
           reach about four to five days out, but his five-day sample is a single scored day so far, so the
           charts floor it out: a lead is not charted until it holds at least 10 scored days.
@@ -309,28 +309,28 @@ export default async function Page() {
           )}
         </p>
         {/* data-dependent claim — re-verify against leadtime_scores when editing */}
-        <p className="mt-3 max-w-2xl text-sm text-muted">
+        <p className="mt-3 max-w-2xl ds-body text-muted">
           Two honesty notes. The comparison is at matched elevation: his Boone station sits at 3,240 feet, our
           grading point at 3,242. And on the high temperature alone, Open-Meteo beats Ray&apos;s at every
           horizon, but by days 3 and 4 that gap narrows to a few tenths of a degree. The score gap is the
           meaningful one: it prices the fields Ray&apos;s extended days leave unanswered.
         </p>
-        <p className="mt-3 max-w-2xl text-sm text-muted">
+        <p className="mt-3 max-w-2xl ds-body text-muted">
           The actuals behind every lead are the same Open-Meteo archive described above, and the caveat there
           applies to lead-time scoring too.
         </p>
       </SectionBand>
 
       <SectionBand id="roads" tone="surface">
-        <h2 className="font-display text-xl font-bold">Grading the road-condition forecast</h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
+        <h2 className="ds-h2">Grading the road-condition forecast</h2>
+        <p className="mt-1 max-w-2xl ds-body text-muted">
           The{" "}
           <Link href="/roads" className="text-teal underline underline-offset-2">road-condition forecast</Link>{" "}
           uses no new data. It reads the snow, ice, and temperature we already forecast and sorts each day onto
           one of five ordered surface levels, best to worst: Clear, Wet, Slushy, Icy, Hazardous. The exact
           thresholds, the same numbers the code runs:
         </p>
-        <ul className="mt-2 max-w-2xl space-y-1 text-sm text-muted">
+        <ul className="mt-2 max-w-2xl space-y-1 ds-body text-muted">
           <li>
             <strong className="text-foreground">Hazardous</strong> &mdash; {hazardSnow}&Prime; or more of
             forecast snow, or freezing rain (rain falling into sub-freezing air).
@@ -351,13 +351,13 @@ export default async function Page() {
             <strong className="text-foreground">Clear</strong>{" "}&mdash; dry, or only a trace.
           </li>
         </ul>
-        <p className="mt-3 max-w-2xl text-sm text-muted">
+        <p className="mt-3 max-w-2xl ds-body text-muted">
           Scoring is ordinal, because the levels are ordered. An exact call scores 100, and every level of
           distance between the forecast and what happened costs 25 points: one level off is 75, two is 50, and
           so on to a floor of zero. Calling Icy when it was Slushy is a near miss; calling Clear when it was
           Hazardous is not.
         </p>
-        <p className="mt-3 max-w-2xl text-sm text-muted">
+        <p className="mt-3 max-w-2xl ds-body text-muted">
           The actual comes from NCDOT&apos;s{" "}
           <a href="https://drivenc.gov" rel="nofollow noopener" className="text-teal underline underline-offset-2">
             DriveNC
@@ -367,18 +367,18 @@ export default async function Page() {
           entered by hand by people in the field, not a sensor, so the actual is softer than a measured number.
           And this is one public agency grading against another&apos;s report; a future phase adds our own
           roadside cameras as an independent ground truth, the same arc as the weather station. Off-season the
-          report reads &quot;No Report&quot; and the forecast simply accrues no scored days until winter.
+          report reads &ldquo;No Report&rdquo; and the forecast simply accrues no scored days until winter.
         </p>
       </SectionBand>
 
       <SectionBand tone="light">
-        <h2 className="font-display text-xl font-bold">What each service reports</h2>
-        <p className="mb-4 mt-1 max-w-2xl text-sm text-muted">
+        <h2 className="ds-h2">What each service reports</h2>
+        <p className="mb-4 mt-1 max-w-2xl ds-body text-muted">
           Not every forecaster publishes every field. Here is what each one gives us to score. A blank means the
           question went unanswered, not that they got it wrong.
         </p>
         <CoverageMatrix scores={scores} />
-        <p className="mt-6 max-w-2xl text-sm text-muted">
+        <p className="mt-6 max-w-2xl ds-body text-muted">
           To see the model applied, read{" "}
           <Link href="/resources/articles/is-rays-weather-accurate" className="text-teal underline underline-offset-2">
             the 118-day review of Ray&apos;s Weather

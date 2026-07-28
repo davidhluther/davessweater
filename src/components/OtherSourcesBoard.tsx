@@ -40,7 +40,7 @@ export default function OtherSourcesBoard({ rows }: { rows: OtherSourceRow[] }) 
                   <span className="font-medium text-green-700">{r.label}</span>
                   <span className="tabular-nums font-semibold">{r.avg.toFixed(1)}</span>
                 </div>
-                <div className="mt-1 text-xs text-muted">{r.record} &middot; {r.days} days</div>
+                <div className="mt-1 ds-caption">{r.record} &middot; {r.days} days</div>
               </li>
             ))}
           </ul>
@@ -49,7 +49,7 @@ export default function OtherSourcesBoard({ rows }: { rows: OtherSourceRow[] }) 
 
       {provisional.length > 0 && (
         <div className={ranked.length ? "mt-6" : ""}>
-          <p className="mb-3 text-sm text-muted">
+          <p className="mb-3 ds-body text-muted">
             {`${ranked.length ? "Still gathering data" : "These forecasters are new to the board"}. Each needs ${MIN_SCORED_DAYS} scored days before it's ranked. Here is the running average so far:`}
           </p>
           <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">

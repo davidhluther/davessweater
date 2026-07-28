@@ -99,7 +99,7 @@ function SightChip({ r, env }: { r?: ViewpointResult; env?: SpotEnvironment }) {
   return (
     <span className="whitespace-nowrap">
       <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${ui.cls}`}>{ui.label}</span>
-      <span className="ml-1.5 text-xs text-muted">{margin > 0 ? "+" : ""}{ftFromM(margin)} ft</span>
+      <span className="ml-1.5 ds-caption">{margin > 0 ? "+" : ""}{ftFromM(margin)} ft</span>
     </span>
   );
 }
@@ -298,14 +298,14 @@ export default async function Page() {
           <i className="fw-6 fw-blue" />
         </div>
         <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:py-12">
-          <p className="text-xs font-bold uppercase tracking-wider text-orange-300">
+          <p className="ds-kicker text-orange-300">
             The High Country fireworks page | Updated every morning
           </p>
-          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+          <h1 className="mt-1 ds-h1">
             {`${SEASON.year} Fourth of July fireworks in Boone & the High Country`}
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-white/70">
-            Every listing in Watauga County says &quot;at dusk.&quot; Dusk is math: exact computed times, a
+            Every listing in Watauga County says &ldquo;at dusk.&rdquo; Dusk is math: exact computed times, a
             fireworks-specific forecast, and terrain sightlines for every show in Boone and the High Country.
           </p>
           {mode === "tonight" && tonight.length > 0 && (
@@ -327,7 +327,7 @@ export default async function Page() {
               re-verified next June.{" "}
               {nextYearPacket && (
                 <>Planning ahead: July 4, {SEASON.year + 1} sunset in Boone computes to{" "}
-                {fmtTime(nextYearPacket.sunset, NY_TZ)}. The listings will still say &quot;dusk.&quot;</>
+                {fmtTime(nextYearPacket.sunset, NY_TZ)}. The listings will still say &ldquo;dusk.&rdquo;</>
               )}
             </div>
           )}
@@ -381,13 +381,13 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="light" id="checker" className="max-w-4xl">
-        <h2 className="font-display text-2xl font-bold">Where Should You Watch From?</h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
+        <h2 className="ds-h2">Where Should You Watch From?</h2>
+        <p className="mt-1 max-w-2xl ds-body text-muted">
           Share your location or type an address to see what the view would be like: your browser computes
           the terrain between you and every show, pairs it with the night&apos;s sky forecast, and makes
           the call.
         </p>
-        <p className="mb-3 mt-2 max-w-2xl text-sm text-muted">
+        <p className="mb-3 mt-2 max-w-2xl ds-body text-muted">
           Prefer a known spot? The{" "}
           <a href="#spots" className="text-teal underline underline-offset-2">tested public spots</a> are
           right below.
@@ -404,16 +404,16 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="surface" id="forecast" className="max-w-4xl">
-        <h2 className="font-display text-2xl font-bold">
+        <h2 className="ds-h2">
           {mode === "archive" ? `The ${SEASON.year} Shows` : `Boone Fireworks Forecast: Fourth of July | ${SEASON.year}`}
         </h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
-          Regular forecasts answer &quot;will it rain.&quot; Mountain fireworks die by other means (a low
+        <p className="mt-1 max-w-2xl ds-body text-muted">
+          Regular forecasts answer &ldquo;will it rain.&rdquo; Mountain fireworks die by other means (a low
           deck at burst height, valley fog, smoke over the crowd), so we call each show&apos;s sky from the
           hourly signals at its launch site.
         </p>
         {forecastSeason && stale && (
-          <div className="mt-4 rounded-md border border-border bg-background px-4 py-3 text-sm text-muted">
+          <div className="mt-4 rounded-md border border-border bg-background px-4 py-3 ds-body text-muted">
             The forecast feed is {forecast ? "stale" : "missing"} this morning, so we are showing nothing
             rather than yesterday&apos;s sky. The times below are unaffected; the sun does not have feed
             outages.{forecast && <> Last fetch: {fmtStamp(forecast.fetched_at)}.</>}
@@ -423,10 +423,10 @@ export default async function Page() {
           {views.map(({ venue, packet, outlook }) => (
             <div key={venue.id} className="rounded-lg border border-border bg-background p-4">
               <div className="flex items-center justify-between gap-2">
-                <h3 className="font-display text-sm font-bold">{venue.name}</h3>
+                <h3 className="ds-h4">{venue.name}</h3>
                 {forecastSeason && !stale && <VerdictChip verdict={outlook.verdict} />}
               </div>
-              <p className="mt-1 text-sm text-muted">
+              <p className="mt-1 ds-body text-muted">
                 {fmtNight(venue.date)} |{" "}
                 <strong className="font-semibold text-foreground">
                   {venue.clockTimeStated ? statedTimeLabel(venue) : `~${readWindow(packet.civilDuskEnd)}`}
@@ -436,7 +436,7 @@ export default async function Page() {
                 )}
               </p>
               {forecastSeason && !stale && outlook.verdict !== "unavailable" && outlook.stats && (
-                <p className="mt-1.5 text-sm text-muted">
+                <p className="mt-1.5 ds-body text-muted">
                   {outlook.reasons.length > 0
                     ? outlook.reasons.join(" ")
                     : `Low cloud ${Math.round(outlook.stats.cloudLowAvg ?? 0)}%${
@@ -447,7 +447,7 @@ export default async function Page() {
                 </p>
               )}
               {forecastSeason && !stale && outlook.verdict === "unavailable" && (
-                <p className="mt-1.5 text-sm text-muted">No usable sky data for this site; we do not guess.</p>
+                <p className="mt-1.5 ds-body text-muted">No usable sky data for this site; we do not guess.</p>
               )}
               <p className="mt-1.5 text-xs">
                 <a href={`#${venue.id}`} className="text-teal underline underline-offset-2">details →</a>
@@ -456,7 +456,7 @@ export default async function Page() {
           ))}
         </div>
         {forecastSeason && !stale && windBits.length > 0 && (
-          <p className="mt-3 max-w-2xl text-sm text-muted">
+          <p className="mt-3 max-w-2xl ds-body text-muted">
             <strong className="text-foreground">Smoke Check:</strong> Wind over the show window runs{" "}
             {windBits.join(" | ")}.
             <br />
@@ -464,7 +464,7 @@ export default async function Page() {
           </p>
         )}
         {forecastSeason && !stale && forecast && (
-          <p className="mt-2 text-xs text-muted">
+          <p className="mt-2 ds-caption">
             Sky verdicts fetched {fmtStamp(forecast.fetched_at)}; refreshed every morning by the same
             pipeline that grades Ray. Exact thresholds live in{" "}
             <a href="#method" className="underline underline-offset-2">how we compute</a>.
@@ -473,7 +473,7 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="dark" id="times" className="max-w-4xl">
-        <h2 className="font-display text-2xl font-bold">When Will the Fireworks Start Around Boone?</h2>
+        <h2 className="ds-h2">When Will the Fireworks Start Around Boone?</h2>
         <p className="mb-3 mt-1 max-w-2xl text-sm text-white/70">
           Computed for each launch site&apos;s coordinates. <strong className="text-white">Dark Enough</strong>{" "}
           = end of civil twilight, the earliest a show plausibly starts.{" "}
@@ -523,8 +523,8 @@ export default async function Page() {
         <p className="mt-3 text-sm text-white/70">
           *<strong className="text-white">Last Sun</strong>: when the sun drops behind the actual terrain
           west of each launch site (computed from a 33 ft-resolution elevation model; the flat-horizon
-          tables cannot tell you this). The field goes to shade well before the sky dims; it does not move &quot;dark
-          enough,&quot; which is sky-glow, not sunbeams.
+          tables cannot tell you this). The field goes to shade well before the sky dims; it does not move &ldquo;dark
+          enough,&rdquo; which is sky-glow, not sunbeams.
         </p>
         {boonePacket && (
           <p className="mt-3 text-sm text-white/70">
@@ -543,8 +543,8 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="light" id="spots" className="max-w-4xl">
-        <h2 className="font-display text-2xl font-bold">Where to Watch Fireworks in Boone</h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
+        <h2 className="ds-h2">Where to Watch Fireworks in Boone</h2>
+        <p className="mt-1 max-w-2xl ds-body text-muted">
           We ran the same terrain line-of-sight from real public spots to every launch site: bare-earth
           elevation at about 33 ft resolution, earth curvature, typical (~{ftFromM50(BURST_TYPICAL_M)} ft)
           and finale (~{ftFromM50(BURST_FINALE_M)} ft) burst heights. The elevation model cannot see trees
@@ -581,11 +581,11 @@ export default async function Page() {
             </table>
           </div>
         )}
-        <p className="mt-2 max-w-2xl text-sm text-muted">
+        <p className="mt-2 max-w-2xl ds-body text-muted">
           None of these spots, or realistically anywhere in the Boone bowl, has line of sight to the Beech
           Mountain or West Jefferson shows. Those you attend in person.
         </p>
-        <ul className="mt-4 max-w-2xl space-y-2 text-sm text-muted">
+        <ul className="mt-4 max-w-2xl space-y-2 ds-body text-muted">
           <li>
             <strong className="text-foreground">Arrive by sunset ({boonePacket ? fmtTime(boonePacket.sunset, NY_TZ) : "about 8:47 PM"}).</strong>{" "}
             The close lots fill in the half hour before the first shell, and the launch fields are in
@@ -593,7 +593,7 @@ export default async function Page() {
             feels later out there than the clock says.
           </li>
         </ul>
-        <p className="mt-3 max-w-2xl text-sm text-muted">
+        <p className="mt-3 max-w-2xl ds-body text-muted">
           Somewhere else in mind? The{" "}
           <a href="#checker" className="text-teal underline underline-offset-2">checker above</a> runs the
           same math on any address.
@@ -601,7 +601,7 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="surface" id="shows" className="max-w-4xl">
-        <h2 className="font-display text-2xl font-bold">High Country Fourth of July Firework Show Details</h2>
+        <h2 className="ds-h2">High Country Fourth of July Firework Show Details</h2>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {([
             ["#boone", "Boone"],
@@ -620,7 +620,7 @@ export default async function Page() {
             </a>
           ))}
         </div>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
+        <p className="mt-1 max-w-2xl ds-body text-muted">
           Details below come from each show&apos;s official source, checked this season, with the source
           linked. Anything we could only trace to an aggregator says <em>unconfirmed</em>; we do not launder
           other people&apos;s guesses into facts.
@@ -630,7 +630,7 @@ export default async function Page() {
             <details key={venue.id} id={venue.id} className="group scroll-mt-20 rounded-lg border border-border bg-background">
               <summary className="cursor-pointer list-none p-4 [&::-webkit-details-marker]:hidden">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 className="font-display text-base font-bold">
+                  <h3 className="ds-h4">
                     {venue.showName} <span className="font-normal text-muted">| {fmtNight(venue.date)}</span>
                   </h3>
                   <span className="flex items-baseline gap-3">
@@ -647,12 +647,12 @@ export default async function Page() {
                     </span>
                   </span>
                 </div>
-                <p className="mt-1.5 text-sm text-muted">
+                <p className="mt-1.5 ds-body text-muted">
                   <strong className="text-foreground">{venue.locationName}, {venue.town}.</strong>{" "}
                   {venue.officialWording === "—" ? (
                     <>No official start time published</>
                   ) : (
-                    <>Official start: &quot;{venue.officialWording}&quot;</>
+                    <>Official start: &ldquo;{venue.officialWording}&rdquo;</>
                   )}
                   {venue.clockTimeStated === null && packet.civilDuskEnd && (
                     <>, which computes to {readWindow(packet.civilDuskEnd)} here</>
@@ -663,17 +663,17 @@ export default async function Page() {
               </summary>
               <div className="px-4 pb-4">
               {venue.logistics.length > 0 && (
-                <ul className="mt-2 space-y-1 text-sm text-muted">
+                <ul className="mt-2 space-y-1 ds-body text-muted">
                   {venue.logistics.map((l) => <li key={l}>· {l}</li>)}
                 </ul>
               )}
               {venue.weatherPolicy && (
-                <p className="mt-2 text-sm text-muted">
+                <p className="mt-2 ds-body text-muted">
                   <strong className="text-foreground">Weather policy:</strong> {venue.weatherPolicy}
                 </p>
               )}
               {venue.observed && venue.observed.length > 0 && (
-                <div className="mt-2 text-sm text-muted">
+                <div className="mt-2 ds-body text-muted">
                   <strong className="text-foreground">The observed record</strong> (what actually happened,
                   not what the listing said):
                   <ul className="mt-1 space-y-1">
@@ -702,7 +702,7 @@ export default async function Page() {
                 <p key={c} className="mt-2 text-sm text-orange-600">{c}</p>
               ))}
               {venue.sources.length > 0 && (
-                <p className="mt-2 text-xs text-muted">
+                <p className="mt-2 ds-caption">
                   Source{venue.sources.length > 1 ? "s" : ""}:{" "}
                   {venue.sources.map((s, i) => (
                     <span key={s.url}>
@@ -717,10 +717,10 @@ export default async function Page() {
           ))}
           {NO_SHOW_TOWNS.map((t) => (
             <div key={t.id} id={t.id} className="scroll-mt-20 rounded-lg border border-dashed border-border bg-background p-4">
-              <h3 className="font-display text-base font-bold">{t.town} <span className="font-normal text-muted">| {t.headline}</span></h3>
-              <p className="mt-1.5 text-sm text-muted">{t.note}</p>
+              <h3 className="ds-h4">{t.town} <span className="font-normal text-muted">| {t.headline}</span></h3>
+              <p className="mt-1.5 ds-body text-muted">{t.note}</p>
               {t.sources.length > 0 && (
-                <p className="mt-2 text-xs text-muted">
+                <p className="mt-2 ds-caption">
                   Source{t.sources.length > 1 ? "s" : ""}:{" "}
                   {t.sources.map((s, i) => (
                     <span key={s.url}>
@@ -734,12 +734,12 @@ export default async function Page() {
           ))}
         </div>
         <div className="mt-6 rounded-md border border-border bg-surface px-4 py-3">
-          <h3 className="font-display text-sm font-bold">Reported Further Out, Could Not Verify</h3>
-          <p className="mt-1 text-sm text-muted">
+          <h3 className="ds-h4">Reported Further Out, Could Not Verify</h3>
+          <p className="mt-1 ds-body text-muted">
             These circulate on aggregator roundups; we found no primary source for any of them. Listed so you
             know what is out there and exactly how thin the sourcing is.
           </p>
-          <ul className="mt-2 space-y-1.5 text-sm text-muted">
+          <ul className="mt-2 space-y-1.5 ds-body text-muted">
             {UNVERIFIED_REPORTS.map((r) => (
               <li key={r.town}>
                 <strong className="text-foreground">{r.town}, {fmtNight(r.date)}:</strong> {r.claim}{" "}
@@ -751,20 +751,20 @@ export default async function Page() {
       </SectionBand>
 
       <SectionBand tone="light" id="faq">
-        <h2 className="font-display text-2xl font-bold">Questions People Actually Search</h2>
+        <h2 className="ds-h2">Questions People Actually Search</h2>
         <div className="mt-3 max-w-2xl space-y-5">
           {faqs.map((f) => (
             <div key={f.id} id={f.id}>
-              <h3 className="font-display text-base font-bold">{f.q}</h3>
-              <p className="mt-1 text-sm text-muted">{f.a}</p>
+              <h3 className="ds-h4">{f.q}</h3>
+              <p className="mt-1 ds-body text-muted">{f.a}</p>
             </div>
           ))}
         </div>
       </SectionBand>
 
       <SectionBand tone="surface" id="method">
-        <h2 className="font-display text-2xl font-bold">How the Math Works</h2>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
+        <h2 className="ds-h2">How the Math Works</h2>
+        <p className="mt-1 max-w-2xl ds-body text-muted">
           Times are computed for each launch site&apos;s coordinates with standard almanac solar geometry
           (sunset = sun&apos;s upper limb at the refracted horizon; civil twilight ends at 6° below; nautical
           at 12°), the same convention NOAA and every printed table use. One honest caveat: those tables
@@ -774,8 +774,8 @@ export default async function Page() {
           building next.
         </p>
         <div className="mt-4 max-w-2xl rounded-md border border-border bg-background px-4 py-3">
-          <h3 className="font-display text-sm font-bold">How We Call the Sky (the Actual Thresholds)</h3>
-          <ul className="mt-2 space-y-1 text-sm text-muted">
+          <h3 className="ds-h4">How We Call the Sky (the Actual Thresholds)</h3>
+          <ul className="mt-2 space-y-1 ds-body text-muted">
             <li>
               <strong className="text-foreground">Likely obstructed</strong> when, averaged over the 8–11 PM
               show window: low cloud exceeds {RUBRIC.obstructed.cloudLowAvgPct}%, or visibility drops under{" "}
@@ -796,25 +796,25 @@ export default async function Page() {
             </li>
           </ul>
         </div>
-        <p className="mt-3 max-w-2xl text-sm text-muted">
+        <p className="mt-3 max-w-2xl ds-body text-muted">
           The sky verdicts pull Open-Meteo&apos;s hourly model per launch site each morning; the thresholds
           sit right here, in full, because{" "}
           <Link href="/methodology" className="text-teal underline underline-offset-2">receipts are a habit here</Link>.
           Show details were checked against primary sources this season; while doing it, we found town
           calendar pages in three different towns still displaying 2024 or 2025 dates. Not malice, just
           copy-paste. It is also why this page checks years. Dusk math recomputes automatically every year,
-          forever. The listings will still say &quot;dusk.&quot;
+          forever. The listings will still say &ldquo;dusk.&rdquo;
         </p>
-        <p className="mt-3 max-w-2xl text-sm text-muted">
+        <p className="mt-3 max-w-2xl ds-body text-muted">
           The sightline work runs on the same honesty: USGS bare-earth elevation (~33 ft resolution) via
           the open AWS terrain tiles, earth curvature with a standard refraction allowance, eye height
           ~6 ft above the local high ground, and a published ±{ftFromM50(MARGIN_NOISE_M)} ft noise band;
-          anything inside it says &quot;marginal,&quot; never a false yes. Known spots also carry an
+          anything inside it says &ldquo;marginal,&rdquo; never a false yes. Known spots also carry an
           environment tag: downtown and wooded locations pay a ~{ftFromM50(CLUTTER_PENALTY_M)} ft clutter
           allowance, because a bare-earth model that clears King Street by 40 ft has not met King
           Street&apos;s buildings. Typical municipal shells burst around {ftFromM50(BURST_TYPICAL_M)} ft
           up, finales near {ftFromM50(BURST_FINALE_M)} ft.
-          &quot;Last sun&quot; in the times table is the same terrain model pointed west: the minute the
+          &ldquo;Last sun&rdquo; in the times table is the same terrain model pointed west: the minute the
           ridgeline actually takes the sun off each launch field.
         </p>
       </SectionBand>

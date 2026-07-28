@@ -60,14 +60,18 @@ export const CATEGORIES = [
     description: "News and updates from Dave's Sweater: New features, scoring changes, and announcements.",
   },
   {
-    key: "videos", label: "Videos", schemaName: "Videos", href: "/resources/videos",
+    // hidden: keeps the route + its posts working, but the category is left out
+    // of the hub, the nav, and the hub OG card until there is a video to show
+    // (owner, 2026-07-27: "we don't have any there and there's no need for a
+    // holding spot"). Flip this off when the first video lands.
+    key: "videos", label: "Videos", schemaName: "Videos", href: "/resources/videos", hidden: true,
     blurb: "The forecast, but with moving pictures.",
     description: "Weather videos from Dave's Sweater, Boone's most mostly reliable weather tracker.",
   },
   {
-    key: "reports", label: "Reports", schemaName: "Reports", href: "/resources/reports",
-    blurb: "Data deep-dives with charts and receipts.",
-    description: "Data reports from Dave's Sweater: Deep dives into Boone, NC forecast accuracy, with charts and receipts.",
+    key: "reports", label: "Reports and Tools", schemaName: "Reports and Tools", href: "/resources/reports",
+    blurb: "Data deep-dives and the free tools built on them.",
+    description: "Reports and tools from Dave's Sweater. Deep dives into Boone, NC forecast accuracy, plus the planners and trackers built on the same data.",
   },
 ] as const;
 

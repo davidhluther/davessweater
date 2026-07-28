@@ -173,7 +173,13 @@ export default async function WidgetPage({
         <span className="truncate font-semibold" style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}>
           {town?.name ?? slug}
         </span>
-        <span className="shrink-0 text-[10px] uppercase tracking-wide text-orange-300">Dave&apos;s Sweater</span>
+        {/* The embed runs its own compact scale, not the site's ds-* ladder:
+            this markup renders inside someone else's page at an iframe height
+            we advertise, so its type is sized to that box rather than to our
+            pages. Keep it self-contained.
+            Brand name, not "Index": the card now carries almanac and river
+            lines alongside the consensus, so it is more than the index. */}
+        <span className="shrink-0 text-[11px] uppercase tracking-wide text-orange-300">Dave&apos;s Sweater</span>
       </div>
 
       {!today ? (

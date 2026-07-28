@@ -27,7 +27,7 @@ export default function ScoredDayCard(
           ) : iconChar ? (
             <span aria-hidden="true">{iconChar}</span>
           ) : null}
-          <span className="font-display text-base font-bold sm:text-lg">{label}</span>
+          <span className="ds-h4">{label}</span>
           {isBest && (
             <span className="rounded-full border border-green/30 bg-green/10 px-2.5 py-0.5 text-xs font-semibold text-green-700">
               day&apos;s best
@@ -44,7 +44,7 @@ export default function ScoredDayCard(
         </span>
         <span className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
           <VerdictScale score={s} />
-          <span className="font-display text-2xl font-bold sm:text-3xl">
+          <span className="ds-stat">
             {s.toFixed(1)}<span className="text-sm font-normal text-muted">/100</span>
           </span>
         </span>
@@ -54,15 +54,15 @@ export default function ScoredDayCard(
       </div>
       <div className="mt-4 grid grid-cols-3 gap-3 border-t border-border pt-4 text-sm">
         <div>
-          <div className="text-xs text-muted">Predicted hi / lo</div>
+          <div className="ds-caption">Predicted hi / lo</div>
           <div className="mt-0.5 font-medium">{f.hiLo}</div>
         </div>
         <div>
-          <div className="text-xs text-muted">Wind</div>
+          <div className="ds-caption">Wind</div>
           <div className="mt-0.5 font-medium">{f.wind}</div>
         </div>
         <div>
-          <div className="text-xs text-muted">Rain</div>
+          <div className="ds-caption">Rain</div>
           <div className="mt-0.5 font-medium">{f.rain}</div>
         </div>
       </div>
