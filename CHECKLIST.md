@@ -1266,7 +1266,8 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
         infra; (2) /business page + upload + private dashboard; (3) later: consented aggregate
         dining index, paid tier (owner calls). ⚠️ HARD CONSTRAINT: contributed data is private —
         NEVER in the public repo (pilot = owner-side storage; v1 needs Supabase/private store).
-        OWNER ACTION to start the pilot: name 2–3 businesses willing to share a daily number.
+        **⏸ ON HOLD — owner, 2026-07-28.** Discussed and parked; naming pilot businesses is NOT a
+        pending owner action and sessions should stop surfacing it as one. Resume is owner-initiated.
   - [x] **Bookings/dining data + Google pricing — RESEARCHED 2026-07-25 (verdicts recorded).**
         DINING: every third-party avenue is OUT — Yelp Fusion (no demand fields, no free tier,
         anti-redistribution terms), TripAdvisor Content API (5k/mo free BUT reviews-only + terms
@@ -1359,6 +1360,9 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
         continuous station sits on our corridors. If it lands: years of labeled hours joinable to
         reconstructed features — the free historical backfill. Commercial alternatives are dead
         ends (TomTom Stats = enterprise; Google = ToS §3.2.3).
+        **Still no reply as of 2026-07-28 (owner confirmed).** Nothing to do but wait; this is not a
+        blocker on anything, since traffic v2 grades against TomTom actuals and NCDOT would only add
+        historical depth. If it stays silent into late Aug, a follow-up is the owner's call.
   - [ ] **Restaurant-API historical data — ANSWERED 2026-07-25: the APIs hold no demand history**
         (Yelp/TripAdvisor "history" = review timestamps — lagging, thin at Boone scale, ToS-
         encumbered; Google popular-times curves = the real thing but API-inaccessible and
@@ -1459,10 +1463,23 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
         /api/items joins on source URL adding cancelled/counties/kind/source_name/festival_name —
         506/506 enriched day one. Factual fields only; their editorial prose deliberately stays
         out of this public repo.
-  - [ ] **Owner ping to the left917 operator — now OPTIONAL relationship gesture** (permission no
-        longer being asked, per owner): a friendly heads-up that DS consumes their calendar with
-        attribution + the reciprocal offer — our /api/v1/forecast + one-line widget.js whenever
-        they want DS as their weather source.
+  - [ ] **Owner ping to the left917 operator — DRAFTED 2026-07-28, owner sends** (optional
+        relationship gesture; permission no longer being asked, per owner). Draft:
+        `planning/2026-07-28-left917-courtesy-ping-draft.md`. No prior draft existed anywhere —
+        this line described one but never contained it.
+        ⚠️ **The old wording of this item was factually wrong and the draft corrects it.** It said
+        the ping tells them "DS consumes their calendar with attribution." Verified in code
+        2026-07-28: **neither half is true yet.** (1) No public attribution — `left917.json` carries
+        an `attribution` string but nothing renders it; `grep left917 src/` returns zero hits, because
+        there is no public events surface at all. (2) **Nothing consumes the feed** —
+        `capture_left917_events.py` writes 507 enriched events daily and no reader picks them up;
+        `compute_busyness.py` reads only `registry.json` + `athletics.json`. The feed is captured
+        and parked. Accurate claim today: "we pull it daily and it will feed the demand signal."
+    - [ ] **Wire the left917 feed into `compute_busyness.py` + surface the credit** — recommended
+          BEFORE sending, and worth doing regardless. 507 hyperlocal Watauga/Ashe/Avery events
+          across three counties are being captured for nothing, and they are exactly the layer the
+          index is missing. Doing it first also turns the ping from a heads-up into a thank-you
+          with a link.
 
 ## Public feed + API (owner-directed 2026-07-25 — spec DRAFT, awaiting owner sign-off)
 Owner: "an API or RSS to share," with display options — **1/3/5-day horizons · by town when live ·
