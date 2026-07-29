@@ -756,6 +756,27 @@ PR, with reasoning. Divergence-by-omission is the failure mode this kills.**
       words, R/M/W legend, reading cards, typographic quotes ×17, stat-caption capitalization,
       attribution backlink. STILL OPEN in the pass: forecaster logos on one line, drop the
       Open-Meteo hero card, remove the Apple Weather spot, article cadence decision.
+  - [x] **Town selection now carries across pages — 2026-07-28 (branch `town-selection-persistence`).**
+        Owner report: "The dropdown selector should carry across pages. If they change from one town
+        to the next, then the next page with a town selector should match it." The header picker read
+        the town from the URL only, so the nav's Today / Right-Wrong-Ray links were hardcoded to
+        Boone's canonical URLs and the choice was lost on every cross-surface move. Fix: the chosen
+        town is remembered in `localStorage` (`ds:town`) by `src/lib/townMemory.ts` — banked both on
+        an explicit pick and on ARRIVING at any town page (deep link, internal link, back button),
+        and cleared by "All towns", which deliberately means no single town. The two primary nav
+        links (desktop row and mobile sheet) then point at that town's copy of each surface.
+        Hydration-safe by construction: the memory is an external store whose server snapshot is
+        null, so the prerendered HTML keeps Boone's crawlable `/` and `/right-wrong-ray` and the
+        swap happens after mount. Unit-tested (`townMemory.test.ts`, `townPicker.test.ts`) and
+        walked in a browser end to end.
+  - [x] **Town pages mirror the canonical Boone page — 2026-07-28 (same branch).** Owner report:
+        "the pills on the towns are still in the hero, these new town pages are supposed to mirror
+        the canon Boone page." The homepage's in-hero town band moved into the header on 2026-07-28,
+        but both town templates still rendered the old "Switch town" pills. Removed from
+        `weather/[slug]` and `right-wrong-ray/[slug]`, and `TownSwitcher.tsx` deleted — it had no
+        consumers left. The town control now exists exactly once site-wide, in the header. No
+        crawlable links lost: `TownPicker` ships its full town list in every page's HTML (hidden
+        attribute, not conditional rendering), verified in the built output.
 - [ ] **Layer 1 — `docs/DESIGN-STANDARD.md`.** Walk the corrected site and codify: the page shell
       (layout/partials every page extends); navigation/discovery registration rules (a new route
       must register in nav/hubs/indexes — /weather hub, report-card franchise — so pages can't

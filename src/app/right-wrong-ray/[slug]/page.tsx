@@ -15,7 +15,6 @@ import SectionBand from "@/components/SectionBand";
 import SortableScoreTable, { type ScoreRow } from "@/components/SortableScoreTable";
 import ScoredDayCard from "@/components/ScoredDayCard";
 import UpcomingForecasts from "@/components/UpcomingForecasts";
-import TownSwitcher from "@/components/TownSwitcher";
 import JsonLd from "@/components/JsonLd";
 
 const BASE = "https://davessweater.com";
@@ -125,6 +124,9 @@ export default async function TownTrackerPage({ params }: { params: Promise<{ sl
     <>
       <JsonLd data={jsonLd} />
 
+      {/* No town control in this hero: it mirrors the canonical Boone board,
+          whose town band moved into the header picker on 2026-07-28 so the
+          control exists exactly once (owner, 2026-07-28). */}
       <section className="w-full bg-teal-700 text-white">
         <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:py-12">
           <div className="ds-kicker text-orange-300">
@@ -150,10 +152,6 @@ export default async function TownTrackerPage({ params }: { params: Promise<{ sl
               {town.name}&apos;s forecast
             </Link>
           </p>
-          <div className="mt-5">
-            <div className="mb-2 ds-kicker text-white/60">Switch town</div>
-            <TownSwitcher current={slug} base="right-wrong-ray" />
-          </div>
         </div>
       </section>
 

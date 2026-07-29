@@ -35,8 +35,26 @@ export function townHrefOn(slug: string, surface: TownSurface): string {
   return `/${surface}/${slug}`;
 }
 
+/**
+ * Point one of the header's two primary nav links at the remembered town.
+ *
+ * "Today" and "Right/Wrong Ray" ship in the HTML as Boone's canonical `/` and
+ * `/right-wrong-ray` — those are the crawlable URLs and the server-rendered
+ * markup, and they stay that way. Once the header has resolved a remembered
+ * town (after mount, see lib/townMemory.ts), the same two links point at that
+ * town's copy of the surface instead, so a visitor reading Beech Mountain's
+ * forecast gets Beech Mountain's scoreboard. Any other href is returned
+ * untouched — Towns, Resources, and the shop are not per-town surfaces.
+ */
+export function navHrefForTown(href: string, slug: string | null): string {
+  if (!slug) return href;
+  if (href === "/") return townHrefOn(slug, "weather");
+  if (href === "/right-wrong-ray") return townHrefOn(slug, "right-wrong-ray");
+  return href;
+}
+
 /** Strip a trailing slash so "/weather/" behaves like "/weather". */
-function normalize(pathname: string | null | undefined): string {
+export function normalizePath(pathname: string | null | undefined): string {
   const p = (pathname || "/").split(/[?#]/)[0];
   return p.replace(/\/+$/, "") || "/";
 }
@@ -53,7 +71,7 @@ export function pickerState(
   pathname: string | null | undefined,
   towns: { slug: string; name: string }[],
 ): PickerState {
-  const path = normalize(pathname);
+  const path = normalizePath(pathname);
   const nameOf = (slug: string): string | null => towns.find((t) => t.slug === slug)?.name ?? null;
 
   if (path === "/") return { surface: "weather", slug: "boone", label: nameOf("boone") ?? "Boone" };

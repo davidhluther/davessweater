@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { pickerState, townHrefOn } from "@/lib/townPicker";
+import { navHrefForTown, normalizePath, pickerState, townHrefOn } from "@/lib/townPicker";
 
 const TOWNS = [
   { slug: "boone", name: "Boone" },
@@ -15,6 +15,40 @@ describe("townHrefOn", () => {
   it("routes every other town under the requested surface", () => {
     expect(townHrefOn("deep-gap", "weather")).toBe("/weather/deep-gap");
     expect(townHrefOn("deep-gap", "right-wrong-ray")).toBe("/right-wrong-ray/deep-gap");
+  });
+});
+
+describe("navHrefForTown", () => {
+  it("leaves the canonical Boone hrefs alone with no remembered town", () => {
+    // This is what the prerendered HTML has to keep shipping.
+    expect(navHrefForTown("/", null)).toBe("/");
+    expect(navHrefForTown("/right-wrong-ray", null)).toBe("/right-wrong-ray");
+  });
+
+  it("points both primary links at the remembered town", () => {
+    expect(navHrefForTown("/", "deep-gap")).toBe("/weather/deep-gap");
+    expect(navHrefForTown("/right-wrong-ray", "deep-gap")).toBe("/right-wrong-ray/deep-gap");
+  });
+
+  it("keeps Boone on its legacy top-level URLs when Boone is the remembered town", () => {
+    expect(navHrefForTown("/", "boone")).toBe("/");
+    expect(navHrefForTown("/right-wrong-ray", "boone")).toBe("/right-wrong-ray");
+  });
+
+  it("does not touch links that are not per-town surfaces", () => {
+    for (const href of ["/weather", "/resources", "/shop", "/api"]) {
+      expect(navHrefForTown(href, "deep-gap")).toBe(href);
+    }
+  });
+});
+
+describe("normalizePath", () => {
+  it("strips trailing slashes, queries, and hashes down to a bare path", () => {
+    expect(normalizePath("/weather/")).toBe("/weather");
+    expect(normalizePath("/weather?x=1")).toBe("/weather");
+    expect(normalizePath("/weather#top")).toBe("/weather");
+    expect(normalizePath("/")).toBe("/");
+    expect(normalizePath(null)).toBe("/");
   });
 });
 
