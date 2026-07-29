@@ -25,9 +25,10 @@ python3 scripts/copy_lint.py
 
 It reads the user-facing strings out of `src/` (JSX text, prose literals, metadata,
 aria-labels, native posts) and errors on AP colon violations, lowercase
-"label: value" skeletons, em-dashes in UI copy, nav/category label sets that break
-Title Case, lowercase table cells and stat captions, straight quotes in JSX, words
-running together at an element boundary, and Tier 1 banned vocabulary.
+"label: value" skeletons, em-dashes in UI copy, middots used as data-line
+separators, nav/category label sets that break Title Case, lowercase table cells and
+stat captions, straight quotes in JSX, words running together at an element
+boundary, and Tier 1 banned vocabulary.
 `tests/test_copy_lint.py` runs it over the real tree, so a violation fails
 `python3 -m pytest tests/` rather than waiting for the owner to catch it by reading
 the page — which is what kept happening while these rules lived only in prose
@@ -52,12 +53,19 @@ the universal validator has no way to check.
   Short form "Mon D" (`fmtShortDate()`) only where space is genuinely tight (chart
   tooltips) — see `CLAUDE.md`. This is a render-layer rule as much as a writing
   one: format at the component boundary, not by hand-writing dates into copy.
-- **Pipes as data separators, not em-dashes.** Scoreboard/stat lines use `|`
-  between data points ("OM 92 | Ray's 67 | Apple 88"), matching the codebase
+- **Pipes as data separators — not em-dashes, not middots.** Scoreboard/stat lines
+  use `|` between data points ("OM 92 | Ray's 67 | Apple 88"), matching the codebase
   convention (`TrendChartInteractive.tsx`, homepage headers). Keep prose em-dashes
   for the universal styleguide's normal use (≤1 per ~200 words); don't reach for
   one where a pipe belongs in a data line, and don't reach for a pipe inside a
-  sentence.
+  sentence. **Copy lint enforces this** (`SEPARATOR`): a middot in shipped copy,
+  literal or `&middot;`, is an error. The standard was set 2026-07-02 and swept
+  site-wide, then drifted back twice — by 2026-07-28 the embeddable widget card
+  read "TODAY | JUL 28" two lines above "Sunrise 6:24 AM · Sunset 8:41 PM", so one
+  card contradicted itself. Two exemptions, both narrow: a middot **opening an
+  `<li>`** is a hand-rolled bullet glyph (the fireworks report's logistics and
+  observed-record lists), and **next/og share cards** (`opengraph-image.tsx`,
+  `twitter-image.tsx`) are rasterized poster art with their own display typography.
 - **Em-dashes minimized further than the universal ceiling where a plainer option
   exists.** The universal cap (≤1 per ~200 words) is the outer bound, not a
   target — prefer a period or comma first; spend the em-dash only when nothing

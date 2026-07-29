@@ -40,7 +40,7 @@ export default function OtherSourcesBoard({ rows }: { rows: OtherSourceRow[] }) 
                   <span className="font-medium text-green-700">{r.label}</span>
                   <span className="tabular-nums font-semibold">{r.avg.toFixed(1)}</span>
                 </div>
-                <div className="mt-1 ds-caption">{r.record} &middot; {r.days} days</div>
+                <div className="mt-1 ds-caption">{r.record} | {r.days} days</div>
               </li>
             ))}
           </ul>
@@ -59,7 +59,7 @@ export default function OtherSourcesBoard({ rows }: { rows: OtherSourceRow[] }) 
                 <span className="font-medium text-green-700">{r.label}</span>
                 <span className="text-muted">
                   <span className="tabular-nums text-foreground">{r.avg.toFixed(1)}</span>
-                  {" · "}{r.days} of {MIN_SCORED_DAYS} days
+                  {" | "}{r.days} of {MIN_SCORED_DAYS} days
                 </span>
               </li>
             ))}

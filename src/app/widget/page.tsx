@@ -98,7 +98,7 @@ function DayRow({ day, showWind }: { day: StripDay; showWind: boolean }) {
       </div>
       <div className="mt-0.5 text-[0.72rem] leading-snug text-white/75">
         {day.summary}
-        {showWind && day.wind ? <span className="text-white/50"> &middot; wind {day.wind}</span> : null}
+        {showWind && day.wind ? <span className="text-white/50"> | wind {day.wind}</span> : null}
       </div>
     </li>
   );
@@ -221,8 +221,8 @@ export default async function WidgetPage({
             {wantFull ? (
               <div className="mt-1 text-[0.68rem] text-white/50">
                 {today.count}-source consensus
-                {today.wind ? ` · wind ${today.wind}` : ""}
-                {` · ${today.confidence} agreement`}
+                {today.wind ? ` | wind ${today.wind}` : ""}
+                {` | ${today.confidence} agreement`}
               </div>
             ) : null}
           </div>
@@ -241,7 +241,7 @@ export default async function WidgetPage({
           appears only where a gauge genuinely belongs to it. */}
       {almanac.length || river ? (
         <div className="border-t border-white/10 bg-teal-800/60 px-3 py-2 text-[0.68rem] leading-relaxed text-white/70">
-          {almanac.length ? <div>{almanac.join(" · ")}</div> : null}
+          {almanac.length ? <div>{almanac.join(" | ")}</div> : null}
           {river ? (
             <div>
               {river.river} {formatFlow(river.cfs)}
