@@ -1331,23 +1331,29 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
           absent (never generated — that day is a gap, not backfilled). LESSON (pattern for all
           shared-cron workflows): never gate a step on wall-clock hour; gate on whether its
           output exists.
-      - [ ] **WATCH — the output-gate fix has never actually fired in CI (DS IA, 2026-07-28).** The
-            fix committed 07-27 16:40 UTC; the only Traffic Actuals runs after it (17:49, 22:14,
-            00:08) all found `forecast/2026-07-27.json` already present from the local catch-up and
-            correctly skipped. So the repaired path is still unexercised: **today's first run
-            (12:07 UTC cron, ~08:07 EDT 07-28) is its first live test.** Confirm afterward that
-            `data/traffic/forecast/2026-07-28.json` exists AND `data/traffic/comparisons/2026-07-27.json`
-            appeared (grading yesterday). If either is missing, the gate is still wrong — `gh run view`
-            the run and read the grade→forecast step. Note 07-26 stays a legitimate gap (no forecast
-            was ever generated for it, so it can never be graded); `graded_dates` should go
-            07-25 → 07-27, skipping 07-26.
-      - [x] **Sentinel now covers this failure class — PR #158 OPEN 2026-07-28 (not merged).** The
-            standalone freshness sentinel stayed green through the whole silent skip because it only
+      - [x] **Output-gate fix VERIFIED IN CI 2026-07-28 — first live firing, clean.** Worth recording
+            that until this run the repaired path had never executed: the fix committed 07-27 16:40 UTC
+            and every Traffic Actuals run after it (17:49, 22:14, 00:08) found `forecast/2026-07-27.json`
+            already present from the local catch-up and correctly skipped. The 07-28 run exercised it for
+            real and produced exactly the expected state: `forecast/2026-07-28.json` generated,
+            `comparisons/2026-07-27.json` written (yesterday graded), `graded_dates` =
+            `['2026-07-25', '2026-07-27']` — 07-26 skipped, which is correct and permanent (no forecast
+            was ever generated for it, so it can never be graded). **The run that did it proves the fix
+            was necessary: GitHub fired the 12:07 UTC cron at 14:30**, another >2h delay the old
+            wall-clock gate could not have survived. Model quality improved with the second graded day:
+            n 12 → 24, ratio MAE 0.064 → 0.048, jammed Brier 0.068 → 0.037.
+      - [x] **Sentinel now covers this failure class — PR #158 MERGED 2026-07-28 (`5ee7348f`, squash).**
+            The standalone freshness sentinel stayed green through the whole silent skip because it only
             watched the weather pipeline. Extended with three read-only traffic checks (newest
             forecast ≤1 day, newest comparison ≤3 days, newest actuals ≤1 day — slack sized to
             GitHub's routine multi-hour cron delays and to the one legitimate 07-26 gap day).
             Thresholds pinned by test against both the real passing repo state and the reconstructed
-            failing incident state. 546 pytest green. **Owner: review + merge.**
+            failing incident state. 546 pytest green.
+        - [ ] **Confirm the extended sentinel's first CI run.** It merged after the 07-28 17:49 UTC
+              sentinel run, so that run still executed the old weather-only code — **the 07-29 run is
+              the first to exercise the traffic checks.** Expect success; a red run means a threshold
+              is mis-sized against real cron timing rather than a genuine pipeline stall, so read the
+              step output before touching the pipeline.
   - [~] **NCDOT continuous-count historical data — EMAIL SENT by owner 2026-07-25; awaiting
         Traffic Survey Group reply.** Hourly volumes 24/365, public/clean; unknown whether a
         continuous station sits on our corridors. If it lands: years of labeled hours joinable to
