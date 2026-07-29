@@ -6,6 +6,7 @@ import { ChevronDown, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { TownNavItem } from "@/lib/towns";
 import { pickerState, townHrefOn } from "@/lib/townPicker";
+import { clearTown, writeTown } from "@/lib/townMemory";
 
 // The header's one town control (owner, 2026-07-28: "Can we put the toggle/
 // dropdown in the header/nav section?"). It replaces BOTH the old desktop
@@ -81,9 +82,16 @@ export default function TownPicker({ towns }: { towns: TownNavItem[] }) {
         hidden={!open}
         className="absolute right-0 top-full z-50 mt-2 w-[min(20rem,calc(100vw-1.5rem))] rounded-xl border border-white/15 bg-teal-700 p-1.5 shadow-lg"
       >
+        {/* The picks write the town memory directly as well as through the
+            arrival that follows (SiteHeader's effect), so the choice is banked
+            the moment it is made rather than a navigation later — and so
+            "All towns" reads as what it is: a deliberate clearing. */}
         <Link
           href="/weather"
-          onClick={() => setOpen(false)}
+          onClick={() => {
+            clearTown();
+            setOpen(false);
+          }}
           className={cn(
             "block rounded-md px-3 py-2 text-[0.78rem] font-semibold transition-colors",
             slug === null && pathname === "/weather"
@@ -98,7 +106,10 @@ export default function TownPicker({ towns }: { towns: TownNavItem[] }) {
             <Link
               key={t.slug}
               href={townHrefOn(t.slug, surface)}
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                writeTown(t.slug);
+                setOpen(false);
+              }}
               aria-current={t.slug === slug ? "page" : undefined}
               className={cn(
                 "block rounded-md px-3 py-2 text-[0.78rem] font-medium transition-colors",

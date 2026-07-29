@@ -13,7 +13,6 @@ import SectionBand from "@/components/SectionBand";
 import CompositeHeadline from "@/components/CompositeHeadline";
 import FiveDayStrip from "@/components/FiveDayStrip";
 import UpcomingForecasts from "@/components/UpcomingForecasts";
-import TownSwitcher from "@/components/TownSwitcher";
 import JsonLd from "@/components/JsonLd";
 
 const BASE = "https://davessweater.com";
@@ -105,7 +104,12 @@ export default async function TownWeatherPage({ params }: { params: Promise<{ sl
     <>
       <JsonLd data={jsonLd} />
 
-      {/* Hero band — same teal dialect as the tracker header, with the switcher */}
+      {/* Hero band — same teal dialect as the tracker header. No town control
+          here: this page mirrors the canonical Boone page, whose in-hero band
+          moved into the header picker on 2026-07-28 so the site has exactly one
+          place to switch town (owner, 2026-07-28: "the pills on the towns are
+          still in the hero, these new town pages are supposed to mirror the
+          canon Boone page"). */}
       <section className="w-full bg-teal-700 text-white">
         <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:py-12">
           <div className="ds-kicker text-orange-300">
@@ -117,10 +121,6 @@ export default async function TownWeatherPage({ params }: { params: Promise<{ sl
             {town.name}&apos;s own coordinates, blended into one consensus and graded daily against{" "}
             {town.name}&apos;s own actuals.
           </p>
-          <div className="mt-5">
-            <div className="mb-2 ds-kicker text-white/60">Switch town</div>
-            <TownSwitcher current={slug} base="weather" />
-          </div>
         </div>
       </section>
 

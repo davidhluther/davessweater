@@ -1,11 +1,13 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { TownNavItem } from "@/lib/towns";
 import TownPicker from "@/components/TownPicker";
+import { navHrefForTown } from "@/lib/townPicker";
+import { readTown, recordTownArrival, subscribeTown } from "@/lib/townMemory";
 
 // Top-level stays lean; everything editorial lives under the Resources
 // dropdown (the label itself links to the /resources hub).
@@ -41,6 +43,19 @@ export default function SiteHeader({ towns }: { towns: TownNavItem[] }) {
   // refused to scroll (owner-reported 2026-07-27).
   const [townsMobile, setTownsMobile] = useState(false);
   const [resourcesMobile, setResourcesMobile] = useState(false);
+
+  // The remembered town (lib/townMemory.ts). The server snapshot is always
+  // null, so the first client render matches the prerendered HTML exactly —
+  // Boone's canonical `/` and `/right-wrong-ray` ship in the markup and stay
+  // crawlable — and React re-reads the real value right after mount.
+  const town = useSyncExternalStore(subscribeTown, () => readTown(towns), () => null);
+  // Arriving on a town page IS choosing that town, however the visitor got
+  // there: deep link, internal link, or back button. Landing on the /weather
+  // hub clears it, because "All towns" means no single town.
+  useEffect(() => {
+    recordTownArrival(pathname, towns);
+  }, [pathname, towns]);
+
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
   // A town link is current only on its own page (Boone's page is "/").
   const townActive = (t: TownNavItem) => (t.href === "/" ? pathname === "/" : pathname === t.href);
@@ -68,11 +83,16 @@ export default function SiteHeader({ towns }: { towns: TownNavItem[] }) {
             against the right edge. */}
         <TownPicker towns={towns} />
         <nav className="hidden items-center gap-1 md:flex">
-          {primary.map((l) => (
-            <Link key={l.href} href={l.href} className={pill(isActive(l.href))}>
-              {l.label}
-            </Link>
-          ))}
+          {primary.map((l) => {
+            // Town-aware once the memory has resolved; Boone's canonical URLs
+            // until then, which is what ships in the HTML.
+            const href = navHrefForTown(l.href, town);
+            return (
+              <Link key={l.href} href={href} className={pill(isActive(href))}>
+                {l.label}
+              </Link>
+            );
+          })}
           <div
             className="relative"
             onMouseEnter={() => setDrop(true)}
@@ -123,13 +143,16 @@ export default function SiteHeader({ towns }: { towns: TownNavItem[] }) {
       </div>
       {open && (
         <nav className="flex max-h-[calc(100dvh-4rem)] flex-col gap-1 overflow-y-auto overscroll-contain border-t border-white/15 px-4 py-2 md:hidden">
-          {primary.map((l) => (
-            <Link key={l.href} href={l.href} onClick={() => setOpen(false)}
-              className={cn("rounded-md px-3 py-3 text-sm font-medium",
-                isActive(l.href) ? "bg-orange-600 text-white" : "text-white/80 hover:bg-white/10")}>
-              {l.label}
-            </Link>
-          ))}
+          {primary.map((l) => {
+            const href = navHrefForTown(l.href, town);
+            return (
+              <Link key={l.href} href={href} onClick={() => setOpen(false)}
+                className={cn("rounded-md px-3 py-3 text-sm font-medium",
+                  isActive(href) ? "bg-orange-600 text-white" : "text-white/80 hover:bg-white/10")}>
+                {l.label}
+              </Link>
+            );
+          })}
           <div className="flex items-center">
             <Link href="/weather" onClick={() => setOpen(false)}
               className={cn("flex-1 rounded-md px-3 py-3 text-sm font-medium",
