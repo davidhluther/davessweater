@@ -777,6 +777,28 @@ PR, with reasoning. Divergence-by-omission is the failure mode this kills.**
         consumers left. The town control now exists exactly once site-wide, in the header. No
         crawlable links lost: `TownPicker` ships its full town list in every page's HTML (hidden
         attribute, not conditional rendering), verified in the built output.
+- [x] **Separator standard re-swept, and made enforceable — 2026-07-28 (branch
+      `separator-standard-lint`).** The 2026-07-02 brand standard (data-line separators are pipes,
+      swept site-wide; see the Right/Wrong Ray v2 entry above) had drifted back a **second** time.
+      Found during the widget's cross-origin verification: the embeddable card rendered "TODAY |
+      JUL 28" two lines above "Sunrise 6:24 AM · Sunset 8:41 PM · Waxing gibbous, 99% lit" — one
+      card contradicting itself inside one box. **8 sites converted** across 5 files: `/widget`
+      (almanac join, the day-row wind suffix, and both consensus-line suffixes — 4), `ScoreBreakdown`
+      (2), `OtherSourcesBoard` (2 — note this component is now orphaned, no importer since the "rest
+      of the field" retirement), `GmhgBanner` (1), and the GMHG planner's parking table (1).
+      **2 exemptions, both deliberate:** a middot **opening an `<li>`** is a hand-rolled bullet glyph,
+      not a separator (the fireworks report's venue logistics and observed-record lists, 16 items —
+      nothing sits to its left), and **next/og share cards** (`opengraph-image.tsx` /
+      `twitter-image.tsx`) are satori-rasterized poster art running their own display typography.
+      **The durable half is the lint:** `scripts/copy_lint.py` grew a `SEPARATOR` rule (error) that
+      catches the literal `·` and every entity spelling, reading SOURCE rather than extracted
+      snippets — because the drift that started this was `almanac.join(" · ")`, and a bare " · " is
+      too short to survive `_looks_like_copy`. It was invisible to extraction exactly where it did
+      the most damage. The `<li>`-opening exemption is anchored to `<li>` specifically, not to
+      "leading glyph", so `ScoreBreakdown`'s `<span>· not published</span>` — which also led its
+      element and WAS drift — still fails. 8 new tests; pytest blocks on it. Documented in the
+      script docstring, `CLAUDE.md`, and `guidelines/seo/DS_WRITING_QUALITY.md`. The 07-02 sweep
+      cannot silently drift a third time.
 - [ ] **Layer 1 — `docs/DESIGN-STANDARD.md`.** Walk the corrected site and codify: the page shell
       (layout/partials every page extends); navigation/discovery registration rules (a new route
       must register in nav/hubs/indexes — /weather hub, report-card franchise — so pages can't

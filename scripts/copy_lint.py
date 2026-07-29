@@ -24,6 +24,7 @@ subset of styleguide rules that are mechanically decidable on UI copy:
   CAPTION_CASE    error  a stat caption or standalone label that starts lowercase
   JSX_SPACING     error  words that run together at an element boundary
   JSX_QUOTES      error  straight quotes in rendered JSX text (nothing converts them)
+  SEPARATOR       error  a middot separating data points (DS data lines use a pipe)
   VOCAB           error  Tier 1 banned vocabulary, puffery, or formulaic transitions
 
 Severity is the design. Errors are the unambiguous mechanical cases; every judgment
@@ -1073,6 +1074,62 @@ def rule_jsx_quotes(snips: list[Snippet]) -> list[Finding]:
     return findings
 
 
+# Data-line separators are pipes. The standard was set 2026-07-02 and swept
+# site-wide then; by 2026-07-28 it had drifted back far enough that the embeddable
+# widget card contradicted itself inside one box — "TODAY | JUL 28" on the date
+# line, "Sunrise 6:24 AM · Sunset 8:41 PM · Waxing gibbous" two lines below. A
+# prose standard the linter can't see is a standard that drifts, so this is the
+# mechanical version of it. Every entity spelling counts: `&middot;` is the same
+# character to a reader, and one of the two drifted sites was written that way.
+_MIDDOT = re.compile(r"·|&middot;|&#0*183;|&#[xX]0*[bB]7;")
+
+# A middot is not always a separator. Opening a list item, it is standing in for
+# a bullet: the fireworks report renders each venue's logistics and observed
+# record as `<li>· {line}</li>`, a hand-rolled list marker with no data on either
+# side of it. That is typography, not a data line, so a middot that OPENS an <li>
+# is exempt; a middot with content before it is separating two things and must be
+# a pipe. Anchoring the exemption to <li> specifically (rather than to "leading
+# glyph") keeps the inline-span case honest — ScoreBreakdown's `<span>· not
+# published</span>` also led its element, and it WAS drift.
+_LI_OPEN_BEFORE = re.compile(r"<li\b[^>]*>\s*$")
+
+# next/og share cards are build-time ART. satori rasterizes them to a PNG with
+# their own display typography ("JULY 9-12, 2026  ·  MACRAE MEADOWS", letter-spaced
+# on a poster), and nothing there sits in a rendered data line beside a pipe, so
+# they don't carry the site convention. Separator rule only — every other rule
+# still reads these files.
+OG_IMAGE_NAMES = {"opengraph-image.tsx", "twitter-image.tsx"}
+
+
+def rule_separator(files: list[Path]) -> list[Finding]:
+    """Middot used as a data-line separator, where the standard is a pipe.
+
+    Reads the source rather than the extracted snippets on purpose: the drift
+    that prompted this rule was `almanac.join(" · ")`, and a bare " · " is too
+    short to survive `_looks_like_copy`. The separator is invisible to extraction
+    precisely where it does the most damage.
+    """
+    findings: list[Finding] = []
+    for path in files:
+        if path.name in OG_IMAGE_NAMES:
+            continue
+        rel = _rel(path)
+        src = path.read_text(encoding="utf-8")
+        if path.suffix in (".ts", ".tsx"):
+            src = strip_comments(src)
+        for m in _MIDDOT.finditer(src):
+            if _LI_OPEN_BEFORE.search(src[max(0, m.start() - 200) : m.start()]):
+                continue
+            context = " ".join(src[max(0, m.start() - 40) : m.start() + 40].split())
+            findings.append(
+                Finding(rel, _line_of(src, m.start()), "SEPARATOR", "error",
+                        "middot between data points - DS data lines separate with a pipe "
+                        f'(standard set 2026-07-02; a bullet glyph opening an <li> is '
+                        f'exempt): "{context}"', context)
+            )
+    return findings
+
+
 def rule_vocab(snips: list[Snippet], terms: list[tuple[str, str]]) -> list[Finding]:
     findings: list[Finding] = []
     for s in snips:
@@ -1124,7 +1181,7 @@ def lint(paths: list[Path], rules: dict | None = None) -> list[Finding]:
         snips.extend(extract_file(path))
     findings = rule_colons(snips) + rule_emdash(snips) + rule_vocab(snips, terms)
     findings += rule_label_case(snips) + rule_jsx_quotes(snips)
-    findings += rule_nav_case(files) + rule_jsx_spacing(files)
+    findings += rule_nav_case(files) + rule_jsx_spacing(files) + rule_separator(files)
     return sorted(findings, key=lambda f: (f.path, f.line, f.code))
 
 
