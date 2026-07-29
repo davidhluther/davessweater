@@ -22,6 +22,33 @@ Two checks, both must pass:
    (handled by the backfill sweep) without false-alarming on a merely-delayed
    backfill.
 
+It also covers the **traffic** predict→grade loop (added 2026-07-28), the exact
+failure class that motivated it: on 2026-07-26/27 the traffic model's daily
+predict→grade step in `traffic_actuals.yml` silently skipped for two days (its
+old "UTC hour == 12" gate never matched, because GitHub fired the nominal 12:07
+cron at 13:49/15:08 — routine cron delay exceeds an hour). Nothing failed, the
+weather-only sentinel stayed green, and the traffic forecast/comparison feeds
+just stopped advancing. The gate is fixed now (commit e5ed6322); these checks
+are the backstop that would have caught it. Three traffic checks:
+
+3. **Traffic forecast isn't stale** — the newest file in `data/traffic/forecast/`
+   is dated no more than 1 day before today. The forecast is written once/day on
+   the day's first actuals cron; because GitHub delays that cron by hours, at the
+   16:30 UTC sentinel run today's forecast may legitimately not exist yet, so
+   *yesterday's* forecast must still count as healthy. Two consecutive missing
+   days (age > 1) is the real "the loop stopped" signal — red.
+4. **Traffic comparisons aren't stale** — the newest file in
+   `data/traffic/comparisons/` is no more than 3 days old. Grading scores
+   *yesterday's* forecast, so the healthy age is 1; the extra slack absorbs one
+   legitimate missing-forecast gap day (a day with no forecast — like the
+   2026-07-26 incident gap — never gets a comparison, so the newest comparison
+   can sit a day further back than the newest forecast without anything being
+   wrong) plus the same in-flight-cron delay as the forecast check.
+5. **Traffic actuals aren't stale** — the newest file in `data/traffic/actuals/`
+   is dated no more than 1 day before today. Actuals sample 4x/day with delays up
+   to ~3h, so by the same reasoning as the forecast check yesterday's actuals
+   must count as healthy; age > 1 means the sampling crons stopped.
+
 Read-only: this workflow must never commit anything, it just goes red loudly
 so the owner notices a skipped run instead of a slowly staling site.
 
@@ -38,6 +65,14 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 EST = ZoneInfo("America/New_York")
 
 STALE_COMPARISON_DAYS = 2  # yesterday's comparison + 1 day of archive-lag slack
+
+# Traffic predict→grade loop (added 2026-07-28). All slack values reason about
+# GitHub's routine multi-hour cron delay: at the 16:30 UTC sentinel the day's
+# first traffic run may not have fired yet, so yesterday's file must count as
+# healthy. See the module docstring for the per-check rationale.
+TRAFFIC_STALE_FORECAST_DAYS = 1    # yesterday's forecast ok; two missing days = red
+TRAFFIC_STALE_COMPARISON_DAYS = 3  # grades yesterday + one gap-day + in-flight cron
+TRAFFIC_STALE_ACTUALS_DAYS = 1     # yesterday's actuals ok; missing = crons stopped
 
 
 def check_today_capture(today: str):
@@ -108,11 +143,72 @@ def check_town_captures(today: str):
     return True, f"towns: all {len(towns)} towns captured today ({today})"
 
 
+def newest_traffic_date(subdir: str):
+    """Return the newest YYYY-MM-DD stem in data/traffic/{subdir}/, or None if empty/missing."""
+    d = DATA_DIR / "traffic" / subdir
+    if not d.is_dir():
+        return None
+    stems = sorted(p.stem for p in d.glob("*.json"))
+    return stems[-1] if stems else None
+
+
+def _check_traffic_freshness(today: str, subdir: str, label: str, allowed: int):
+    """Shared staleness check for a data/traffic/{subdir}/ feed: True if the newest
+    dated *.json is within `allowed` days of `today`."""
+    newest = newest_traffic_date(subdir)
+    if newest is None:
+        return False, f"traffic {label}: MISSING — data/traffic/{subdir}/ has no files at all"
+    try:
+        today_d = date.fromisoformat(today)
+        newest_d = date.fromisoformat(newest)
+    except ValueError:
+        return False, f"traffic {label}: newest file '{newest}' is not a parseable date"
+    age = (today_d - newest_d).days
+    if age < 0:
+        # Newest file dated after the reference date — a --date override pointed at
+        # the past, or clock skew. Not a staleness problem.
+        return True, f"traffic {label}: newest is {newest} (dated after the reference date {today}) — ok"
+    if age > allowed:
+        return False, (f"traffic {label}: STALE — newest is {newest}, {age} days old "
+                        f"(reference date {today}, allowed up to {allowed})")
+    return True, f"traffic {label}: newest is {newest}, {age} day(s) old — ok"
+
+
+def check_traffic_forecast_freshness(today: str):
+    """True if the newest traffic forecast is within TRAFFIC_STALE_FORECAST_DAYS.
+
+    The forecast is written once/day on the day's first actuals cron; GitHub's
+    hours-long cron delay means today's may not exist yet at the sentinel run, so
+    yesterday's counts as healthy. Two consecutive missing days is the real signal."""
+    return _check_traffic_freshness(today, "forecast", "forecast", TRAFFIC_STALE_FORECAST_DAYS)
+
+
+def check_traffic_comparison_freshness(today: str):
+    """True if the newest traffic comparison is within TRAFFIC_STALE_COMPARISON_DAYS.
+
+    Grading scores yesterday's forecast (healthy age 1); the extra slack absorbs
+    one legitimate missing-forecast gap day (a day with no forecast never gets a
+    comparison — the 2026-07-26 incident gap) plus the in-flight-cron delay."""
+    return _check_traffic_freshness(today, "comparisons", "comparisons", TRAFFIC_STALE_COMPARISON_DAYS)
+
+
+def check_traffic_actuals_freshness(today: str):
+    """True if the newest traffic actuals file is within TRAFFIC_STALE_ACTUALS_DAYS.
+
+    Actuals sample 4x/day with delays up to ~3h, so by the same reasoning as the
+    forecast check yesterday's actuals count as healthy; age > 1 means the
+    sampling crons stopped firing."""
+    return _check_traffic_freshness(today, "actuals", "actuals", TRAFFIC_STALE_ACTUALS_DAYS)
+
+
 def run_checks(today: str):
     """Pure check: given a reference date string, return (problems, report_lines)."""
     problems, lines = [], []
     for ok, msg in (check_today_capture(today), check_comparison_freshness(today),
-                    check_town_captures(today)):
+                    check_town_captures(today),
+                    check_traffic_forecast_freshness(today),
+                    check_traffic_comparison_freshness(today),
+                    check_traffic_actuals_freshness(today)):
         lines.append(("  OK   " if ok else "  FAIL ") + msg)
         if not ok:
             problems.append(msg)

@@ -478,6 +478,14 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       + `.github/workflows/freshness_sentinel.yml` (16:30 UTC + manual dispatch, read-only, fails red):
       checks BOTH today's `data/predictions/` capture exists AND newest comparison ≤2 days old. 14 new
       pytest, verified in passing + simulated-failing states.
+  - [x] **Extended to the traffic predict→grade loop — 2026-07-28 (PR pending).** Motivated by the
+        2026-07-26/27 silent skip: the traffic model's daily predict→grade step never fired for two days
+        (its "UTC hour == 12" gate never matched GitHub's hours-delayed cron; gate fixed in e5ed6322), and
+        the weather-only sentinel stayed green through it. Added three read-only traffic checks to
+        `check_freshness.py`: newest `data/traffic/forecast/` ≤1 day old, newest `data/traffic/comparisons/`
+        ≤3 days old (slack absorbs one legit missing-forecast gap day), newest `data/traffic/actuals/` ≤1 day
+        old. Real repo state passes; the incident state fails. 15 new pytest (546 total green); no workflow
+        change (CLI contract unchanged).
 - [x] **Vercel webhook coalescing (lesson):** back-to-back merges to main can leave the second merge
       undeployed — no build, no failure, just absent (#105 needed a manually created git-source deployment).
       Leave a beat between merges, or confirm a deployment exists per merge.
