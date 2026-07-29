@@ -1,0 +1,163 @@
+{
+  "date": "2026-07-28",
+  "graded_at": "2026-07-29T10:28:22.455491-04:00",
+  "weekday_class": "weekday",
+  "event_day": true,
+  "n_pairs": 12,
+  "overall": {
+    "ratio_mae": 0.0316,
+    "brier": 0.0123
+  },
+  "corridors": {
+    "bypass-321": {
+      "n": 2,
+      "ratio_mae": 0.0663,
+      "brier": 0.0703,
+      "windows": {
+        "12:00": {
+          "predicted_ratio": 0.598,
+          "observed_ratio": 0.5865,
+          "abs_error": 0.0115,
+          "jammed_prob": 0.36,
+          "predicted_jammed": false,
+          "observed_jammed": false,
+          "brier": 0.1296
+        },
+        "19:00": {
+          "predicted_ratio": 0.729,
+          "observed_ratio": 0.85,
+          "abs_error": 0.121,
+          "jammed_prob": 0.105,
+          "predicted_jammed": false,
+          "observed_jammed": false,
+          "brier": 0.011
+        }
+      }
+    },
+    "king-st": {
+      "n": 2,
+      "ratio_mae": 0.0348,
+      "brier": 0.0036,
+      "windows": {
+        "12:00": {
+          "predicted_ratio": 0.773,
+          "observed_ratio": 0.724,
+          "abs_error": 0.049,
+          "jammed_prob": 0.064,
+          "predicted_jammed": false,
+          "observed_jammed": false,
+          "brier": 0.0041
+        },
+        "19:00": {
+          "predicted_ratio": 0.785,
+          "observed_ratio": 0.7645,
+          "abs_error": 0.0205,
+          "jammed_prob": 0.056,
+          "predicted_jammed": false,
+          "observed_jammed": false,
+          "brier": 0.0031
+        }
+      }
+    },
+    "nc105-split": {
+      "n": 2,
+      "ratio_mae": 0.0703,
+      "brier": 0.0001,
+      "windows": {
+        "12:00": {
+          "predicted_ratio": 0.927,
+          "observed_ratio": 1.0,
+          "abs_error": 0.073,
+          "jammed_prob": 0.011,
+          "predicted_jammed": false,
+          "observed_jammed": false,
+          "brier": 0.0001
+        },
+        "19:00": {
+          "predicted_ratio": 1.0,
+          "observed_ratio": 0.9325,
+          "abs_error": 0.0675,
+          "jammed_prob": 0.004,
+          "predicted_jammed": false,
+          "observed_jammed": false,
+          "brier": 0.0
+        }
+      }
+    },
+    "nc105-foscoe": {
+      "n": 2,
+      "ratio_mae": 0.0185,
+      "brier": 0.0,
+      "windows": {
+        "12:00": {
+          "predicted_ratio": 0.963,
+          "observed_ratio": 1.0,
+          "abs_error": 0.037,
+          "jammed_prob": 0.007,
+          "predicted_jammed": false,
+          "observed_jammed": false,
+          "brier": 0.0
+        },
+        "19:00": {
+          "predicted_ratio": 1.0,
+          "observed_ratio": 1.0,
+          "abs_error": 0.0,
+          "jammed_prob": 0.004,
+          "predicted_jammed": false,
+          "observed_jammed": false,
+          "brier": 0.0
+        }
+      }
+    },
+    "us321-blowing-rock": {
+      "n": 2,
+      "ratio_mae": 0.0,
+      "brier": 0.0,
+      "windows": {
+        "12:00": {
+          "predicted_ratio": 1.0,
+          "observed_ratio": 1.0,
+          "abs_error": 0.0,
+          "jammed_prob": 0.004,
+          "predicted_jammed": false,
+          "observed_jammed": false,
+          "brier": 0.0
+        },
+        "19:00": {
+          "predicted_ratio": 1.0,
+          "observed_ratio": 1.0,
+          "abs_error": 0.0,
+          "jammed_prob": 0.004,
+          "predicted_jammed": false,
+          "observed_jammed": false,
+          "brier": 0.0
+        }
+      }
+    },
+    "us421-deep-gap": {
+      "n": 2,
+      "ratio_mae": 0.0,
+      "brier": 0.0,
+      "windows": {
+        "12:00": {
+          "predicted_ratio": 1.0,
+          "observed_ratio": 1.0,
+          "abs_error": 0.0,
+          "jammed_prob": 0.004,
+          "predicted_jammed": false,
+          "observed_jammed": false,
+          "brier": 0.0
+        },
+        "19:00": {
+          "predicted_ratio": 1.0,
+          "observed_ratio": 1.0,
+          "abs_error": 0.0,
+          "jammed_prob": 0.004,
+          "predicted_jammed": false,
+          "observed_jammed": false,
+          "brier": 0.0
+        }
+      }
+    }
+  }
+}
