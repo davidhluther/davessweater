@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CATEGORIES, REPORTS } from "@/content/resources";
+import { CATEGORIES, REPORTS, TOOLS } from "@/content/resources";
 import { fmtLongDate } from "@/lib/dates";
 import { breadcrumbs, collectionPage } from "@/lib/schema";
 import SectionBand from "@/components/SectionBand";
@@ -9,11 +9,14 @@ import JsonLd from "@/components/JsonLd";
 
 const DEF = CATEGORIES.find((c) => c.key === "reports")!;
 
+// Titled for what the page actually holds, which is also what the nav calls it:
+// the dated reports plus the standing tools (TOOLS). It read "Reports" while the
+// nav read "Reports and Tools", and the tools were not on it at all.
 export const metadata = {
-  title: "Reports",
+  title: "Reports and Tools",
   description: DEF.description,
   alternates: { canonical: DEF.href },
-  openGraph: { title: "Reports | Dave's Sweater", description: DEF.description },
+  openGraph: { title: "Reports and Tools | Dave's Sweater", description: DEF.description },
 };
 
 export default function Page() {
@@ -25,7 +28,7 @@ export default function Page() {
     ]),
     collectionPage({
       name: DEF.schemaName, path: DEF.href, description: DEF.description,
-      parts: REPORTS.map((r) => ({ name: r.title, path: r.href })),
+      parts: [...REPORTS, ...TOOLS].map((r) => ({ name: r.title, path: r.href })),
     }),
   ];
   return (
@@ -36,8 +39,8 @@ export default function Page() {
           &larr; All resources
         </Link>
       </p>
-      <h1 className="mt-3 mb-1 ds-h1 text-foreground">Reports</h1>
-      <p className="mb-6 ds-body text-muted">Data deep-dives with charts and receipts.</p>
+      <h1 className="mt-3 mb-1 ds-h1 text-foreground">Reports and Tools</h1>
+      <p className="mb-6 ds-body text-muted">Data deep-dives with charts and receipts, and the free tools built on them.</p>
       {REPORTS.length === 0 ? (
         <p className="text-muted">No reports yet. Check back soon.</p>
       ) : (
@@ -74,6 +77,31 @@ export default function Page() {
             </li>
           ))}
         </ul>
+      )}
+      {/* The standing tools and trackers. Same card treatment as the reports
+          above, one level down, because they belong to the same shelf: this is
+          where the nav's "Reports and Tools" sends a reader looking for /roads
+          or /report-card. Add to TOOLS in src/content/resources.ts, never to
+          the header nav, which the owner keeps deliberately lean. */}
+      {TOOLS.length > 0 && (
+        <section className="mt-10 border-t border-border pt-6">
+          <h2 className="ds-h2 text-foreground">Tools and trackers</h2>
+          <p className="mt-1 ds-body text-muted">
+            Pages that keep updating, rather than a report published once.
+          </p>
+          <ul className="mt-5 space-y-5">
+            {TOOLS.map((t) => (
+              <li key={t.href} className="border-b border-border pb-5 last:border-0">
+                <h3 className="ds-h3">
+                  <Link href={t.href} className="text-orange-600 hover:underline underline-offset-2">
+                    {t.title}
+                  </Link>
+                </h3>
+                {t.summary && <p className="mt-1 ds-body text-muted">{t.summary}</p>}
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
       {/* Live teaser from the fireworks report: same input module as the
           on-page checker; Check hands off to /fireworks, which auto-runs it.
