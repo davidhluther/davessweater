@@ -1,0 +1,546 @@
+{
+  "generated_at": "2026-08-03T11:11:27.259956-04:00",
+  "model": "traffic-model-v0",
+  "note": "v0 priors, corrected by grading \u2014 baseline x event x weather, clamped to (0.05, 1.0]. 'basis' names the baseline fallback level.",
+  "windows": [
+    "08:00",
+    "12:00",
+    "17:00",
+    "19:00"
+  ],
+  "corridors": {
+    "bypass-321": "US-321 Blowing Rock Rd (Boone bypass)",
+    "king-st": "King St / US-421 downtown Boone",
+    "nc105-split": "NC-105 at the US-321 split",
+    "nc105-foscoe": "NC-105 South at Foscoe (ski approach)",
+    "us321-blowing-rock": "US-321 Valley Blvd, Blowing Rock",
+    "us421-deep-gap": "US-421 Doc & Merle Watson Hwy, Deep Gap"
+  },
+  "baseline_cells_observed": 60,
+  "targets": {
+    "2026-08-03": {
+      "weekday_class": "weekday",
+      "event_day": false,
+      "events": [],
+      "event_labels": [],
+      "busyness": {
+        "band": "calm",
+        "score": 14
+      },
+      "weather": {
+        "multiplier": 1.0,
+        "reason": "dry-or-light"
+      },
+      "corridors": {
+        "bypass-321": {
+          "event_multiplier": 1.0,
+          "windows": {
+            "08:00": {
+              "ratio": 0.784,
+              "basis": "corridor_window",
+              "baseline": 0.7837,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.057,
+              "jammed": false
+            },
+            "12:00": {
+              "ratio": 0.609,
+              "basis": "cell",
+              "baseline": 0.6093,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.33,
+              "jammed": false
+            },
+            "17:00": {
+              "ratio": 0.707,
+              "basis": "corridor",
+              "baseline": 0.7066,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.132,
+              "jammed": false
+            },
+            "19:00": {
+              "ratio": 0.793,
+              "basis": "cell",
+              "baseline": 0.7929,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.051,
+              "jammed": false
+            }
+          }
+        },
+        "king-st": {
+          "event_multiplier": 1.0,
+          "windows": {
+            "08:00": {
+              "ratio": 1.0,
+              "basis": "corridor_window",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.004,
+              "jammed": false
+            },
+            "12:00": {
+              "ratio": 0.75,
+              "basis": "cell",
+              "baseline": 0.7496,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.083,
+              "jammed": false
+            },
+            "17:00": {
+              "ratio": 0.807,
+              "basis": "corridor",
+              "baseline": 0.8074,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.044,
+              "jammed": false
+            },
+            "19:00": {
+              "ratio": 0.711,
+              "basis": "cell",
+              "baseline": 0.7105,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.127,
+              "jammed": false
+            }
+          }
+        },
+        "nc105-split": {
+          "event_multiplier": 1.0,
+          "windows": {
+            "08:00": {
+              "ratio": 1.0,
+              "basis": "corridor_window",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.004,
+              "jammed": false
+            },
+            "12:00": {
+              "ratio": 0.924,
+              "basis": "cell",
+              "baseline": 0.9238,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.011,
+              "jammed": false
+            },
+            "17:00": {
+              "ratio": 0.967,
+              "basis": "corridor",
+              "baseline": 0.9671,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.007,
+              "jammed": false
+            },
+            "19:00": {
+              "ratio": 0.98,
+              "basis": "cell",
+              "baseline": 0.9795,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.006,
+              "jammed": false
+            }
+          }
+        },
+        "nc105-foscoe": {
+          "event_multiplier": 1.0,
+          "windows": {
+            "08:00": {
+              "ratio": 1.0,
+              "basis": "corridor_window",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.004,
+              "jammed": false
+            },
+            "12:00": {
+              "ratio": 0.988,
+              "basis": "cell",
+              "baseline": 0.9877,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.005,
+              "jammed": false
+            },
+            "17:00": {
+              "ratio": 0.997,
+              "basis": "corridor",
+              "baseline": 0.9969,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.005,
+              "jammed": false
+            },
+            "19:00": {
+              "ratio": 1.0,
+              "basis": "cell",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.004,
+              "jammed": false
+            }
+          }
+        },
+        "us321-blowing-rock": {
+          "event_multiplier": 1.0,
+          "windows": {
+            "08:00": {
+              "ratio": 1.0,
+              "basis": "corridor_window",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.004,
+              "jammed": false
+            },
+            "12:00": {
+              "ratio": 1.0,
+              "basis": "cell",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.004,
+              "jammed": false
+            },
+            "17:00": {
+              "ratio": 1.0,
+              "basis": "corridor",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.004,
+              "jammed": false
+            },
+            "19:00": {
+              "ratio": 1.0,
+              "basis": "cell",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.004,
+              "jammed": false
+            }
+          }
+        },
+        "us421-deep-gap": {
+          "event_multiplier": 1.0,
+          "windows": {
+            "08:00": {
+              "ratio": 1.0,
+              "basis": "corridor_window",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.004,
+              "jammed": false
+            },
+            "12:00": {
+              "ratio": 1.0,
+              "basis": "cell",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.004,
+              "jammed": false
+            },
+            "17:00": {
+              "ratio": 1.0,
+              "basis": "corridor",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.004,
+              "jammed": false
+            },
+            "19:00": {
+              "ratio": 1.0,
+              "basis": "cell",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 1.0,
+              "jammed_prob": 0.004,
+              "jammed": false
+            }
+          }
+        }
+      }
+    },
+    "2026-08-04": {
+      "weekday_class": "weekday",
+      "event_day": false,
+      "events": [],
+      "event_labels": [],
+      "busyness": {
+        "band": "calm",
+        "score": 17
+      },
+      "weather": {
+        "multiplier": 0.85,
+        "reason": "heavy precip 61%"
+      },
+      "corridors": {
+        "bypass-321": {
+          "event_multiplier": 1.0,
+          "windows": {
+            "08:00": {
+              "ratio": 0.666,
+              "basis": "corridor_window",
+              "baseline": 0.7837,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.199,
+              "jammed": false
+            },
+            "12:00": {
+              "ratio": 0.518,
+              "basis": "cell",
+              "baseline": 0.6093,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.595,
+              "jammed": true
+            },
+            "17:00": {
+              "ratio": 0.601,
+              "basis": "corridor",
+              "baseline": 0.7066,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.352,
+              "jammed": false
+            },
+            "19:00": {
+              "ratio": 0.674,
+              "basis": "cell",
+              "baseline": 0.7929,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.184,
+              "jammed": false
+            }
+          }
+        },
+        "king-st": {
+          "event_multiplier": 1.0,
+          "windows": {
+            "08:00": {
+              "ratio": 0.85,
+              "basis": "corridor_window",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.027,
+              "jammed": false
+            },
+            "12:00": {
+              "ratio": 0.637,
+              "basis": "cell",
+              "baseline": 0.7496,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.26,
+              "jammed": false
+            },
+            "17:00": {
+              "ratio": 0.686,
+              "basis": "corridor",
+              "baseline": 0.8074,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.164,
+              "jammed": false
+            },
+            "19:00": {
+              "ratio": 0.604,
+              "basis": "cell",
+              "baseline": 0.7105,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.343,
+              "jammed": false
+            }
+          }
+        },
+        "nc105-split": {
+          "event_multiplier": 1.0,
+          "windows": {
+            "08:00": {
+              "ratio": 0.85,
+              "basis": "corridor_window",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.027,
+              "jammed": false
+            },
+            "12:00": {
+              "ratio": 0.785,
+              "basis": "cell",
+              "baseline": 0.9238,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.056,
+              "jammed": false
+            },
+            "17:00": {
+              "ratio": 0.822,
+              "basis": "corridor",
+              "baseline": 0.9671,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.037,
+              "jammed": false
+            },
+            "19:00": {
+              "ratio": 0.833,
+              "basis": "cell",
+              "baseline": 0.9795,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.032,
+              "jammed": false
+            }
+          }
+        },
+        "nc105-foscoe": {
+          "event_multiplier": 1.0,
+          "windows": {
+            "08:00": {
+              "ratio": 0.85,
+              "basis": "corridor_window",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.027,
+              "jammed": false
+            },
+            "12:00": {
+              "ratio": 0.84,
+              "basis": "cell",
+              "baseline": 0.9877,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.03,
+              "jammed": false
+            },
+            "17:00": {
+              "ratio": 0.847,
+              "basis": "corridor",
+              "baseline": 0.9969,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.028,
+              "jammed": false
+            },
+            "19:00": {
+              "ratio": 0.85,
+              "basis": "cell",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.027,
+              "jammed": false
+            }
+          }
+        },
+        "us321-blowing-rock": {
+          "event_multiplier": 1.0,
+          "windows": {
+            "08:00": {
+              "ratio": 0.85,
+              "basis": "corridor_window",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.027,
+              "jammed": false
+            },
+            "12:00": {
+              "ratio": 0.85,
+              "basis": "cell",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.027,
+              "jammed": false
+            },
+            "17:00": {
+              "ratio": 0.85,
+              "basis": "corridor",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.027,
+              "jammed": false
+            },
+            "19:00": {
+              "ratio": 0.85,
+              "basis": "cell",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.027,
+              "jammed": false
+            }
+          }
+        },
+        "us421-deep-gap": {
+          "event_multiplier": 1.0,
+          "windows": {
+            "08:00": {
+              "ratio": 0.85,
+              "basis": "corridor_window",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.027,
+              "jammed": false
+            },
+            "12:00": {
+              "ratio": 0.85,
+              "basis": "cell",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.027,
+              "jammed": false
+            },
+            "17:00": {
+              "ratio": 0.85,
+              "basis": "corridor",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.027,
+              "jammed": false
+            },
+            "19:00": {
+              "ratio": 0.85,
+              "basis": "cell",
+              "baseline": 1.0,
+              "event_multiplier": 1.0,
+              "weather_multiplier": 0.85,
+              "jammed_prob": 0.027,
+              "jammed": false
+            }
+          }
+        }
+      }
+    }
+  }
+}
