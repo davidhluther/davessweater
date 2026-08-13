@@ -141,7 +141,11 @@ Uses Fourthwall for merch. The Storefront API has a persistent 403 issue (unreso
 ## Deployment
 
 - **Hosting**: Vercel — `next build` on every push to `main` (Git integration). `vercel.json`: `framework: nextjs`, `outputDirectory: .next`. Domain davessweater.com (+ www); DNS via Squarespace.
-- **Build**: Node/Next (`npm`). `prebuild` (`scripts/prepare_public.mjs`) copies the latest `data/predictions` screenshots → `public/screenshots/`.
+- **Build**: Node/Next (`npm`). `prebuild` runs `scripts/prepare_public.mjs` (latest `data/predictions` screenshots → `public/screenshots/`) then `scripts/generate_og_images.mjs` (renders the per-town/post/month share cards → `public/og/`). Both output dirs are gitignored.
+- **⚠️ Serverless-function budget (hard, non-negotiable): Vercel Hobby allows 12 Serverless Functions per deployment.** Exceeding it does **not** fail the build — the build succeeds, then the deployment dies at `patchBuild` with `exceeded_serverless_functions_per_deployment`, which is invisible in CI. This froze production for 7 days in August 2026. Two rules:
+  1. **Every route directory containing a dynamic segment costs one function**, whether or not it is prerendered (`generateStaticParams`, `dynamicParams = false` and `dynamic = "force-static"` were all measured — none removes it). That includes metadata image routes. Prefer one catch-all (`api/v1/[...path]`) over N sibling routes; render share cards to files (`src/lib/ogStatic.ts`) instead of `opengraph-image.tsx` routes under a dynamic segment.
+  2. **Keep `outputFileTracingIncludes` narrow and identical across entries.** Vercel packs dynamic routes into the fewest functions it can but splits them as bundles grow, so a broad glob like `./data/**/*.json` (~47 MB, 7,100 files) makes the function count climb on its own as the daily pipeline commits data — a data-only commit can break the deploy. Never re-add a broad `data/` glob.
+  - The Keystatic editor is gated out of production for this reason (`ENABLE_KEYSTATIC=1`, see `docs/cms.md`). Neither the `next build` route table's `ƒ` count nor any local `vercel build` count reproduces the platform's number — the only ground truth is a real deployment.
 - **Data pipeline**: Python stdlib; `capture_rays.py` needs Playwright. Runs only in GitHub Actions.
 - **Stale config (inert)**: the Vercel project dashboard still has GitHub-Pages-era *overrides* (build cmd / output dir = `docs`); `vercel.json` overrides them. GitHub Pages is also still configured but vestigial (DNS → Vercel) — disable when convenient.
 
