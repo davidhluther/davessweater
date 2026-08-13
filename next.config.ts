@@ -59,17 +59,46 @@ const nextConfig: NextConfig = {
   // renders in a Lambda rather than at build (e.g. a future revalidate window)
   // would otherwise get an empty reader. Ship the content with every function.
   //
-  // The /api/v1/* handlers and /widget are DYNAMIC (they read query params, so
-  // they cannot be force-static) and read committed data/ JSON at request time.
-  // The tracer can't see those runtime reads statically, so the files must be
-  // declared here or the Lambda ships without them. We include only *.json
-  // (the ~20 MB of datasets) — never the 180 MB of prediction screenshots. The
-  // RSS feeds under /feed are force-static and read data at build, so they need
-  // no entry here.
+  // The /api/v1/[...path] handlers and /widget are DYNAMIC (they read query
+  // params, so they cannot be force-static) and read committed data/ JSON at
+  // request time. The tracer can't see those runtime reads statically, so the
+  // files must be declared here or the Lambda ships without them.
+  //
+  // ⚠️ KEEP THESE LISTS NARROW AND IDENTICAL. `./data/**/*.json` used to be the
+  // whole list, which traced ~47 MB across 7,100 files (Turbopack warns that the
+  // pattern "matches 19236 files") into every one of these Lambdas. Vercel packs
+  // dynamic routes into the fewest functions it can, but it splits them apart as
+  // the bundles grow — so the function count rose on its own as the daily
+  // pipeline committed more JSON, with no code change, until it crossed the
+  // Hobby cap of 12 and froze production for a week in August 2026. Two routes
+  // with DIFFERENT include lists also cannot share a bundle, hence "identical".
+  // Only add a path a Lambda genuinely reads at request time, and prefer a
+  // specific file over a directory glob. See CHECKLIST.md for the budget.
+  //
+  // Deliberately NOT included: data/predictions/** (Boone's captures — read only
+  // at build; ~12.5 MB of JSON beside 180 MB of screenshots), and the leaf/
+  // leadtime/demand/traffic/actuals/events datasets, none of which these two
+  // routes touch.
   outputFileTracingIncludes: {
     "/*": ["./src/content/**/*"],
-    "/api/v1/[...path]": ["./data/**/*.json"],
-    "/widget": ["./data/**/*.json"],
+    // towns.ts: registry, per-town scores/comparisons, and the latest per-town
+    // capture that getTownForecast5 folds into a 5-day strip.
+    // forecast5.ts + towns.ts: Boone's own forecast/scores/comparisons.
+    // rivers.ts: the widget's river-flow readout.
+    "/api/v1/[...path]": [
+      "./data/locations/**/*.json",
+      "./data/comparisons/*.json",
+      "./data/rivers/*.json",
+      "./data/forecast_5day.json",
+      "./data/scores.json",
+    ],
+    "/widget": [
+      "./data/locations/**/*.json",
+      "./data/comparisons/*.json",
+      "./data/rivers/*.json",
+      "./data/forecast_5day.json",
+      "./data/scores.json",
+    ],
   },
   async headers() {
     // The embeddable widget MUST be framable on third-party sites, so the
