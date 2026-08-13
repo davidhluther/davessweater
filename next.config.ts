@@ -68,11 +68,7 @@ const nextConfig: NextConfig = {
   // no entry here.
   outputFileTracingIncludes: {
     "/*": ["./src/content/**/*"],
-    "/api/v1/forecast": ["./data/**/*.json"],
-    "/api/v1/today": ["./data/**/*.json"],
-    "/api/v1/scores": ["./data/**/*.json"],
-    "/api/v1/verdict": ["./data/**/*.json"],
-    "/api/v1/towns": ["./data/**/*.json"],
+    "/api/v1/[...path]": ["./data/**/*.json"],
     "/widget": ["./data/**/*.json"],
   },
   async headers() {

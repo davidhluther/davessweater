@@ -1,4 +1,7 @@
-// GET /api/v1/forecast?town=&days=1|3|5&detail=summary|full
+// Served by the src/app/api/v1/[...path] catch-all, not its own route file:
+// each route directory would cost a Serverless Function against the Vercel
+// Hobby cap of 12. Public URL is unchanged. See src/lib/ogStatic.ts + CHECKLIST.md.
+// Handler for GET /api/v1/forecast?town=&days=1|3|5&detail=summary|full
 // The consensus (Dave's Sweater Index) forecast for a town, N days out.
 //
 // Vercel data-tracing: this handler reads committed data/ JSON at request time.
@@ -6,18 +9,13 @@
 // query params) — it is dynamic, and next.config.ts's outputFileTracingIncludes
 // ships data/**/*.json into the serverless bundle so the reads resolve in the
 // Lambda. See the note in next.config.ts.
-export const dynamic = "force-dynamic";
 
-import { jsonOk, jsonError, corsPreflight } from "@/lib/apiResponse";
+import { jsonOk, jsonError } from "@/lib/apiResponse";
 import { parseDays, parseDetail, toApiDay, type ApiSourceRow } from "@/lib/publicFeed";
 import { getTown, isTownPublic, publicSlugs, getTownForecast5 } from "@/lib/towns";
 import { stripDays } from "@/lib/forecast5";
 
-export function OPTIONS() {
-  return corsPreflight();
-}
-
-export async function GET(request: Request) {
+export async function forecast(request: Request) {
   const sp = new URL(request.url).searchParams;
   const slug = sp.get("town") || "boone";
 
