@@ -542,23 +542,30 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
          unchanged.**
       3. **Tracing narrowed** to the paths those Lambdas actually read at request time, and made
          **identical** between the two entries (different include lists prevent bundle sharing).
-- [x] **Keystatic gating was built, then REVERTED before merge (DS IA, 2026-08-13) — the CMS is
-      untouched and still live in production.** The fix agent additionally hid `/keystatic` +
-      `/api/keystatic` behind an `ENABLE_KEYSTATIC=1` flag to reclaim 2 functions. Measured after the
-      revert: the build lands at **5 of 12** functions without it, so the reclaim was never needed —
-      it was an unrequested change to the owner's content-editing workflow bundled into an outage fix
-      (and it 404'd the editor in local dev too, not just prod). Reverted in `eb28310b`. The pattern
-      is recorded here in case the budget ever genuinely tightens: renaming the two route files to
-      `*.keystatic.*` and adding those to `pageExtensions` only under the flag does work, and costs
-      nothing while the flag is off. Reach for it only if the ceiling is actually the binding
-      constraint — and say so to the owner first, because it changes how content gets edited.
+      4. **Keystatic gated out of production** — and this was the commit that actually cleared the
+         cap, not an optional extra. See the next entry.
+- [ ] **⚠️ OWNER DECISION — the Keystatic editor is OFF in production.** `/keystatic` +
+      `/api/keystatic` are hidden behind `ENABLE_KEYSTATIC=1`: their route files are named
+      `page.keystatic.tsx` / `route.keystatic.ts`, an extension `pageExtensions` only accepts when the
+      flag is set. Run the editor locally with `ENABLE_KEYSTATIC=1 npm run dev`. Saving still commits
+      to git and still triggers a redeploy, so the publishing workflow is unchanged — only the hosted
+      editor URL is gone. **Restoring it requires reclaiming 2 functions elsewhere or moving to Pro.**
+      ⚠️ **DS IA reverted this on 2026-08-13 believing it was unnecessary, and was wrong — re-reverted
+      the same day (`98f11ad4`).** The reasoning that failed: a local `next build` route table showed
+      only 5 `ƒ` entries, which looked like 7 slots of headroom. **That table is not what Vercel
+      meters.** `vercel build` on the same tree emitted 210 `.func` directories, and the platform's
+      accounting counts distinct Lambda bundles — inflated here because per-entry
+      `outputFileTracingIncludes` differences prevent bundle sharing. The authoritative evidence is
+      the per-commit deploy status: OG-cards-to-static ❌, `/api/v1` collapse ❌, tracing narrowed ❌,
+      **Keystatic gated ✅**. All four were needed. **LESSON: never judge this budget from the local
+      route table. The only trustworthy check is a real Vercel deployment** (push the branch and read
+      the preview's status), or at minimum `npx vercel build` plus a count of the emitted functions.
 - [ ] **STANDING BUDGET — Vercel Hobby, hard 12-Serverless-Function ceiling, and it moves on its own.**
       Two rules, both learned the hard way:
       **(a) Every new route directory with a dynamic segment costs a function** — API routes,
       `/widget`-style dynamic pages, and metadata image routes (easy to forget: they are not "pages").
-      Prefer one catch-all over N sibling routes. Current route functions (**5 of 12**, verified by
-      build 2026-08-13): `/api/geocode`, `/api/v1/[...path]`, `/widget`, `/keystatic/[[...params]]`,
-      `/api/keystatic/[...params]`, plus the dynamic-segment pages `/feed/[town]/[feed]`,
+      Prefer one catch-all over N sibling routes. Route functions: `/api/geocode`,
+      `/api/v1/[...path]`, `/widget`, plus the dynamic-segment pages `/feed/[town]/[feed]`,
       `/report-card/[month]`, `/resources/[category]`, `/resources/[category]/[slug]`,
       `/right-wrong-ray/[slug]`, `/weather/[slug]`.
       **(b) Keep `outputFileTracingIncludes` narrow and identical across entries.** This is the one that
