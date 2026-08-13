@@ -53,7 +53,25 @@ const securityHeaders = [
   },
 ];
 
+// The Keystatic content editor (/keystatic + /api/keystatic) is an admin UI that
+// no public visitor ever loads, but it costs 2 of this project's 12 Serverless
+// Functions on Vercel Hobby — the budget that froze production for a week in
+// August 2026 (see CHECKLIST.md). So it is gated out of the build by default and
+// its two route files are named `*.keystatic.*`, an extension Next only treats as
+// a route when this flag is on.
+//
+//   ENABLE_KEYSTATIC=1 npm run dev     # editor at /keystatic
+//
+// To ship it to production, set ENABLE_KEYSTATIC=1 in the Vercel project's env
+// vars — but first reclaim 2 functions elsewhere or move to Pro, or the
+// deployment will fail at patchBuild with exceeded_serverless_functions_per_deployment.
+const keystaticEnabled = process.env.ENABLE_KEYSTATIC === "1";
+const routeExtensions = ["tsx", "ts", "jsx", "js"];
+
 const nextConfig: NextConfig = {
+  pageExtensions: keystaticEnabled
+    ? ["keystatic.tsx", "keystatic.ts", ...routeExtensions]
+    : routeExtensions,
   // getNativePosts() reads src/content/posts/*.{md,mdoc} off the filesystem.
   // Next's tracer only bundles files it can see statically, so any route that
   // renders in a Lambda rather than at build (e.g. a future revalidate window)
