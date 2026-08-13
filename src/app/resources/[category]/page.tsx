@@ -2,13 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBlogPosts, postSlug, postCategoryOf } from "@/lib/data";
 import { fmtLongDate } from "@/lib/dates";
-import { CATEGORIES, type PostCategory } from "@/content/resources";
+import { CATEGORIES, POST_CATEGORIES, type PostCategory } from "@/content/resources";
 import { breadcrumbs, collectionPage } from "@/lib/schema";
 import SectionBand from "@/components/SectionBand";
 import JsonLd from "@/components/JsonLd";
-
-// Post-backed categories only — videos and reports have their own static routes.
-const POST_CATEGORIES: PostCategory[] = ["articles", "news"];
 
 export const dynamicParams = false;
 

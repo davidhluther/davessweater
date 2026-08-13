@@ -1,9 +1,18 @@
-import { CATEGORIES } from "@/content/resources";
+import { CATEGORIES, POST_CATEGORIES } from "@/content/resources";
 import { brandOgCard, OG_SIZE } from "@/lib/ogCard";
 
 export const alt = "Dave's Sweater resources: Articles, news, videos, and reports.";
 export const size = OG_SIZE;
 export const contentType = "image/png";
+export const dynamicParams = false;
+
+// Prerender one card per post-backed category at build time, off the same list
+// page.tsx uses. Without this the route stays dynamic and costs a serverless
+// function, and this repo runs on Vercel Hobby with a hard 12-function ceiling
+// (see CHECKLIST.md).
+export function generateStaticParams() {
+  return POST_CATEGORIES.map((category) => ({ category }));
+}
 
 export default async function OgImage({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params;

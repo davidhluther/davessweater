@@ -1,9 +1,18 @@
-import { getTown } from "@/lib/towns";
+import { allTowns, getTown } from "@/lib/towns";
 import { brandOgCard, OG_SIZE } from "@/lib/ogCard";
 
 export const alt = "A real multi-source weather forecast, graded against the town's own actuals.";
 export const size = OG_SIZE;
 export const contentType = "image/png";
+
+// Prerender one card per town at build time. Without this the route stays
+// dynamic and costs a serverless function, and this repo runs on Vercel Hobby
+// with a hard 12-function ceiling (see CHECKLIST.md). Mirrors page.tsx: Boone
+// keeps `/`, so it has no /weather/boone twin.
+export async function generateStaticParams() {
+  const towns = await allTowns();
+  return towns.filter((t) => t.slug !== "boone").map((t) => ({ slug: t.slug }));
+}
 
 export default async function OgImage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

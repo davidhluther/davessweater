@@ -501,6 +501,52 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       settings (python build → `docs/`); backed up, removed, re-linked fresh (project/org IDs only). The
       matching *dashboard* overrides remain an owner click (see Deployment notes in `CLAUDE.md`).
 
+### ⚠️ 7-DAY DEPLOY OUTAGE 2026-08-06 → 08-13 — serverless-function cap (fix: PR, branch `fix-vercel-function-limit`)
+- [x] **Root cause: the Vercel Hobby 12-Serverless-Function ceiling.** Every production deployment from
+      **2026-08-06 05:33 UTC** onward failed with `exceeded_serverless_functions_per_deployment`
+      ("No more than 12 Serverless Functions can be added to a Deployment on the Hobby plan"), so prod
+      sat frozen on August 4 content for a week while the data pipeline stayed perfectly healthy —
+      GitHub Actions green, committing `data/` daily, nothing red anywhere in CI.
+      **Why it hid so well:** the build *succeeds* ("Build Completed", "Deploying outputs…") and only
+      then fails at the **`patchBuild`** step. Build logs look clean; only the deployment's error field
+      names the cap. Last good deploy `dpl_DeDywW1EAhzrtStreP2uGfLhfNkM` ("Daily capture 2026-08-06");
+      the next one 54 seconds later was the first failure, with **no code change between them** — the
+      count had been sitting at the ceiling and enforcement simply caught up. Rollback was never a
+      mitigation: prod was *already* serving that last good build.
+- [x] **The fix: prerender the dynamic-segment OG/Twitter image routes.** The build emitted **19**
+      functions. Ten of them were image routes under dynamic segments that were missing
+      `generateStaticParams`, so each stayed dynamic and cost a function:
+      `weather/[slug]`, `right-wrong-ray/[slug]`, `resources/[category]`,
+      `resources/[category]/[slug]`, `report-card/[month]` — `opengraph-image` + `twitter-image` each.
+      Added `generateStaticParams` to all five `opengraph-image.tsx` files, reusing the *same* loader
+      the sibling `page.tsx` already uses (`allTowns`, `POST_CATEGORIES`, `getBlogPosts`,
+      `getReportCards`) rather than a divergent copy — `POST_CATEGORIES` was hoisted out of
+      `resources/[category]/page.tsx` into `src/content/resources.ts` so page and image route share
+      one list. **19 → 9 functions.** These cards are generated from committed data that changes at
+      most once a day, so rendering them per-request was always wasteful; this is the correct design
+      independent of the cap.
+- [x] **Two gotchas worth keeping.** (a) A child of a dynamic segment receives **empty parent params**
+      in `generateStaticParams`, so `resources/[category]/[slug]` must emit complete `{category, slug}`
+      pairs bottom-up (the same pattern its `page.tsx` already documents) — get it wrong and the route
+      silently prerenders **zero** paths, quietly stays a function, and you are still over the limit.
+      (b) `dynamicParams` **cannot be re-exported** — Next parses it statically and errors with
+      "it mustn't be reexported". The `twitter-image.tsx` files re-export `generateStaticParams` from
+      their `opengraph-image` sibling but must declare `dynamicParams` locally.
+- [ ] **STANDING BUDGET — this repo runs on Vercel Hobby with a hard 12-Serverless-Function ceiling.**
+      Every new **API route**, **`/widget`-style dynamic page**, or **dynamic-segment image route**
+      must be budgeted against it *before* it merges. Current usage is **9 of 12** — three slots of
+      headroom. The nine: `/api/geocode`, `/api/keystatic/[...params]`, `/api/v1/forecast`,
+      `/api/v1/scores`, `/api/v1/today`, `/api/v1/towns`, `/api/v1/verdict`,
+      `/keystatic/[[...params]]`, `/widget`. **Verify by counting the `ƒ` (Dynamic) rows in the
+      `npm run build` route table** — do not assume; a route that fails to prerender degrades
+      silently back into a function.
+      **Reclaimable if more room is ever needed:** `/keystatic` + `/api/keystatic` occupy 2 of the 9
+      purely for the CMS admin UI, which no public visitor uses — gating Keystatic out of production
+      builds would return the count to 7.
+- [ ] **Consider a CI guard** so this can never silently recur: fail the build (or a PR check) when the
+      route table reports more than 12 `ƒ` entries. Cheap, and it converts a week-long invisible
+      outage into a red check on the PR that causes it.
+
 ## Promotion-readiness audit — RAN 2026-06-25 → risk register
 Multi-agent audit (Dims 1–4, adversarially verified) complete. 24 findings → 22 verified + 2 critic → a
 12-entry prioritized register. **Full detail: `planning/audits/2026-06-25-promotion-readiness-risk-register.md`.**
