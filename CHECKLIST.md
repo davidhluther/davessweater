@@ -542,21 +542,23 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
          unchanged.**
       3. **Tracing narrowed** to the paths those Lambdas actually read at request time, and made
          **identical** between the two entries (different include lists prevent bundle sharing).
-      4. **Keystatic gated out of production** — see below.
-- [ ] **⚠️ OWNER DECISION — the Keystatic editor is now OFF in production.** `/keystatic` +
-      `/api/keystatic` cost 2 functions for an admin UI no visitor loads, and they were the cheapest
-      remaining reclaim. Their route files are now `page.keystatic.tsx` / `route.keystatic.ts`, an
-      extension `pageExtensions` only accepts when `ENABLE_KEYSTATIC=1`. Run it locally with
-      `ENABLE_KEYSTATIC=1 npm run dev`; saving still commits to git and still triggers a redeploy, so
-      the publishing workflow is unchanged — only the hosted editor URL is gone. To restore it, set
-      `ENABLE_KEYSTATIC=1` in Vercel **after** reclaiming 2 functions elsewhere or moving to Pro.
-      Documented at the top of `docs/cms.md`. **Revisit if the owner wants the hosted editor back.**
+- [x] **Keystatic gating was built, then REVERTED before merge (DS IA, 2026-08-13) — the CMS is
+      untouched and still live in production.** The fix agent additionally hid `/keystatic` +
+      `/api/keystatic` behind an `ENABLE_KEYSTATIC=1` flag to reclaim 2 functions. Measured after the
+      revert: the build lands at **5 of 12** functions without it, so the reclaim was never needed —
+      it was an unrequested change to the owner's content-editing workflow bundled into an outage fix
+      (and it 404'd the editor in local dev too, not just prod). Reverted in `eb28310b`. The pattern
+      is recorded here in case the budget ever genuinely tightens: renaming the two route files to
+      `*.keystatic.*` and adding those to `pageExtensions` only under the flag does work, and costs
+      nothing while the flag is off. Reach for it only if the ceiling is actually the binding
+      constraint — and say so to the owner first, because it changes how content gets edited.
 - [ ] **STANDING BUDGET — Vercel Hobby, hard 12-Serverless-Function ceiling, and it moves on its own.**
       Two rules, both learned the hard way:
       **(a) Every new route directory with a dynamic segment costs a function** — API routes,
       `/widget`-style dynamic pages, and metadata image routes (easy to forget: they are not "pages").
-      Prefer one catch-all over N sibling routes. Current route functions: `/api/geocode`,
-      `/api/v1/[...path]`, `/widget`, plus the dynamic-segment pages `/feed/[town]/[feed]`,
+      Prefer one catch-all over N sibling routes. Current route functions (**5 of 12**, verified by
+      build 2026-08-13): `/api/geocode`, `/api/v1/[...path]`, `/widget`, `/keystatic/[[...params]]`,
+      `/api/keystatic/[...params]`, plus the dynamic-segment pages `/feed/[town]/[feed]`,
       `/report-card/[month]`, `/resources/[category]`, `/resources/[category]/[slug]`,
       `/right-wrong-ray/[slug]`, `/weather/[slug]`.
       **(b) Keep `outputFileTracingIncludes` narrow and identical across entries.** This is the one that
