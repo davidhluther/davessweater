@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getBlogPosts, getBlogPost, postSlug, postCategoryOf } from "@/lib/data";
 import { fmtLongDate } from "@/lib/dates";
 import { CATEGORIES } from "@/content/resources";
+import { ogAlt, ogImage, ogPath } from "@/lib/ogStatic";
 import { SITE_BASE, breadcrumbs, faqPage } from "@/lib/schema";
 import SectionBand from "@/components/SectionBand";
 import PostBody from "@/components/PostBody";
@@ -21,13 +22,18 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   const { category, slug } = await params;
   const post = await getBlogPost(slug);
   if (!post) return { title: "Post" };
+  // Prerendered share card (public/og/...), not an opengraph-image route: a
+  // dynamic-segment image route costs a Serverless Function against the Vercel
+  // Hobby cap of 12. See src/lib/ogStatic.ts.
+  const card = ogImage(ogPath.post(category, slug), ogAlt.post);
   const title = post.metaTitle ?? post.title;
   const description = post.metaDescription ?? post.summary;
   return {
     title,
     description,
     alternates: { canonical: `/resources/${category}/${slug}` },
-    openGraph: { title, description, type: "article", url: `https://davessweater.com/resources/${category}/${slug}` },
+    openGraph: { title, description, type: "article", url: `https://davessweater.com/resources/${category}/${slug}`, images: [card] },
+    twitter: { images: [card] },
   };
 }
 

@@ -501,7 +501,7 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       settings (python build → `docs/`); backed up, removed, re-linked fresh (project/org IDs only). The
       matching *dashboard* overrides remain an owner click (see Deployment notes in `CLAUDE.md`).
 
-### ⚠️ 7-DAY DEPLOY OUTAGE 2026-08-06 → 08-13 — serverless-function cap (fix: PR, branch `fix-vercel-function-limit`)
+### ⚠️ 7-DAY DEPLOY OUTAGE 2026-08-06 → 08-13 — Vercel Hobby function cap (fix: PR #162, branch `fix-vercel-function-limit`)
 - [x] **Root cause: the Vercel Hobby 12-Serverless-Function ceiling.** Every production deployment from
       **2026-08-06 05:33 UTC** onward failed with `exceeded_serverless_functions_per_deployment`
       ("No more than 12 Serverless Functions can be added to a Deployment on the Hobby plan"), so prod
@@ -513,39 +513,45 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       the next one 54 seconds later was the first failure, with **no code change between them** — the
       count had been sitting at the ceiling and enforcement simply caught up. Rollback was never a
       mitigation: prod was *already* serving that last good build.
-- [x] **The fix: prerender the dynamic-segment OG/Twitter image routes.** The build emitted **19**
-      functions. Ten of them were image routes under dynamic segments that were missing
-      `generateStaticParams`, so each stayed dynamic and cost a function:
-      `weather/[slug]`, `right-wrong-ray/[slug]`, `resources/[category]`,
-      `resources/[category]/[slug]`, `report-card/[month]` — `opengraph-image` + `twitter-image` each.
-      Added `generateStaticParams` to all five `opengraph-image.tsx` files, reusing the *same* loader
-      the sibling `page.tsx` already uses (`allTowns`, `POST_CATEGORIES`, `getBlogPosts`,
-      `getReportCards`) rather than a divergent copy — `POST_CATEGORIES` was hoisted out of
-      `resources/[category]/page.tsx` into `src/content/resources.ts` so page and image route share
-      one list. **19 → 9 functions.** These cards are generated from committed data that changes at
-      most once a day, so rendering them per-request was always wasteful; this is the correct design
-      independent of the cap.
-- [x] **Two gotchas worth keeping.** (a) A child of a dynamic segment receives **empty parent params**
-      in `generateStaticParams`, so `resources/[category]/[slug]` must emit complete `{category, slug}`
-      pairs bottom-up (the same pattern its `page.tsx` already documents) — get it wrong and the route
-      silently prerenders **zero** paths, quietly stays a function, and you are still over the limit.
-      (b) `dynamicParams` **cannot be re-exported** — Next parses it statically and errors with
-      "it mustn't be reexported". The `twitter-image.tsx` files re-export `generateStaticParams` from
-      their `opengraph-image` sibling but must declare `dynamicParams` locally.
+- [x] **⚠️ MEASURE THE RIGHT NUMBER — the `ƒ` count in the `next build` route table is NOT the function
+      count.** The first attempt at this fix trusted that table, added `generateStaticParams` to the ten
+      dynamic-segment image routes, took the table from 19 `ƒ` to 9 `ƒ`, and **the preview deployment
+      failed with the identical error.** Ground truth is the Build Output API: run `npx vercel build` and
+      count the distinct Lambda bundles —
+      `find .vercel/output/functions -name '*.func' -type d | grep -v '\.rsc\.func$' | grep -v '\.segments/'`.
+      Every prerendered path is a *symlink* into one of those bundles, so the raw `.func` total (178) is
+      meaningless too. By that measure the build was **18**, and `generateStaticParams` changed it to
+      **18** — no improvement whatsoever.
+- [x] **The actual rule: Next emits exactly one Lambda per route directory containing a dynamic segment,
+      prerendered or not.** Measured and confirmed: `generateStaticParams`, `dynamicParams = false` and
+      `dynamic = "force-static"` **all** leave the Lambda in place. So ten
+      `opengraph-image.tsx` / `twitter-image.tsx` files under `weather/[slug]`, `right-wrong-ray/[slug]`,
+      `resources/[category]`, `resources/[category]/[slug]` and `report-card/[month]` cost 9 Lambdas
+      (two happened to share a bundle) that no amount of prerendering could reclaim. The only way to
+      remove them is to stop having the route.
+- [x] **The fix: render the cards to static files at build time.** Deleted all ten dynamic-segment image
+      routes. `scripts/generate_og_images.mjs` (new `prebuild` step) esbuild-bundles
+      `scripts/og/cards.tsx` and renders every card to `public/og/**.png`, reusing the **same**
+      `src/lib/ogCard.tsx` renderer and the **same** data loaders the pages use, so there is no second
+      copy of the design to drift. `src/lib/ogStatic.ts` holds the URL helpers + alt text shared by the
+      generator and the pages' `generateMetadata`. 42 cards (17 towns × 2, 2 categories, 5 posts,
+      1 report month), byte-identical output, `public/og/` gitignored like `public/screenshots/`.
+      **18 → 9 Lambdas.** Cards come from committed data that changes at most once a day, so
+      per-request rendering was always wasteful.
 - [ ] **STANDING BUDGET — this repo runs on Vercel Hobby with a hard 12-Serverless-Function ceiling.**
-      Every new **API route**, **`/widget`-style dynamic page**, or **dynamic-segment image route**
-      must be budgeted against it *before* it merges. Current usage is **9 of 12** — three slots of
-      headroom. The nine: `/api/geocode`, `/api/keystatic/[...params]`, `/api/v1/forecast`,
-      `/api/v1/scores`, `/api/v1/today`, `/api/v1/towns`, `/api/v1/verdict`,
-      `/keystatic/[[...params]]`, `/widget`. **Verify by counting the `ƒ` (Dynamic) rows in the
-      `npm run build` route table** — do not assume; a route that fails to prerender degrades
-      silently back into a function.
-      **Reclaimable if more room is ever needed:** `/keystatic` + `/api/keystatic` occupy 2 of the 9
-      purely for the CMS admin UI, which no public visitor uses — gating Keystatic out of production
-      builds would return the count to 7.
-- [ ] **Consider a CI guard** so this can never silently recur: fail the build (or a PR check) when the
-      route table reports more than 12 `ƒ` entries. Cheap, and it converts a week-long invisible
-      outage into a red check on the PR that causes it.
+      Every new **API route**, **`/widget`-style dynamic page**, or **any route directory with a dynamic
+      segment** must be budgeted against it *before* it merges — including metadata image routes, which
+      are easy to forget because they are not "pages". Current usage is **9 of 12**, three slots of
+      headroom. The nine: `api/geocode` (all `/api/v1/*` share this bundle), `feed/[town]/[feed]`,
+      `keystatic/[[...params]]`, `report-card/[month]`, `resources/[category]`,
+      `resources/[category]/[slug]`, `right-wrong-ray/[slug]`, `weather/[slug]`, `widget`.
+      **Verify with `npx vercel build` + the `.func` count above — never the route table.**
+      **Reclaimable if more room is needed:** `keystatic/[[...params]]` (and the `api/keystatic` route
+      that shares its bundle) exists purely for the CMS admin UI that no public visitor uses — gating
+      Keystatic out of production builds would return the count to 8.
+- [ ] **Consider a CI guard** so this can never silently recur: fail a PR check when
+      `npx vercel build` yields more than 12 distinct `.func` bundles. Cheap, and it converts a
+      week-long invisible outage into a red check on the PR that causes it.
 
 ## Promotion-readiness audit — RAN 2026-06-25 → risk register
 Multi-agent audit (Dims 1–4, adversarially verified) complete. 24 findings → 22 verified + 2 critic → a

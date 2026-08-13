@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "vitest run src/lib/__tests__/solar.test.ts --reporter=dot && node scripts/prepare_public.mjs",
+    "prebuild": "vitest run src/lib/__tests__/solar.test.ts --reporter=dot && node scripts/prepare_public.mjs && node scripts/generate_og_images.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
