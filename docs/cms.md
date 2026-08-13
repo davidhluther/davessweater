@@ -1,5 +1,22 @@
 # Content editor (Keystatic)
 
+> **⚠️ The editor is OFF in production builds (since 2026-08-13).** `/keystatic`
+> and `/api/keystatic` cost 2 of the 12 Serverless Functions this project gets on
+> Vercel Hobby, and that budget is what froze production for a week in August 2026
+> (see `CHECKLIST.md`). Their route files are named `page.keystatic.tsx` /
+> `route.keystatic.ts`, an extension Next only treats as a route when the flag is
+> set. Run the editor locally with:
+>
+> ```bash
+> ENABLE_KEYSTATIC=1 npm run dev      # editor at http://localhost:3000/keystatic
+> ```
+>
+> To put it back on the live site, set `ENABLE_KEYSTATIC=1` in the Vercel project's
+> environment variables — but first reclaim 2 functions elsewhere or move to Pro,
+> or the deployment will fail at `patchBuild`. Saving from a local editor session
+> still commits to git and still triggers a normal Vercel redeploy, so the
+> publishing workflow below works unchanged; only the hosted editor URL is gone.
+
 Blog posts can be written and edited through a Google-Docs-style editor at
 **`/keystatic`** — no markdown knowledge needed. The editor has a toolbar for
 bold, links, headings, lists, and tables, and the structured fields (title,
