@@ -31,5 +31,13 @@ next-env.d.ts
 # Private planning / competitive strategy — local only, never public
 planning/
 
+# Private data store — local only, never public. Holds the traffic dataset
+# (TomTom-derived: raw flow samples plus every layer built from them), which
+# left this repo on 2026-08-13 because TomTom's terms do not cover storing or
+# republishing Results and data/ here is offered under CC BY 4.0. The workflow
+# mounts a private checkout at this path; see scripts/traffic_paths.py and the
+# "TomTom storage exposure" entry in CHECKLIST.md.
+/private-data/
+
 # Keystatic local-mode cache (dev only; never committed)
 .keystatic/

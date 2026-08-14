@@ -1308,11 +1308,122 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
         permit storage + derived analysis. ⚠️ Follow-up flag: read TomTom's display/storage terms
         for committed flow snapshots in a public repo (same class of question; TomTom free tier is
         "commercial OK" per 07-08 research, redistribution wording unchecked).
+        **→ READ 2026-08-13, and the flag was right. See "TomTom storage exposure" below.**
   - [x] **Keys UNBLOCKED 2026-07-25 — owner supplied DriveNC + NPS + TomTom; all three
         live-verified** + stored as GH secrets. DriveNC v2 shape confirmed:
         `drivenc.gov/api/v2/get/{event,roadconditions,cameras}?key=` (roadconditions =
         per-Division rows; Watauga = Division 11); WZDx keyless. ⚠️ TomTom flowSegmentData
         defaults to km/h — request `unit=mph` (caught live).
+  - [x] **TomTom storage exposure — FOUND + REMEDIED 2026-08-13/14.** The parked flag above was
+        read against the binding instrument (TomTom Portal Terms & Conditions, accepted at
+        registration; the canonical URL redirects to a login-gated page, so the text was read from
+        Wayback captures of both the current and the 2023 version — the clauses are long-standing
+        and only renumbered). **The finding: Committing flow snapshots to a public repo is not
+        covered by the licence.**
+        - **11.4** — "The caching or storing of any Results shall be prohibited except that you may
+          cache Results delivered by the Licensed Products provided that: 11.4.1 such Results may
+          only be cached **in clients** where the control headers are present in the Result;
+          11.4.2 ... not ... longer than the maximum age period indicated in such cache control
+          headers". `data/traffic/actuals/` was persistent server-side storage on no cache-control
+          clock. It met none of 11.4.1–11.4.3.
+        - **11.6.1** — forbids using the Licensed Products "to create any derivative work, product
+          or service ... including ... the creation of any secondary or derived database populated
+          wholly or partially with your data". An accumulating, indexed, daily time series of
+          extracted readings that seeds a forecasting model sits near the centre of that wording.
+        - **17.1** — all IP in the Content and Results is TomTom's. **17.3** conditions use of the
+          TomTom name on prior written approval and offers only the Copyright API as the attribution
+          mechanism, so there is no attribution wording that would have made publication clean.
+        - **The aggravating fact, and the one that decided the remedy: `data/` here is published
+          under CC BY 4.0** (`data/LICENSE`, `data/README.md`, the /api page, and a `license` field
+          on every API response) — "Use them anywhere, including commercially." We were offering the
+          world a licence over TomTom's Results that we do not hold. That is a stronger problem than
+          the storage itself.
+        - **11.6.4** also bars Licensed Products being retained in a "Public Reference Data Set"
+          from which a process may generate output for third-party queries. A public repo of TomTom
+          readings feeding a published forecast model sits close enough to be worth naming.
+        - **Scope at the time of the fix:** 55 tracked files, 2026-07-25 → 2026-08-12, ~560 KB
+          (actuals 152 KB) — 19 actuals day-files holding 74 samples x 6 corridors = 444 raw
+          readings (`current_mph`, `free_flow_mph`, both travel times, `road_closure`,
+          `confidence`), plus 17 comparisons, 18 forecasts and `scores.json`. Consumers mapped:
+          `capture_traffic_actuals.py`, `forecast_traffic.py` (reads EVERY actuals day to seed
+          baselines), `compare_traffic.py`, `check_freshness.py`, and the `traffic_actuals.yml`
+          predict→grade loop. **The site does not read it** — no page, no `/api/v1` endpoint, and
+          `next.config.ts` deliberately excludes traffic from the Lambda file tracing — and the
+          Busy-ness Index composite does not use it either. So nothing user-facing depended on it.
+  - [x] **REMEDY (owner ruling 2026-08-13: move it private, keep using it, stop labelling it
+        publicly).** Implemented 2026-08-14:
+        - The **whole** `traffic/` tree moved to a private store — the derived layers went with the raw
+          samples. The
+          comparisons carry `observed_ratio` and the forecasts carry baselines averaged from those
+          ratios, so every layer is derived from Results; under 11.6.1 the derived-only defence
+          ("we publish banded scores rather than mph") is available but weak, and the CC BY offer
+          defeats it outright. The honest read: A ratio is a transformation of two Results values,
+          and a daily series of them is the derived database the clause names.
+          Re-publishing a traffic scoreboard later is a live owner decision, not a settled one.
+        - `scripts/traffic_paths.py` is now the single place that says where the dataset lives:
+          `$DS_PRIVATE_DATA_DIR`, else `<repo>/private-data` (gitignored). All four scripts resolve
+          through it.
+        - `traffic_actuals.yml` clones a **private companion repo** to `./private-data`, runs the
+          same capture → grade → forecast sequence against it, and commits back **there**. Its
+          permission on this repo dropped to `contents: read`; it commits nothing here any more.
+          Workflow **artifacts were considered and rejected** — on a public repo anyone can download
+          them, which would rebuild the exposure.
+        - The freshness sentinel cannot see the dataset any more, so its three traffic checks SKIP
+          when the store is absent (a public checkout's normal state) and the backstop moved into
+          the traffic workflow itself as `check_freshness.py --traffic-only`, which treats an
+          unmounted store as a failure. A green run that captured nothing is the 2026-07-26 silent
+          skip all over again, so that path goes red.
+        - **Capture continuity held.** The samples the bot committed publicly on 08-13/08-14 while
+          this was in flight were copied into the private store before the public copies were
+          removed — 21 actuals days, 19 comparisons, 20 forecasts, and `scores.json` graded through
+          2026-08-13. Nothing was lost, and the loop was verified end-to-end against a relocated
+          store (graded 08-12, forecast written, 19 actuals days seeding baselines).
+        - Tests: 555 green, including new coverage for the resolver and for the mounted/unmounted
+          sentinel behaviour.
+  - [ ] **OWNER-ONLY, and the capture is DOWN until it is done.** Agents cannot create repos.
+        1. Create a **private** repo `davessweater-data` (matches `PRIVATE_DATA_REPO` in
+           `traffic_actuals.yml`; change the env value if you name it something else).
+        2. Seed it from the local working copy: `cd ~/Projects/DavesSweater/private-data &&
+           git init -b main && git add traffic && git commit -m "Seed traffic dataset" &&
+           git remote add origin git@github.com:davidhluther/davessweater-data.git && git push -u
+           origin main`. **Do not add a licence file to it**, and never make it public.
+        3. Add a repo secret **`DS_PRIVATE_DATA_TOKEN`** on `davessweater` — a fine-grained PAT
+           granting read and write on the contents of `davessweater-data` alone.
+        Until 2 and 3 land, every scheduled traffic run fails loudly with those instructions and
+        **no samples are taken**, which is deliberate: The alternative was a green run storing
+        nothing, or storing it somewhere public again.
+  - [ ] **HISTORY — public git history still holds the data, and purging it is an owner call.**
+        Removing the files at HEAD stops them being served from the tip; it does not remove them
+        from the repo's history, and GitHub keeps unreachable objects reachable by SHA for a while
+        after a rewrite. **What remains exposed: 80 commits touch `data/traffic/` (78 of them the
+        actuals path), spanning 2026-07-25 → 2026-08-14, across ~568 objects, inside a 1,305-commit
+        public repo** created 2026-03-04. Mitigating facts: 0 forks and 0 stars, and the data is a
+        19-day corridor-speed series for six pins, not credentials.
+        A purge would be:
+        ```
+        pipx run git-filter-repo --invert-paths --path data/traffic --force
+        git remote add origin https://github.com/davidhluther/davessweater.git
+        git push --force --all && git push --force --tags
+        ```
+        **Risks, stated honestly:** it rewrites every SHA after the first traffic commit, so the
+        four daily workflows, any open branch, and every local clone must be re-cloned or rebased;
+        force-pushing a public repo cannot recall anything already cloned, crawled, mirrored, or
+        indexed by a code-search or model-training crawler; and GitHub Support has to be asked
+        separately to expire cached views. **The realistic gain is modest** — it closes casual
+        discovery while leaving any distribution that already happened untouched. Recommendation: Do it only if the raw
+        readings are ever alleged to matter; the standing decision otherwise is to leave history
+        alone and rely on HEAD being clean. Either way the force push is the **owner's decision to
+        make**; an agent should never take it.
+  - [ ] **Loose end from the same sweep:** the free-tier grant is genuinely ambiguous — 2.2 licenses
+        free use for **Evaluation Use**, defined as *internal* evaluation and testing, while 2.1
+        licenses a Permitted Solution "where you have entered into a Subscription Plan", and a free
+        plan is selected through the Portal. The 07-08 note that the free tier is "commercial OK"
+        came from the pricing page, which does not obviously agree with the terms. Nothing depends
+        on resolving it while the dataset stays private and unpublished; it has to be resolved
+        before any TomTom-derived number is published anywhere, including on davessweater.com.
+        Related ruling from the same research (pigasus side): Do NOT publish TomTom-derived
+        congestion figures in marketing copy — source congestion claims from NCDOT AADT counts or
+        our own measurement instead.
   - [x] **Traffic v2 actuals — BUILT + MERGED 2026-07-25 (PR #135).** `capture_traffic_actuals.py`
         + own workflow (4 peak-window crons): 6 corridor pins, every one reverse-geocoded onto its
         intended road (no-eyeballed-pins rule — first-guess pins ALL landed on side streets):

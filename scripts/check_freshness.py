@@ -31,20 +31,20 @@ weather-only sentinel stayed green, and the traffic forecast/comparison feeds
 just stopped advancing. The gate is fixed now (commit e5ed6322); these checks
 are the backstop that would have caught it. Three traffic checks:
 
-3. **Traffic forecast isn't stale** — the newest file in `data/traffic/forecast/`
+3. **Traffic forecast isn't stale** — the newest file in `{private}/traffic/forecast/`
    is dated no more than 1 day before today. The forecast is written once/day on
    the day's first actuals cron; because GitHub delays that cron by hours, at the
    16:30 UTC sentinel run today's forecast may legitimately not exist yet, so
    *yesterday's* forecast must still count as healthy. Two consecutive missing
    days (age > 1) is the real "the loop stopped" signal — red.
 4. **Traffic comparisons aren't stale** — the newest file in
-   `data/traffic/comparisons/` is no more than 3 days old. Grading scores
+   `{private}/traffic/comparisons/` is no more than 3 days old. Grading scores
    *yesterday's* forecast, so the healthy age is 1; the extra slack absorbs one
    legitimate missing-forecast gap day (a day with no forecast — like the
    2026-07-26 incident gap — never gets a comparison, so the newest comparison
    can sit a day further back than the newest forecast without anything being
    wrong) plus the same in-flight-cron delay as the forecast check.
-5. **Traffic actuals aren't stale** — the newest file in `data/traffic/actuals/`
+5. **Traffic actuals aren't stale** — the newest file in `{private}/traffic/actuals/`
    is dated no more than 1 day before today. Actuals sample 4x/day with delays up
    to ~3h, so by the same reasoning as the forecast check yesterday's actuals
    must count as healthy; age > 1 means the sampling crons stopped.
@@ -52,7 +52,11 @@ are the backstop that would have caught it. Three traffic checks:
 Read-only: this workflow must never commit anything, it just goes red loudly
 so the owner notices a skipped run instead of a slowly staling site.
 
-Usage: python scripts/check_freshness.py [--date YYYY-MM-DD]
+Usage: python scripts/check_freshness.py [--date YYYY-MM-DD] [--traffic-only]
+--traffic-only runs the three traffic checks alone and REQUIRES the private
+traffic store to be mounted (the traffic workflow's own backstop). Without it
+the traffic checks skip when the store is absent, which is the normal state of
+a public checkout since the dataset moved out on 2026-08-13 (TomTom terms).
 Default date ("today") is the current date in America/New_York.
 """
 import os
@@ -61,7 +65,15 @@ from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+import traffic_paths as tp
+
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+# The traffic dataset moved to the private store on 2026-08-13 (TomTom terms —
+# see CHECKLIST.md). A plain public checkout has no traffic data at all, so the
+# three traffic checks SKIP unless the store is mounted. The traffic workflow,
+# which does mount it, runs this with --traffic-only, where an unmounted store
+# is itself a failure.
+TRAFFIC_DIR = tp.traffic_dir()
 EST = ZoneInfo("America/New_York")
 
 STALE_COMPARISON_DAYS = 2  # yesterday's comparison + 1 day of archive-lag slack
@@ -143,9 +155,14 @@ def check_town_captures(today: str):
     return True, f"towns: all {len(towns)} towns captured today ({today})"
 
 
+def traffic_store_mounted() -> bool:
+    """True when the private traffic store is present in this checkout."""
+    return TRAFFIC_DIR.is_dir()
+
+
 def newest_traffic_date(subdir: str):
-    """Return the newest YYYY-MM-DD stem in data/traffic/{subdir}/, or None if empty/missing."""
-    d = DATA_DIR / "traffic" / subdir
+    """Return the newest YYYY-MM-DD stem in {private}/traffic/{subdir}/, or None if empty/missing."""
+    d = TRAFFIC_DIR / subdir
     if not d.is_dir():
         return None
     stems = sorted(p.stem for p in d.glob("*.json"))
@@ -153,11 +170,19 @@ def newest_traffic_date(subdir: str):
 
 
 def _check_traffic_freshness(today: str, subdir: str, label: str, allowed: int):
-    """Shared staleness check for a data/traffic/{subdir}/ feed: True if the newest
-    dated *.json is within `allowed` days of `today`."""
+    """Shared staleness check for a {private}/traffic/{subdir}/ feed: True if the newest
+    dated *.json is within `allowed` days of `today`.
+
+    Skips (and passes) when the private store is not mounted, the normal state of
+    a public checkout since the dataset moved out on 2026-08-13. The traffic
+    workflow mounts the store and runs with --traffic-only, where an unmounted
+    store fails instead of skipping."""
+    if not traffic_store_mounted():
+        return True, (f"traffic {label}: SKIPPED — private traffic store not mounted "
+                      f"at {TRAFFIC_DIR}")
     newest = newest_traffic_date(subdir)
     if newest is None:
-        return False, f"traffic {label}: MISSING — data/traffic/{subdir}/ has no files at all"
+        return False, f"traffic {label}: MISSING — traffic/{subdir}/ has no files at all"
     try:
         today_d = date.fromisoformat(today)
         newest_d = date.fromisoformat(newest)
@@ -201,14 +226,32 @@ def check_traffic_actuals_freshness(today: str):
     return _check_traffic_freshness(today, "actuals", "actuals", TRAFFIC_STALE_ACTUALS_DAYS)
 
 
-def run_checks(today: str):
-    """Pure check: given a reference date string, return (problems, report_lines)."""
+def check_traffic_store_mounted():
+    """True when the private traffic store is mounted. Only asserted in
+    --traffic-only mode, which runs inside the traffic workflow after it has
+    checked the private data out; anywhere else an absent store is expected."""
+    if traffic_store_mounted():
+        return True, f"traffic store: mounted at {TRAFFIC_DIR}"
+    return False, (f"traffic store: NOT MOUNTED at {TRAFFIC_DIR} — the private data "
+                   "checkout failed, so today's samples were not persisted")
+
+
+def run_checks(today: str, traffic_only: bool = False):
+    """Pure check: given a reference date string, return (problems, report_lines).
+
+    traffic_only runs the traffic loop's checks alone and requires the private
+    store, for the traffic workflow. The public sentinel runs the full set, where
+    the traffic checks skip themselves when the store is absent."""
+    traffic_checks = (check_traffic_forecast_freshness(today),
+                      check_traffic_comparison_freshness(today),
+                      check_traffic_actuals_freshness(today))
+    if traffic_only:
+        checks = (check_traffic_store_mounted(),) + traffic_checks
+    else:
+        checks = (check_today_capture(today), check_comparison_freshness(today),
+                  check_town_captures(today)) + traffic_checks
     problems, lines = [], []
-    for ok, msg in (check_today_capture(today), check_comparison_freshness(today),
-                    check_town_captures(today),
-                    check_traffic_forecast_freshness(today),
-                    check_traffic_comparison_freshness(today),
-                    check_traffic_actuals_freshness(today)):
+    for ok, msg in checks:
         lines.append(("  OK   " if ok else "  FAIL ") + msg)
         if not ok:
             problems.append(msg)
@@ -224,9 +267,13 @@ def _target_date(argv):
 
 
 def main():
-    today = _target_date(sys.argv[1:])
-    problems, lines = run_checks(today)
-    report = f"### Freshness sentinel — reference date {today}\n\n" + "\n".join(lines)
+    argv = sys.argv[1:]
+    today = _target_date(argv)
+    traffic_only = "--traffic-only" in argv
+    problems, lines = run_checks(today, traffic_only=traffic_only)
+    scope = "traffic loop only" if traffic_only else "full pipeline"
+    report = (f"### Freshness sentinel ({scope}) — reference date {today}\n\n"
+              + "\n".join(lines))
     print(report)
     step_summary = os.environ.get("GITHUB_STEP_SUMMARY")
     if step_summary:

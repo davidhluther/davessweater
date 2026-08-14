@@ -8,8 +8,8 @@ Reads yesterday's forecast + yesterday's actuals; per corridor-window it scores:
   ratio abs error : |predicted_ratio - observed_ratio|
   jammed Brier    : (jammed_prob - observed_jammed)^2, observed = actual < 0.55
 
-Writes data/traffic/comparisons/{yesterday}.json and folds the results into a
-running data/traffic/scores.json (overall, per corridor, and split by condition:
+Writes {private}/traffic/comparisons/{yesterday}.json and folds the results into
+a running {private}/traffic/scores.json (overall, per corridor, split by condition:
 event-day vs ordinary, and per weekday-class). scores.json guards against
 double-counting via a graded_dates list, so a re-run is a no-op for the totals.
 
@@ -26,12 +26,15 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 
 import traffic_model as tm
+import traffic_paths as tp
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-FORECAST_DIR = BASE_DIR / "data" / "traffic" / "forecast"
-ACTUALS_DIR = BASE_DIR / "data" / "traffic" / "actuals"
-COMPARISONS_DIR = BASE_DIR / "data" / "traffic" / "comparisons"
-SCORES_PATH = BASE_DIR / "data" / "traffic" / "scores.json"
+# The traffic dataset is private and lives outside this public repo — every
+# layer of it derives from TomTom Results. See scripts/traffic_paths.py.
+FORECAST_DIR = tp.traffic_subdir("forecast")
+ACTUALS_DIR = tp.traffic_subdir("actuals")
+COMPARISONS_DIR = tp.traffic_subdir("comparisons")
+SCORES_PATH = tp.traffic_dir() / "scores.json"
 
 
 def _load_json(path: Path):

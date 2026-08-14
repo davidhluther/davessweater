@@ -176,24 +176,28 @@ def test_run_checks_includes_town_check(tmp_path, monkeypatch):
 
 # ── traffic predict→grade loop (added 2026-07-28 after the silent-skip incident) ──
 def _traffic(tmp_path, subdir, *dates):
+    """Seed the MOUNTED private traffic store (moved out of data/ 2026-08-13)."""
     for d in dates:
         _touch(tmp_path / "traffic" / subdir / f"{d}.json")
 
 
 def test_newest_traffic_date_picks_latest(tmp_path, monkeypatch):
     monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "traffic")
     _traffic(tmp_path, "forecast", "2026-07-25", "2026-07-27", "2026-07-26")
     assert f.newest_traffic_date("forecast") == "2026-07-27"
 
 
 def test_newest_traffic_date_missing_dir_is_none(tmp_path, monkeypatch):
     monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "traffic")
     assert f.newest_traffic_date("forecast") is None
 
 
 # forecast: yesterday ok (in-flight cron), two consecutive missing days = red
 def test_traffic_forecast_yesterday_is_fresh(tmp_path, monkeypatch):
     monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "traffic")
     _traffic(tmp_path, "forecast", "2026-07-27")
     ok, msg = f.check_traffic_forecast_freshness("2026-07-28")
     assert ok
@@ -203,6 +207,7 @@ def test_traffic_forecast_yesterday_is_fresh(tmp_path, monkeypatch):
 def test_traffic_forecast_two_days_old_is_stale(tmp_path, monkeypatch):
     # The incident: forecast stuck at 2026-07-25, so by 07-27 it is two days stale.
     monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "traffic")
     _traffic(tmp_path, "forecast", "2026-07-25")
     ok, msg = f.check_traffic_forecast_freshness("2026-07-27")
     assert not ok
@@ -211,6 +216,8 @@ def test_traffic_forecast_two_days_old_is_stale(tmp_path, monkeypatch):
 
 def test_traffic_forecast_missing_is_stale(tmp_path, monkeypatch):
     monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "traffic")
+    (tmp_path / "traffic").mkdir()  # store mounted, dataset empty
     ok, msg = f.check_traffic_forecast_freshness("2026-07-28")
     assert not ok
     assert "MISSING" in msg
@@ -222,6 +229,7 @@ def test_traffic_comparison_gap_day_does_not_false_alarm(tmp_path, monkeypatch):
     # forecast (the incident gap) so it never got a comparison, and 07-27 grading
     # lands later today. 3 days old — must stay green.
     monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "traffic")
     _traffic(tmp_path, "comparisons", "2026-07-25")
     ok, msg = f.check_traffic_comparison_freshness("2026-07-28")
     assert ok
@@ -230,6 +238,7 @@ def test_traffic_comparison_gap_day_does_not_false_alarm(tmp_path, monkeypatch):
 
 def test_traffic_comparison_four_days_old_is_stale(tmp_path, monkeypatch):
     monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "traffic")
     _traffic(tmp_path, "comparisons", "2026-07-24")
     ok, msg = f.check_traffic_comparison_freshness("2026-07-28")
     assert not ok
@@ -239,6 +248,8 @@ def test_traffic_comparison_four_days_old_is_stale(tmp_path, monkeypatch):
 def test_traffic_comparison_none_at_all_is_stale(tmp_path, monkeypatch):
     # The incident state: no traffic comparisons ever landed.
     monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "traffic")
+    (tmp_path / "traffic").mkdir()  # store mounted, dataset empty
     ok, msg = f.check_traffic_comparison_freshness("2026-07-27")
     assert not ok
     assert "MISSING" in msg
@@ -247,6 +258,7 @@ def test_traffic_comparison_none_at_all_is_stale(tmp_path, monkeypatch):
 # actuals: yesterday ok, two days = red, none = red
 def test_traffic_actuals_yesterday_is_fresh(tmp_path, monkeypatch):
     monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "traffic")
     _traffic(tmp_path, "actuals", "2026-07-27")
     ok, msg = f.check_traffic_actuals_freshness("2026-07-28")
     assert ok
@@ -255,6 +267,7 @@ def test_traffic_actuals_yesterday_is_fresh(tmp_path, monkeypatch):
 
 def test_traffic_actuals_two_days_old_is_stale(tmp_path, monkeypatch):
     monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "traffic")
     _traffic(tmp_path, "actuals", "2026-07-25")
     ok, msg = f.check_traffic_actuals_freshness("2026-07-27")
     assert not ok
@@ -263,6 +276,8 @@ def test_traffic_actuals_two_days_old_is_stale(tmp_path, monkeypatch):
 
 def test_traffic_actuals_missing_is_stale(tmp_path, monkeypatch):
     monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "traffic")
+    (tmp_path / "traffic").mkdir()  # store mounted, dataset empty
     ok, msg = f.check_traffic_actuals_freshness("2026-07-28")
     assert not ok
     assert "MISSING" in msg
@@ -271,6 +286,7 @@ def test_traffic_actuals_missing_is_stale(tmp_path, monkeypatch):
 def test_traffic_future_dated_is_not_flagged(tmp_path, monkeypatch):
     # A --date override in the past relative to the data isn't staleness.
     monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "traffic")
     _traffic(tmp_path, "forecast", "2026-07-27")
     ok, _ = f.check_traffic_forecast_freshness("2026-07-20")
     assert ok
@@ -279,6 +295,7 @@ def test_traffic_future_dated_is_not_flagged(tmp_path, monkeypatch):
 # ── run_checks now carries all six checks, and the real+incident states verify ──
 def test_run_checks_has_six_checks_all_healthy(tmp_path, monkeypatch):
     monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "traffic")
     _touch(tmp_path / "predictions" / "2026-07-28" / "openmeteo_forecast.json")
     _touch(tmp_path / "comparisons" / "2026-07-27.json")
     _touch(tmp_path / "locations" / "vilas" / "predictions" / "2026-07-28" / "openmeteo_forecast.json")
@@ -294,6 +311,7 @@ def test_run_checks_flags_traffic_silent_skip(tmp_path, monkeypatch):
     # The 2026-07-26/27 incident: weather kept running, but the traffic loop
     # silently stopped — forecast stuck at 07-25, no comparisons at all.
     monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "traffic")
     _touch(tmp_path / "predictions" / "2026-07-27" / "openmeteo_forecast.json")
     _touch(tmp_path / "comparisons" / "2026-07-26.json")
     _touch(tmp_path / "locations" / "vilas" / "predictions" / "2026-07-27" / "openmeteo_forecast.json")
@@ -303,3 +321,54 @@ def test_run_checks_flags_traffic_silent_skip(tmp_path, monkeypatch):
     problems, _ = f.run_checks("2026-07-27")
     assert any("traffic forecast" in p and "STALE" in p for p in problems)
     assert any("traffic comparisons" in p and "MISSING" in p for p in problems)
+
+
+# ── private traffic store (moved out of this public repo 2026-08-13) ──────
+# TomTom's terms do not cover storing or republishing Results, and data/ here is
+# CC BY 4.0, so the whole traffic tree lives in a private companion repo. A
+# public checkout therefore has no traffic data at all, and the sentinel must
+# read that as "not my dataset" rather than "the pipeline died."
+def test_traffic_checks_skip_when_store_is_not_mounted(tmp_path, monkeypatch):
+    monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "no-private-data" / "traffic")
+    for check in (f.check_traffic_forecast_freshness,
+                  f.check_traffic_comparison_freshness,
+                  f.check_traffic_actuals_freshness):
+        ok, msg = check("2026-07-28")
+        assert ok
+        assert "SKIPPED" in msg
+
+
+def test_public_sentinel_stays_green_without_the_private_store(tmp_path, monkeypatch):
+    # The sentinel workflow's real state after the move: weather healthy, no
+    # traffic data in the checkout. It must not go red on that.
+    monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "no-private-data" / "traffic")
+    _touch(tmp_path / "predictions" / "2026-07-28" / "openmeteo_forecast.json")
+    _touch(tmp_path / "comparisons" / "2026-07-27.json")
+    _touch(tmp_path / "locations" / "vilas" / "predictions" / "2026-07-28" / "openmeteo_forecast.json")
+    problems, lines = f.run_checks("2026-07-28")
+    assert problems == []
+    assert len(lines) == 6
+
+
+def test_traffic_only_requires_the_store_to_be_mounted(tmp_path, monkeypatch):
+    # Inside the traffic workflow the store IS supposed to be there, so an
+    # absent one is the failure — a green run that captured nothing is the
+    # silent-skip class all over again.
+    monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "no-private-data" / "traffic")
+    problems, lines = f.run_checks("2026-07-28", traffic_only=True)
+    assert any("NOT MOUNTED" in p for p in problems)
+    assert len(lines) == 4  # mount check + 3 traffic checks
+
+
+def test_traffic_only_passes_on_a_healthy_mounted_store(tmp_path, monkeypatch):
+    monkeypatch.setattr(f, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(f, "TRAFFIC_DIR", tmp_path / "traffic")
+    _traffic(tmp_path, "forecast", "2026-07-27")
+    _traffic(tmp_path, "comparisons", "2026-07-25")
+    _traffic(tmp_path, "actuals", "2026-07-27")
+    problems, lines = f.run_checks("2026-07-28", traffic_only=True)
+    assert problems == []
+    assert len(lines) == 4

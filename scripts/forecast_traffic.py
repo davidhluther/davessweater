@@ -5,7 +5,8 @@ forecast_traffic.py — daily corridor-congestion forecast (traffic model v0).
 Runs once a day (with the first actuals sample). For TODAY and TOMORROW it
 predicts each corridor's congestion ratio at each of the four sample windows
 (~08:00 / 12:00 / 17:00 / 19:00 NY), plus a jammed probability, and writes
-data/traffic/forecast/{today}.json.
+{private}/traffic/forecast/{today}.json — the traffic dataset is private and
+sits outside this public repo (scripts/traffic_paths.py explains why).
 
     ratio_hat = baseline_cell x event_multiplier x weather_multiplier  (clamped)
 
@@ -23,10 +24,11 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 
 import traffic_model as tm
+import traffic_paths as tp
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-ACTUALS_DIR = BASE_DIR / "data" / "traffic" / "actuals"
-OUT_DIR = BASE_DIR / "data" / "traffic" / "forecast"
+ACTUALS_DIR = tp.traffic_subdir("actuals")
+OUT_DIR = tp.traffic_subdir("forecast")
 REGISTRY_PATH = BASE_DIR / "data" / "events" / "registry.json"
 ATHLETICS_PATH = BASE_DIR / "data" / "events" / "athletics.json"
 FORECAST_5DAY_PATH = BASE_DIR / "data" / "forecast_5day.json"
