@@ -28,7 +28,8 @@ on:
   workflow_dispatch:
 
 # Read-only against THIS repo now — the job no longer writes anything here. The
-# private data repo is written with DS_PRIVATE_DATA_TOKEN instead.
+# private data repo is written over SSH with a repo-scoped deploy key
+# (DS_PRIVATE_DATA_KEY) — narrower than a PAT: it can reach only that one repo.
 permissions:
   contents: read
 
@@ -55,21 +56,27 @@ jobs:
       - name: Mount the private traffic store
         id: mount
         env:
-          DS_PRIVATE_DATA_TOKEN: ${{ secrets.DS_PRIVATE_DATA_TOKEN }}
+          DS_PRIVATE_DATA_KEY: ${{ secrets.DS_PRIVATE_DATA_KEY }}
         run: |
-          if [ -z "${DS_PRIVATE_DATA_TOKEN}" ]; then
+          if [ -z "${DS_PRIVATE_DATA_KEY}" ]; then
             echo "mounted=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::DS_PRIVATE_DATA_TOKEN is not set — the private traffic store cannot be mounted, so this run samples nothing."
+            echo "::warning::DS_PRIVATE_DATA_KEY is not set — the private traffic store cannot be mounted, so this run samples nothing."
             exit 0
           fi
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "${DS_PRIVATE_DATA_KEY}" > ~/.ssh/ds_data_key
+          chmod 600 ~/.ssh/ds_data_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/ds_data_key -o IdentitiesOnly=yes"
+          echo "GIT_SSH_COMMAND=${GIT_SSH_COMMAND}" >> "$GITHUB_ENV"
           if git clone --depth 1 \
-              "https://x-access-token:${DS_PRIVATE_DATA_TOKEN}@github.com/${PRIVATE_DATA_REPO}.git" \
+              "git@github.com:${PRIVATE_DATA_REPO}.git" \
               private-data; then
             echo "mounted=true" >> "$GITHUB_OUTPUT"
             echo "Mounted ${PRIVATE_DATA_REPO} at ./private-data"
           else
             echo "mounted=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::Could not clone the private data repo — check that it exists and the token has access."
+            echo "::warning::Could not clone the private data repo — check that it exists and the deploy key has access."
           fi
 
       - name: Sample corridor flow (fail-closed)
@@ -130,6 +137,6 @@ jobs:
           echo "The private traffic store is not mounted, so no sample was taken or stored."
           echo "Owner steps: create the private companion repo, seed it with the traffic/"
           echo "tree from the local private-data directory, then add a repo secret"
-          echo "DS_PRIVATE_DATA_TOKEN with read/write access to it."
+          echo "DS_PRIVATE_DATA_KEY (a write deploy key for it)."
           echo "Background: CHECKLIST.md, 'TomTom storage exposure'."
           exit 1

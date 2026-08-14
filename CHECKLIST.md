@@ -1387,7 +1387,7 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
            git init -b main && git add traffic && git commit -m "Seed traffic dataset" &&
            git remote add origin git@github.com:davidhluther/davessweater-data.git && git push -u
            origin main`. **Do not add a licence file to it**, and never make it public.
-        3. Add a repo secret **`DS_PRIVATE_DATA_TOKEN`** on `davessweater` — a fine-grained PAT
+        3. ~~Add a repo secret~~ DONE 2026-08-14 via **`DS_PRIVATE_DATA_KEY`** (repo-scoped write deploy key — narrower than a PAT
            granting read and write on the contents of `davessweater-data` alone.
         Until 2 and 3 land, every scheduled traffic run fails loudly with those instructions and
         **no samples are taken**, which is deliberate: The alternative was a green run storing
