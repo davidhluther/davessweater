@@ -38,6 +38,10 @@ planning/
 # mounts a private checkout at this path; see scripts/traffic_paths.py and the
 # "TomTom storage exposure" entry in CHECKLIST.md.
 /private-data/
+# Belt and braces: daily_compare.yml commits with a broad `git add data/`, so
+# if anything ever recreated data/traffic/ it would be republished here. This
+# line makes that impossible without a deliberate `git add -f`.
+/data/traffic/
 
 # Keystatic local-mode cache (dev only; never committed)
 .keystatic/
