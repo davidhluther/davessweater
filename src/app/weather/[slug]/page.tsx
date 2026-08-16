@@ -5,6 +5,7 @@ import {
   allTowns, getTown, getTownForecast5, getTownScores,
   townTodayForecasts, scoredDays, firstScoredDate, isTownPublic,
 } from "@/lib/towns";
+import { ogAlt, ogImage, ogPath } from "@/lib/ogStatic";
 import { compositeForecast } from "@/lib/composite";
 import { sweaterFromEffective } from "@/lib/sweater";
 import { MIN_SCORED_DAYS } from "@/lib/gating";
@@ -30,6 +31,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const town = await getTown(slug);
   if (!town || slug === "boone") return {};
+  // Prerendered share card (public/og/...), not an opengraph-image route: a
+  // dynamic-segment image route costs a Serverless Function against the Vercel
+  // Hobby cap of 12. See src/lib/ogStatic.ts.
+  const card = ogImage(ogPath.weather(slug), ogAlt.weather);
   const title = `${town.name}, NC weather: Multi-source forecast, graded`;
   const description =
     `The forecast for ${town.name}, NC from every source we track, blended into one consensus and graded daily against ${town.name}'s own actuals. Its own data at its own coordinates, not a stamped regional copy.`;
@@ -42,6 +47,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description: `A real ${town.name} forecast: multiple sources, one consensus, graded against ${town.name}'s own actuals.`,
       url: `${BASE}/weather/${slug}`,
       type: "website",
+      images: [card],
     },
     twitter: { card: "summary_large_image" },
   };

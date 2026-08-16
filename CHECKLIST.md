@@ -501,6 +501,63 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       settings (python build → `docs/`); backed up, removed, re-linked fresh (project/org IDs only). The
       matching *dashboard* overrides remain an owner click (see Deployment notes in `CLAUDE.md`).
 
+### ⚠️ DEPLOY OUTAGE 2026-08-06 → 08-16 — Vercel Hobby 12-function cap
+- [x] **Symptom.** Every production deployment failed with
+      `exceeded_serverless_functions_per_deployment` ("No more than 12 Serverless Functions can be
+      added to a Deployment on the Hobby plan"), so prod served stale content while the data pipeline
+      stayed perfectly healthy — Actions green, committing `data/` daily, nothing red in CI. **It hid
+      because the build SUCCEEDS** ("Build Completed", "Deploying outputs…") and only then fails at
+      the **`patchBuild`** step. Rollback was never a mitigation — prod was already serving the last
+      good build. Each daily `data/` commit re-triggered a failed deploy (3/day) plus an alert email.
+- [x] **Share cards became static files (the fix).** The five `opengraph-image.tsx` routes under
+      `weather/[slug]`, `right-wrong-ray/[slug]`, `resources/[category]`, `resources/[category]/[slug]`
+      and `report-card/[month]` were deleted. `scripts/generate_og_images.mjs` (new `prebuild` step)
+      esbuild-bundles `scripts/og/cards.tsx` and renders all 42 cards to `public/og/**.png` using the
+      **same** `src/lib/ogCard.tsx` renderer and the **same** data loaders, so there is no second copy
+      of the design to drift. `src/lib/ogStatic.ts` shares the URLs + alt text with the pages'
+      `generateMetadata`. `public/og/` is gitignored like `public/screenshots/`. **18 → 9 emitted
+      function bundles.** Cards come from committed data that changes at most once a day, so
+      per-request rendering was always wasteful.
+- [x] **Every `twitter-image.tsx` route deleted, site-wide (owner product decision, not just a cap
+      workaround).** The owner shares only to LinkedIn, Instagram and Facebook — all of which read
+      `og:image` — and X falls back to `og:image` when no twitter-specific image is declared, so
+      nothing breaks for third parties posting links there. All 15 files were re-exports of their
+      `opengraph-image` sibling, so no card was lost. `twitter.card`/title/description stay; Next
+      mirrors the OG image into `twitter:image` on its own.
+- [x] **⚠️ `generateStaticParams` does NOT reclaim a function.** Next emits one Lambda per route
+      directory containing a dynamic segment, prerendered or not; `generateStaticParams`,
+      `dynamicParams = false` and `dynamic = "force-static"` were each measured and none removes it.
+      The only way to drop that function is to not have the route. (An earlier attempt took the
+      `next build` route table from 19 `ƒ` to 9 `ƒ` this way and the deployment failed identically.)
+- [x] **⚠️ `outputFileTracingIncludes` narrowing is a red herring here — measured, and dropped.**
+      Narrowing the `/api/v1/*` + `/widget` entries from `./data/**/*.json` to the five paths those
+      routes actually read moved the traced file list from **8,283 → 8,242 entries**: a 0.5% change.
+      The tree is dragged in by the *automatic* tracer instead, because `towns.ts` builds paths with
+      `readdir`/dynamic `join` (Turbopack warns "matches 17452 files" / "matches 21192 files"). So the
+      include list is not the lever it looks like; **the dynamic filesystem reads are**. Left at the
+      broad glob rather than shipping a narrow list that only *looks* safe and 500s the day a route
+      reads a path nobody remembered to add.
+- [ ] **STANDING BUDGET — Vercel Hobby, hard 12-Serverless-Function ceiling.**
+      **Every new route directory with a dynamic segment costs a function** — API routes,
+      `/widget`-style dynamic pages, and metadata image routes (easy to forget: they are not
+      "pages"). Adding a new dynamic route *family* is what risks re-tripping the cap. Prefer one
+      catch-all over N sibling routes, and prefer a build-time file over a route whenever the output
+      is derived from committed data. Current 9: `/api/geocode`, `/api/keystatic/[...params]`,
+      `/keystatic/[[...params]]`, `/widget`, `/feed/[town]/[feed]`, `/report-card/[month]`,
+      `/resources/[category]`, `/resources/[category]/[slug]`, `/right-wrong-ray/[slug]`,
+      `/weather/[slug]` (the `/api/v1/*` handlers share one bundle).
+      **How to check:** `npx vercel build` then
+      `find .vercel/output/functions -name '*.func' -type d ! -name '*.rsc.func' ! -path '*.segments*' | wc -l`.
+      Do **not** trust the `ƒ` column in the `next build` route table — it is not the function count.
+      Treat the local number as an indicator and **a real deployment as the ground truth**: push the
+      branch and read the preview's status before merging.
+- [ ] **Consider a CI guard** so this cannot silently recur — fail a PR check when the emitted
+      function count exceeds ~10. A multi-day invisible outage should have been a red check on a PR.
+- [ ] **Reclaim options if the budget is ever tight again:** `/keystatic` + `/api/keystatic` occupy 2
+      of the 9 for an admin UI no public visitor loads; gating them out of production builds behind an
+      env flag returns the count to 7. Not done here — it removes the hosted editor, which is an owner
+      decision, not a cleanup.
+
 ## Promotion-readiness audit — RAN 2026-06-25 → risk register
 Multi-agent audit (Dims 1–4, adversarially verified) complete. 24 findings → 22 verified + 2 critic → a
 12-entry prioritized register. **Full detail: `planning/audits/2026-06-25-promotion-readiness-risk-register.md`.**

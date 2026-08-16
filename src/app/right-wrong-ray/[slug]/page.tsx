@@ -5,6 +5,7 @@ import {
   allTowns, getTown, getTownScores, latestComparisonDate, getTownComparison,
   getTownForecast5, townTodayForecasts, scoredDays, firstScoredDate, isTownPublic,
 } from "@/lib/towns";
+import { ogAlt, ogImage, ogPath } from "@/lib/ogStatic";
 import { sortScoredSources, townSparkSeries } from "@/lib/board";
 import { scoreboardRows } from "@/lib/scoreboard";
 import { rollingMean } from "@/lib/sparkline";
@@ -31,6 +32,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const town = await getTown(slug);
   if (!town || slug === "boone") return {};
+  // Prerendered share card (public/og/...), not an opengraph-image route: a
+  // dynamic-segment image route costs a Serverless Function against the Vercel
+  // Hobby cap of 12. See src/lib/ogStatic.ts.
+  const card = ogImage(ogPath.tracker(slug), ogAlt.tracker);
   const title = `Right Ray / Wrong Ray: ${town.name}, NC forecast accuracy`;
   const description =
     `Daily accuracy scores for every ${town.name}, NC forecast, graded against ${town.name}'s own verified actuals on the same 100-point scale as Boone. Each town stands alone. No blended average.`;
@@ -43,6 +48,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description: `Who actually gets ${town.name}'s weather right? Every forecast graded daily against what happened.`,
       url: `${BASE}/right-wrong-ray/${slug}`,
       type: "website",
+      images: [card],
     },
     twitter: { card: "summary_large_image" },
   };

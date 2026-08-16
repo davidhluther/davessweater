@@ -2,13 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBlogPosts, postSlug, postCategoryOf } from "@/lib/data";
 import { fmtLongDate } from "@/lib/dates";
-import { CATEGORIES, type PostCategory } from "@/content/resources";
+import { CATEGORIES, POST_CATEGORIES, type PostCategory } from "@/content/resources";
+import { ogAlt, ogImage, ogPath } from "@/lib/ogStatic";
 import { breadcrumbs, collectionPage } from "@/lib/schema";
 import SectionBand from "@/components/SectionBand";
 import JsonLd from "@/components/JsonLd";
-
-// Post-backed categories only — videos and reports have their own static routes.
-const POST_CATEGORIES: PostCategory[] = ["articles", "news"];
 
 export const dynamicParams = false;
 
@@ -20,11 +18,15 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   const { category } = await params;
   const def = CATEGORIES.find((c) => c.key === category);
   if (!def) return { title: "Resources" };
+  // Prerendered share card (public/og/...), not an opengraph-image route: a
+  // dynamic-segment image route costs a Serverless Function against the Vercel
+  // Hobby cap of 12. See src/lib/ogStatic.ts.
+  const card = ogImage(ogPath.resourceCategory(category), ogAlt.resourceCategory);
   return {
     title: def.label,
     description: def.description,
     alternates: { canonical: def.href },
-    openGraph: { title: `${def.label} | Dave's Sweater`, description: def.description, url: `https://davessweater.com${def.href}` },
+    openGraph: { title: `${def.label} | Dave's Sweater`, description: def.description, url: `https://davessweater.com${def.href}`, images: [card] },
   };
 }
 
