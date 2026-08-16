@@ -501,7 +501,16 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       settings (python build → `docs/`); backed up, removed, re-linked fresh (project/org IDs only). The
       matching *dashboard* overrides remain an owner click (see Deployment notes in `CLAUDE.md`).
 
-### ⚠️ DEPLOY OUTAGE 2026-08-06 → 08-16 — Vercel Hobby 12-function cap
+### ⚠️ DEPLOY OUTAGE 2026-08-06 → 08-16 — Vercel Hobby 12-function cap — ✅ RESOLVED
+- [x] **RESOLVED 2026-08-16.** PR #163 merged; the triggered production deploy went **Ready**
+      (12m build, verified via `vercel ls`) after ten days of every deploy erroring on the cap.
+      Prod re-verified same morning: serving the new build (tracker shows the Aug 15 graded day,
+      not the frozen Aug 13 build) and one static card per family returns 200 image/png
+      (`/og/weather/beech-mountain.png`, `/og/right-wrong-ray/beech-mountain.png`,
+      `/og/resources/articles.png`, `/og/report-card/2026-06.png`), with page metadata pointing
+      at the static paths. Note: no `/og/right-wrong-ray/boone.png` exists by design — Boone's
+      tracker is canonical at `/right-wrong-ray` with no slug twin. OVERALL IA's
+      `IA-HANDOFF-2026-08-16-vercel-function-limit.md` is closed and deleted.
 - [x] **Symptom.** Every production deployment failed with
       `exceeded_serverless_functions_per_deployment` ("No more than 12 Serverless Functions can be
       added to a Deployment on the Hobby plan"), so prod served stale content while the data pipeline
