@@ -1188,17 +1188,19 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
       `DS_CONTENT_STRUCTURE.md` (answer-first/franchise patterns from the real fireworks/GMHG pages) +
       `DS_WRITING_QUALITY.md` (layered on the universal styleguide, never loosens it) written;
       `DS_VOICE.md` stub note reconciled. Owner review of all three still pending.
-- [ ] **Multi-location launch content — PREPPED 2026-07-19, publishes gate on P1 town pages.**
-      Map: `planning/seo/multi-location-content-map.md` (~19,700/mo addressable across 18 places,
-      KD 0-1; layers + sequencing + per-town keyword table). Staged in `planning/seo/drafts/`:
-      **17-high-country-towns.md** (News announcement, NEW — publish the day town pages ship) and
-      **rays-66-locations-3-forecasts.md** ("What we do instead" now filled with the real 17-town
-      build; publish-morning checklist in its header; follows the announcement by 1-2 days).
-      Data-gated follow-ups mapped: flagship per-town accuracy piece (~Sept 1, needs ~30 scored
-      days/town; the elevation question is its spine), July report card gains a wider-field
-      paragraph. Owner reviews drafts before publish (house rule). ⚠️ Owner mentioned "Keytastic"
-      (set up for Pigasus) — nothing by that name exists in any repo/skill/connector; awaiting
-      owner clarification (noted in map §5).
+- [x] **Multi-location launch content — ✅ PUBLISHED 2026-08-16 (owner: "launch"; commit 12170d2d).**
+      Both pieces live as native posts, re-dated 2026-08-16 with the stale late-July time anchors
+      minimally updated ("As of this week" → "Since late July"; "in about a month" → "a few more
+      weeks of grading"; no facts changed): **17-high-country-towns** (news) and
+      **rays-66-locations-3-forecasts** (articles — its July 7 pull date is stated in-text and
+      stands). Pre-publish checks: copy_lint 0 errors; validator's only errors were Corpay-brand
+      structure rules (upsell/Contentful/takeaways — inapplicable to DS); 333 vitest green; town
+      facts re-verified (18 tracked = Boone + 17; gate 9 days; Ray absent in Seven Devils /
+      Sugar Grove / Wilkesboro). Owner: request GSC indexing for both URLs.
+      Data-gated follow-ups still mapped: flagship per-town accuracy piece (~Sept 1, needs ~30
+      scored days/town; the elevation question is its spine — the towns now have the sample),
+      report card gains a wider-field paragraph. ⚠️ "Keytastic" mention likely = Keystatic (the
+      CMS already in this repo) — the one-time GitHub App owner step above is still open.
 - [x] **Report Card franchise route — ✅ MERGED + LIVE 2026-07-26 (PR #143; June URL 308s to
       /report-card/2026-06 on prod, verified).** `/report-card`
       hub + `/report-card/{yyyy-mm}` (SSG); cards are native posts flagged `category: report-card` +
