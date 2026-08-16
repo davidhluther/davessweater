@@ -551,17 +551,37 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       `/widget`-style dynamic pages, and metadata image routes (easy to forget: they are not
       "pages"). Adding a new dynamic route *family* is what risks re-tripping the cap. Prefer one
       catch-all over N sibling routes, and prefer a build-time file over a route whenever the output
-      is derived from committed data. Current 9: `/api/geocode`, `/api/keystatic/[...params]`,
-      `/keystatic/[[...params]]`, `/widget`, `/feed/[town]/[feed]`, `/report-card/[month]`,
-      `/resources/[category]`, `/resources/[category]/[slug]`, `/right-wrong-ray/[slug]`,
-      `/weather/[slug]` (the `/api/v1/*` handlers share one bundle).
-      **How to check:** `npx vercel build` then
-      `find .vercel/output/functions -name '*.func' -type d ! -name '*.rsc.func' ! -path '*.segments*' | wc -l`.
+      is derived from committed data. **Current 9:** `/api/**` (ONE shared bundle — `/api/geocode`,
+      the five `/api/v1/*` handlers *and* `/api/keystatic/[...params]` all symlink into it;
+      corrected 2026-08-16, the earlier list double-counted them), `/keystatic/[[...params]]`,
+      `/widget`, `/feed/[town]/[feed]`, `/report-card/[month]`, `/resources/[category]`,
+      `/resources/[category]/[slug]`, `/right-wrong-ray/[slug]`, `/weather/[slug]`.
+      **How to check:** `python3 scripts/check_function_budget.py` (one second, no build), or the
+      ground truth — `npx vercel build` then
+      `find .vercel/output/functions -name '*.func' -type d ! -name '*.rsc.func' ! -path '*.segments*' | wc -l`
+      (same thing: `python3 scripts/check_function_budget.py --build-output .vercel/output`).
       Do **not** trust the `ƒ` column in the `next build` route table — it is not the function count.
       Treat the local number as an indicator and **a real deployment as the ground truth**: push the
       branch and read the preview's status before merging.
-- [ ] **Consider a CI guard** so this cannot silently recur — fail a PR check when the emitted
-      function count exceeds ~10. A multi-day invisible outage should have been a red check on a PR.
+- [x] **CI guard — SHIPPED 2026-08-16.** `scripts/check_function_budget.py` counts the deployment's
+      Serverless Functions two ways and fails at **>10** (two under the 12 cap, so a model that
+      under-counts by one still trips the check before a deployment does). Its default mode is a
+      static model of the `src/app` route tree — every route file under a dynamic segment costs a
+      function (metadata image routes included, since they are routes and not pages), all `/api/**`
+      handlers share one bundle, a `force-dynamic` route costs one without a dynamic segment, and a
+      plain prerendered page costs nothing; `--build-output` counts the real bundles a `vercel build`
+      emitted, skipping the `.func` symlinks, `.rsc.func` halves and `.segments/` payloads that make
+      the output directory look bigger than it is. Both read **9** today, and both moved to 10 in
+      lockstep when a throwaway `[probe]` route was added, so the fast model is calibrated against
+      the measurement rather than asserted. `tests/test_function_budget.py` gates the real tree in
+      pytest and pins each counting rule against synthetic route trees;
+      `.github/workflows/function_budget.yml` runs the static gate plus a full `vercel build` on
+      every PR touching `src/app`, `next.config.ts`, `vercel.json` or the lockfile, and warns when
+      the two counts drift apart. **The build job needs no secret** — measured: `vercel build` wants
+      project settings, not credentials, so a placeholder `.vercel/project.json` written in the
+      workflow is enough and nothing touches the Vercel API; if a future CLI release starts demanding
+      auth the job posts a notice naming the owner step (add `VERCEL_TOKEN`) and steps aside rather
+      than going confusingly red, with the static gate still biting.
 - [ ] **Reclaim options if the budget is ever tight again:** `/keystatic` + `/api/keystatic` occupy 2
       of the 9 for an admin UI no public visitor loads; gating them out of production builds behind an
       env flag returns the count to 7. Not done here — it removes the hosted editor, which is an owner
