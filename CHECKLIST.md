@@ -937,20 +937,35 @@ standard when it lands.
       DSI forecasts precip; rain/snow by majority among callers; any split reads mixed. Stateless (no weighting,
       no history), disclosed on `/methodology`. Measured +1.9 pts on the record → **DSI is now #1 at 96.7, 21-0-0.**
       Kept in sync across `compare.py:_composite_precip_type` and `composite.ts:compositePrecipType` (change both).
-- [ ] **REEVALUATE DSI ~2026-08-15 (scheduled).** A month-out check (reminder set 2026-07-15, GitHub issue #128): with a
-      fuller sample (and any regime shift), re-test out-of-sample whether the precip credible-minority rule still
-      holds, and whether the deferred bias correction + per-horizon weighting are now worth building. Re-run the
-      analysis scripts against `data/comparisons` + `data/leadtime`, report the DSI's standing, and implement the
-      bias correction if the evidence supports it.
-- [ ] **DSI temperature bias correction (adaptive step 2 — the last lever, ~+0.5).** Members share a ~+1.1°F
-      warm-high bias that averaging can't remove. A causal, rolling, per-member trailing-bias correction (only
-      past days; re-adapts by season) would recover it. It's the one genuinely *learned* piece, so it needs the
-      walk-forward backfill machinery + a `/methodology` note, and it's the most overfit-prone on 21 summer days
-      — **best validated with a fuller sample / into winter before shipping.** Owner chose the full adaptive path
-      (B); this is the remaining B work after the precip rule.
-- [ ] **DSI membership optimization — revisit at ~30-60 days.** With per-lead scoring now in hand, decide any
-      per-horizon member weighting (leader changes by horizon: Google/MET win day 0-1, Visual Crossing/Tomorrow
-      hold up best at day 2-5). Don't hard-code weights before a fuller sample — ~21 days is one summer regime.
+- [x] **REEVALUATE DSI ~2026-08-15 — ✅ RAN 2026-08-16** (issue #128; full memo:
+      `planning/analysis/2026-08-16-dsi-reevaluation.md`, local-only). Standing: **DSI #1 at 95.61,
+      53-0-0** over 53 days on the rescored record — and *better* on fresh data (95.11 first 22 days,
+      95.96 the 31 since). Caveat for site copy: the lead over MET.no (94.36) is NOT statistically
+      separated (t≈1.3–1.4; 25 wins / 25 losses) — the defensible public claim is **most consistent**
+      (worst day 86.3; 48/53 days ≥90), not "most accurate." **Credible-minority precip rule HELD
+      out-of-sample**: +0.97 pts on the 31 post-adoption days (t=+2.40), 6 better / 0 worse / 1 tie —
+      keep as shipped. Untested face: zero snow days in the record, so the wrong-form-on-snow cost has
+      never been exercised. **Next scheduled re-eval: after the first month with measurable snow**,
+      specifically re-testing that face.
+- [x] **DSI temperature bias correction — ❌ CLOSED 2026-08-16, measured and rejected** (not deferred).
+      The premise is falsified on the fuller sample: the pooled warm-high bias decayed +1.12°F →
+      +0.50°F, and what remains is ONE member (WeatherAPI, +3.5 to +4.7°F warm in every window), not a
+      shared bias averaging can't remove. The specified causal walk-forward lever measures **−0.05 pts
+      out-of-sample** (t=−0.17); across 12 configs the spread (−0.19..+0.27) exceeds any gain — noise.
+      Also kept dead on auditability grounds: it's the one genuinely *learned* component, and a learned
+      self-improvement is the version of DSI tuning a critic can legitimately call rigged. Reopen only
+      on evidence of a *shared* seasonal bias ≥1.5°F persisting a month (winter cold regime is the
+      plausible candidate), not on the calendar.
+- [ ] **DSI membership optimization — retargeted to ~2026-09-15** (ideally into the first cold regime).
+      2026-08-16 findings: **per-horizon weighting is DEAD** — fitted per-lead member sets beat one
+      global set at ZERO of six leads (tie d0-d1, worse d2-d5; far-horizon rank stability ρ=0.66, and
+      Visual Crossing fell from far-lead leader to 3rd everywhere). The live candidate is a
+      **horizon-independent trim** (drop OWM/NWS/WeatherAPI): +0.07..+1.25 out-of-sample at every lead
+      (mean ≈+0.55), consistent in sign but significant at only one lead — too thin on a summer-only
+      sample. ⚠️ **OWNER VOICE CALL, not math:** the trim drops the taxpayer-funded NWS from a
+      data-democracy site; the middle path is dropping WeatherAPI alone (the one broken member,
+      +0.16..+0.28 by itself, easy to disclose on /methodology). Decide the register before anything
+      ships.
 - [ ] **Ray's real price for the "Paid" chip** on `/right-wrong-ray` — owner to supply the figure.
 - [ ] **M5 multi-location "multiplication" — spec written 2026-07-18, pending owner review:**
       `planning/specs/2026-07-18-multi-location-multiplication-design.md`. Decisions taken in spec:
