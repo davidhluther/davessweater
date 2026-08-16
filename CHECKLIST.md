@@ -1446,7 +1446,13 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
           store (graded 08-12, forecast written, 19 actuals days seeding baselines).
         - Tests: 555 green, including new coverage for the resolver and for the mounted/unmounted
           sentinel behaviour.
-  - [ ] **OWNER-ONLY, and the capture is DOWN until it is done.** Agents cannot create repos.
+  - [x] **RESOLVED — capture is UP; verified 2026-08-16.** The private repo
+        `davidhluther/davessweater-data` exists (private), holds the seed plus bot commits, and the
+        write deploy key is live. Every `traffic_actuals.yml` run since 2026-08-14 17:01 UTC is
+        green, and the store holds an unbroken `traffic/actuals/` day series 2026-08-09 → 2026-08-16
+        — **no samples were lost**. The local `~/Projects/DavesSweater/private-data` mirror now has
+        `origin` wired and fast-forwards from the remote (the seed commit is its ancestor).
+        Original owner steps, kept for reference: Agents cannot create repos.
         1. Create a **private** repo `davessweater-data` (matches `PRIVATE_DATA_REPO` in
            `traffic_actuals.yml`; change the env value if you name it something else).
         2. Seed it from the local working copy: `cd ~/Projects/DavesSweater/private-data &&
