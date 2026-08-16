@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getReportCards, getReportCard } from "@/lib/data";
 import { fmtLongDate } from "@/lib/dates";
+import { ogAlt, ogImage, ogPath } from "@/lib/ogStatic";
 import { SITE_BASE, breadcrumbs, faqPage } from "@/lib/schema";
 import SectionBand from "@/components/SectionBand";
 import PostBody from "@/components/PostBody";
@@ -23,6 +24,10 @@ export async function generateMetadata({ params }: { params: Promise<{ month: st
   const { month } = await params;
   const card = await getReportCard(month);
   if (!card) return { title: "Report Card" };
+  // Prerendered share card (public/og/...), not an opengraph-image route: a
+  // dynamic-segment image route costs a Serverless Function against the Vercel
+  // Hobby cap of 12. See src/lib/ogStatic.ts.
+  const ogCard = ogImage(ogPath.reportCard(month), ogAlt.reportCard);
   const title = card.metaTitle ?? card.title;
   const description = card.metaDescription ?? card.summary;
   const url = `/report-card/${month}`;
@@ -30,7 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ month: st
     title,
     description,
     alternates: { canonical: url },
-    openGraph: { title, description, type: "article", url: `${SITE_BASE}${url}` },
+    openGraph: { title, description, type: "article", url: `${SITE_BASE}${url}`, images: [ogCard] },
   };
 }
 
@@ -51,7 +56,7 @@ export default async function Page({ params }: { params: Promise<{ month: string
       headline: card.title,
       url: `${SITE_BASE}${url}`,
       mainEntityOfPage: `${SITE_BASE}${url}`,
-      image: `${SITE_BASE}${url}/opengraph-image`,
+      image: `${SITE_BASE}${ogPath.reportCard(month)}`,
       ...(card.date ? { datePublished: card.date } : {}),
       ...(card.summary ? { description: card.summary } : {}),
       author: { "@type": "Organization", name: "Dave's Sweater" },

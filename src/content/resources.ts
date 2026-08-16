@@ -9,6 +9,13 @@ export type PostCategory = "articles" | "news";
 
 export const ARTICLE_SLUGS = new Set<string>([]);
 
+// The categories that are backed by posts and so get a /resources/[category]
+// route. Videos and reports have their own static routes. Shared so the route's
+// page and its OG/Twitter image routes emit the same static params — they must
+// agree or the image route silently stays a serverless function (see the Vercel
+// Hobby 12-function ceiling note in CHECKLIST.md).
+export const POST_CATEGORIES: PostCategory[] = ["articles", "news"];
+
 export function postCategory(slug: string): PostCategory {
   return ARTICLE_SLUGS.has(slug) ? "articles" : "news";
 }
