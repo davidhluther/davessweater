@@ -501,6 +501,92 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       settings (python build → `docs/`); backed up, removed, re-linked fresh (project/org IDs only). The
       matching *dashboard* overrides remain an owner click (see Deployment notes in `CLAUDE.md`).
 
+### ⚠️ DEPLOY OUTAGE 2026-08-06 → 08-16 — Vercel Hobby 12-function cap — ✅ RESOLVED
+- [x] **RESOLVED 2026-08-16.** PR #163 merged; the triggered production deploy went **Ready**
+      (12m build, verified via `vercel ls`) after ten days of every deploy erroring on the cap.
+      Prod re-verified same morning: serving the new build (tracker shows the Aug 15 graded day,
+      not the frozen Aug 13 build) and one static card per family returns 200 image/png
+      (`/og/weather/beech-mountain.png`, `/og/right-wrong-ray/beech-mountain.png`,
+      `/og/resources/articles.png`, `/og/report-card/2026-06.png`), with page metadata pointing
+      at the static paths. Note: no `/og/right-wrong-ray/boone.png` exists by design — Boone's
+      tracker is canonical at `/right-wrong-ray` with no slug twin. OVERALL IA's
+      `IA-HANDOFF-2026-08-16-vercel-function-limit.md` is closed and deleted.
+- [x] **Symptom.** Every production deployment failed with
+      `exceeded_serverless_functions_per_deployment` ("No more than 12 Serverless Functions can be
+      added to a Deployment on the Hobby plan"), so prod served stale content while the data pipeline
+      stayed perfectly healthy — Actions green, committing `data/` daily, nothing red in CI. **It hid
+      because the build SUCCEEDS** ("Build Completed", "Deploying outputs…") and only then fails at
+      the **`patchBuild`** step. Rollback was never a mitigation — prod was already serving the last
+      good build. Each daily `data/` commit re-triggered a failed deploy (3/day) plus an alert email.
+- [x] **Share cards became static files (the fix).** The five `opengraph-image.tsx` routes under
+      `weather/[slug]`, `right-wrong-ray/[slug]`, `resources/[category]`, `resources/[category]/[slug]`
+      and `report-card/[month]` were deleted. `scripts/generate_og_images.mjs` (new `prebuild` step)
+      esbuild-bundles `scripts/og/cards.tsx` and renders all 42 cards to `public/og/**.png` using the
+      **same** `src/lib/ogCard.tsx` renderer and the **same** data loaders, so there is no second copy
+      of the design to drift. `src/lib/ogStatic.ts` shares the URLs + alt text with the pages'
+      `generateMetadata`. `public/og/` is gitignored like `public/screenshots/`. **18 → 9 emitted
+      function bundles.** Cards come from committed data that changes at most once a day, so
+      per-request rendering was always wasteful.
+- [x] **Every `twitter-image.tsx` route deleted, site-wide (owner product decision, not just a cap
+      workaround).** The owner shares only to LinkedIn, Instagram and Facebook — all of which read
+      `og:image` — and X falls back to `og:image` when no twitter-specific image is declared, so
+      nothing breaks for third parties posting links there. All 15 files were re-exports of their
+      `opengraph-image` sibling, so no card was lost. `twitter.card`/title/description stay; Next
+      mirrors the OG image into `twitter:image` on its own.
+- [x] **⚠️ `generateStaticParams` does NOT reclaim a function.** Next emits one Lambda per route
+      directory containing a dynamic segment, prerendered or not; `generateStaticParams`,
+      `dynamicParams = false` and `dynamic = "force-static"` were each measured and none removes it.
+      The only way to drop that function is to not have the route. (An earlier attempt took the
+      `next build` route table from 19 `ƒ` to 9 `ƒ` this way and the deployment failed identically.)
+- [x] **⚠️ `outputFileTracingIncludes` narrowing is a red herring here — measured, and dropped.**
+      Narrowing the `/api/v1/*` + `/widget` entries from `./data/**/*.json` to the five paths those
+      routes actually read moved the traced file list from **8,283 → 8,242 entries**: a 0.5% change.
+      The tree is dragged in by the *automatic* tracer instead, because `towns.ts` builds paths with
+      `readdir`/dynamic `join` (Turbopack warns "matches 17452 files" / "matches 21192 files"). So the
+      include list is not the lever it looks like; **the dynamic filesystem reads are**. Left at the
+      broad glob rather than shipping a narrow list that only *looks* safe and 500s the day a route
+      reads a path nobody remembered to add.
+- [ ] **STANDING BUDGET — Vercel Hobby, hard 12-Serverless-Function ceiling.**
+      **Every new route directory with a dynamic segment costs a function** — API routes,
+      `/widget`-style dynamic pages, and metadata image routes (easy to forget: they are not
+      "pages"). Adding a new dynamic route *family* is what risks re-tripping the cap. Prefer one
+      catch-all over N sibling routes, and prefer a build-time file over a route whenever the output
+      is derived from committed data. **Current 9:** `/api/**` (ONE shared bundle — `/api/geocode`,
+      the five `/api/v1/*` handlers *and* `/api/keystatic/[...params]` all symlink into it;
+      corrected 2026-08-16, the earlier list double-counted them), `/keystatic/[[...params]]`,
+      `/widget`, `/feed/[town]/[feed]`, `/report-card/[month]`, `/resources/[category]`,
+      `/resources/[category]/[slug]`, `/right-wrong-ray/[slug]`, `/weather/[slug]`.
+      **How to check:** `python3 scripts/check_function_budget.py` (one second, no build), or the
+      ground truth — `npx vercel build` then
+      `find .vercel/output/functions -name '*.func' -type d ! -name '*.rsc.func' ! -path '*.segments*' | wc -l`
+      (same thing: `python3 scripts/check_function_budget.py --build-output .vercel/output`).
+      Do **not** trust the `ƒ` column in the `next build` route table — it is not the function count.
+      Treat the local number as an indicator and **a real deployment as the ground truth**: push the
+      branch and read the preview's status before merging.
+- [x] **CI guard — SHIPPED 2026-08-16.** `scripts/check_function_budget.py` counts the deployment's
+      Serverless Functions two ways and fails at **>10** (two under the 12 cap, so a model that
+      under-counts by one still trips the check before a deployment does). Its default mode is a
+      static model of the `src/app` route tree — every route file under a dynamic segment costs a
+      function (metadata image routes included, since they are routes and not pages), all `/api/**`
+      handlers share one bundle, a `force-dynamic` route costs one without a dynamic segment, and a
+      plain prerendered page costs nothing; `--build-output` counts the real bundles a `vercel build`
+      emitted, skipping the `.func` symlinks, `.rsc.func` halves and `.segments/` payloads that make
+      the output directory look bigger than it is. Both read **9** today, and both moved to 10 in
+      lockstep when a throwaway `[probe]` route was added, so the fast model is calibrated against
+      the measurement rather than asserted. `tests/test_function_budget.py` gates the real tree in
+      pytest and pins each counting rule against synthetic route trees;
+      `.github/workflows/function_budget.yml` runs the static gate plus a full `vercel build` on
+      every PR touching `src/app`, `next.config.ts`, `vercel.json` or the lockfile, and warns when
+      the two counts drift apart. **The build job needs no secret** — measured: `vercel build` wants
+      project settings, not credentials, so a placeholder `.vercel/project.json` written in the
+      workflow is enough and nothing touches the Vercel API; if a future CLI release starts demanding
+      auth the job posts a notice naming the owner step (add `VERCEL_TOKEN`) and steps aside rather
+      than going confusingly red, with the static gate still biting.
+- [ ] **Reclaim options if the budget is ever tight again:** `/keystatic` + `/api/keystatic` occupy 2
+      of the 9 for an admin UI no public visitor loads; gating them out of production builds behind an
+      env flag returns the count to 7. Not done here — it removes the hosted editor, which is an owner
+      decision, not a cleanup.
+
 ## Promotion-readiness audit — RAN 2026-06-25 → risk register
 Multi-agent audit (Dims 1–4, adversarially verified) complete. 24 findings → 22 verified + 2 critic → a
 12-entry prioritized register. **Full detail: `planning/audits/2026-06-25-promotion-readiness-risk-register.md`.**
@@ -893,20 +979,35 @@ standard when it lands.
       DSI forecasts precip; rain/snow by majority among callers; any split reads mixed. Stateless (no weighting,
       no history), disclosed on `/methodology`. Measured +1.9 pts on the record → **DSI is now #1 at 96.7, 21-0-0.**
       Kept in sync across `compare.py:_composite_precip_type` and `composite.ts:compositePrecipType` (change both).
-- [ ] **REEVALUATE DSI ~2026-08-15 (scheduled).** A month-out check (reminder set 2026-07-15, GitHub issue #128): with a
-      fuller sample (and any regime shift), re-test out-of-sample whether the precip credible-minority rule still
-      holds, and whether the deferred bias correction + per-horizon weighting are now worth building. Re-run the
-      analysis scripts against `data/comparisons` + `data/leadtime`, report the DSI's standing, and implement the
-      bias correction if the evidence supports it.
-- [ ] **DSI temperature bias correction (adaptive step 2 — the last lever, ~+0.5).** Members share a ~+1.1°F
-      warm-high bias that averaging can't remove. A causal, rolling, per-member trailing-bias correction (only
-      past days; re-adapts by season) would recover it. It's the one genuinely *learned* piece, so it needs the
-      walk-forward backfill machinery + a `/methodology` note, and it's the most overfit-prone on 21 summer days
-      — **best validated with a fuller sample / into winter before shipping.** Owner chose the full adaptive path
-      (B); this is the remaining B work after the precip rule.
-- [ ] **DSI membership optimization — revisit at ~30-60 days.** With per-lead scoring now in hand, decide any
-      per-horizon member weighting (leader changes by horizon: Google/MET win day 0-1, Visual Crossing/Tomorrow
-      hold up best at day 2-5). Don't hard-code weights before a fuller sample — ~21 days is one summer regime.
+- [x] **REEVALUATE DSI ~2026-08-15 — ✅ RAN 2026-08-16** (issue #128; full memo:
+      `planning/analysis/2026-08-16-dsi-reevaluation.md`, local-only). Standing: **DSI #1 at 95.61,
+      53-0-0** over 53 days on the rescored record — and *better* on fresh data (95.11 first 22 days,
+      95.96 the 31 since). Caveat for site copy: the lead over MET.no (94.36) is NOT statistically
+      separated (t≈1.3–1.4; 25 wins / 25 losses) — the defensible public claim is **most consistent**
+      (worst day 86.3; 48/53 days ≥90), not "most accurate." **Credible-minority precip rule HELD
+      out-of-sample**: +0.97 pts on the 31 post-adoption days (t=+2.40), 6 better / 0 worse / 1 tie —
+      keep as shipped. Untested face: zero snow days in the record, so the wrong-form-on-snow cost has
+      never been exercised. **Next scheduled re-eval: after the first month with measurable snow**,
+      specifically re-testing that face.
+- [x] **DSI temperature bias correction — ❌ CLOSED 2026-08-16, measured and rejected** (not deferred).
+      The premise is falsified on the fuller sample: the pooled warm-high bias decayed +1.12°F →
+      +0.50°F, and what remains is ONE member (WeatherAPI, +3.5 to +4.7°F warm in every window), not a
+      shared bias averaging can't remove. The specified causal walk-forward lever measures **−0.05 pts
+      out-of-sample** (t=−0.17); across 12 configs the spread (−0.19..+0.27) exceeds any gain — noise.
+      Also kept dead on auditability grounds: it's the one genuinely *learned* component, and a learned
+      self-improvement is the version of DSI tuning a critic can legitimately call rigged. Reopen only
+      on evidence of a *shared* seasonal bias ≥1.5°F persisting a month (winter cold regime is the
+      plausible candidate), not on the calendar.
+- [ ] **DSI membership optimization — retargeted to ~2026-09-15** (ideally into the first cold regime).
+      2026-08-16 findings: **per-horizon weighting is DEAD** — fitted per-lead member sets beat one
+      global set at ZERO of six leads (tie d0-d1, worse d2-d5; far-horizon rank stability ρ=0.66, and
+      Visual Crossing fell from far-lead leader to 3rd everywhere). The live candidate is a
+      **horizon-independent trim** (drop OWM/NWS/WeatherAPI): +0.07..+1.25 out-of-sample at every lead
+      (mean ≈+0.55), consistent in sign but significant at only one lead — too thin on a summer-only
+      sample. ⚠️ **OWNER VOICE CALL, not math:** the trim drops the taxpayer-funded NWS from a
+      data-democracy site; the middle path is dropping WeatherAPI alone (the one broken member,
+      +0.16..+0.28 by itself, easy to disclose on /methodology). Decide the register before anything
+      ships.
 - [ ] **Ray's real price for the "Paid" chip** on `/right-wrong-ray` — owner to supply the figure.
 - [ ] **M5 multi-location "multiplication" — spec written 2026-07-18, pending owner review:**
       `planning/specs/2026-07-18-multi-location-multiplication-design.md`. Decisions taken in spec:
@@ -1109,17 +1210,19 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
       `DS_CONTENT_STRUCTURE.md` (answer-first/franchise patterns from the real fireworks/GMHG pages) +
       `DS_WRITING_QUALITY.md` (layered on the universal styleguide, never loosens it) written;
       `DS_VOICE.md` stub note reconciled. Owner review of all three still pending.
-- [ ] **Multi-location launch content — PREPPED 2026-07-19, publishes gate on P1 town pages.**
-      Map: `planning/seo/multi-location-content-map.md` (~19,700/mo addressable across 18 places,
-      KD 0-1; layers + sequencing + per-town keyword table). Staged in `planning/seo/drafts/`:
-      **17-high-country-towns.md** (News announcement, NEW — publish the day town pages ship) and
-      **rays-66-locations-3-forecasts.md** ("What we do instead" now filled with the real 17-town
-      build; publish-morning checklist in its header; follows the announcement by 1-2 days).
-      Data-gated follow-ups mapped: flagship per-town accuracy piece (~Sept 1, needs ~30 scored
-      days/town; the elevation question is its spine), July report card gains a wider-field
-      paragraph. Owner reviews drafts before publish (house rule). ⚠️ Owner mentioned "Keytastic"
-      (set up for Pigasus) — nothing by that name exists in any repo/skill/connector; awaiting
-      owner clarification (noted in map §5).
+- [x] **Multi-location launch content — ✅ PUBLISHED 2026-08-16 (owner: "launch"; commit 12170d2d).**
+      Both pieces live as native posts, re-dated 2026-08-16 with the stale late-July time anchors
+      minimally updated ("As of this week" → "Since late July"; "in about a month" → "a few more
+      weeks of grading"; no facts changed): **17-high-country-towns** (news) and
+      **rays-66-locations-3-forecasts** (articles — its July 7 pull date is stated in-text and
+      stands). Pre-publish checks: copy_lint 0 errors; validator's only errors were Corpay-brand
+      structure rules (upsell/Contentful/takeaways — inapplicable to DS); 333 vitest green; town
+      facts re-verified (18 tracked = Boone + 17; gate 9 days; Ray absent in Seven Devils /
+      Sugar Grove / Wilkesboro). Owner: request GSC indexing for both URLs.
+      Data-gated follow-ups still mapped: flagship per-town accuracy piece (~Sept 1, needs ~30
+      scored days/town; the elevation question is its spine — the towns now have the sample),
+      report card gains a wider-field paragraph. ⚠️ "Keytastic" mention likely = Keystatic (the
+      CMS already in this repo) — the one-time GitHub App owner step above is still open.
 - [x] **Report Card franchise route — ✅ MERGED + LIVE 2026-07-26 (PR #143; June URL 308s to
       /report-card/2026-06 on prod, verified).** `/report-card`
       hub + `/report-card/{yyyy-mm}` (SSG); cards are native posts flagged `category: report-card` +
@@ -1330,11 +1433,128 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
         permit storage + derived analysis. ⚠️ Follow-up flag: read TomTom's display/storage terms
         for committed flow snapshots in a public repo (same class of question; TomTom free tier is
         "commercial OK" per 07-08 research, redistribution wording unchecked).
+        **→ READ 2026-08-13, and the flag was right. See "TomTom storage exposure" below.**
   - [x] **Keys UNBLOCKED 2026-07-25 — owner supplied DriveNC + NPS + TomTom; all three
         live-verified** + stored as GH secrets. DriveNC v2 shape confirmed:
         `drivenc.gov/api/v2/get/{event,roadconditions,cameras}?key=` (roadconditions =
         per-Division rows; Watauga = Division 11); WZDx keyless. ⚠️ TomTom flowSegmentData
         defaults to km/h — request `unit=mph` (caught live).
+  - [x] **TomTom storage exposure — FOUND + REMEDIED 2026-08-13/14.** The parked flag above was
+        read against the binding instrument (TomTom Portal Terms & Conditions, accepted at
+        registration; the canonical URL redirects to a login-gated page, so the text was read from
+        Wayback captures of both the current and the 2023 version — the clauses are long-standing
+        and only renumbered). **The finding: Committing flow snapshots to a public repo is not
+        covered by the licence.**
+        - **11.4** — "The caching or storing of any Results shall be prohibited except that you may
+          cache Results delivered by the Licensed Products provided that: 11.4.1 such Results may
+          only be cached **in clients** where the control headers are present in the Result;
+          11.4.2 ... not ... longer than the maximum age period indicated in such cache control
+          headers". `data/traffic/actuals/` was persistent server-side storage on no cache-control
+          clock. It met none of 11.4.1–11.4.3.
+        - **11.6.1** — forbids using the Licensed Products "to create any derivative work, product
+          or service ... including ... the creation of any secondary or derived database populated
+          wholly or partially with your data". An accumulating, indexed, daily time series of
+          extracted readings that seeds a forecasting model sits near the centre of that wording.
+        - **17.1** — all IP in the Content and Results is TomTom's. **17.3** conditions use of the
+          TomTom name on prior written approval and offers only the Copyright API as the attribution
+          mechanism, so there is no attribution wording that would have made publication clean.
+        - **The aggravating fact, and the one that decided the remedy: `data/` here is published
+          under CC BY 4.0** (`data/LICENSE`, `data/README.md`, the /api page, and a `license` field
+          on every API response) — "Use them anywhere, including commercially." We were offering the
+          world a licence over TomTom's Results that we do not hold. That is a stronger problem than
+          the storage itself.
+        - **11.6.4** also bars Licensed Products being retained in a "Public Reference Data Set"
+          from which a process may generate output for third-party queries. A public repo of TomTom
+          readings feeding a published forecast model sits close enough to be worth naming.
+        - **Scope at the time of the fix:** 55 tracked files, 2026-07-25 → 2026-08-12, ~560 KB
+          (actuals 152 KB) — 19 actuals day-files holding 74 samples x 6 corridors = 444 raw
+          readings (`current_mph`, `free_flow_mph`, both travel times, `road_closure`,
+          `confidence`), plus 17 comparisons, 18 forecasts and `scores.json`. Consumers mapped:
+          `capture_traffic_actuals.py`, `forecast_traffic.py` (reads EVERY actuals day to seed
+          baselines), `compare_traffic.py`, `check_freshness.py`, and the `traffic_actuals.yml`
+          predict→grade loop. **The site does not read it** — no page, no `/api/v1` endpoint, and
+          `next.config.ts` deliberately excludes traffic from the Lambda file tracing — and the
+          Busy-ness Index composite does not use it either. So nothing user-facing depended on it.
+  - [x] **REMEDY (owner ruling 2026-08-13: move it private, keep using it, stop labelling it
+        publicly).** Implemented 2026-08-14:
+        - The **whole** `traffic/` tree moved to a private store — the derived layers went with the raw
+          samples. The
+          comparisons carry `observed_ratio` and the forecasts carry baselines averaged from those
+          ratios, so every layer is derived from Results; under 11.6.1 the derived-only defence
+          ("we publish banded scores rather than mph") is available but weak, and the CC BY offer
+          defeats it outright. The honest read: A ratio is a transformation of two Results values,
+          and a daily series of them is the derived database the clause names.
+          Re-publishing a traffic scoreboard later is a live owner decision, not a settled one.
+        - `scripts/traffic_paths.py` is now the single place that says where the dataset lives:
+          `$DS_PRIVATE_DATA_DIR`, else `<repo>/private-data` (gitignored). All four scripts resolve
+          through it.
+        - `traffic_actuals.yml` clones a **private companion repo** to `./private-data`, runs the
+          same capture → grade → forecast sequence against it, and commits back **there**. Its
+          permission on this repo dropped to `contents: read`; it commits nothing here any more.
+          Workflow **artifacts were considered and rejected** — on a public repo anyone can download
+          them, which would rebuild the exposure.
+        - The freshness sentinel cannot see the dataset any more, so its three traffic checks SKIP
+          when the store is absent (a public checkout's normal state) and the backstop moved into
+          the traffic workflow itself as `check_freshness.py --traffic-only`, which treats an
+          unmounted store as a failure. A green run that captured nothing is the 2026-07-26 silent
+          skip all over again, so that path goes red.
+        - **Capture continuity held.** The samples the bot committed publicly on 08-13/08-14 while
+          this was in flight were copied into the private store before the public copies were
+          removed — 21 actuals days, 19 comparisons, 20 forecasts, and `scores.json` graded through
+          2026-08-13. Nothing was lost, and the loop was verified end-to-end against a relocated
+          store (graded 08-12, forecast written, 19 actuals days seeding baselines).
+        - Tests: 555 green, including new coverage for the resolver and for the mounted/unmounted
+          sentinel behaviour.
+  - [x] **RESOLVED — capture is UP; verified 2026-08-16.** The private repo
+        `davidhluther/davessweater-data` exists (private), holds the seed plus bot commits, and the
+        write deploy key is live. Every `traffic_actuals.yml` run since 2026-08-14 17:01 UTC is
+        green, and the store holds an unbroken `traffic/actuals/` day series 2026-08-09 → 2026-08-16
+        — **no samples were lost**. The local `~/Projects/DavesSweater/private-data` mirror now has
+        `origin` wired and fast-forwards from the remote (the seed commit is its ancestor).
+        Original owner steps, kept for reference: Agents cannot create repos.
+        1. Create a **private** repo `davessweater-data` (matches `PRIVATE_DATA_REPO` in
+           `traffic_actuals.yml`; change the env value if you name it something else).
+        2. Seed it from the local working copy: `cd ~/Projects/DavesSweater/private-data &&
+           git init -b main && git add traffic && git commit -m "Seed traffic dataset" &&
+           git remote add origin git@github.com:davidhluther/davessweater-data.git && git push -u
+           origin main`. **Do not add a licence file to it**, and never make it public.
+        3. ~~Add a repo secret~~ DONE 2026-08-14 via **`DS_PRIVATE_DATA_KEY`** (repo-scoped write deploy key — narrower than a PAT
+           granting read and write on the contents of `davessweater-data` alone.
+        Until 2 and 3 land, every scheduled traffic run fails loudly with those instructions and
+        **no samples are taken**, which is deliberate: The alternative was a green run storing
+        nothing, or storing it somewhere public again.
+  - [ ] **HISTORY — public git history still holds the data, and purging it is an owner call.**
+        Removing the files at HEAD stops them being served from the tip; it does not remove them
+        from the repo's history, and GitHub keeps unreachable objects reachable by SHA for a while
+        after a rewrite. **What remains exposed: 80 commits touch `data/traffic/` (78 of them the
+        actuals path), spanning 2026-07-25 → 2026-08-14, across ~568 objects, inside a 1,305-commit
+        public repo** created 2026-03-04. Mitigating facts: 0 forks and 0 stars, and the data is a
+        19-day corridor-speed series for six pins, not credentials.
+        A purge would be:
+        ```
+        pipx run git-filter-repo --invert-paths --path data/traffic --force
+        git remote add origin https://github.com/davidhluther/davessweater.git
+        git push --force --all && git push --force --tags
+        ```
+        **Risks, stated honestly:** it rewrites every SHA after the first traffic commit, so the
+        four daily workflows, any open branch, and every local clone must be re-cloned or rebased;
+        force-pushing a public repo cannot recall anything already cloned, crawled, mirrored, or
+        indexed by a code-search or model-training crawler; and GitHub Support has to be asked
+        separately to expire cached views. **The realistic gain is modest** — it closes casual
+        discovery while leaving any distribution that already happened untouched. Recommendation: Do it only if the raw
+        readings are ever alleged to matter; the standing decision otherwise is to leave history
+        alone and rely on HEAD being clean. Either way the force push is the **owner's decision to
+        make**; an agent should never take it.
+  - [ ] **Loose end from the same sweep:** the free-tier grant is genuinely ambiguous — 2.2 licenses
+        free use for **Evaluation Use**, defined as *internal* evaluation and testing, while 2.1
+        licenses a Permitted Solution "where you have entered into a Subscription Plan", and a free
+        plan is selected through the Portal. The 07-08 note that the free tier is "commercial OK"
+        came from the pricing page, which does not obviously agree with the terms. Nothing depends
+        on resolving it while the dataset stays private and unpublished; it has to be resolved
+        before any TomTom-derived number is published anywhere, including on davessweater.com.
+        Related ruling from the same research (pigasus side): Do NOT publish TomTom-derived
+        congestion figures in marketing copy — source congestion claims from NCDOT AADT counts or
+        our own measurement instead.
   - [x] **Traffic v2 actuals — BUILT + MERGED 2026-07-25 (PR #135).** `capture_traffic_actuals.py`
         + own workflow (4 peak-window crons): 6 corridor pins, every one reverse-geocoded onto its
         intended road (no-eyeballed-pins rule — first-guess pins ALL landed on side streets):

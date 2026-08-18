@@ -4,6 +4,21 @@ name: Traffic Actuals
 # ~8 AM, noon, 5 PM, 7 PM; UTC crons sit an hour early in winter — acceptable
 # drift, the samples carry their own timestamps). 6 pins x 4 runs = 24 of
 # TomTom's 2,500 free calls/day.
+#
+# ⚠️ THE DATASET DOES NOT LIVE IN THIS REPO (changed 2026-08-13). This repo is
+# public and its data/ tree is published under CC BY 4.0; TomTom's Portal Terms
+# (11.4 caching, 11.6.1 no secondary or derived database, 17.1 ownership) cover
+# neither persistent server-side storage of Results nor sublicensing them to
+# anyone who clones us. Every layer — raw samples, comparisons, forecast,
+# scores — now lives in a PRIVATE companion repo that this job checks out at
+# ./private-data and commits back to. Nothing traffic-related is committed here
+# any more. Full finding: CHECKLIST.md, "TomTom storage exposure."
+#
+# Artifacts were considered as a store and rejected: workflow artifacts on a
+# public repo are downloadable by anyone, so they would rebuild the exposure.
+#
+# Inputs: schedule and manual dispatch only. No event-supplied text reaches a
+# run: block, so there is no injection surface here.
 on:
   schedule:
     - cron: '7 12 * * *'
@@ -12,8 +27,16 @@ on:
     - cron: '7 23 * * *'
   workflow_dispatch:
 
+# Read-only against THIS repo now — the job no longer writes anything here. The
+# private data repo is written over SSH with a repo-scoped deploy key
+# (DS_PRIVATE_DATA_KEY) — narrower than a PAT: it can reach only that one repo.
 permissions:
-  contents: write
+  contents: read
+
+env:
+  DS_PRIVATE_DATA_DIR: ${{ github.workspace }}/private-data
+  # Owner/name of the private companion repo holding the traffic dataset.
+  PRIVATE_DATA_REPO: davidhluther/davessweater-data
 
 jobs:
   sample:
@@ -25,7 +48,39 @@ jobs:
         with:
           python-version: '3.12'
 
+      # Mounts the private dataset at ./private-data (gitignored here). The
+      # scripts resolve every traffic path through scripts/traffic_paths.py,
+      # which reads DS_PRIVATE_DATA_DIR, so nothing below needs to know the
+      # layout. A shallow clone is enough: the pipeline only ever reads the
+      # current files, never the history.
+      - name: Mount the private traffic store
+        id: mount
+        env:
+          DS_PRIVATE_DATA_KEY: ${{ secrets.DS_PRIVATE_DATA_KEY }}
+        run: |
+          if [ -z "${DS_PRIVATE_DATA_KEY}" ]; then
+            echo "mounted=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::DS_PRIVATE_DATA_KEY is not set — the private traffic store cannot be mounted, so this run samples nothing."
+            exit 0
+          fi
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "${DS_PRIVATE_DATA_KEY}" > ~/.ssh/ds_data_key
+          chmod 600 ~/.ssh/ds_data_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/ds_data_key -o IdentitiesOnly=yes"
+          echo "GIT_SSH_COMMAND=${GIT_SSH_COMMAND}" >> "$GITHUB_ENV"
+          if git clone --depth 1 \
+              "git@github.com:${PRIVATE_DATA_REPO}.git" \
+              private-data; then
+            echo "mounted=true" >> "$GITHUB_OUTPUT"
+            echo "Mounted ${PRIVATE_DATA_REPO} at ./private-data"
+          else
+            echo "mounted=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Could not clone the private data repo — check that it exists and the deploy key has access."
+          fi
+
       - name: Sample corridor flow (fail-closed)
+        if: steps.mount.outputs.mounted == 'true'
         run: python scripts/capture_traffic_actuals.py
         continue-on-error: true
         env:
@@ -40,9 +95,10 @@ jobs:
       # Grade yesterday BEFORE forecasting today. Both scripts are fail-soft;
       # the trailing `|| true` guards the step.
       - name: Grade yesterday, then forecast today + tomorrow (first daily run only)
+        if: steps.mount.outputs.mounted == 'true'
         run: |
           today="$(TZ=America/New_York date +%F)"
-          if [ ! -f "data/traffic/forecast/${today}.json" ]; then
+          if [ ! -f "${DS_PRIVATE_DATA_DIR}/traffic/forecast/${today}.json" ]; then
             python scripts/compare_traffic.py || true
             python scripts/forecast_traffic.py || true
           else
@@ -50,11 +106,37 @@ jobs:
           fi
         continue-on-error: true
 
-      - name: Commit sample
+      # Commits into the PRIVATE repo, never this one. Same collision handling
+      # as before (the four daily runs plus a manual dispatch can overlap).
+      - name: Commit sample to the private data repo
+        if: steps.mount.outputs.mounted == 'true'
+        working-directory: private-data
         run: |
           git config user.name "DavesSweaterBot"
           git config user.email "bot@davessweater.com"
-          git add data/traffic/
+          git add traffic/
           git commit -m "Traffic actuals sample $(date -u +%Y-%m-%dT%H:%MZ)" || echo "No changes to commit"
-          git pull origin main --no-rebase -X ours || true
-          git push origin main || (sleep 5 && git pull origin main --no-rebase -X ours && git push origin main)
+          git pull origin HEAD --no-rebase -X ours || true
+          git push || (sleep 5 && git pull origin HEAD --no-rebase -X ours && git push)
+
+      # The predict→grade backstop that used to live only in the public
+      # sentinel. The sentinel cannot see this dataset any more, so the check
+      # runs here, where the store is mounted. --traffic-only also treats an
+      # unmounted store as a failure, which is what makes the interim state
+      # below loud rather than silent.
+      - name: Traffic freshness backstop
+        if: steps.mount.outputs.mounted == 'true'
+        run: python scripts/check_freshness.py --traffic-only
+
+      # Until the private repo and its token exist, every run above is skipped.
+      # That is a real outage of the dataset, so the job goes red rather than
+      # reporting a green run that captured nothing.
+      - name: Fail when the private store is missing
+        if: steps.mount.outputs.mounted != 'true'
+        run: |
+          echo "The private traffic store is not mounted, so no sample was taken or stored."
+          echo "Owner steps: create the private companion repo, seed it with the traffic/"
+          echo "tree from the local private-data directory, then add a repo secret"
+          echo "DS_PRIVATE_DATA_KEY (a write deploy key for it)."
+          echo "Background: CHECKLIST.md, 'TomTom storage exposure'."
+          exit 1

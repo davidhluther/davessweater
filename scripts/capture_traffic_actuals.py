@@ -18,8 +18,12 @@ segment; unit=mph is requested EXPLICITLY (the API defaults to km/h — caught
 in live verification 2026-07-25). Free tier 2,500 req/day; this job uses
 6 pins x 4 runs = 24/day.
 
-Output: data/traffic/actuals/{date}.json — one file per day, each run APPENDS
-a sample block (read-modify-write), so all of a day's samples live together.
+Output: {private data}/traffic/actuals/{date}.json — one file per day, each run
+APPENDS a sample block (read-modify-write), so all of a day's samples live
+together. The dataset is PRIVATE and stays out of this public repo: TomTom's
+terms (11.4 caching, 11.6.1 derived database) do not cover committing Results
+here, and this repo's data/ tree is CC BY 4.0. scripts/traffic_paths.py owns
+the location; CHECKLIST.md, "TomTom storage exposure," owns the reasoning.
 
 Fail-closed, stdlib only: always exits 0; consumers gate on sample timestamps.
 Key from TOMTOM_API_KEY env (GitHub secret).
@@ -37,8 +41,9 @@ from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
 NY = ZoneInfo("America/New_York")
-BASE_DIR = Path(__file__).resolve().parent.parent
-OUT_DIR = BASE_DIR / "data" / "traffic" / "actuals"
+import traffic_paths as tp
+
+OUT_DIR = tp.traffic_subdir("actuals")
 
 API = "https://api.tomtom.com/traffic/services/4/flowSegmentData/absolute/10/json"
 TIMEOUT_S = 20

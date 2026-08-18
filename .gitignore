@@ -18,6 +18,8 @@ next-env.d.ts
 *.tsbuildinfo
 # Build-time generated screenshots (copied from data/ by prebuild)
 /public/screenshots/
+# Build-time generated share cards (rendered by prebuild, see src/lib/ogStatic.ts)
+/public/og/
 
 # Vercel CLI
 /.vercel
@@ -30,6 +32,18 @@ next-env.d.ts
 
 # Private planning / competitive strategy — local only, never public
 planning/
+
+# Private data store — local only, never public. Holds the traffic dataset
+# (TomTom-derived: raw flow samples plus every layer built from them), which
+# left this repo on 2026-08-13 because TomTom's terms do not cover storing or
+# republishing Results and data/ here is offered under CC BY 4.0. The workflow
+# mounts a private checkout at this path; see scripts/traffic_paths.py and the
+# "TomTom storage exposure" entry in CHECKLIST.md.
+/private-data/
+# Belt and braces: daily_compare.yml commits with a broad `git add data/`, so
+# if anything ever recreated data/traffic/ it would be republished here. This
+# line makes that impossible without a deliberate `git add -f`.
+/data/traffic/
 
 # Keystatic local-mode cache (dev only; never committed)
 .keystatic/

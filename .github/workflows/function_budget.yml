@@ -1,0 +1,138 @@
+# Vercel function budget - the check the August 2026 outage needed.
+#
+# Vercel Hobby refuses a deployment carrying more than 12 Serverless Functions,
+# and it refuses it at the `patchBuild` step - AFTER the build has reported
+# "Build Completed". So `next build` stays green, every workflow stays green,
+# the data pipeline keeps committing, and production silently freezes on its
+# last good build. That is how 2026-08-06 -> 08-16 became a ten-day invisible
+# outage. Nothing was red. This is what turns it red, on the pull request that
+# would cause it.
+#
+# Two jobs on purpose:
+#   static-model  reads the route tree and predicts the count in a second. It
+#                 gates every PR and needs no toolchain.
+#   ground-truth  runs a real `vercel build` and counts the bundles the builder
+#                 actually emitted. Slower, exact, and the arbiter when the two
+#                 disagree.
+#
+# NO SECRETS ARE REQUIRED. `vercel build` needs project settings, not
+# credentials: given a local .vercel/project.json it never calls the Vercel API,
+# so the ground-truth job runs unauthenticated on a fork PR and leaks nothing.
+# The ids written below are placeholders - `vercel build` only reads them when
+# it has to pull settings from the API, which it does not do here. If a future
+# CLI release starts demanding auth, the job says so and steps aside rather than
+# failing confusingly; the static gate still bites.
+#
+# Budget is 10, not 12, so a model that under-counts by one still fails this
+# check before a deployment does. See CHECKLIST.md, "STANDING BUDGET".
+
+name: Function budget
+
+on:
+  pull_request:
+    paths:
+      - "src/app/**"
+      - "next.config.ts"
+      - "vercel.json"
+      - "package.json"
+      - "package-lock.json"
+      - "scripts/check_function_budget.py"
+      - ".github/workflows/function_budget.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-model:
+    name: Static model
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Count function-emitting routes
+        run: python3 scripts/check_function_budget.py
+      - name: Prove the counting rules still hold
+        run: |
+          python3 -m pip install --quiet pytest
+          python3 -m pytest tests/test_function_budget.py -q
+
+  ground-truth:
+    name: Ground truth (vercel build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Project settings, not credentials. `vercel build` reads framework and
+      # command overrides from this file; vercel.json supplies the rest. The ids
+      # are placeholders because nothing here talks to the Vercel API.
+      - name: Provide local project settings
+        run: |
+          mkdir -p .vercel
+          cat > .vercel/project.json <<'JSON'
+          {
+            "projectId": "prj_ci_function_budget_guard",
+            "orgId": "team_ci_function_budget_guard",
+            "settings": {
+              "framework": "nextjs",
+              "devCommand": null,
+              "installCommand": null,
+              "buildCommand": null,
+              "outputDirectory": null,
+              "rootDirectory": null,
+              "nodeVersion": "24.x"
+            }
+          }
+          JSON
+
+      - name: Build the Vercel output
+        id: build
+        run: |
+          set +e
+          npx --yes vercel@54 build --prod > vercel-build.log 2>&1
+          status=$?
+          set -e
+          tail -40 vercel-build.log
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          if [ "$status" -ne 0 ] && grep -qiE 'project_settings_required|not authorized|credentials|Please log in|You must re-authenticate' vercel-build.log; then
+            echo "needs_auth=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # A build that failed because the CLI wants credentials is not a signal
+      # about the function count, so it must not read as one. Say what it needs,
+      # name the owner step, and leave the static gate to do the work.
+      - name: Explain a credentials-only failure
+        if: steps.build.outputs.needs_auth == 'true'
+        run: |
+          echo "::notice title=Ground-truth check skipped::The Vercel CLI now requires authentication to build, so the emitted-function count could not be measured here. OWNER STEP: add a VERCEL_TOKEN repository secret (Vercel dashboard, Account Settings, Tokens), then add a 'vercel pull --yes --environment=production' step using it before the build step in this workflow. Until then the static model in the other job is the only guard."
+
+      - name: Fail on a real build failure
+        if: steps.build.outputs.status != '0' && steps.build.outputs.needs_auth != 'true'
+        env:
+          BUILD_STATUS: ${{ steps.build.outputs.status }}
+        run: |
+          echo "::error title=Build failed::vercel build exited $BUILD_STATUS - see the build log above."
+          exit 1
+
+      - name: Count the emitted function bundles
+        if: steps.build.outputs.status == '0'
+        run: python3 scripts/check_function_budget.py --build-output .vercel/output
+
+      - name: Compare against the static model
+        if: steps.build.outputs.status == '0'
+        run: |
+          count() { python3 scripts/check_function_budget.py "$@" --json | python3 -c 'import json,sys; print(json.load(sys.stdin)["count"])'; }
+          measured=$(count --build-output .vercel/output)
+          modeled=$(count)
+          echo "measured=$measured modeled=$modeled"
+          if [ "$measured" != "$modeled" ]; then
+            echo "::warning title=Model drift::The static model predicts $modeled function bundles but the build emitted $measured. The measurement wins - update the counting rule in scripts/check_function_budget.py so the fast gate keeps matching reality."
+          fi
