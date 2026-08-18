@@ -53,6 +53,30 @@ export const REPORTS: ReportEntry[] = [
   },
 ];
 
+// The standing pages, as opposed to the dated one-off reports above: surfaces
+// that keep updating rather than ones published once. This is the "and Tools"
+// half of the nav's "Reports and Tools", and it exists because both entries had
+// gone nearly unreachable. The 2026-07-28 nav trim removed the header's
+// "Road Conditions" link intending to rehome it here, but here was a hand-curated
+// list it was never added to, so /roads spent three days with a single inbound
+// link site-wide; /report-card, the franchise hub that gains a URL every graded
+// month, was linked only from its own child. Anything standing goes in this list,
+// not in the nav.
+export const TOOLS: ReportEntry[] = [
+  {
+    title: "Road conditions in the High Country, graded daily",
+    href: "/roads",
+    summary:
+      "A daily road-risk forecast for the High Country, from clear to hazardous, graded against what NCDOT and the Parkway actually reported. The rubric is on the page, so you can see why a day was called.",
+  },
+  {
+    title: "The monthly Ray's Weather Report Card",
+    href: "/report-card",
+    summary:
+      "One page per graded month, showing how each Boone forecaster did against verified actuals and how the running totals moved.",
+  },
+];
+
 // label = UI text; schemaName = the same name with raw "&" avoided (JSON-LD
 // renders through an HTML-escaping component); description = meta description.
 export const CATEGORIES = [

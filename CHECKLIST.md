@@ -1879,6 +1879,97 @@ Owner chose both tools, sitewide: Microsoft Clarity (heatmaps/recordings) + GA4 
       the owner's own devices are ds_track=off since #120 — verified the code fires on prod via dataLayer
       (element_click with correct payload). Realtime → "Event count by Event name" is the no-lag view.
 
+## Technical SEO audit (2026-07-28) — discovery failure after the town/roads launch
+Trigger: Google Search Console reported `/weather`, `/weather/*`, and `/roads` as "URL is unknown to
+Google" days after they launched, with the sitemap last downloaded 2026-07-23 — before those pages
+existed. A read-only audit (codebase at `main`, a local build with all prerendered HTML parsed, plus
+live `curl` against prod) found the cause and produced a full prioritized register.
+
+**Full register: `planning/audits/2026-07-28-seo-technical-audit.md` — LOCAL ONLY** (`planning/` is
+gitignored, so it is not in this repo's history; it lives on the owner's machine). Everything below
+is the sanitized summary, so nothing is lost if that file is.
+
+Headline: the crawl surface is otherwise in genuinely good shape. Canonicals correct on all 56 pages,
+exactly one `<h1>` each, every `<img>` has an `alt`, zero duplicate titles or descriptions, all
+redirects single-hop, `/widget` correctly noindexed and absent from the sitemap, robots clean, no
+internal link 404s, and the header town picker does ship all 17 town links in prerendered HTML.
+
+- [x] **C1 (Critical) — sitemap emitted no `lastmod` for any data-driven URL. FIXED 2026-07-28**
+      (branch `seo-sitemap-lastmod-and-orphans`). Prod served 55 `<loc>` and only 5 `<lastmod>`, all
+      static editorial post dates, newest 2026-07-02 — so nothing in the file had moved in a way
+      Google could see since before the town pages existed. Google ignores `changefreq` and
+      `priority`; `lastmod` is the one field it reads. The old code's reasoning (never stamp every
+      URL with the daily build date) was kept and extended, not overturned: build dates are noise,
+      data dates are honest. Town weather + board pages now carry their own
+      `latestComparisonDate(slug)`, `/` and `/right-wrong-ray` carry Boone's, `/weather` carries the
+      newest across its towns, `/roads` carries the roads artifact's `generated_at`. `/about`,
+      `/methodology`, `/shop`, `/api`, and `/resources*` still omit it, correctly. Built output went
+      from 5 `<lastmod>` to 44.
+- [x] **H1 (High) — `/roads` was orphaned by a same-day nav regression. FIXED 2026-07-28.** It had
+      exactly one inbound link site-wide (from `/methodology`). Commit `4b96577a` (2026-07-28, "Nav
+      and footer trim") removed its header entry, intending to rehome it under "Reports and Tools",
+      but `/resources/reports` renders a hand-curated list it was never added to.
+- [x] **H2 (High) — `/report-card` hub near-orphaned. FIXED 2026-07-28.** One inbound link, from its
+      own child. The individual monthly cards are well linked; the franchise hub they roll up to was
+      not, which matters because it gains a URL every graded month.
+      Both fixed the same way: a new `TOOLS` list in `src/content/resources.ts` for standing pages
+      (as opposed to `REPORTS`, which is dated one-offs), rendered as a "Tools and trackers" section
+      on `/resources/reports` — the destination the nav trim intended. That page's title and `h1`
+      became "Reports and Tools" to match what the nav already called it. Nav stays lean, per the
+      owner's trim. Crawl path is now every page → `/resources` → `/resources/reports` → both pages,
+      all in prerendered HTML. A unit test fails if either is dropped from `TOOLS`.
+
+Still open from the same audit (nothing here is breakage):
+- [ ] **M1 — OWNER DECISION: the public gate is applied inconsistently across surfaces.** Three towns
+      sit below `MIN_SCORED_DAYS = 9` (seven-devils 4, sugar-grove 2, wilkesboro 2). `/api/v1/towns`
+      and the feed enumeration filter them out through `listPublicTowns()`; the sitemap submits them.
+      Same gate, opposite answers. The pages are **not** thin — measured, `/weather/sugar-grove` is
+      the *largest* town forecast page on the site (526 words) and every below-gate board carries
+      real data plus a prominent "N of 9 scored days" disclosure — so this is a coherence question,
+      not a content question. Two defensible resolutions, pick one: **(a)** filter the sitemap
+      through `isTownPublic()` (pages stay live and crawlable, they just aren't *submitted*, and they
+      enter automatically on crossing the gate with a real `lastmod` marking it — the auditor's
+      lean, and it matches the API); or **(b)** leave the sitemap open and reframe the gate as
+      "provisional records aren't ranked", exposing the towns via `/api/v1/towns` with a
+      `provisional: true` flag. Settle before more towns are added, since the rule binds all of them.
+- [ ] **M2 — `/weather/{slug}` is high-boilerplate.** Measured word-similarity against `deep-gap`:
+      0.60–0.85 (median ~0.78) on ~510-word pages. The boards are fine (0.47–0.62 on 817–1,414
+      words), and cross-surface similarity is only 0.32–0.45, so the two surfaces are **not**
+      cannibalising each other. Fix: 100–200 words per town derived from data rather than hand-written
+      (elevation delta vs Boone, which sources cover the town, its river gauge, its own best and
+      worst forecaster) — machine-generated, factual, unique by construction. Largest item on the list.
+- [ ] **M3 — `/resources/videos` is a 102-word empty page that the sitemap still submits** while it
+      is deliberately hidden from the nav. Best fix: filter empty categories out of `resourceRoutes`
+      (automatic and self-healing) rather than a one-off noindex.
+- [ ] **M4 — three routes have no OG image:** `/weather`, `/roads`, `/api`. The town pages are fine;
+      it is the hubs that are missing one. Follow the existing `src/lib/ogCard.tsx` pattern.
+- [ ] **M5 — town `Dataset` JSON-LD is thinner than Boone's.** Boone's carries `keywords` and a
+      `distribution` array; all 34 town blocks carry neither, though every town has a real
+      distribution (`/api/v1/scores?town={slug}` plus its feeds). Extract a shared `townDataset()`
+      into `src/lib/schema.ts` with `distribution`, `temporalCoverage`, `variableMeasured`; gate
+      `distribution` on `isTownPublic` so it never advertises an endpoint that 404s.
+- [ ] **M6 — `/weather` has no heading structure below `<h1>`.** The 18 town cards use
+      `<span className="ds-h3">`. Change to `<h2 className="ds-h3">` — `ds-*` are size tokens, not
+      element tokens, so this is a pure markup change with zero visual diff.
+- [ ] **L1 — 41 of 56 titles exceed 60 characters** (the `| Dave's Sweater` suffix costs 16 on every
+      page). Mostly cosmetic: the town name sits early enough to survive truncation and there are
+      zero duplicates. Only worth doing if the owner wants control of the full snippet.
+- [ ] **L2 — `/right-wrong-ray` (Boone) is the only town-surface page without a `BreadcrumbList`.**
+      Also normalise breadcrumb `Home` items, which are sometimes `https://davessweater.com/` and
+      sometimes `https://davessweater.com`.
+- [ ] **L3 — RSS autodiscovery exists only on the homepage.** The site publishes 4 feeds x 15 gated
+      towns; none is advertised on the town page it describes. Mirror the homepage's
+      `alternates.types` block in `/weather/{slug}`, gated on `isTownPublic`.
+- [ ] **L4 — one heading-level skip**, `h1` → `h4` in the `welcome-to-daves-sweater` post markdown.
+      Every other page is clean.
+- [ ] **L5 — OWNER CALL: the homepage `<h1>` contains neither "Boone" nor "weather"** ("The free
+      forecasts keep beating the one you pay for."). Not a defect — the title and description both
+      carry Boone + weather. Flagged only because it is the site's most weighted on-page element. A
+      kicker carrying "Boone, NC weather" would get both without blunting the line.
+- [ ] **L6 — `/shop` has no product structured data.** Low value: checkout happens on Fourthwall and
+      the merch is explicitly not a revenue play. Listed for completeness; the auditor would not
+      prioritise it.
+
 ## SEO scan follow-ups (audited 2026-07-18 — owner said "remind me later")
 Full-site scan 2026-07-18: fundamentals clean (sitemap exact, robots OK, canonicals self-referencing,
 all JSON-LD valid, redirects single-hop, no noindex). Two fix-sized items were spun into task chips;
