@@ -223,7 +223,7 @@ export default async function Page() {
                     {new Intl.DateTimeFormat("en-US", { weekday: "long", month: "short", day: "numeric", timeZone: "UTC" })
                       .format(new Date(`${day}T12:00:00Z`))}
                   </td>
-                  <td className="py-2 pr-3">{lots.join(" · ")}</td>
+                  <td className="py-2 pr-3">{lots.join(" | ")}</td>
                   <td className="py-2 text-muted">{shuttleHours[day] ?? "n/a"}</td>
                 </tr>
               ))}

@@ -397,6 +397,75 @@ def test_css_spaced_elements_are_exempt(tmp_path):
 
 
 # ---------------------------------------------------------------------------
+# Data-line separators
+# ---------------------------------------------------------------------------
+
+
+def test_middot_separator_is_an_error(tmp_path):
+    """The widget almanac line the owner caught: pipes above, middots below."""
+    found = lint(tmp_path, "a.tsx", page(
+        '    <div>Sunrise 6:24 AM · Sunset 8:41 PM</div>'))
+    assert "SEPARATOR" in codes(found, "error")
+
+
+def test_middot_entity_separator_is_an_error(tmp_path):
+    """`&middot;` reads as the same character, so it drifts the same way."""
+    found = lint(tmp_path, "a.tsx", page(
+        '    <div className="ds-caption">{r.record} &middot; {r.days} days</div>'))
+    assert "SEPARATOR" in codes(found, "error")
+
+
+def test_middot_join_separator_is_an_error(tmp_path):
+    """`join(" · ")` is the case snippet extraction cannot see: too short to
+    look like copy, and it produced the contradiction inside the widget card."""
+    found = lint(tmp_path, "a.tsx", 'const line = almanac.join(" · ");\n' + page(
+        "    <p>Fine copy here.</p>"))
+    assert "SEPARATOR" in codes(found, "error")
+
+
+def test_pipe_separator_is_clean(tmp_path):
+    found = lint(tmp_path, "a.tsx", 'const line = almanac.join(" | ");\n' + page(
+        '    <div>Sunrise 6:24 AM | Sunset 8:41 PM</div>'))
+    assert codes(found, "error") == []
+
+
+def test_middot_opening_a_list_item_is_a_bullet_glyph(tmp_path):
+    """The fireworks report's hand-rolled list markers, exempt by design."""
+    found = lint(tmp_path, "a.tsx", page(
+        '    <ul>',
+        '      <li key={l}>· {l}</li>',
+        '      <li key={o.year}>',
+        '        · <strong className="text-foreground">The observed record</strong>',
+        '      </li>',
+        '    </ul>'))
+    assert codes(found, "error") == []
+
+
+def test_middot_opening_an_inline_span_is_still_a_separator(tmp_path):
+    """ScoreBreakdown's `<span>· not published</span>` also led its element, and
+    it was drift - the exemption is <li>, not "leading glyph"."""
+    found = lint(tmp_path, "a.tsx", page(
+        '    <div>High temp <span>· not published</span></div>'))
+    assert "SEPARATOR" in codes(found, "error")
+
+
+def test_og_share_card_art_is_exempt(tmp_path):
+    """next/og cards are rasterized poster art with their own typography."""
+    found = lint(tmp_path, "opengraph-image.tsx", page(
+        '    <div>JULY 9–12, 2026  ·  MACRAE MEADOWS</div>'))
+    assert codes(found, "error") == []
+    same = lint(tmp_path, "page.tsx", page(
+        '    <div>JULY 9–12, 2026  ·  MACRAE MEADOWS</div>'))
+    assert "SEPARATOR" in codes(same, "error")
+
+
+def test_middot_in_a_source_comment_is_not_copy(tmp_path):
+    found = lint(tmp_path, "a.tsx", '// almanac used to read "Sunrise · Sunset"\n' + page(
+        '    <p>Fine copy here.</p>'))
+    assert codes(found, "error") == []
+
+
+# ---------------------------------------------------------------------------
 # Typographic quotes in JSX
 # ---------------------------------------------------------------------------
 

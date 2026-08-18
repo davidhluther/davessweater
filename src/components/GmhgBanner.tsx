@@ -37,7 +37,7 @@ export default function GmhgBanner() {
       </span>
       <span className="relative mx-auto flex w-full max-w-5xl flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3">
         <span className="ds-kicker text-orange-300">
-          {live ? "Highland Games happening now" : "Highland Games · July 9–12"}
+          {live ? "Highland Games happening now" : "Highland Games | July 9–12"}
         </span>
         <span className="text-sm font-semibold">
           Plan your days: Filter the schedule, print a per-day itinerary, and get a field map with your stops pinned.
