@@ -1262,21 +1262,29 @@ Brief: `DISAVOW-GA4-HANDOFF.md`. Both tasks are DS-owned follow-ups.
       (the live tag fires + collects). ✅ **CLOSED 2026-07-25 — owner corrected the GA4 admin situation**
       (stream ownership confirmed / mis-added Corpay property handled). Context: marketing-baseline-log.md
       Q6 (pigasus-group).
-- [x] **Disavow — ✅ SUBMITTED 2026-07-25 by David** (308 domains, via the **URL-prefix property**
-      `https://davessweater.com/` — the disavow tool rejects Domain properties, so future
-      re-uploads use the URL-prefix property too). Submission log stamped in
-      `planning/seo/davessweater-disavow-notes.md`. **STANDING ~MONTHLY:** re-run the Ahrefs
-      refresh, append new spam RDs, David re-uploads (full replacement). Prior state:
-      Re-audited `sc-domain:davessweater.com` backlinks via Ahrefs 2026-07-20: profile grew 250 → **308**
-      referring domains, still **0 dofollow / 0 organic traffic across ALL 308** (100% the same SEO/PBN spam
-      net; 300/308 Ahrefs-flagged, the other 8 obvious by name). Appended the **58 new** spam domains to
-      `planning/seo/davessweater-disavow.txt` (now 308 unique `domain:` lines; dated cluster + updated header
-      counts); refreshed `planning/seo/davessweater-disavow-notes.md` (summary + a Submission log section).
-      **Nothing to remove** (all 250 prior are still live RDs). Files live in gitignored `planning/` (local
-      only — never committed). **David: upload `davessweater-disavow.txt` at
-      search.google.com/search-console/disavow-links (domain property), then I'll stamp the submission date
-      in the notes' Submission log.** The spam net keeps blasting new domains at the `*weather.com` family,
-      so re-run this refresh ~monthly and re-upload the whole file (uploads are full replacements).
+- [ ] **Disavow — 🔄 REFRESHED 2026-08-20, awaiting David's upload (443 domains).**
+      Monthly re-audit ran against Ahrefs (all_time, subdomains, both protocols): profile grew
+      **308 → 444** referring domains. **135 new spam RDs appended** to
+      `planning/seo/davessweater-disavow.txt` (now **443** unique `domain:` lines) under a dated
+      2026-08-20 cluster; header counts + `planning/seo/davessweater-disavow-notes.md` updated.
+      **Two changes worth knowing:**
+      (a) **First genuine link in the profile — `pigasus.group`** (`/services/intelligence`,
+      in-content, anchor "a High Country index I built"). **KEPT, not disavowed**; the "100% spam"
+      framing no longer holds and every future refresh must check for real links before appending.
+      (b) **The net now passes dofollow** from 8 ordinary-looking `.com`/`.shop` shells
+      (archive-hu, bisprofit, blogerreviewers, brinto, dupurgeniefr, quotesblom, sahammurah,
+      wecelebrities) — all carrying one identical "High Quality Dofollow Backlinks DA 50 PA 40
+      Premium PBN…" anchor. So "0 dofollow" is no longer the spam test; the shared anchor is.
+      **DAVID: upload the refreshed file** at search.google.com/search-console/disavow-links via
+      the **URL-prefix property `https://davessweater.com/`** (the tool rejects Domain properties);
+      it's a **full replacement**. Copy delivered to Google Drive → **"Dave's Sweater" →
+      `davessweater-disavow.txt`**; local original at `planning/seo/davessweater-disavow.txt`
+      (gitignored — never committed). Then I stamp the submission date in the notes' Submission log.
+- [x] **Disavow v1 — ✅ SUBMITTED 2026-07-25 by David** (308 domains, via the **URL-prefix property**
+      `https://davessweater.com/`). Prior state: re-audited 2026-07-20, profile 250 → 308 RDs, all
+      0-dofollow / 0-traffic spam (300/308 Ahrefs-flagged); 58 new domains appended. Submission log
+      stamped in `planning/seo/davessweater-disavow-notes.md`. **STANDING ~MONTHLY:** re-run the
+      Ahrefs refresh, append new spam RDs, David re-uploads (full replacement).
 
 ## Traffic forecast (owner, 2026-07-08; RESTARTED 2026-07-25 — restored from the 07-09 backup)
 > Restored 2026-07-25: this block existed only in `planning/CHECKLIST-working-backup-2026-07-09.md`
