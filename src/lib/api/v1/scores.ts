@@ -1,18 +1,13 @@
 // GET /api/v1/scores?town=
 // The season scoreboard for a town: per-source average score and Right-Meh-Wrong
 // record, plus the scored-day count. Shaped straight from scores.json for consumers.
-export const dynamic = "force-dynamic";
 
-import { jsonOk, jsonError, corsPreflight } from "@/lib/apiResponse";
+import { jsonOk, jsonError } from "@/lib/apiResponse";
 import { getTown, isTownPublic, publicSlugs, getTownScores, scoredDays } from "@/lib/towns";
 import { scoreboardRows } from "@/lib/scoreboard";
 import { isProvisional } from "@/lib/gating";
 
-export function OPTIONS() {
-  return corsPreflight();
-}
-
-export async function GET(request: Request) {
+export async function scores(request: Request): Promise<Response> {
   const sp = new URL(request.url).searchParams;
   const slug = sp.get("town") || "boone";
 

@@ -501,6 +501,57 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       settings (python build → `docs/`); backed up, removed, re-linked fresh (project/org IDs only). The
       matching *dashboard* overrides remain an owner click (see Deployment notes in `CLAUDE.md`).
 
+### ⚠️ DEPLOY OUTAGE 2026-08-21 → 08-22 — Vercel Hobby 12-function cap — ✅ CAUSE FOUND, FIX IN PR #165
+- [ ] **Symptom.** Every production deploy from 2026-08-21 failed with
+      `exceeded_serverless_functions_per_deployment` at the `patchBuild` step — three a day, one per
+      bot commit. Production froze on the 2026-08-20 build and stayed up serving stale data. Same
+      hiding place as August 6–16: the build reports success and only then is the deployment refused.
+- [ ] **✅ ROOT CAUSE: payload size, not route count.** Measured 2026-08-22 by reading the Vercel Next
+      builder's own source (`@vercel/next/dist/index.js`): routes are merged into shared Lambdas only
+      while a group fits `DEFAULT_MAX_UNCOMPRESSED_LAMBDA_SIZE` (**150 MiB**) minus
+      `LAMBDA_RESERVED_UNCOMPRESSED_SIZE` (**25 MiB**) — a **125 MiB** budget. Summing each function's
+      own `filePathMap`: **246 MiB per function, 224 MiB of it `data/`.** At 246 MiB *no two routes
+      can ever share a Lambda*, so the emitted function count equals the route count and climbs as the
+      route tree and the data grow. `data/` grows ~170 files a day; 08-20 it still merged enough to
+      land ≤12, 08-21 it did not. **Nothing in the repo had to change for this to break, which is why
+      a pure-data commit broke it.**
+- [ ] **Why `data/` was in the Lambdas at all.** `src/lib/towns.ts` builds paths with a dynamic
+      `join()`, and the tracer answers a dynamic path by globbing the whole tree — the
+      "matches 24452 files" build warnings. So all of `data/` rode in, **including the 192 MB of
+      prediction screenshots**, which nothing reads at request time.
+      ⚠️ **The 2026-08-16 entry called this a red herring and dropped it. That was the wrong call** —
+      it measured the `outputFileTracingIncludes` list (8,283 → 8,242 entries) and concluded the
+      include list was not the lever. True, but it never measured the *bytes*, and the bytes were the
+      whole problem. The note's own last line — "the dynamic filesystem reads **are** the lever" —
+      was right, and got filed under "dropped".
+- [ ] **✅ THE FIX (PR #165): exclude `data/**/*.png` from function tracing.** One entry in
+      `next.config.ts`'s `outputFileTracingExcludes`. **Measured: payload 246 → ~59 MiB per function,
+      function count 10 → 4, and a real `vercel deploy --prebuilt` of that output SUCCEEDS** (the
+      same command on the 10-function build was refused, which is how we know the count, not the code,
+      was the blocker). All **8,670** `data/**/*.json` files are still traced into every bundle, so no
+      request-time read can miss. Safe because nothing reads a `data/` image at request time:
+      `prepare_public.mjs` copies screenshots to `public/screenshots/` at build, and the one reader
+      (`src/lib/screenshot.ts`, a `statSync` for file size) is reached only from the prerendered
+      homepage.
+- [ ] **Also in PR #165, and worth keeping on its own merits, but NOT the fix:** the five
+      `/api/v1/*` route files became one catch-all `/api/v1/[endpoint]`, handlers moved to
+      `src/lib/api/v1/`. Every public URL unchanged; an unknown endpoint now returns a JSON 404 naming
+      the real ones. Took the count 14 → 10 — **and the deploy still failed at 10**, which is what
+      finally pointed at size instead of route count. `src/app/api/__tests__/v1Route.test.ts` covers
+      the dispatch against real committed data.
+- [ ] **⚠️ TWO WRONG DIAGNOSES ARE RECORDED HERE ON PURPOSE.** First: "the builder stopped grouping
+      the `/api/v1/*` handlers" — killed by building the last GREEN commit (`09eefc90`, deployed Ready
+      08-20) and getting *the same 14 bundles*. Second: "cutting route files will fix it" — killed by
+      cutting to 10 and being refused anyway. Both came from counting `.func` directories and never
+      measuring what was inside them. **If this recurs, measure the payload first:**
+      `python3 -c "import json,os;fpm=json.load(open('.vercel/output/functions/<route>.func/.vc-config.json'))['filePathMap'];print(sum(os.path.getsize(s) for s in fpm.values())/1048576)"`
+- [ ] **Guard updated.** `scripts/check_function_budget.py` now says in its docstring that count is a
+      function of payload size, not just route count, and the model-vs-emitted test asserts
+      `modeled >= emitted` (the model is a ceiling; the builder merges below it) instead of equality —
+      under-counting is the only direction that can ship a refused deployment.
+- [ ] **Headroom is now real: 4 emitted, cap 12.** The static model still reads 10 because it counts
+      route files and cannot see merging. That gap is expected and safe.
+
 ### ⚠️ DEPLOY OUTAGE 2026-08-06 → 08-16 — Vercel Hobby 12-function cap — ✅ RESOLVED
 - [x] **RESOLVED 2026-08-16.** PR #163 merged; the triggered production deploy went **Ready**
       (12m build, verified via `vercel ls`) after ten days of every deploy erroring on the cap.
@@ -551,11 +602,14 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       `/widget`-style dynamic pages, and metadata image routes (easy to forget: they are not
       "pages"). Adding a new dynamic route *family* is what risks re-tripping the cap. Prefer one
       catch-all over N sibling routes, and prefer a build-time file over a route whenever the output
-      is derived from committed data. **Current 9:** `/api/**` (ONE shared bundle — `/api/geocode`,
-      the five `/api/v1/*` handlers *and* `/api/keystatic/[...params]` all symlink into it;
-      corrected 2026-08-16, the earlier list double-counted them), `/keystatic/[[...params]]`,
-      `/widget`, `/feed/[town]/[feed]`, `/report-card/[month]`, `/resources/[category]`,
-      `/resources/[category]/[slug]`, `/right-wrong-ray/[slug]`, `/weather/[slug]`.
+      is derived from committed data. **Current 10** (measured 2026-08-22): `/api/**` shared bundle
+      (`/api/geocode` + `/api/keystatic/[...params]` symlink into it), `/api/v1/[endpoint]`,
+      `/keystatic/[[...params]]`, `/widget`, `/feed/[town]/[feed]`, `/report-card/[month]`,
+      `/resources/[category]`, `/resources/[category]/[slug]`, `/right-wrong-ray/[slug]`,
+      `/weather/[slug]`. **At budget — the next dynamic route family fails the check.**
+      ⚠️ **Grouping is the builder's decision and it changed once already** (2026-08-21, below).
+      Never plan a route family on the assumption that Vercel will merge it; a catch-all route
+      file costs one function by construction, which is the only guarantee available.
       **How to check:** `python3 scripts/check_function_budget.py` (one second, no build), or the
       ground truth — `npx vercel build` then
       `find .vercel/output/functions -name '*.func' -type d ! -name '*.rsc.func' ! -path '*.segments*' | wc -l`
@@ -567,8 +621,9 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       Serverless Functions two ways and fails at **>10** (two under the 12 cap, so a model that
       under-counts by one still trips the check before a deployment does). Its default mode is a
       static model of the `src/app` route tree — every route file under a dynamic segment costs a
-      function (metadata image routes included, since they are routes and not pages), all `/api/**`
-      handlers share one bundle, a `force-dynamic` route costs one without a dynamic segment, and a
+      function (metadata image routes included, since they are routes and not pages), `/api/**` handlers
+      share one bundle *unless* they opt out of prerendering (corrected 2026-08-22 — see the
+      2026-08-21 outage below), a `force-dynamic` route costs one without a dynamic segment, and a
       plain prerendered page costs nothing; `--build-output` counts the real bundles a `vercel build`
       emitted, skipping the `.func` symlinks, `.rsc.func` halves and `.segments/` payloads that make
       the output directory look bigger than it is. Both read **9** today, and both moved to 10 in
@@ -1262,21 +1317,29 @@ Brief: `DISAVOW-GA4-HANDOFF.md`. Both tasks are DS-owned follow-ups.
       (the live tag fires + collects). ✅ **CLOSED 2026-07-25 — owner corrected the GA4 admin situation**
       (stream ownership confirmed / mis-added Corpay property handled). Context: marketing-baseline-log.md
       Q6 (pigasus-group).
-- [x] **Disavow — ✅ SUBMITTED 2026-07-25 by David** (308 domains, via the **URL-prefix property**
-      `https://davessweater.com/` — the disavow tool rejects Domain properties, so future
-      re-uploads use the URL-prefix property too). Submission log stamped in
-      `planning/seo/davessweater-disavow-notes.md`. **STANDING ~MONTHLY:** re-run the Ahrefs
-      refresh, append new spam RDs, David re-uploads (full replacement). Prior state:
-      Re-audited `sc-domain:davessweater.com` backlinks via Ahrefs 2026-07-20: profile grew 250 → **308**
-      referring domains, still **0 dofollow / 0 organic traffic across ALL 308** (100% the same SEO/PBN spam
-      net; 300/308 Ahrefs-flagged, the other 8 obvious by name). Appended the **58 new** spam domains to
-      `planning/seo/davessweater-disavow.txt` (now 308 unique `domain:` lines; dated cluster + updated header
-      counts); refreshed `planning/seo/davessweater-disavow-notes.md` (summary + a Submission log section).
-      **Nothing to remove** (all 250 prior are still live RDs). Files live in gitignored `planning/` (local
-      only — never committed). **David: upload `davessweater-disavow.txt` at
-      search.google.com/search-console/disavow-links (domain property), then I'll stamp the submission date
-      in the notes' Submission log.** The spam net keeps blasting new domains at the `*weather.com` family,
-      so re-run this refresh ~monthly and re-upload the whole file (uploads are full replacements).
+- [ ] **Disavow — 🔄 REFRESHED 2026-08-20, awaiting David's upload (443 domains).**
+      Monthly re-audit ran against Ahrefs (all_time, subdomains, both protocols): profile grew
+      **308 → 444** referring domains. **135 new spam RDs appended** to
+      `planning/seo/davessweater-disavow.txt` (now **443** unique `domain:` lines) under a dated
+      2026-08-20 cluster; header counts + `planning/seo/davessweater-disavow-notes.md` updated.
+      **Two changes worth knowing:**
+      (a) **First genuine link in the profile — `pigasus.group`** (`/services/intelligence`,
+      in-content, anchor "a High Country index I built"). **KEPT, not disavowed**; the "100% spam"
+      framing no longer holds and every future refresh must check for real links before appending.
+      (b) **The net now passes dofollow** from 8 ordinary-looking `.com`/`.shop` shells
+      (archive-hu, bisprofit, blogerreviewers, brinto, dupurgeniefr, quotesblom, sahammurah,
+      wecelebrities) — all carrying one identical "High Quality Dofollow Backlinks DA 50 PA 40
+      Premium PBN…" anchor. So "0 dofollow" is no longer the spam test; the shared anchor is.
+      **DAVID: upload the refreshed file** at search.google.com/search-console/disavow-links via
+      the **URL-prefix property `https://davessweater.com/`** (the tool rejects Domain properties);
+      it's a **full replacement**. Copy delivered to Google Drive → **"Dave's Sweater" →
+      `davessweater-disavow.txt`**; local original at `planning/seo/davessweater-disavow.txt`
+      (gitignored — never committed). Then I stamp the submission date in the notes' Submission log.
+- [x] **Disavow v1 — ✅ SUBMITTED 2026-07-25 by David** (308 domains, via the **URL-prefix property**
+      `https://davessweater.com/`). Prior state: re-audited 2026-07-20, profile 250 → 308 RDs, all
+      0-dofollow / 0-traffic spam (300/308 Ahrefs-flagged); 58 new domains appended. Submission log
+      stamped in `planning/seo/davessweater-disavow-notes.md`. **STANDING ~MONTHLY:** re-run the
+      Ahrefs refresh, append new spam RDs, David re-uploads (full replacement).
 
 ## Traffic forecast (owner, 2026-07-08; RESTARTED 2026-07-25 — restored from the 07-09 backup)
 > Restored 2026-07-25: this block existed only in `planning/CHECKLIST-working-backup-2026-07-09.md`

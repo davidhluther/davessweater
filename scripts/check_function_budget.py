@@ -11,6 +11,22 @@ build. That is exactly what happened between 2026-08-06 and 2026-08-16: ten days
 of invisible outage that nothing red ever announced. See the "DEPLOY OUTAGE
 2026-08-06 -> 08-16" section of CHECKLIST.md.
 
+It happened again on 2026-08-21, and the cause was not the route tree at all.
+No source changed; a pure-data commit was refused. The mechanism, measured
+2026-08-22: the builder merges routes into shared Lambdas only while a group
+fits DEFAULT_MAX_UNCOMPRESSED_LAMBDA_SIZE (150 MiB) minus a 25 MiB reserve, and
+every function here was carrying a 246 MiB traced payload - 224 MiB of it the
+`data/` tree, prediction screenshots included, globbed in because src/lib/towns.ts
+builds paths with a dynamic join(). At 246 MiB per route no two routes can ever
+share a Lambda, so the emitted count equalled the route count and rose with the
+data. Excluding data/**/*.png from tracing dropped each payload to ~59 MiB,
+grouping resumed, and the count went 10 -> 4.
+
+THE REAL LESSON: function count is a function of PAYLOAD SIZE, not just route
+count. A fat bundle silently converts every route into its own Lambda. If this
+check ever reads close to the cap, look at what the routes are dragging in
+before you start deleting routes.
+
 This script turns that ceiling into a check that can fail a pull request.
 
 TWO WAYS TO COUNT, AND WHY BOTH SHIP
@@ -49,12 +65,15 @@ below reproduces the same 9 from the source tree:
      `twitter-image.tsx` and `icon.tsx` in a dynamic directory each cost their
      own function on top of the page beside them. Forgetting this is what put
      the deployment 6 over the ceiling; retiring those files is what fixed it.
-  3. All route handlers under src/app/api share ONE bundle. Measured: in
-     .vercel/output/functions, api/geocode.func is the only real directory and
-     every other /api/** entry - the five /api/v1/* handlers and
-     api/keystatic/[...params] - is a symlink to it. The Vercel Next builder
-     groups route handlers of the same kind into a shared Lambda that dispatches
-     on the request path.
+  3. Route handlers under src/app/api MOSTLY share one bundle, and a handler
+     that opts out of prerendering does not. Measured 2026-08-22: api/geocode
+     is a real directory and api/keystatic/[...params] is a symlink to it, but
+     the force-dynamic handlers each got their own bundle. Before 2026-08-21 the
+     builder grouped those too - same source, same CLI version, different
+     answer. So this rule is a description of current behavior, never a
+     guarantee. Do not add a family of sibling API routes and expect grouping to
+     pay for it; a catch-all route file costs one function by construction,
+     which is why /api/v1/[endpoint] serves all five v1 endpoints.
   4. A route with no dynamic segment still costs a function when it opts out of
      prerendering (`export const dynamic = "force-dynamic"`). /widget is the
      site's only one: it reads query params on every request.
@@ -63,9 +82,13 @@ below reproduces the same 9 from the source tree:
 
 LIMITS OF THE STATIC MODEL (read before trusting it alone)
 ----------------------------------------------------------
-* Bundle grouping is size-bounded. The builder stops merging routes into one
-  Lambda when the group approaches its size ceiling, so a large enough new API
-  route could split /api into two bundles that this model counts as one.
+* Bundle grouping is size-bounded, and the model cannot see size. It counts
+  route files; the builder merges them while the group fits its budget. So the
+  emitted count is normally LOWER than this model - until the traced payload
+  grows, at which point merging stops route by route and the emitted count
+  climbs toward the model with nothing in the source tree changing. That is the
+  2026-08-21 outage in one sentence. Treat this model as the ceiling, and a real
+  deployment as the truth.
 * A page can become dynamic without saying so, by reading `searchParams`,
   `cookies()` or `headers()` at request time. The model cannot see that.
 * Both errors are UNDER-counts, which is the dangerous direction. That is why
@@ -232,7 +255,7 @@ def model_static(app_dir: Path) -> list[Function]:
 
     api_bundle = Function(
         name="/api/** (shared bundle)",
-        reason="route handlers under /api share one Lambda",
+        reason="prerenderable route handlers under /api share one Lambda",
     )
     dynamic_fns: list[Function] = []
     forced_fns: list[Function] = []
@@ -240,7 +263,20 @@ def model_static(app_dir: Path) -> list[Function]:
     for path in route_files(app_dir):
         route = route_path(app_dir, path)
         if is_api_route(app_dir, path):
-            api_bundle.routes.append(route)
+            # A force-dynamic handler is measured to sit outside the shared
+            # bundle (rule 3). Counting it separately is also the safe error:
+            # if the builder does group it after all, the model over-counts,
+            # and over-counting only costs a nagging check.
+            if is_force_dynamic(path):
+                forced_fns.append(
+                    Function(
+                        name=route,
+                        reason="API handler that opts out of prerendering",
+                        routes=[route],
+                    )
+                )
+            else:
+                api_bundle.routes.append(route)
         elif has_dynamic_segment(app_dir, path):
             dynamic_fns.append(
                 Function(name=route, reason="dynamic segment in the route path", routes=[route])

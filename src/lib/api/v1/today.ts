@@ -1,17 +1,12 @@
 // GET /api/v1/today?town=&detail=summary|full
 // Today's Dave's Sweater Index consensus for a town (the first forecast day).
-export const dynamic = "force-dynamic";
 
-import { jsonOk, jsonError, corsPreflight } from "@/lib/apiResponse";
+import { jsonOk, jsonError } from "@/lib/apiResponse";
 import { parseDetail, toApiDay, type ApiSourceRow } from "@/lib/publicFeed";
 import { getTown, isTownPublic, publicSlugs, getTownForecast5 } from "@/lib/towns";
 import { stripDays } from "@/lib/forecast5";
 
-export function OPTIONS() {
-  return corsPreflight();
-}
-
-export async function GET(request: Request) {
+export async function today(request: Request): Promise<Response> {
   const sp = new URL(request.url).searchParams;
   const slug = sp.get("town") || "boone";
 

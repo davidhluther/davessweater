@@ -59,21 +59,46 @@ const nextConfig: NextConfig = {
   // renders in a Lambda rather than at build (e.g. a future revalidate window)
   // would otherwise get an empty reader. Ship the content with every function.
   //
-  // The /api/v1/* handlers and /widget are DYNAMIC (they read query params, so
-  // they cannot be force-static) and read committed data/ JSON at request time.
-  // The tracer can't see those runtime reads statically, so the files must be
-  // declared here or the Lambda ships without them. We include only *.json
-  // (the ~20 MB of datasets) — never the 180 MB of prediction screenshots. The
-  // RSS feeds under /feed are force-static and read data at build, so they need
-  // no entry here.
+  // The v1 API and /widget are DYNAMIC (they read query params, so they cannot
+  // be force-static) and read committed data/ JSON at request time. The tracer
+  // can't see those runtime reads statically, so the files must be declared
+  // here or the Lambda ships without them. We include only *.json (the ~55 MB
+  // of datasets) — never the 180 MB of prediction screenshots. The RSS feeds
+  // under /feed are force-static and read data at build, so they need no entry
+  // here.
+  //
+  // The five /api/v1/* endpoints live behind one catch-all route file, so this
+  // is keyed on the route's on-disk path, not on the public endpoint URLs. If
+  // that route ever moves, this key moves with it or the Lambda ships without
+  // the datasets it reads.
   outputFileTracingIncludes: {
     "/*": ["./src/content/**/*"],
-    "/api/v1/forecast": ["./data/**/*.json"],
-    "/api/v1/today": ["./data/**/*.json"],
-    "/api/v1/scores": ["./data/**/*.json"],
-    "/api/v1/verdict": ["./data/**/*.json"],
-    "/api/v1/towns": ["./data/**/*.json"],
+    "/api/v1/[endpoint]": ["./data/**/*.json"],
     "/widget": ["./data/**/*.json"],
+  },
+  // THE FUNCTION-COUNT LEVER. Measured 2026-08-22: every emitted function was
+  // carrying a 246 MiB traced payload, 224 MiB of it `data/` — because
+  // `src/lib/towns.ts` builds paths with a dynamic `join()` and the tracer
+  // answers a dynamic path by globbing the whole tree (the "matches 24452
+  // files" build warnings). `data/` is 243 MB and 192 MB of that is prediction
+  // screenshots, so the PNGs were riding into every Lambda.
+  //
+  // That is what breaks the deploy. The Vercel Next builder merges routes into
+  // shared Lambdas only while a group fits DEFAULT_MAX_UNCOMPRESSED_LAMBDA_SIZE
+  // (150 MiB) minus a 25 MiB reserve. At 246 MiB per route, no two routes can
+  // ever share one — so the function count equals the route count and grows
+  // with the route tree, and `data/` growing daily is what finally pushed a
+  // pure-data commit over Hobby's 12-function cap on 2026-08-21.
+  //
+  // Nothing reads a `data/` image at request time. `scripts/prepare_public.mjs`
+  // copies the screenshots into `public/screenshots/` at build, and the one
+  // runtime-ish reader (`src/lib/screenshot.ts`, a `statSync` for file size)
+  // is reached only from the homepage, which is prerendered. So the PNGs are
+  // pure dead weight in a Lambda. The *.json stays: it is what the v1 API and
+  // /widget actually read, and the include above is deliberately broad so a
+  // route reading a path nobody remembered cannot 500.
+  outputFileTracingExcludes: {
+    "/*": ["./data/**/*.png"],
   },
   async headers() {
     // The embeddable widget MUST be framable on third-party sites, so the
