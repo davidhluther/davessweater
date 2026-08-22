@@ -11,12 +11,21 @@ build. That is exactly what happened between 2026-08-06 and 2026-08-16: ten days
 of invisible outage that nothing red ever announced. See the "DEPLOY OUTAGE
 2026-08-06 -> 08-16" section of CHECKLIST.md.
 
-It happened again on 2026-08-21, from the other direction: no source changed at
-all, but the builder stopped grouping the /api/v1/* handlers into one Lambda and
-the count went 9 -> 14 on a pure-data commit. Three days of pipeline commits
-failed to deploy. The lesson is in rule 3 below - grouping is the builder's
-decision and can change under you, so the routes that matter now buy their own
-function outright (the v1 API is one catch-all route file, not five siblings).
+It happened again on 2026-08-21, and the cause was not the route tree at all.
+No source changed; a pure-data commit was refused. The mechanism, measured
+2026-08-22: the builder merges routes into shared Lambdas only while a group
+fits DEFAULT_MAX_UNCOMPRESSED_LAMBDA_SIZE (150 MiB) minus a 25 MiB reserve, and
+every function here was carrying a 246 MiB traced payload - 224 MiB of it the
+`data/` tree, prediction screenshots included, globbed in because src/lib/towns.ts
+builds paths with a dynamic join(). At 246 MiB per route no two routes can ever
+share a Lambda, so the emitted count equalled the route count and rose with the
+data. Excluding data/**/*.png from tracing dropped each payload to ~59 MiB,
+grouping resumed, and the count went 10 -> 4.
+
+THE REAL LESSON: function count is a function of PAYLOAD SIZE, not just route
+count. A fat bundle silently converts every route into its own Lambda. If this
+check ever reads close to the cap, look at what the routes are dragging in
+before you start deleting routes.
 
 This script turns that ceiling into a check that can fail a pull request.
 
@@ -73,10 +82,13 @@ below reproduces the same 9 from the source tree:
 
 LIMITS OF THE STATIC MODEL (read before trusting it alone)
 ----------------------------------------------------------
-* Bundle grouping is the builder's call and it changes. It is size-bounded (a
-  large enough new API route splits /api into two bundles this model counts as
-  one), and on 2026-08-21 it changed with no input from this repo at all. Any
-  route this model scores as shared may stop being shared without warning.
+* Bundle grouping is size-bounded, and the model cannot see size. It counts
+  route files; the builder merges them while the group fits its budget. So the
+  emitted count is normally LOWER than this model - until the traced payload
+  grows, at which point merging stops route by route and the emitted count
+  climbs toward the model with nothing in the source tree changing. That is the
+  2026-08-21 outage in one sentence. Treat this model as the ceiling, and a real
+  deployment as the truth.
 * A page can become dynamic without saying so, by reading `searchParams`,
   `cookies()` or `headers()` at request time. The model cannot see that.
 * Both errors are UNDER-counts, which is the dangerous direction. That is why

@@ -501,58 +501,56 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       settings (python build → `docs/`); backed up, removed, re-linked fresh (project/org IDs only). The
       matching *dashboard* overrides remain an owner click (see Deployment notes in `CLAUDE.md`).
 
-### ⚠️ DEPLOY OUTAGE 2026-08-21 → — Vercel Hobby 12-function cap, second time — UNRESOLVED
-- [ ] **Symptom, again.** Three production deploys failed on 2026-08-21 with
-      `exceeded_serverless_functions_per_deployment` at the `patchBuild` step — the three daily bot
-      commits (`Daily capture 2026-08-21`, two `Daily comparison 2026-08-21`). Production froze on
-      the 2026-08-20 build and stayed up, serving stale data. Same hiding place as August 6–16: the
-      build reports success and only then is the deployment refused.
-- [ ] **⚠️ CAUSE NOT ESTABLISHED. Do not repeat the first guess.** The obvious read was "the builder
-      stopped grouping the `/api/v1/*` handlers": `vercel build` on the failing tree measures **14**
-      real bundles, with `api/geocode`, `forecast`, `scores`, `today`, `towns` and `verdict` each
-      their own directory, against the guard's rule 3 ("all route handlers under `src/app/api` share
-      ONE bundle", measured 2026-08-16). **That read is wrong.** Building the last GREEN commit
-      (`09eefc90`, deployed Ready 2026-08-20) with the same CLI emits **the same 14 bundles and the
-      same six separate API directories**. The function output did not change between the deploy that
-      worked and the ones that failed — so rule 3 was already stale on a day that shipped fine, and
-      staleness is not what broke it. What is established: zero source changes across the boundary
-      (only `data/` JSON), identical route tables in both build logs, same Vercel CLI (59.1.4) on
-      both. Whatever Vercel counts, it counted ≤12 for that tree on 08-20 and >12 for the same tree
-      on 08-21. **Something changed on Vercel's side and we cannot see it from here.**
-- [ ] **The local `.func` count is NOT what Vercel counts — that is now proven.** 14 real bundles
-      deployed green on 08-20 under a cap of 12. The output also holds **21 real `.rsc.func`
-      directories** (35 real `*.func` dirs in total) that the guard excludes as decoys; that
-      exclusion was calibrated during the August 6–16 outage and may no longer hold. Until the two
-      numbers are reconciled against a real deployment, treat `check_function_budget.py` as an
-      indicator only, exactly as the STANDING BUDGET bullet already says: **a real deployment is the
-      ground truth.**
-- [ ] **PR #165 — necessary, NOT sufficient: the preview still fails.** It takes the measured count
-      14 → 10, and the preview deployment refuses with the identical error, which is the second proof
-      that the local count is not Vercel's. Keep it (fewer functions and one catch-all is right
-      either way; a catch-all costs one function by construction), but it does not unfreeze
-      production on its own. **Open questions for the owner:** ask Vercel support what changed in the
-      count on 08-21; or take the Pro plan, which lifts the cap; or keep cutting routes empirically
-      against real preview deployments (each push is one measurement) — noting that if the 21
-      prerendered-page bundles are what started counting, no realistic amount of route-cutting wins,
-      because those are the site's content.
-- [ ] **What PR #165 does: the five `/api/v1/*` route files became one catch-all, `/api/v1/[endpoint]`.**
-      Each handler moved to `src/lib/api/v1/<name>.ts` as a named function; the route file dispatches
-      on the segment. **Every public URL is unchanged** — `/api/v1/forecast`, `/today`, `/scores`,
-      `/verdict`, `/towns` all still resolve, and an unknown endpoint now returns a JSON 404 naming
-      the real ones instead of the site's 404 page. `next.config.ts`'s `outputFileTracingIncludes`
-      is re-keyed from the five endpoint paths to the one route path (verified: the bundle still
-      carries all 17,340 `data/**/*.json` entries, so the runtime reads still resolve).
-      **Measured 14 → 10.** `src/app/api/__tests__/v1Route.test.ts` exercises the dispatch against
-      real committed data so a renamed handler is a red test, not a production 404.
-- [ ] **The durable lesson, and the guard change.** A catch-all costs one function *by construction*;
-      a family of siblings costs whatever the builder decides. `scripts/check_function_budget.py`
-      now counts a `force-dynamic` API handler as its own bundle (over-counting is the safe error),
-      its rule 3 says plainly that grouping is a description of current behavior and never a
-      guarantee, and `tests/test_function_budget.py` pins both halves.
-- [ ] **Still at budget: 10 of 12.** Reclaim options if it tightens again — merge
-      `/resources/[category]` and `/resources/[category]/[slug]` into one optional catch-all (−1), or
-      gate the Keystatic admin routes out of production builds (−2, but that removes the hosted
-      editor: owner decision).
+### ⚠️ DEPLOY OUTAGE 2026-08-21 → 08-22 — Vercel Hobby 12-function cap — ✅ CAUSE FOUND, FIX IN PR #165
+- [ ] **Symptom.** Every production deploy from 2026-08-21 failed with
+      `exceeded_serverless_functions_per_deployment` at the `patchBuild` step — three a day, one per
+      bot commit. Production froze on the 2026-08-20 build and stayed up serving stale data. Same
+      hiding place as August 6–16: the build reports success and only then is the deployment refused.
+- [ ] **✅ ROOT CAUSE: payload size, not route count.** Measured 2026-08-22 by reading the Vercel Next
+      builder's own source (`@vercel/next/dist/index.js`): routes are merged into shared Lambdas only
+      while a group fits `DEFAULT_MAX_UNCOMPRESSED_LAMBDA_SIZE` (**150 MiB**) minus
+      `LAMBDA_RESERVED_UNCOMPRESSED_SIZE` (**25 MiB**) — a **125 MiB** budget. Summing each function's
+      own `filePathMap`: **246 MiB per function, 224 MiB of it `data/`.** At 246 MiB *no two routes
+      can ever share a Lambda*, so the emitted function count equals the route count and climbs as the
+      route tree and the data grow. `data/` grows ~170 files a day; 08-20 it still merged enough to
+      land ≤12, 08-21 it did not. **Nothing in the repo had to change for this to break, which is why
+      a pure-data commit broke it.**
+- [ ] **Why `data/` was in the Lambdas at all.** `src/lib/towns.ts` builds paths with a dynamic
+      `join()`, and the tracer answers a dynamic path by globbing the whole tree — the
+      "matches 24452 files" build warnings. So all of `data/` rode in, **including the 192 MB of
+      prediction screenshots**, which nothing reads at request time.
+      ⚠️ **The 2026-08-16 entry called this a red herring and dropped it. That was the wrong call** —
+      it measured the `outputFileTracingIncludes` list (8,283 → 8,242 entries) and concluded the
+      include list was not the lever. True, but it never measured the *bytes*, and the bytes were the
+      whole problem. The note's own last line — "the dynamic filesystem reads **are** the lever" —
+      was right, and got filed under "dropped".
+- [ ] **✅ THE FIX (PR #165): exclude `data/**/*.png` from function tracing.** One entry in
+      `next.config.ts`'s `outputFileTracingExcludes`. **Measured: payload 246 → ~59 MiB per function,
+      function count 10 → 4, and a real `vercel deploy --prebuilt` of that output SUCCEEDS** (the
+      same command on the 10-function build was refused, which is how we know the count, not the code,
+      was the blocker). All **8,670** `data/**/*.json` files are still traced into every bundle, so no
+      request-time read can miss. Safe because nothing reads a `data/` image at request time:
+      `prepare_public.mjs` copies screenshots to `public/screenshots/` at build, and the one reader
+      (`src/lib/screenshot.ts`, a `statSync` for file size) is reached only from the prerendered
+      homepage.
+- [ ] **Also in PR #165, and worth keeping on its own merits, but NOT the fix:** the five
+      `/api/v1/*` route files became one catch-all `/api/v1/[endpoint]`, handlers moved to
+      `src/lib/api/v1/`. Every public URL unchanged; an unknown endpoint now returns a JSON 404 naming
+      the real ones. Took the count 14 → 10 — **and the deploy still failed at 10**, which is what
+      finally pointed at size instead of route count. `src/app/api/__tests__/v1Route.test.ts` covers
+      the dispatch against real committed data.
+- [ ] **⚠️ TWO WRONG DIAGNOSES ARE RECORDED HERE ON PURPOSE.** First: "the builder stopped grouping
+      the `/api/v1/*` handlers" — killed by building the last GREEN commit (`09eefc90`, deployed Ready
+      08-20) and getting *the same 14 bundles*. Second: "cutting route files will fix it" — killed by
+      cutting to 10 and being refused anyway. Both came from counting `.func` directories and never
+      measuring what was inside them. **If this recurs, measure the payload first:**
+      `python3 -c "import json,os;fpm=json.load(open('.vercel/output/functions/<route>.func/.vc-config.json'))['filePathMap'];print(sum(os.path.getsize(s) for s in fpm.values())/1048576)"`
+- [ ] **Guard updated.** `scripts/check_function_budget.py` now says in its docstring that count is a
+      function of payload size, not just route count, and the model-vs-emitted test asserts
+      `modeled >= emitted` (the model is a ceiling; the builder merges below it) instead of equality —
+      under-counting is the only direction that can ship a refused deployment.
+- [ ] **Headroom is now real: 4 emitted, cap 12.** The static model still reads 10 because it counts
+      route files and cannot see merging. That gap is expected and safe.
 
 ### ⚠️ DEPLOY OUTAGE 2026-08-06 → 08-16 — Vercel Hobby 12-function cap — ✅ RESOLVED
 - [x] **RESOLVED 2026-08-16.** PR #163 merged; the triggered production deploy went **Ready**

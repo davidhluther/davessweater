@@ -76,6 +76,30 @@ const nextConfig: NextConfig = {
     "/api/v1/[endpoint]": ["./data/**/*.json"],
     "/widget": ["./data/**/*.json"],
   },
+  // THE FUNCTION-COUNT LEVER. Measured 2026-08-22: every emitted function was
+  // carrying a 246 MiB traced payload, 224 MiB of it `data/` — because
+  // `src/lib/towns.ts` builds paths with a dynamic `join()` and the tracer
+  // answers a dynamic path by globbing the whole tree (the "matches 24452
+  // files" build warnings). `data/` is 243 MB and 192 MB of that is prediction
+  // screenshots, so the PNGs were riding into every Lambda.
+  //
+  // That is what breaks the deploy. The Vercel Next builder merges routes into
+  // shared Lambdas only while a group fits DEFAULT_MAX_UNCOMPRESSED_LAMBDA_SIZE
+  // (150 MiB) minus a 25 MiB reserve. At 246 MiB per route, no two routes can
+  // ever share one — so the function count equals the route count and grows
+  // with the route tree, and `data/` growing daily is what finally pushed a
+  // pure-data commit over Hobby's 12-function cap on 2026-08-21.
+  //
+  // Nothing reads a `data/` image at request time. `scripts/prepare_public.mjs`
+  // copies the screenshots into `public/screenshots/` at build, and the one
+  // runtime-ish reader (`src/lib/screenshot.ts`, a `statSync` for file size)
+  // is reached only from the homepage, which is prerendered. So the PNGs are
+  // pure dead weight in a Lambda. The *.json stays: it is what the v1 API and
+  // /widget actually read, and the include above is deliberately broad so a
+  // route reading a path nobody remembered cannot 500.
+  outputFileTracingExcludes: {
+    "/*": ["./data/**/*.png"],
+  },
   async headers() {
     // The embeddable widget MUST be framable on third-party sites, so the
     // clickjacking-protection X-Frame-Options: DENY (correct everywhere else)
