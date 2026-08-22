@@ -501,22 +501,41 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       settings (python build → `docs/`); backed up, removed, re-linked fresh (project/org IDs only). The
       matching *dashboard* overrides remain an owner click (see Deployment notes in `CLAUDE.md`).
 
-### ⚠️ DEPLOY OUTAGE 2026-08-21 → — Vercel Hobby 12-function cap, second time — FIX IN REVIEW
+### ⚠️ DEPLOY OUTAGE 2026-08-21 → — Vercel Hobby 12-function cap, second time — UNRESOLVED
 - [ ] **Symptom, again.** Three production deploys failed on 2026-08-21 with
       `exceeded_serverless_functions_per_deployment` at the `patchBuild` step — the three daily bot
       commits (`Daily capture 2026-08-21`, two `Daily comparison 2026-08-21`). Production froze on
       the 2026-08-20 build and stayed up, serving stale data. Same hiding place as August 6–16: the
       build reports success and only then is the deployment refused.
-- [ ] **Cause: Vercel stopped grouping the `/api/v1/*` handlers, and nothing in this repo changed.**
-      Diffed the last green deploy against the first failure — **zero source changes**, only `data/`
-      JSON; identical route tables in both build logs; same Vercel CLI (59.1.4) on both. Measured the
-      real count with `vercel build`: **14 bundles**. `api/geocode.func`, `api/v1/forecast.func`,
-      `scores`, `today`, `towns`, `verdict` were each their own real directory. The guard's rule 3
-      ("all route handlers under `src/app/api` share ONE bundle", measured 2026-08-16) had stopped
-      being true, which silently added 5 functions: 9 → 14, two over the cap.
-      `api/keystatic/[...params]` still symlinks into `geocode.func`, so the grouping did not stop
-      entirely — the handlers that left the shared bundle are the `force-dynamic` ones.
-- [ ] **Fix (PR): the five `/api/v1/*` route files became one catch-all, `/api/v1/[endpoint]`.**
+- [ ] **⚠️ CAUSE NOT ESTABLISHED. Do not repeat the first guess.** The obvious read was "the builder
+      stopped grouping the `/api/v1/*` handlers": `vercel build` on the failing tree measures **14**
+      real bundles, with `api/geocode`, `forecast`, `scores`, `today`, `towns` and `verdict` each
+      their own directory, against the guard's rule 3 ("all route handlers under `src/app/api` share
+      ONE bundle", measured 2026-08-16). **That read is wrong.** Building the last GREEN commit
+      (`09eefc90`, deployed Ready 2026-08-20) with the same CLI emits **the same 14 bundles and the
+      same six separate API directories**. The function output did not change between the deploy that
+      worked and the ones that failed — so rule 3 was already stale on a day that shipped fine, and
+      staleness is not what broke it. What is established: zero source changes across the boundary
+      (only `data/` JSON), identical route tables in both build logs, same Vercel CLI (59.1.4) on
+      both. Whatever Vercel counts, it counted ≤12 for that tree on 08-20 and >12 for the same tree
+      on 08-21. **Something changed on Vercel's side and we cannot see it from here.**
+- [ ] **The local `.func` count is NOT what Vercel counts — that is now proven.** 14 real bundles
+      deployed green on 08-20 under a cap of 12. The output also holds **21 real `.rsc.func`
+      directories** (35 real `*.func` dirs in total) that the guard excludes as decoys; that
+      exclusion was calibrated during the August 6–16 outage and may no longer hold. Until the two
+      numbers are reconciled against a real deployment, treat `check_function_budget.py` as an
+      indicator only, exactly as the STANDING BUDGET bullet already says: **a real deployment is the
+      ground truth.**
+- [ ] **PR #165 — necessary, NOT sufficient: the preview still fails.** It takes the measured count
+      14 → 10, and the preview deployment refuses with the identical error, which is the second proof
+      that the local count is not Vercel's. Keep it (fewer functions and one catch-all is right
+      either way; a catch-all costs one function by construction), but it does not unfreeze
+      production on its own. **Open questions for the owner:** ask Vercel support what changed in the
+      count on 08-21; or take the Pro plan, which lifts the cap; or keep cutting routes empirically
+      against real preview deployments (each push is one measurement) — noting that if the 21
+      prerendered-page bundles are what started counting, no realistic amount of route-cutting wins,
+      because those are the site's content.
+- [ ] **What PR #165 does: the five `/api/v1/*` route files became one catch-all, `/api/v1/[endpoint]`.**
       Each handler moved to `src/lib/api/v1/<name>.ts` as a named function; the route file dispatches
       on the segment. **Every public URL is unchanged** — `/api/v1/forecast`, `/today`, `/scores`,
       `/verdict`, `/towns` all still resolve, and an unknown endpoint now returns a JSON 404 naming
@@ -526,7 +545,7 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       **Measured 14 → 10.** `src/app/api/__tests__/v1Route.test.ts` exercises the dispatch against
       real committed data so a renamed handler is a red test, not a production 404.
 - [ ] **The durable lesson, and the guard change.** A catch-all costs one function *by construction*;
-      a family of siblings costs whatever the builder feels like that week. `scripts/check_function_budget.py`
+      a family of siblings costs whatever the builder decides. `scripts/check_function_budget.py`
       now counts a `force-dynamic` API handler as its own bundle (over-counting is the safe error),
       its rule 3 says plainly that grouping is a description of current behavior and never a
       guarantee, and `tests/test_function_budget.py` pins both halves.
