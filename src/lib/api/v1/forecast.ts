@@ -1,23 +1,12 @@
 // GET /api/v1/forecast?town=&days=1|3|5&detail=summary|full
 // The consensus (Dave's Sweater Index) forecast for a town, N days out.
-//
-// Vercel data-tracing: this handler reads committed data/ JSON at request time.
-// It uses searchParams, so it CANNOT be `force-static` (force-static can't read
-// query params) — it is dynamic, and next.config.ts's outputFileTracingIncludes
-// ships data/**/*.json into the serverless bundle so the reads resolve in the
-// Lambda. See the note in next.config.ts.
-export const dynamic = "force-dynamic";
 
-import { jsonOk, jsonError, corsPreflight } from "@/lib/apiResponse";
+import { jsonOk, jsonError } from "@/lib/apiResponse";
 import { parseDays, parseDetail, toApiDay, type ApiSourceRow } from "@/lib/publicFeed";
 import { getTown, isTownPublic, publicSlugs, getTownForecast5 } from "@/lib/towns";
 import { stripDays } from "@/lib/forecast5";
 
-export function OPTIONS() {
-  return corsPreflight();
-}
-
-export async function GET(request: Request) {
+export async function forecast(request: Request): Promise<Response> {
   const sp = new URL(request.url).searchParams;
   const slug = sp.get("town") || "boone";
 

@@ -1,17 +1,12 @@
 // GET /api/v1/verdict?town=&date=YYYY-MM-DD
 // The daily Right/Wrong Ray result: per-source day scores + grades for a scored
 // day (defaults to the latest scored day — "yesterday" once actuals land).
-export const dynamic = "force-dynamic";
 
-import { jsonOk, jsonError, corsPreflight } from "@/lib/apiResponse";
+import { jsonOk, jsonError } from "@/lib/apiResponse";
 import { getTown, isTownPublic, publicSlugs, getTownComparison, latestComparisonDate } from "@/lib/towns";
 import { fmtLongDate } from "@/lib/dates";
 
-export function OPTIONS() {
-  return corsPreflight();
-}
-
-export async function GET(request: Request) {
+export async function verdict(request: Request): Promise<Response> {
   const sp = new URL(request.url).searchParams;
   const slug = sp.get("town") || "boone";
 

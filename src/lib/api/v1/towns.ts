@@ -3,22 +3,17 @@
 // coordinates, elevation, Ray's-station presence, and scored-day count. Only
 // towns past the MIN_SCORED_DAYS gate appear (Boone always) — the same honesty
 // rule the site applies to a source's track record.
-export const dynamic = "force-dynamic";
 
-import { jsonOk, corsPreflight } from "@/lib/apiResponse";
+import { jsonOk } from "@/lib/apiResponse";
 import { listPublicTowns } from "@/lib/towns";
 import { MIN_SCORED_DAYS } from "@/lib/gating";
 
-export function OPTIONS() {
-  return corsPreflight();
-}
-
-export async function GET() {
-  const towns = await listPublicTowns();
+export async function towns(): Promise<Response> {
+  const registry = await listPublicTowns();
   return jsonOk({
     gate: { min_scored_days: MIN_SCORED_DAYS },
-    count: towns.length,
-    towns: towns.map((t) => ({
+    count: registry.length,
+    towns: registry.map((t) => ({
       slug: t.slug,
       name: t.name,
       lat: t.lat,

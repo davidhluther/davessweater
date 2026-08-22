@@ -59,20 +59,21 @@ const nextConfig: NextConfig = {
   // renders in a Lambda rather than at build (e.g. a future revalidate window)
   // would otherwise get an empty reader. Ship the content with every function.
   //
-  // The /api/v1/* handlers and /widget are DYNAMIC (they read query params, so
-  // they cannot be force-static) and read committed data/ JSON at request time.
-  // The tracer can't see those runtime reads statically, so the files must be
-  // declared here or the Lambda ships without them. We include only *.json
-  // (the ~20 MB of datasets) — never the 180 MB of prediction screenshots. The
-  // RSS feeds under /feed are force-static and read data at build, so they need
-  // no entry here.
+  // The v1 API and /widget are DYNAMIC (they read query params, so they cannot
+  // be force-static) and read committed data/ JSON at request time. The tracer
+  // can't see those runtime reads statically, so the files must be declared
+  // here or the Lambda ships without them. We include only *.json (the ~55 MB
+  // of datasets) — never the 180 MB of prediction screenshots. The RSS feeds
+  // under /feed are force-static and read data at build, so they need no entry
+  // here.
+  //
+  // The five /api/v1/* endpoints live behind one catch-all route file, so this
+  // is keyed on the route's on-disk path, not on the public endpoint URLs. If
+  // that route ever moves, this key moves with it or the Lambda ships without
+  // the datasets it reads.
   outputFileTracingIncludes: {
     "/*": ["./src/content/**/*"],
-    "/api/v1/forecast": ["./data/**/*.json"],
-    "/api/v1/today": ["./data/**/*.json"],
-    "/api/v1/scores": ["./data/**/*.json"],
-    "/api/v1/verdict": ["./data/**/*.json"],
-    "/api/v1/towns": ["./data/**/*.json"],
+    "/api/v1/[endpoint]": ["./data/**/*.json"],
     "/widget": ["./data/**/*.json"],
   },
   async headers() {

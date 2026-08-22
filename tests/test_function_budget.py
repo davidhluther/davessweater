@@ -129,14 +129,47 @@ def test_force_dynamic_page_costs_a_function_without_a_dynamic_segment(tmp_path)
     assert names(budget.model_static(tmp_path)) == ["/widget"]
 
 
-def test_api_handlers_share_one_bundle(tmp_path):
-    """Measured: every /api/** .func is a symlink into a single real bundle."""
-    for route in ("api/geocode", "api/v1/scores", "api/v1/today", "api/keystatic/[...params]"):
+def test_prerenderable_api_handlers_share_one_bundle(tmp_path):
+    """Measured: those /api/** .func entries are symlinks into a single bundle."""
+    for route in ("api/geocode", "api/keystatic/[...params]"):
         make_route(tmp_path, f"{route}/route.ts", "export function GET() {}\n")
     functions = budget.model_static(tmp_path)
     assert len(functions) == 1
     assert functions[0].name == "/api/** (shared bundle)"
-    assert len(functions[0].routes) == 4
+    assert len(functions[0].routes) == 2
+
+
+def test_force_dynamic_api_handler_leaves_the_shared_bundle(tmp_path):
+    """The 2026-08-21 regression: the builder stopped grouping these.
+
+    Five force-dynamic siblings counted as one shared bundle is exactly the
+    under-count that let a green build freeze production, so each one is now
+    counted on its own.
+    """
+    make_route(tmp_path, "api/geocode/route.ts", "export function GET() {}\n")
+    for endpoint in ("forecast", "scores", "today"):
+        make_route(
+            tmp_path,
+            f"api/v1/{endpoint}/route.ts",
+            'export const dynamic = "force-dynamic";\nexport function GET() {}\n',
+        )
+    assert names(budget.model_static(tmp_path)) == [
+        "/api/** (shared bundle)",
+        "/api/v1/forecast",
+        "/api/v1/scores",
+        "/api/v1/today",
+    ]
+
+
+def test_one_catch_all_api_route_costs_one_function(tmp_path):
+    """Why the v1 API is a single route file: the count stops depending on the
+    builder's grouping mood."""
+    make_route(
+        tmp_path,
+        "api/v1/[endpoint]/route.ts",
+        'export const dynamic = "force-dynamic";\nexport function GET() {}\n',
+    )
+    assert names(budget.model_static(tmp_path)) == ["/api/v1/[endpoint]"]
 
 
 def test_route_handler_outside_api_is_counted_on_its_own(tmp_path):

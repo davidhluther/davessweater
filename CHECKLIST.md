@@ -501,6 +501,40 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       settings (python build → `docs/`); backed up, removed, re-linked fresh (project/org IDs only). The
       matching *dashboard* overrides remain an owner click (see Deployment notes in `CLAUDE.md`).
 
+### ⚠️ DEPLOY OUTAGE 2026-08-21 → — Vercel Hobby 12-function cap, second time — FIX IN REVIEW
+- [ ] **Symptom, again.** Three production deploys failed on 2026-08-21 with
+      `exceeded_serverless_functions_per_deployment` at the `patchBuild` step — the three daily bot
+      commits (`Daily capture 2026-08-21`, two `Daily comparison 2026-08-21`). Production froze on
+      the 2026-08-20 build and stayed up, serving stale data. Same hiding place as August 6–16: the
+      build reports success and only then is the deployment refused.
+- [ ] **Cause: Vercel stopped grouping the `/api/v1/*` handlers, and nothing in this repo changed.**
+      Diffed the last green deploy against the first failure — **zero source changes**, only `data/`
+      JSON; identical route tables in both build logs; same Vercel CLI (59.1.4) on both. Measured the
+      real count with `vercel build`: **14 bundles**. `api/geocode.func`, `api/v1/forecast.func`,
+      `scores`, `today`, `towns`, `verdict` were each their own real directory. The guard's rule 3
+      ("all route handlers under `src/app/api` share ONE bundle", measured 2026-08-16) had stopped
+      being true, which silently added 5 functions: 9 → 14, two over the cap.
+      `api/keystatic/[...params]` still symlinks into `geocode.func`, so the grouping did not stop
+      entirely — the handlers that left the shared bundle are the `force-dynamic` ones.
+- [ ] **Fix (PR): the five `/api/v1/*` route files became one catch-all, `/api/v1/[endpoint]`.**
+      Each handler moved to `src/lib/api/v1/<name>.ts` as a named function; the route file dispatches
+      on the segment. **Every public URL is unchanged** — `/api/v1/forecast`, `/today`, `/scores`,
+      `/verdict`, `/towns` all still resolve, and an unknown endpoint now returns a JSON 404 naming
+      the real ones instead of the site's 404 page. `next.config.ts`'s `outputFileTracingIncludes`
+      is re-keyed from the five endpoint paths to the one route path (verified: the bundle still
+      carries all 17,340 `data/**/*.json` entries, so the runtime reads still resolve).
+      **Measured 14 → 10.** `src/app/api/__tests__/v1Route.test.ts` exercises the dispatch against
+      real committed data so a renamed handler is a red test, not a production 404.
+- [ ] **The durable lesson, and the guard change.** A catch-all costs one function *by construction*;
+      a family of siblings costs whatever the builder feels like that week. `scripts/check_function_budget.py`
+      now counts a `force-dynamic` API handler as its own bundle (over-counting is the safe error),
+      its rule 3 says plainly that grouping is a description of current behavior and never a
+      guarantee, and `tests/test_function_budget.py` pins both halves.
+- [ ] **Still at budget: 10 of 12.** Reclaim options if it tightens again — merge
+      `/resources/[category]` and `/resources/[category]/[slug]` into one optional catch-all (−1), or
+      gate the Keystatic admin routes out of production builds (−2, but that removes the hosted
+      editor: owner decision).
+
 ### ⚠️ DEPLOY OUTAGE 2026-08-06 → 08-16 — Vercel Hobby 12-function cap — ✅ RESOLVED
 - [x] **RESOLVED 2026-08-16.** PR #163 merged; the triggered production deploy went **Ready**
       (12m build, verified via `vercel ls`) after ten days of every deploy erroring on the cap.
@@ -551,11 +585,14 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       `/widget`-style dynamic pages, and metadata image routes (easy to forget: they are not
       "pages"). Adding a new dynamic route *family* is what risks re-tripping the cap. Prefer one
       catch-all over N sibling routes, and prefer a build-time file over a route whenever the output
-      is derived from committed data. **Current 9:** `/api/**` (ONE shared bundle — `/api/geocode`,
-      the five `/api/v1/*` handlers *and* `/api/keystatic/[...params]` all symlink into it;
-      corrected 2026-08-16, the earlier list double-counted them), `/keystatic/[[...params]]`,
-      `/widget`, `/feed/[town]/[feed]`, `/report-card/[month]`, `/resources/[category]`,
-      `/resources/[category]/[slug]`, `/right-wrong-ray/[slug]`, `/weather/[slug]`.
+      is derived from committed data. **Current 10** (measured 2026-08-22): `/api/**` shared bundle
+      (`/api/geocode` + `/api/keystatic/[...params]` symlink into it), `/api/v1/[endpoint]`,
+      `/keystatic/[[...params]]`, `/widget`, `/feed/[town]/[feed]`, `/report-card/[month]`,
+      `/resources/[category]`, `/resources/[category]/[slug]`, `/right-wrong-ray/[slug]`,
+      `/weather/[slug]`. **At budget — the next dynamic route family fails the check.**
+      ⚠️ **Grouping is the builder's decision and it changed once already** (2026-08-21, below).
+      Never plan a route family on the assumption that Vercel will merge it; a catch-all route
+      file costs one function by construction, which is the only guarantee available.
       **How to check:** `python3 scripts/check_function_budget.py` (one second, no build), or the
       ground truth — `npx vercel build` then
       `find .vercel/output/functions -name '*.func' -type d ! -name '*.rsc.func' ! -path '*.segments*' | wc -l`
@@ -567,8 +604,9 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       Serverless Functions two ways and fails at **>10** (two under the 12 cap, so a model that
       under-counts by one still trips the check before a deployment does). Its default mode is a
       static model of the `src/app` route tree — every route file under a dynamic segment costs a
-      function (metadata image routes included, since they are routes and not pages), all `/api/**`
-      handlers share one bundle, a `force-dynamic` route costs one without a dynamic segment, and a
+      function (metadata image routes included, since they are routes and not pages), `/api/**` handlers
+      share one bundle *unless* they opt out of prerendering (corrected 2026-08-22 — see the
+      2026-08-21 outage below), a `force-dynamic` route costs one without a dynamic segment, and a
       plain prerendered page costs nothing; `--build-output` counts the real bundles a `vercel build`
       emitted, skipping the `.func` symlinks, `.rsc.func` halves and `.segments/` payloads that make
       the output directory look bigger than it is. Both read **9** today, and both moved to 10 in
