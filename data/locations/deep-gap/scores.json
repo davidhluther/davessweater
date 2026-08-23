@@ -415,82 +415,203 @@
       "visualcrossing": 83.8,
       "weatherapi": 91.3,
       "composite": 94.9
+    },
+    {
+      "date": "2026-08-22",
+      "googleweather": 95.4,
+      "metno": 99.1,
+      "nws": 76.4,
+      "openmeteo": 88.2,
+      "openweathermap": 88.9,
+      "raysweather": 53.8,
+      "tomorrowio": 87.3,
+      "visualcrossing": 87.1,
+      "weatherapi": 87.0,
+      "composite": 96.8
     }
   ],
   "totals": {
     "metno": {
-      "right": 28,
+      "right": 29,
       "wrong": 1,
       "meh": 2,
-      "total_score": 2844.7000000000003,
-      "days": 31
+      "total_score": 2943.8,
+      "days": 32
     },
     "nws": {
-      "right": 20,
+      "right": 21,
       "wrong": 0,
       "meh": 11,
-      "total_score": 2419.2000000000003,
-      "days": 31
+      "total_score": 2495.6000000000004,
+      "days": 32
     },
     "openmeteo": {
-      "right": 30,
+      "right": 31,
       "wrong": 0,
       "meh": 1,
-      "total_score": 2752.4,
-      "days": 31
+      "total_score": 2840.6,
+      "days": 32
     },
     "raysweather": {
       "right": 0,
-      "wrong": 15,
+      "wrong": 16,
       "meh": 20,
-      "total_score": 2164.8,
-      "days": 35
+      "total_score": 2218.6000000000004,
+      "days": 36
     },
     "composite": {
+      "right": 32,
+      "wrong": 0,
+      "meh": 0,
+      "total_score": 3046.0000000000005,
+      "days": 32
+    },
+    "googleweather": {
       "right": 31,
       "wrong": 0,
       "meh": 0,
-      "total_score": 2949.2000000000003,
+      "total_score": 2895.5999999999995,
       "days": 31
     },
-    "googleweather": {
-      "right": 30,
-      "wrong": 0,
-      "meh": 0,
-      "total_score": 2800.1999999999994,
-      "days": 30
-    },
     "openweathermap": {
-      "right": 25,
+      "right": 26,
       "wrong": 2,
       "meh": 3,
-      "total_score": 2556.9,
-      "days": 30
+      "total_score": 2645.8,
+      "days": 31
     },
     "tomorrowio": {
-      "right": 29,
+      "right": 30,
       "wrong": 0,
       "meh": 1,
-      "total_score": 2663.3999999999996,
-      "days": 30
+      "total_score": 2750.7,
+      "days": 31
     },
     "visualcrossing": {
-      "right": 24,
+      "right": 25,
       "wrong": 0,
       "meh": 6,
-      "total_score": 2478.7000000000003,
-      "days": 30
+      "total_score": 2565.8,
+      "days": 31
     },
     "weatherapi": {
-      "right": 27,
+      "right": 28,
       "wrong": 1,
       "meh": 2,
-      "total_score": 2586.7000000000007,
-      "days": 30
+      "total_score": 2673.7000000000007,
+      "days": 31
     }
   },
   "coverage": {
     "metno": {
+      "high_temp": {
+        "provided": 32,
+        "days": 32
+      },
+      "low_temp": {
+        "provided": 29,
+        "days": 32
+      },
+      "wind": {
+        "provided": 32,
+        "days": 32
+      },
+      "precip": {
+        "provided": 32,
+        "days": 32
+      }
+    },
+    "nws": {
+      "high_temp": {
+        "provided": 32,
+        "days": 32
+      },
+      "low_temp": {
+        "provided": 32,
+        "days": 32
+      },
+      "wind": {
+        "provided": 32,
+        "days": 32
+      },
+      "precip": {
+        "provided": 26,
+        "days": 32
+      }
+    },
+    "openmeteo": {
+      "high_temp": {
+        "provided": 32,
+        "days": 32
+      },
+      "low_temp": {
+        "provided": 32,
+        "days": 32
+      },
+      "wind": {
+        "provided": 32,
+        "days": 32
+      },
+      "precip": {
+        "provided": 32,
+        "days": 32
+      }
+    },
+    "raysweather": {
+      "high_temp": {
+        "provided": 36,
+        "days": 36
+      },
+      "low_temp": {
+        "provided": 36,
+        "days": 36
+      },
+      "wind": {
+        "provided": 0,
+        "days": 36
+      },
+      "precip": {
+        "provided": 11,
+        "days": 36
+      }
+    },
+    "composite": {
+      "high_temp": {
+        "provided": 32,
+        "days": 32
+      },
+      "low_temp": {
+        "provided": 32,
+        "days": 32
+      },
+      "wind": {
+        "provided": 32,
+        "days": 32
+      },
+      "precip": {
+        "provided": 32,
+        "days": 32
+      }
+    },
+    "googleweather": {
+      "high_temp": {
+        "provided": 31,
+        "days": 31
+      },
+      "low_temp": {
+        "provided": 31,
+        "days": 31
+      },
+      "wind": {
+        "provided": 31,
+        "days": 31
+      },
+      "precip": {
+        "provided": 31,
+        "days": 31
+      }
+    },
+    "openweathermap": {
       "high_temp": {
         "provided": 31,
         "days": 31
@@ -508,166 +629,58 @@
         "days": 31
       }
     },
-    "nws": {
-      "high_temp": {
-        "provided": 31,
-        "days": 31
-      },
-      "low_temp": {
-        "provided": 31,
-        "days": 31
-      },
-      "wind": {
-        "provided": 31,
-        "days": 31
-      },
-      "precip": {
-        "provided": 25,
-        "days": 31
-      }
-    },
-    "openmeteo": {
-      "high_temp": {
-        "provided": 31,
-        "days": 31
-      },
-      "low_temp": {
-        "provided": 31,
-        "days": 31
-      },
-      "wind": {
-        "provided": 31,
-        "days": 31
-      },
-      "precip": {
-        "provided": 31,
-        "days": 31
-      }
-    },
-    "raysweather": {
-      "high_temp": {
-        "provided": 35,
-        "days": 35
-      },
-      "low_temp": {
-        "provided": 35,
-        "days": 35
-      },
-      "wind": {
-        "provided": 0,
-        "days": 35
-      },
-      "precip": {
-        "provided": 10,
-        "days": 35
-      }
-    },
-    "composite": {
-      "high_temp": {
-        "provided": 31,
-        "days": 31
-      },
-      "low_temp": {
-        "provided": 31,
-        "days": 31
-      },
-      "wind": {
-        "provided": 31,
-        "days": 31
-      },
-      "precip": {
-        "provided": 31,
-        "days": 31
-      }
-    },
-    "googleweather": {
-      "high_temp": {
-        "provided": 30,
-        "days": 30
-      },
-      "low_temp": {
-        "provided": 30,
-        "days": 30
-      },
-      "wind": {
-        "provided": 30,
-        "days": 30
-      },
-      "precip": {
-        "provided": 30,
-        "days": 30
-      }
-    },
-    "openweathermap": {
-      "high_temp": {
-        "provided": 30,
-        "days": 30
-      },
-      "low_temp": {
-        "provided": 27,
-        "days": 30
-      },
-      "wind": {
-        "provided": 30,
-        "days": 30
-      },
-      "precip": {
-        "provided": 30,
-        "days": 30
-      }
-    },
     "tomorrowio": {
       "high_temp": {
-        "provided": 30,
-        "days": 30
+        "provided": 31,
+        "days": 31
       },
       "low_temp": {
-        "provided": 30,
-        "days": 30
+        "provided": 31,
+        "days": 31
       },
       "wind": {
-        "provided": 30,
-        "days": 30
+        "provided": 31,
+        "days": 31
       },
       "precip": {
-        "provided": 30,
-        "days": 30
+        "provided": 31,
+        "days": 31
       }
     },
     "visualcrossing": {
       "high_temp": {
-        "provided": 30,
-        "days": 30
+        "provided": 31,
+        "days": 31
       },
       "low_temp": {
-        "provided": 30,
-        "days": 30
+        "provided": 31,
+        "days": 31
       },
       "wind": {
-        "provided": 30,
-        "days": 30
+        "provided": 31,
+        "days": 31
       },
       "precip": {
-        "provided": 30,
-        "days": 30
+        "provided": 31,
+        "days": 31
       }
     },
     "weatherapi": {
       "high_temp": {
-        "provided": 30,
-        "days": 30
+        "provided": 31,
+        "days": 31
       },
       "low_temp": {
-        "provided": 30,
-        "days": 30
+        "provided": 31,
+        "days": 31
       },
       "wind": {
-        "provided": 30,
-        "days": 30
+        "provided": 31,
+        "days": 31
       },
       "precip": {
-        "provided": 30,
-        "days": 30
+        "provided": 31,
+        "days": 31
       }
     }
   }
