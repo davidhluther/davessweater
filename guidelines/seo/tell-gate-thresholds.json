@@ -1,0 +1,18 @@
+{
+  "_notes": "DS-calibrated ceilings for the shared tell-scorer gate (engine: shared-skills/seo/tell-scorer, not vendored here). Calibrated 2026-08-31 from the live davessweater.com article corpus (6 pages, selector 'article') and the same posts' markdown sources: the gate strips YAML frontmatter before scoring (metadata 'key: value' lines otherwise inflate the internal-colon count — shared finding, Pigasus onboarding 2026-08-31); with that shim, every language tell scored 0.0 per 1k except cross-sentence negative parallelism (max 2.375/1k, a deliberate voice construction in two posts), so ceilings pass the current disciplined corpus with headroom and fail legacy/bypass-level content. Keys without a leading underscore GATE (tests/test_tell_gate.py fails). '_warn_' keys are formatting tells kept warn-only by design: the 2026-08-25 study found formatting tells correlate with MORE AI citations, so they are reported, never blocked. Warn ceilings sit just above the current corpus max (colon-heavy 'label: value' data lines are the DS house voice).",
+  "composite_hard_per1k": 3.0,
+  "t1_vocab_per1k": 0.3,
+  "restricted_per1k": 0.5,
+  "puffery_per1k": 0.5,
+  "meta_commentary_per1k": 0.3,
+  "summary_closer_per1k": 0.3,
+  "chat_opener_per1k": 0.3,
+  "ai_assistant_term_per1k": 0.3,
+  "neg_parallel_per1k": 0.3,
+  "neg_parallel_sibling_per1k": 2.5,
+  "this_is_where_per1k": 0.6,
+  "_warn_emdash_per1k": 3.0,
+  "_warn_colon_internal_per1k": 12.0,
+  "_warn_title_case_head_frac": 0.2,
+  "_warn_bold_numeric_blocks_per1k": 3.0
+}
