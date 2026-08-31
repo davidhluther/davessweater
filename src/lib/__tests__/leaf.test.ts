@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   elevationBand, fmtPeakWindow, hasThermalSignal, lapseRatePerThousandFt,
+  leafBandRows, leafBarPosition, leafBookends, leafByPeak, leafSeasonSpan,
   leafWindowIsCurrent, ridgeOffsetPhrase, type LeafPrediction,
 } from "@/lib/leaf";
 
@@ -148,5 +149,128 @@ describe("leafWindowIsCurrent", () => {
   it("is false on an unparseable end date rather than rendering a bad window", () => {
     expect(leafWindowIsCurrent(boone({ peak_end: "" }), new Date("2026-08-30T12:00:00-04:00")))
       .toBe(false);
+  });
+});
+
+// --- cross-town helpers (the /leaf hub) -------------------------------------
+
+const at = (slug: string, ft: number, start: string, center: string, end: string): LeafPrediction => ({
+  slug, name: slug, elevation_ft: ft,
+  peak_start: start, peak_center: center, peak_end: end,
+  components: {
+    reference_date: "2026-10-06", reference_elevation_ft: 5000,
+    elevation_shift_days: 0, thermal_shift_days: 0, temp_anomaly_f: null, half_window_days: 5,
+  },
+  basis: "elevation-climatology",
+});
+
+// Real 2026 bookends plus one mid-band town, so the span arithmetic is checkable
+// against the shipped artifact.
+const SET = [
+  at("beech-mountain", 5436, "2026-09-28", "2026-10-03", "2026-10-08"),
+  at("boone", 3333, "2026-10-12", "2026-10-17", "2026-10-22"),
+  at("wilkesboro", 1024, "2026-10-27", "2026-11-01", "2026-11-06"),
+];
+
+describe("leafSeasonSpan", () => {
+  it("spans the earliest start to the latest end, inclusive", () => {
+    const span = leafSeasonSpan(SET);
+    expect(span).toEqual({ start: "2026-09-28", end: "2026-11-06", days: 40 });
+  });
+
+  it("is null for an empty set rather than a zero-length season", () => {
+    expect(leafSeasonSpan([])).toBeNull();
+  });
+
+  it("crosses the month boundary without dropping days", () => {
+    const span = leafSeasonSpan([at("a", 3000, "2026-10-30", "2026-10-31", "2026-11-01")]);
+    expect(span?.days).toBe(3);
+  });
+});
+
+describe("leafBandRows", () => {
+  it("groups towns into bands, highest ground first", () => {
+    const rows = leafBandRows(SET);
+    expect(rows.map((r) => r.label)).toEqual([
+      "Above 5,000 feet", "2,500 to 3,500 feet", "Below 2,500 feet",
+    ]);
+  });
+
+  it("omits bands with no tracked town instead of rendering an empty row", () => {
+    // Nothing here sits between 3,500 and 5,000 ft.
+    expect(leafBandRows(SET).some((r) => r.label === "3,500 to 5,000 feet")).toBe(false);
+  });
+
+  it("collapses each band to the span its towns actually cover", () => {
+    const rows = leafBandRows([
+      at("high-a", 5400, "2026-09-28", "2026-10-03", "2026-10-08"),
+      at("high-b", 5100, "2026-10-01", "2026-10-06", "2026-10-11"),
+    ]);
+    expect(rows).toHaveLength(1);
+    expect(rows[0].start).toBe("2026-09-28");
+    expect(rows[0].end).toBe("2026-10-11");
+    expect(rows[0].towns.map((t) => t.slug)).toEqual(["high-a", "high-b"]);
+  });
+
+  it("returns nothing for an empty set", () => {
+    expect(leafBandRows([])).toEqual([]);
+  });
+});
+
+describe("leafBarPosition", () => {
+  const span = { start: "2026-09-28", end: "2026-11-06", days: 40 };
+
+  it("puts the first window flush against the left edge", () => {
+    const pos = leafBarPosition(span, "2026-09-28", "2026-10-08");
+    expect(pos?.leftPct).toBe(0);
+    expect(pos?.widthPct).toBeCloseTo((11 / 40) * 100, 5);
+  });
+
+  it("puts the last window flush against the right edge", () => {
+    const pos = leafBarPosition(span, "2026-10-27", "2026-11-06")!;
+    expect(pos.leftPct + pos.widthPct).toBeCloseTo(100, 5);
+  });
+
+  it("never lets a bar spill past the end of the track", () => {
+    const pos = leafBarPosition(span, "2026-11-01", "2026-12-25")!;
+    expect(pos.leftPct + pos.widthPct).toBeLessThanOrEqual(100);
+  });
+
+  it("is null for a degenerate span rather than dividing by zero", () => {
+    expect(leafBarPosition({ start: "2026-10-06", end: "2026-10-06", days: 1 }, "2026-10-06", "2026-10-06")).toBeNull();
+  });
+
+  it("is null when a date will not parse", () => {
+    expect(leafBarPosition(span, "not-a-date", "2026-10-08")).toBeNull();
+  });
+});
+
+describe("leafBookends", () => {
+  it("names the first town to turn and the last", () => {
+    const ends = leafBookends(SET)!;
+    expect(ends.first.slug).toBe("beech-mountain");
+    expect(ends.last.slug).toBe("wilkesboro");
+  });
+
+  it("is null for an empty set", () => {
+    expect(leafBookends([])).toBeNull();
+  });
+});
+
+describe("leafByPeak", () => {
+  it("orders by peak, highest ground breaking a tie", () => {
+    const same = [
+      at("low", 2500, "2026-10-12", "2026-10-17", "2026-10-22"),
+      at("high", 3300, "2026-10-12", "2026-10-17", "2026-10-22"),
+      at("early", 5400, "2026-09-28", "2026-10-03", "2026-10-08"),
+    ];
+    expect(leafByPeak(same).map((p) => p.slug)).toEqual(["early", "high", "low"]);
+  });
+
+  it("does not mutate its input", () => {
+    const input = [...SET].reverse();
+    const before = input.map((p) => p.slug);
+    leafByPeak(input);
+    expect(input.map((p) => p.slug)).toEqual(before);
   });
 });

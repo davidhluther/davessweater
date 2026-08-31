@@ -11,6 +11,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { allTowns } from "@/lib/towns";
+import { fmtPeakWindow, getLeafPredictions, leafBookends, leafByPeak } from "@/lib/leaf";
 import { getBlogPosts, getReportCards, postSlug, postCategoryOf } from "@/lib/data";
 import { CATEGORIES, POST_CATEGORIES } from "@/content/resources";
 import { fmtLongDate } from "@/lib/dates";
@@ -48,6 +49,24 @@ async function collectCards(): Promise<Card[]> {
       title: `Who gets ${town.name}'s weather right?`,
       subtitle: `Every ${town.name} forecast, graded daily against what actually happened.`,
       path: `/right-wrong-ray/${town.slug}`,
+    });
+  }
+
+  // The /leaf hub. A static route, so it could carry an opengraph-image.tsx
+  // without costing a function -- but the card is built from the same committed
+  // data as the page and there is no reason to render it per request, so it
+  // lives here with the rest. Subtitle names the season's two bookends, which is
+  // the whole story in one line.
+  const leaf = await getLeafPredictions();
+  const leafBounds = leafBookends(leafByPeak(leaf?.predictions ?? []));
+  if (leaf && leafBounds) {
+    const { first, last } = leafBounds;
+    cards.push({
+      url: ogPath.leaf,
+      kicker: "FALL COLOR",
+      title: "When the leaves peak in the High Country",
+      subtitle: `${first.name} ${fmtPeakWindow(first.peak_start, first.peak_end)}, ${last.name} ${fmtPeakWindow(last.peak_start, last.peak_end)}. ${leaf.predictions.length} towns, graded in October.`,
+      path: "/leaf",
     });
   }
 

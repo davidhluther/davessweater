@@ -16,6 +16,11 @@ Each forecast date gets a 0-100 score from four components:
                    the date (major +20 / moderate +10 / minor +4, positive pool
                    capped at +30; seasons count half; demand_sign "negative"
                    outflow events SUBTRACT their magnitude).
+  leaf    (0-15) : share of the tracked towns whose predicted peak-color window
+                   covers the date, from our own leaf model
+                   (data/leaf/predictions.json). This REPLACES the registry's
+                   flat "leaf season = all of October" placeholder, which is
+                   skipped as superseded so the same fact is never counted twice.
   weekend (0/5)  : +5 on Fridays and Saturdays.
 
 Bands: <35 calm, 35-54 typical, 55-74 busy, >=75 slammed.
@@ -49,6 +54,7 @@ ALERTS_DIR = BASE_DIR / "data" / "alerts"
 REGISTRY_PATH = BASE_DIR / "data" / "events" / "registry.json"
 ATHLETICS_PATH = BASE_DIR / "data" / "events" / "athletics.json"
 FORECAST_PATH = BASE_DIR / "data" / "forecast_5day.json"
+LEAF_PATH = BASE_DIR / "data" / "leaf" / "predictions.json"
 OUT_DIR = DEMAND_DIR / "index"
 
 HORIZON_DAYS = 14
@@ -56,6 +62,13 @@ HOTEL_MAX = 40.0
 STR_MAX = 25.0
 EVENTS_POSITIVE_CAP = 30.0
 WEEKEND_BONUS = 5.0
+# Leaf season is the year's largest tourism swing here, but it is one input
+# among several, so it is capped below the lodging signals that measure demand
+# directly rather than predicting it. A date at the height of the season -- every
+# tracked town inside its predicted window at once -- earns the full 15, which
+# is enough to lift a typical weekend into "busy" and not enough to call a
+# weekday "slammed" on foliage alone.
+LEAF_MAX = 15.0
 
 MAGNITUDE_POINTS = {"major": 20.0, "moderate": 10.0, "minor": 4.0}
 DEFAULT_MAGNITUDE = "moderate"
@@ -100,6 +113,47 @@ def score_str(fill_by_market: dict | None, iso_date: str) -> float:
     if not fills:
         return 0.0
     return (sum(fills) / len(fills)) * STR_MAX
+
+
+def leaf_peak_share(leaf: dict | None, iso_date: str) -> float:
+    """Fraction of the tracked places whose predicted peak-color window covers
+    this date. 0.0 when the model has not been run or the date is out of season.
+
+    Share of towns, not an average of anything -- the index is regional, and the
+    honest regional statement is how much of the footprint is at peak at once.
+    Because the towns span 1,001 to 5,436 ft, that fraction rises and falls
+    across October on its own, which is the shape the flat registry placeholder
+    could not produce.
+    """
+    predictions = (leaf or {}).get("predictions") or []
+    if not predictions:
+        return 0.0
+    covering = sum(
+        1 for p in predictions
+        if p.get("peak_start") and p.get("peak_end")
+        and p["peak_start"] <= iso_date <= p["peak_end"]
+    )
+    return covering / len(predictions)
+
+
+def leaf_component(leaf: dict | None, iso_date: str) -> dict:
+    """0-15 points plus a driver naming how much of the region is at peak."""
+    predictions = (leaf or {}).get("predictions") or []
+    share = leaf_peak_share(leaf, iso_date)
+    if share <= 0:
+        return {"points": 0.0, "drivers": []}
+    covering = round(share * len(predictions))
+    driver = (
+        f"Predicted peak color at {covering} of {len(predictions)} tracked towns"
+    )
+    return {"points": share * LEAF_MAX, "drivers": [driver]}
+
+
+def is_superseded(entry: dict) -> bool:
+    """Registry rows a model now computes directly. The row stays in the
+    registry for its provenance; the engine takes the number from the model.
+    """
+    return bool(entry.get("superseded_by"))
 
 
 def is_defunct(event: dict) -> bool:
@@ -184,7 +238,7 @@ def events_component(registry: dict | None, athletics: dict | None, iso_date: st
 
     # Seasons — long-running background, half magnitude.
     for s in registry.get("seasons", []):
-        if not event_matches(s, iso_date):
+        if is_superseded(s) or not event_matches(s, iso_date):
             continue
         base = MAGNITUDE_POINTS.get(s.get("magnitude", DEFAULT_MAGNITUDE), MAGNITUDE_POINTS[DEFAULT_MAGNITUDE]) * 0.5
         name = s.get("name") or s.get("id")
@@ -265,7 +319,7 @@ def weather_note(forecast_days: list | None, iso_date: str) -> str | None:
 # ── assembly (pure) ─────────────────────────────────────────────────────────
 
 def build_horizon(today: date, hotel_high_share, str_fill_by_market,
-                  registry, athletics, alerts, forecast_days) -> list[dict]:
+                  registry, athletics, alerts, forecast_days, leaf=None) -> list[dict]:
     horizon = []
     for i in range(HORIZON_DAYS):
         d = today + timedelta(days=i)
@@ -275,12 +329,14 @@ def build_horizon(today: date, hotel_high_share, str_fill_by_market,
         str_pts = round(score_str(str_fill_by_market, iso), 1)
         ev = events_component(registry, athletics, iso)
         ev_pts = round(ev["points"], 1)
+        leaf_ev = leaf_component(leaf, iso)
+        leaf_pts = round(leaf_ev["points"], 1)
         weekend_pts = WEEKEND_BONUS if is_weekend(d) else 0.0
 
-        score = hotel_pts + str_pts + ev_pts + weekend_pts
+        score = hotel_pts + str_pts + ev_pts + leaf_pts + weekend_pts
         score = int(round(max(0.0, min(100.0, score))))
 
-        drivers = list(ev["drivers"])
+        drivers = list(ev["drivers"]) + leaf_ev["drivers"]
         share = (hotel_high_share or {}).get(iso)
         if share is not None and float(share) >= 0.5:
             drivers.append(f"{round(float(share) * 100)}% of hotels price this date high")
@@ -301,6 +357,7 @@ def build_horizon(today: date, hotel_high_share, str_fill_by_market,
                 "hotel": hotel_pts,
                 "str": str_pts,
                 "events": ev_pts,
+                "leaf": leaf_pts,
                 "weekend": weekend_pts,
             },
             "drivers": drivers,
@@ -380,6 +437,15 @@ def load_inputs(today: date):
     if not forecast_days:
         missing.append("5-day forecast")
 
+    # The leaf model's own artifact. Absent or stale-year means no leaf points
+    # and a named missing input -- never a guessed October.
+    leaf = _load_json(LEAF_PATH)
+    if leaf and leaf.get("target_year") != today.year:
+        leaf = None
+    if not (leaf or {}).get("predictions"):
+        leaf = None
+        missing.append("leaf predictions")
+
     return {
         "hotel_high_share": hotel_high_share,
         "str_fill_by_market": str_fill_by_market,
@@ -387,6 +453,7 @@ def load_inputs(today: date):
         "athletics": athletics,
         "alerts": alerts,
         "forecast_days": forecast_days,
+        "leaf": leaf,
         "missing_inputs": missing,
     }
 
@@ -404,6 +471,7 @@ def main() -> int:
         inp["athletics"],
         inp["alerts"],
         inp["forecast_days"],
+        inp["leaf"],
     )
 
     out = {

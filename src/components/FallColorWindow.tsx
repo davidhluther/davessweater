@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { LeafPrediction } from "@/lib/leaf";
 import {
   elevationBand, fmtPeakWindow, hasThermalSignal, lapseRatePerThousandFt, ridgeOffsetPhrase,
@@ -12,8 +13,9 @@ import { fmtLongDate } from "@/lib/dates";
 // The two claims a reader can check by hand are deliberately on the page: the
 // reference date at the reference elevation, and the days-per-1,000-ft slide.
 //
-// Deliberately NOT linked to a /leaf hub yet, because that page does not exist.
-// When it ships, the one link belongs in the closing paragraph here.
+// One link out, in the closing paragraph, to the /leaf hub (shipped 2026-08-31).
+// Exactly one: this module carries only its own town's window, so it and /leaf
+// never compete for the same query.
 export default function FallColorWindow({
   prediction, targetYear, modelVersion,
 }: { prediction: LeafPrediction; targetYear: number; modelVersion: string }) {
@@ -61,15 +63,15 @@ export default function FallColorWindow({
         )}
       </p>
 
-      {/* LINK SLOT: when /leaf ships, one sentence at the end of the paragraph below
-          pointing at the cross-town peak-color map. Nothing else on this page should
-          link to it -- the town pages carry their own window only, so they and /leaf
-          never compete for the same query. */}
       <p className="mt-3 ds-body text-muted">
         A peak window is a claim about October, so it gets graded like every other forecast here.
         Once the leaves actually turn we score these dates against the published fall color reports
         and the result goes on the board, flattering or not. This is the model&apos;s first live
-        fall, so read the window as a first attempt with its work shown, not a settled number.
+        fall, so read the window as a first attempt with its work shown, not a settled number.{" "}
+        <Link href="/leaf" className="text-foreground underline underline-offset-2">
+          Every town&apos;s window, and how the model gets a date
+        </Link>
+        .
       </p>
 
       <p className="mt-3 ds-caption">

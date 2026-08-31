@@ -14,6 +14,7 @@ import HeadToHeadCard from "@/components/HeadToHeadCard";
 import LiveConditions from "@/components/LiveConditions";
 import IphoneShot from "@/components/IphoneShot";
 import AlsoTracking from "@/components/AlsoTracking";
+import LeafSeasonPrompt from "@/components/LeafSeasonPrompt";
 import { copy } from "@/content/copy";
 
 export const metadata = {
@@ -70,6 +71,9 @@ export default async function HomePage() {
             <FiveDayStrip />
           </div>
           <AlsoTracking />
+          {/* Seasonal, self-retiring: renders only while a predicted peak-color
+              window is still current. See LeafSeasonPrompt. */}
+          <LeafSeasonPrompt />
         </div>
       </SectionBand>
 
