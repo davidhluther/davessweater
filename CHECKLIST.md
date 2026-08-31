@@ -16,11 +16,10 @@ One line each; detail lives in the linked sections below. Prune as they close.
 - [x] **AirROI Redistribution Addendum — PERMISSION OBTAINED (David, confirmed 2026-08-31), with a naming caveat RESOLVED by David 2026-08-31: indirect references are fine; the vendor must not be INDICATED AS THE SOURCE where that is not allowed — visible "Data source: <vendor>" attributions on public surfaces become indirect descriptors (change riding the pigasus site-copy PR); internal code references may keep the name.** Ingest wiring dispatched same day. Travelpayouts backup token remains optional/owner (optional, upgrades
       the tourism demand signal before its page ships Sept 2). Draft email and steps were
       provided 2026-07-25 under Tourism forecast.
-- [ ] **Disavow upload still pending** (standing, David-side, since 2026-08-20): 443
-      domains, `davessweater-disavow.txt` in Google Drive → Dave's Sweater, uploaded at
-      search.google.com/search-console/disavow-links against the **URL-prefix property**
-      `https://davessweater.com/` (the tool rejects Domain properties). Both properties
-      confirmed accessible 2026-08-30. Full replacement.
+- [x] **Disavow upload — ✅ DONE 2026-08-30 23:45 EDT** (443 domains, full replacement, via the
+      **URL-prefix property** `https://davessweater.com/` — the tool rejects Domain properties).
+      This line read "still pending" until 2026-08-31 because the upload was stamped in the detailed
+      entry below and not here; the standing task now checks both places. Next refresh 2026-09-20.
 
 ## Fall readiness sweep (2026-08-30, from OVERALL IA)
 Brief executed: `IA-BRIEF-2026-08-30-fall-readiness.md` (deleted on landing, per its own
