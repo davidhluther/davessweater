@@ -117,7 +117,7 @@ def main() -> int:
     now = datetime.now(NY)
     today = now.date()
     if not is_sample_day(today) and not force:
-        print(f"{today} is not a sample day (Mon/Wed/Fri); skipping paid pull (exit 0).")
+        print(f"{today} is not a sample day (Mondays only); skipping paid pull (exit 0).")
         return 0
     weekend_dates = upcoming_weekend_dates(today)
 
