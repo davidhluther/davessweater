@@ -9,24 +9,10 @@ Peak color in the High Country runs roughly Oct 5–25 and search interest ramps
 September, so the fall runway is about five weeks. These are the items only David can move.
 One line each; detail lives in the linked sections below. Prune as they close.
 
-- [ ] **Business Demand Partner pilots — do you want to unpark this for the fall?**
-      Foliage season IS the pilot window; a pilot that has not started by ~mid-September
-      misses the season entirely and waits a year. ⚠️ Flagged honestly: David parked this
-      himself on 2026-07-28 ("naming pilot businesses is NOT a pending owner action,
-      sessions should stop surfacing it") and that ruling still stands. OVERALL IA
-      re-raised it on 2026-08-30 on seasonal-timing grounds. This line exists to put the
-      timing in front of David, not to reopen it — if the answer is still parked, delete
-      this line and the hold continues unchanged. Detail: "Business Demand Partner" under
-      the Tourism forecast section.
-- [ ] **left917.net courtesy ping — send it, or say drop it.** Draft is written and
-      accurate: `planning/2026-07-28-left917-courtesy-ping-draft.md`. Recommended before
-      sending (and worth doing regardless): wire their 507 daily events into
-      `compute_busyness.py` and render the credit, which turns the ping into a thank-you
-      with a link. Fall is when their event feed is most valuable to us and ours to them.
-- [ ] **Prod check of `/api/v1/forecast` + one widget embed — already DONE 2026-07-28,
-      both halves, verified end to end.** Kept here only to close the loop: this is NOT a
-      pending owner action. See "Post-deploy check" under Public feed + API. Delete this
-      line at the next sweep.
+- [x] **left917.net courtesy ping — DROPPED, David's ruling 2026-08-31.** Draft stays at
+      `planning/2026-07-28-left917-courtesy-ping-draft.md` as a record; do not send, stop
+      surfacing. (The compute_busyness event-feed wiring idea survives separately if a
+      session ever picks it up on its own merits.)
 - [ ] **AirROI Redistribution Addendum email + Travelpayouts token** (optional, upgrades
       the tourism demand signal before its page ships Sept 2). Draft email and steps were
       provided 2026-07-25 under Tourism forecast.
