@@ -1105,14 +1105,44 @@ PR, with reasoning. Divergence-by-omission is the failure mode this kills.**
       its canonical implementation so new pages reuse rather than re-invent; responsiveness +
       asset conventions; and a **page-inventory table** (every route → template → conformance
       status) that doubles as the sweep scoreboard.
-- [ ] **Layer 2 — `/design-check` skill** in `.claude/skills/`, run against a PR's changed
-      pages/components BEFORE merge. Mechanical where possible (extends the shell? registered in
-      nav? tokens not hardcoded? reuses canonical components?), judged against DESIGN-STANDARD.md
-      otherwise; returns pass or a concrete fix-list. **Wire it so it actually runs:** a CLAUDE.md
-      rule giving it the same standing as tests in the definition of done, the rule mirrored here,
-      and a PR-template checkbox if one exists. When a feature legitimately needs a NEW pattern,
-      the PR updates DESIGN-STANDARD.md in the same change — that is the "change deliberately"
-      branch, not an exemption.
+- [x] **Layer 2 — the design gate, BUILT as a shared instrument 2026-08-31.**
+      Built at `~/Projects/shared-skills/design-gate/` rather than as a local
+      `/design-check` skill: the same drift produced nine visual defects on a
+      pigasus.group page on 2026-08-30 (a 177px void, three competing label
+      grammars, a page contradicting its own legend) with every mechanical gate
+      in that repo green, so the instrument is shared and DS consumes it by
+      reference — same call as `copy_lint.py`, never a fork. Two layers:
+      MECHANICAL (`scripts/design_gate.py` — full-page captures at 390 and 1440,
+      light and dark, disclosures open; interior voids over a 120px ceiling,
+      horizontal overflow, zero-ink section boxes) and JUDGMENT (a reviewing
+      agent **that did not build the page** audits the screenshots against the
+      design system for label grammar, heading scale, spacing rhythm, banned
+      devices, theme parity, and self-consistency). Any severity-1 from either
+      layer fails the PR ritual. Contract, config keys and the fixture suite are
+      in that directory's `SKILL.md`; DS-side wiring in
+      `design-gate/consumers/davessweater.md`.
+  - [x] **DS-side wiring — 2026-08-31.** `.design-gate.json` added (config
+        example in the shared repo; `dark_mode` kept at the example's
+        `{"strategy": "media"}` — DS has no stored theme choice and no
+        `prefers-color-scheme` CSS at all, so the media strategy is the
+        accurate no-op rather than a silent skip), `pillow`/`numpy` added to
+        `requirements.txt` (Playwright was already there via
+        `capture_rays.py`), `.design-gate/` gitignored, and the CLAUDE.md
+        definition-of-done rule added below. Proving run against the local
+        dev server on `/` and `/roads` — see the CLAUDE.md entry for the
+        verdict; report cited in `CAPABILITIES.md`.
+  - [x] **`docs/DESIGN-BANLIST.md` — 2026-08-31.** Append-only banned-device
+        list, seeded with the middot-separator ban, quoting the 2026-07-02
+        standard verbatim ("data-line separators are pipes ('|'), swept
+        site-wide") and citing the 2026-07-28 re-sweep that caught the second
+        drift (`CHECKLIST.md` entries above) plus the two deliberate
+        exemptions (`<li>`-opening middot, next/og share-card art). The
+        banlist is the cheapest half of layer 1 and the judgment layer can use
+        it before `DESIGN-STANDARD.md` exists.
+  - [ ] **Turn the judgment layer on** once `docs/DESIGN-STANDARD.md` and a named
+        `reference_page` exist. The mechanical layer needs neither and can run
+        from the day it is wired — voids and overflow are defects against any
+        standard.
 - [ ] **Layer 3 — periodic conformance sweep** after each feature burst (or weekly; DS IA's call
       given the daily workflow cadence): sweep the full inventory, update the scoreboard, file
       nonconformances as checklist fixes. Same predict→grade discipline the weather layer runs on

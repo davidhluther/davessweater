@@ -3,7 +3,9 @@
 Last verified against repo: 2026-08-31 (leaf-forecaster build; rows touched: the `/leaf`
 hub, the leaf grading loop, and the busy-ness leaf term moved from section 2 to section 1,
 and the leaf-season model row in section 2 was retired. All other rows carry their
-2026-08-30 or 2026-08-23 verification date and were not re-checked this pass.)
+2026-08-30 or 2026-08-23 verification date and were not re-checked this pass. Same-day,
+a second pass added the shared design gate's MECHANICAL-layer row to section 1, proven
+by a live run against `/` and `/roads` — see that row for the exact verdict.)
 
 **What this file answers:** what the site and its pipeline can do *right now*, and what
 proves it. It is not the task list — `CHECKLIST.md` is the durable record of what was
@@ -29,6 +31,7 @@ Verification traps worth knowing before you trust or extend a row:
 
 | Capability | Where it runs | Shipped | Proof |
 |---|---|---|---|
+| Shared design gate — MECHANICAL layer wired | `.design-gate.json` (repo root); engine at `~/Projects/shared-skills/design-gate/`, never forked | 2026-08-31 | `pillow`/`numpy` added to `requirements.txt` (Playwright already present via `capture_rays.py`); `.design-gate/` gitignored; `CLAUDE.md` § "Development" carries the definition-of-done rule; `CHECKLIST.md` § "NEXT BUILD: design/template consistency gate" → Layer 2 marked built. **Proving run** against the local dev server (`next dev -p 3311`) on `/` and `/roads`: `python3 ~/Projects/shared-skills/design-gate/scripts/design_gate.py --config .design-gate.json --base-url http://127.0.0.1:3311 --routes /,/roads` → **mechanical PASS**, exit 0, 0 severity-1, 0 severity-2 across 8 captures. `judgment.status: "pending"` — layer B is **NOT wired yet**, by design: it needs `docs/DESIGN-STANDARD.md` and a named `reference_page`, neither of which exists (layer 1 comes first per the section's own ordering note). `docs/DESIGN-BANLIST.md` seeded with the middot-separator ban (quotes the 2026-07-02 standard verbatim, cites the 2026-07-28 re-sweep) so the judgment layer has something to check against even before the full standard lands |
 | Daily multi-source forecast capture for Boone (10 forecaster slots: Ray's Weather, Open-Meteo, NWS, MET Norway, OpenWeather, WeatherAPI, Visual Crossing, Tomorrow.io, Google, plus the Apple slot) | Actions `daily_capture.yml`, 10:00 UTC | 2026-03 | `.github/workflows/daily_capture.yml`; `data/predictions/2026-08-22/` holds 13 files covering every source slot; run succeeded 2026-08-22 |
 | 100-point accuracy scoring against verified actuals, plus the running season scoreboard | `scripts/scoring.py` + `scripts/compare.py` via `daily_compare.yml`; rendered at `/right-wrong-ray` | 2026-03 | <https://davessweater.com/right-wrong-ray> (200); `data/scores.json`; `tests/test_scoring.py` |
 | Merged 20-point precip field and 1°F temperature full-credit band (the 2026-07-26 recalibration), with all history rescored | `scripts/scoring.py:_precip_20`; `scripts/rescore_history.py` | 2026-07-26 | `scripts/scoring.py`; 583 pytest pass, run 2026-08-23 |

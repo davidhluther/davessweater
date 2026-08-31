@@ -1,0 +1,21 @@
+{
+  "repo": "davessweater",
+  "base_url": "http://127.0.0.1:3000",
+  "routes": ["/"],
+  "reference_page": "/right-wrong-ray",
+  "design_system": ["docs/DESIGN-STANDARD.md", "guidelines/"],
+  "banlist": "docs/DESIGN-BANLIST.md",
+  "void_ceiling_px": 120,
+  "viewports": [
+    { "name": "mobile", "width": 390, "height": 844 },
+    { "name": "desktop", "width": 1440, "height": 1000 }
+  ],
+  "themes": ["light", "dark"],
+  "dark_mode": { "strategy": "media" },
+  "disclosure_selectors": ["details:not([open])"],
+  "expand_aria_toggles": false,
+  "section_selector": "main section, main > article",
+  "ignore_selectors": ["nav", "header", "footer"],
+  "force_visible_selectors": [],
+  "out_dir": ".design-gate"
+}

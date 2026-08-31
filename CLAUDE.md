@@ -224,6 +224,27 @@ across source lines loses its leading space at build time, so `<em>range</em> is
 5&ndash;15 mph` ships as "rangeis scored". Use an explicit `{" "}` at that boundary. The linter
 catches it; verified against a production build (Next 16 / SWC).
 
+**Design gate before any UI-touching PR.** Run the shared design gate
+(`~/Projects/shared-skills/design-gate/`) on the routes the PR changed:
+
+```bash
+python3 ~/Projects/shared-skills/design-gate/scripts/design_gate.py \
+  --config .design-gate.json --routes /the,/routes,/you,/changed
+```
+
+Same standing as `vitest` in the definition of done. Exit 1 = FAIL. **Exit 2
+means it could not run — nothing was measured, and that is not a pass.** Then
+the judgment pass, by an agent that did NOT build the page: hand it
+`.design-gate/judgment-packet.md` and the design system, and withhold your
+reasoning for the change. Any severity-1 blocks the PR. If the feature
+legitimately needs a new pattern, the PR updates `docs/DESIGN-STANDARD.md` in
+the same change with the reasoning — new work FITS the template or CHANGES it
+deliberately; divergence-by-omission is the failure mode this kills.
+**Judgment layer status (2026-08-31): mechanical only is wired.** Layer B
+switches on once `docs/DESIGN-STANDARD.md` and a named `reference_page` exist
+(`CHECKLIST.md` § "NEXT BUILD: design/template consistency gate") — layer 1
+comes first by design, per that section's ordering note.
+
 ```bash
 # Run the site (Next.js)
 npm install && npm run dev   # http://localhost:3000  (build: npm run build · test: npm test)
