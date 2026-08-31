@@ -21,6 +21,34 @@ One line each; detail lives in the linked sections below. Prune as they close.
       This line read "still pending" until 2026-08-31 because the upload was stamped in the detailed
       entry below and not here; the standing task now checks both places. Next refresh 2026-09-20.
 
+## Tell-scorer standing capability (2026-08-31, from OVERALL IA — LANDED)
+Brief executed: `IA-BRIEF-2026-08-31-tell-scorer-standing-capability.md`. The shared
+tell-scorer engine (`~/Projects/shared-skills/seo/tell-scorer/`, client-generic, never
+forked into this repo) now runs on DS in both forms David ruled on 2026-08-31:
+
+- [x] **Pre-publish gate** — `tests/test_tell_gate.py` scores every
+      `src/content/posts/*.md` against `guidelines/seo/tell-gate-thresholds.json` and
+      fails pytest on a language-ceiling breach (same blocking posture as the copy
+      lint). Formatting tells (em-dash, internal colons, bold stats) are warn-only by
+      design — the 2026-08-25 study found they correlate with MORE AI citations. The
+      test skips wholesale when the shared engine isn't on the machine, so CI and
+      outside contributors stay green; the gate binds on the owner's machine.
+- [x] **Ceilings calibrated from DS's own corpus, not copied** — live sitemap scored
+      2026-08-31 (`--include /resources/ --selector article`; the four category index
+      pages have no `<article>` and correctly refuse to score). Every language tell
+      sat at 0.0/1k except cross-sentence negative parallelism (max 2.141/1k across
+      two posts — deliberate voice; ceiling 2.5). Rationale lives in the thresholds
+      file's `_notes`.
+- [x] **Monthly self-audit scheduled** — local scheduled task `ds-monthly-tell-audit`
+      (3rd of each month, 7 AM): scores the live sitemap, `cohort_compare.py`
+      `--baseline` against the prior run, writes a report, banks the run as the next
+      baseline. A language regression ESCALATES (push notification + task chip),
+      never advisory-only — David's ruling. Reports go to OVERALL IA as a
+      mobile-viewable link. Baselines, run manual, and reports live under the private
+      `planning/` tree (this repo is public); first baseline banked 2026-08-31.
+- [ ] **Owner, one click:** run the `ds-monthly-tell-audit` task once ("Run now") to
+      pre-approve its tools, or the Sep 3 first run may pause on permission prompts.
+
 ## Fall readiness sweep (2026-08-30, from OVERALL IA)
 Brief executed: `IA-BRIEF-2026-08-30-fall-readiness.md` (deleted on landing, per its own
 instruction). Local checkout was 24 commits stale and carried one unpushed commit
