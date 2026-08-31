@@ -1441,7 +1441,7 @@ Brief: `DISAVOW-GA4-HANDOFF.md`. Both tasks are DS-owned follow-ups.
       (archive-hu, bisprofit, blogerreviewers, brinto, dupurgeniefr, quotesblom, sahammurah,
       wecelebrities) — all carrying one identical "High Quality Dofollow Backlinks DA 50 PA 40
       Premium PBN…" anchor. So "0 dofollow" is no longer the spam test; the shared anchor is.
-      **DAVID: upload the refreshed file** at search.google.com/search-console/disavow-links via
+      ~~DAVID: upload the refreshed file~~ **UPLOADED 2026-08-30 23:45 EDT (443 domains, full replacement — see the submission log)** at search.google.com/search-console/disavow-links via
       the **URL-prefix property `https://davessweater.com/`** (the tool rejects Domain properties);
       it's a **full replacement**. Copy delivered to Google Drive → **"Dave's Sweater" →
       `davessweater-disavow.txt`**; local original at `planning/seo/davessweater-disavow.txt`
