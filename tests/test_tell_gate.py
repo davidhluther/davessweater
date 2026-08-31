@@ -40,14 +40,33 @@ pytestmark = pytest.mark.skipif(
 )
 
 
+def strip_frontmatter(text: str) -> str:
+    """YAML frontmatter is metadata, not prose. Fed raw, the engine scores the
+    frontmatter block as a paragraph and every `key: value` line inflates the
+    internal-colon count (shared finding, Pigasus onboarding 2026-08-31)."""
+    if text.startswith("---\n"):
+        end = text.find("\n---\n", 4)
+        if end != -1:
+            return text[end + 5 :]
+    return text
+
+
 def score_posts(tmp_path: Path) -> list[dict]:
+    posts_dir = tmp_path / "posts"
+    posts_dir.mkdir()
+    sources = sorted((REPO_ROOT / "src" / "content" / "posts").glob("*.md"))
+    assert sources, "no posts found under src/content/posts"
+    for src in sources:
+        (posts_dir / src.name).write_text(
+            strip_frontmatter(src.read_text(encoding="utf-8")), encoding="utf-8"
+        )
     out = tmp_path / "scores.csv"
     proc = subprocess.run(
         [
             "python3",
             str(ENGINE),
             "--md-glob",
-            str(REPO_ROOT / "src" / "content" / "posts" / "*.md"),
+            str(posts_dir / "*.md"),
             "--out",
             str(out),
         ],
