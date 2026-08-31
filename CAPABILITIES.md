@@ -1,6 +1,8 @@
 # Dave's Sweater — capability ledger
 
-Last verified against repo: 2026-08-23 by DS-backfill-agent
+Last verified against repo: 2026-08-30 (fall-readiness sweep; rows touched: leaf-color
+module added to section 1, leaf-season model row in section 2 updated. All other rows
+carry their 2026-08-23 verification date and were not re-checked this pass.)
 
 **What this file answers:** what the site and its pipeline can do *right now*, and what
 proves it. It is not the task list — `CHECKLIST.md` is the durable record of what was
@@ -40,6 +42,7 @@ Verification traps worth knowing before you trust or extend a row:
 | Prerendered RSS feeds, one per town × horizon plus a verdict feed | `/feed/[town]/[feed]`, force-static with enumerated params | 2026-07-25 | `/feed/boone/forecast-1day.xml`, `/feed/boone/verdict.xml`, `/feed/beech-mountain/forecast-5day.xml` all 200 |
 | Embeddable forecast widget — a one-line script that swaps itself for a self-sizing iframe, framable on third-party pages | `public/widget.js` + `/widget` | 2026-07-25; rebuilt around forecast data 2026-07-28 | `/widget.js` 200; `/widget?town=boone&days=3` 200; `frame-ancestors *` exception in `next.config.ts` |
 | River gauge readings on the widget for towns a USGS gauge actually names (no nearest-gauge borrowing) | `scripts/capture_river_gauges.py` → `data/rivers/`; `src/lib/rivers.ts` | 2026-07-25 | `/widget?town=sugar-grove` renders "Watauga River 110 cfs, 1.82 ft (USGS)"; `data/rivers/2026-08-22.json` |
+| Per-town predicted peak fall-color window, with the elevation arithmetic shown and the model's own `basis` disclosed | `src/lib/leaf.ts` + `src/components/FallColorWindow.tsx` reading `data/leaf/predictions.json`; renders on `/weather/[slug]` | 2026-08-30 | `src/lib/__tests__/leaf.test.ts` (20 tests); prerendered HTML for all 17 towns carries the module (`/weather/wilkesboro` shows "October 27–November 6", `/weather/beech-mountain` "September 28–October 8"). Self-retires 45 days past a closed window |
 | Human-readable API/data documentation page | `/api` | 2026-07-25 | <https://davessweater.com/api> (200) |
 | Open datasets published under CC BY 4.0, with the attribution string echoed in API responses | `data/LICENSE`, `data/README.md` | 2026-07-25 | commit `44db043e`; `attribution` field in the `/api/v1/today` payload |
 | Winter road-condition forecast plus live closures, incidents, and Parkway alerts | `scripts/roads.py`, `capture_roads.py`, `compare_roads.py`; `/roads` | 2026-07-25 | <https://davessweater.com/roads> (200); `data/roads_forecast.json`, `data/road_scores.json`; `tests/test_roads.py` |
@@ -73,7 +76,7 @@ Verification traps worth knowing before you trust or extend a row:
 |---|---|---|---|
 | Live remote content editing through the CMS | `/keystatic` in production | Route ships and renders; production editor shows the setup screen | One-time GitHub App creation plus four environment variables, then a redeploy. Steps in `docs/cms.md` |
 | Demand-signal capture bench — lodging prices, short-term-rental pacing, athletics and community event calendars, campus events, races, park visitation, attention signals, weather alerts, the busy-ness index | `daily_capture.yml` (capture scripts run green daily into `data/demand/`, `data/events/`, `data/alerts/`, `data/attention/`, `data/calibration/`) | Data flowing; test-covered | No public page or API surface consumes them yet. They exist to feed the tourism and traffic forecasts |
-| Leaf-season model | `scripts/leaf_model.py`, `scripts/predict_leaf.py` → `data/leaf/predictions.json` | Model and predictions committed | Not surfaced on any page |
+| Leaf-season model | `scripts/leaf_model.py`, `scripts/predict_leaf.py` → `data/leaf/predictions.json` | Model and predictions committed; **per-town windows now published** on the 17 town pages (section 1) | No cross-town `/leaf` hub page yet; no Actions wiring, so the thermal term only activates when someone runs `predict_leaf.py --refresh` |
 | Traffic forecast as a reader-facing product | pipeline live (section 1) | Forecast and grading run daily against the private dataset | No published page, feed, or API endpoint. Terms on the upstream traffic data are why the dataset is private; any public surface has to be designed around that |
 | Monthly report cards for July and August 2026 | `/report-card/{yyyy-mm}` | Franchise route is live and auto-picks up a new file; June 2026 is the only published card (`/report-card/2026-07` 404s) | Writing and publishing the cards |
 | Standing article cadence | `src/content/posts/` | Six posts published; a topic slate exists | An owner-set interval. Backdating was rejected — dates on this site have to be true |

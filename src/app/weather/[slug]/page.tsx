@@ -10,10 +10,12 @@ import { compositeForecast } from "@/lib/composite";
 import { sweaterFromEffective } from "@/lib/sweater";
 import { MIN_SCORED_DAYS } from "@/lib/gating";
 import { fmtLongDate } from "@/lib/dates";
+import { getLeafPredictions, leafWindowIsCurrent } from "@/lib/leaf";
 import SectionBand from "@/components/SectionBand";
 import CompositeHeadline from "@/components/CompositeHeadline";
 import FiveDayStrip from "@/components/FiveDayStrip";
 import UpcomingForecasts from "@/components/UpcomingForecasts";
+import FallColorWindow from "@/components/FallColorWindow";
 import JsonLd from "@/components/JsonLd";
 
 const BASE = "https://davessweater.com";
@@ -69,9 +71,14 @@ export default async function TownWeatherPage({ params }: { params: Promise<{ sl
   const town = await getTown(slug);
   if (!town) notFound();
 
-  const [f5, scores, isPublic] = await Promise.all([
-    getTownForecast5(slug), getTownScores(slug), isTownPublic(slug),
+  const [f5, scores, isPublic, leafAll] = await Promise.all([
+    getTownForecast5(slug), getTownScores(slug), isTownPublic(slug), getLeafPredictions(),
   ]);
+  // The seasonal module renders only while this fall's window is still the one a
+  // reader cares about; a closed window drops off rather than sitting there
+  // asserting a peak that already came and went.
+  const leafRaw = leafAll?.predictions.find((p) => p.slug === slug) ?? null;
+  const leaf = leafRaw && leafWindowIsCurrent(leafRaw, new Date()) ? leafRaw : null;
   const today = townTodayForecasts(f5);
   const composite = compositeForecast(today);
   const days = scoredDays(scores);
@@ -187,6 +194,21 @@ export default async function TownWeatherPage({ params }: { params: Promise<{ sl
             {" | "}
             <Link href="/methodology" className="text-teal underline underline-offset-2">How we grade</Link>
           </p>
+        </SectionBand>
+      )}
+
+      {/* Fall color. Its own band on a surface tone so it reads as a seasonal
+          module rather than another slice of the forecast, and so the two light
+          bands above it do not run together. */}
+      {leaf && leafAll && (
+        <SectionBand tone="surface">
+          <div className="mx-auto max-w-2xl">
+            <FallColorWindow
+              prediction={leaf}
+              targetYear={leafAll.target_year}
+              modelVersion={leafAll.model_version}
+            />
+          </div>
         </SectionBand>
       )}
     </>
