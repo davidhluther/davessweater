@@ -49,6 +49,16 @@ forked into this repo) now runs on DS in both forms David ruled on 2026-08-31:
 - [ ] **Owner, one click:** run the `ds-monthly-tell-audit` task once ("Run now") to
       pre-approve its tools, or the Sep 3 first run may pause on permission prompts.
 
+## PR #157 — a11y contrast fix — ✅ MERGED + LIVE 2026-08-31
+Stale since 2026-07-28, conflicting with `main` (an unrelated em-dash-in-UI-copy fix
+had touched the same `AccuracyDecayChart.tsx` line). Verified both misses were still
+live on `main` before touching anything — computed WCAG ratios independently and they
+matched the PR's own numbers exactly: chart hint `text-white/50` on `teal-700` = 3.70:1
+(needs 4.5:1, small text), "day's worst" badge `text-orange-600` on `bg-orange-600/10`
+over white = 4.48:1 (needs 4.5:1). Rebased onto `main` (one conflict, resolved keeping
+main's copy fix + the PR's color fix), `npm test` 382/382 · lint clean · `next build`
+green, merged via squash (PR #157, `5f7e751c`), prod Vercel deploy confirmed green.
+
 ## Fall readiness sweep (2026-08-30, from OVERALL IA)
 Brief executed: `IA-BRIEF-2026-08-30-fall-readiness.md` (deleted on landing, per its own
 instruction). Local checkout was 24 commits stale and carried one unpushed commit
