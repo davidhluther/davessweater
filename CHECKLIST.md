@@ -16,11 +16,10 @@ One line each; detail lives in the linked sections below. Prune as they close.
 - [x] **AirROI Redistribution Addendum — PERMISSION OBTAINED (David, confirmed 2026-08-31), with a naming caveat RESOLVED by David 2026-08-31: indirect references are fine; the vendor must not be INDICATED AS THE SOURCE where that is not allowed — visible "Data source: <vendor>" attributions on public surfaces become indirect descriptors (change riding the pigasus site-copy PR); internal code references may keep the name.** Ingest wiring dispatched same day. Travelpayouts backup token remains optional/owner (optional, upgrades
       the tourism demand signal before its page ships Sept 2). Draft email and steps were
       provided 2026-07-25 under Tourism forecast.
-- [ ] **Disavow upload still pending** (standing, David-side, since 2026-08-20): 443
-      domains, `davessweater-disavow.txt` in Google Drive → Dave's Sweater, uploaded at
-      search.google.com/search-console/disavow-links against the **URL-prefix property**
-      `https://davessweater.com/` (the tool rejects Domain properties). Both properties
-      confirmed accessible 2026-08-30. Full replacement.
+- [x] **Disavow upload — ✅ DONE 2026-08-30 23:45 EDT** (443 domains, full replacement, via the
+      **URL-prefix property** `https://davessweater.com/` — the tool rejects Domain properties).
+      This line read "still pending" until 2026-08-31 because the upload was stamped in the detailed
+      entry below and not here; the standing task now checks both places. Next refresh 2026-09-20.
 
 ## Fall readiness sweep (2026-08-30, from OVERALL IA)
 Brief executed: `IA-BRIEF-2026-08-30-fall-readiness.md` (deleted on landing, per its own
@@ -62,31 +61,40 @@ in August. Static `opengraph-image` files are fine (the existing `/reports/*` on
 as Static). This pass added no routes and did not move the number.
 
 **Queued behind the two scheduled builds** (each is one commit once the page exists):
-- [ ] **Internal links to `/leaf`** (after the Aug 31 build). Exact insertion points, in
-      priority order: (1) `src/components/SiteFooter.tsx`, same row as the /roads link
-      added this pass, label "Leaf forecast" — this alone gives it all 60 pages;
-      (2) `src/components/FallColorWindow.tsx`, appended to the closing "graded like
-      every other forecast" paragraph, where an in-file comment marks the slot — one
-      sentence pointing at the cross-town map, giving 17 contextual in-body links from
-      pages Google crawls daily; (3) `src/app/page.tsx`
-      near `AlsoTracking`, seasonal. Files: those three. Add `/leaf` to
-      `src/app/sitemap.ts` with `stamp(leafGeneratedAt)` from `generated_at`.
+- [x] **Internal links to `/leaf` — DONE 2026-08-31 with the `/leaf` build.** All three
+      staged slots landed exactly as specified: `SiteFooter.tsx` ("Leaf forecast", all 60
+      URLs), the marked LINK SLOT in `FallColorWindow.tsx` (17 contextual in-body links),
+      and a homepage line near `AlsoTracking` — that one is a component
+      (`LeafSeasonPrompt.tsx`) rather than inline JSX so it can **self-retire**, rendering
+      only while a predicted window is still current under the same 45-day grace the town
+      modules use. `/leaf` is in `sitemap.ts` stamped from the model's `generated_at`
+      (verified in the built sitemap: `2026-07-26T05:28:18.309Z`), `changeFrequency:
+      weekly` because the model reruns on demand, not daily.
 - [ ] **Internal links to `/tourism`** (after the Sept 2 build). Same footer row, label
       "Busy-ness Index"; plus `src/app/roads/page.tsx` (traffic and crowding are the same
       reader) and the `/api` docs page once `/api/v1/tourism` exists. Sitemap entry
       stamped from the index artifact's own generated date.
-- [ ] **OG/social cards for `/leaf` and `/tourism`.** House pattern is prerendered static
+- [~] **OG/social cards for `/leaf` and `/tourism`.** House pattern is prerendered static
       cards, NOT `opengraph-image` routes — a dynamic image route costs a Serverless
       Function against the Hobby cap of 12 and that cap is what froze production for two
       days in August. Follow `src/lib/ogStatic.ts` + `scripts/generate_og_images.mjs`
       (runs in `prebuild`); add `ogPath`/`ogAlt` entries and reference them from each
       page's `generateMetadata`. The function-budget gate
       (`.github/workflows/function_budget.yml`) will catch a regression on the PR.
+      **`/leaf` DONE 2026-08-31** — `ogPath.leaf` / `ogAlt.leaf` added, the card is built
+      in `scripts/og/cards.tsx` from the same predictions the page reads (its subtitle
+      names the season's two bookends, so it restates itself when the model reruns), and
+      `public/og/leaf.png` is written by `prebuild` (44 cards, up from 43). Budget still
+      reports 10 of 10. `/tourism` remains open.
 - [ ] **Decide whether town-page metadata gets a seasonal fall-color variant.** Not done
       deliberately: a peak window in the meta description goes stale in November and
       title/description churn across 17 pages during the ramp is a real risk. The on-page
-      H2 plus the unique per-town data is doing the topical work for now. Owner or
-      /leaf-build call.
+      H2 plus the unique per-town data is doing the topical work for now.
+      **/leaf-build call 2026-08-31: still no.** The hub now owns the seasonal query
+      surface with its own title, description, FAQ schema and Dataset schema, so the case
+      for churning 17 town titles during the ramp got weaker, not stronger. Revisit after
+      the season with GSC data on what `/leaf` actually caught, which is a real answer
+      instead of a guess. Owner can overrule.
 
 **GSC health check, post-outage (run 2026-08-30, findings only):**
 - [x] **No indexing or coverage damage from the 08-21 → 08-22 outage.** Sitemap processed,
@@ -1881,17 +1889,48 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
       23 new tests (374 py green). 2026 sanity: Beech Oct 3 / Boone Oct 17 / Wilkesboro Nov 1. Ships
       silent — no Actions wiring, no page. **UPDATE 2026-08-30: no longer silent.** The per-town
       windows now render on all 17 `/weather/[slug]` pages via `src/lib/leaf.ts` +
-      `FallColorWindow.tsx` (fall-readiness sweep, top of this file); a `/leaf` hub builds
-      2026-08-31. FOLLOW-UPS: (a) **mid-Sept: re-run `predict_leaf.py --refresh`** once Sept temps
-      accrue — this is now MORE urgent, not less: the windows are already public and every town page
-      currently tells the reader in as many words that the thermal term is switched off. The refresh
-      turns that paragraph into a real anomaly reading, and `hasThermalSignal()` flips the copy
-      automatically. Consider wiring it into `daily_capture.yml` behind a September date gate so it
-      is not a human's memory; (b) **October: capture observed peaks by eye** from the registry
-      grading sources into a scorer-ingestible file — decide format then; (c) Boone's elevation is
-      hardcoded (not in locations.json) — fine for now.
-      Original intent (unchanged): feed predicted peak weekends into the Busy-ness Index up-weight +
-      traffic v2 corridors; cross-confirm against lodging high-share.
+      `FallColorWindow.tsx` (fall-readiness sweep, top of this file).
+      **UPDATE 2026-08-31 — the product shipped; only traffic v2 and the live season remain.**
+      - [x] **`/leaf` hub LIVE.** Static route, no dynamic segment, zero new functions (budget
+            holds at 10 of 10; the build reports `○ /leaf`). Carries the cross-town gradient as an
+            elevation-band strip drawn from the data, all 18 windows in a table that fits a 390px
+            phone without sideways scroll, the full methodology with its constants read from the
+            artifact, the model's stated limits, and the grading contract. WebPage + Dataset (CC BY
+            4.0) + BreadcrumbList + FAQPage schema. Reuses `src/lib/leaf.ts` as instructed; the
+            cross-town helpers were added there rather than re-parsing the JSON.
+      - [x] **Follow-up (a) mid-Sept refresh: AUTOMATED, not left to memory.** `daily_capture.yml`
+            gained a date-gated step running `predict_leaf.py --refresh` **Sep 18–30** (the model
+            needs 12 September days and the Open-Meteo archive trails ~6, so Sep 18 is the earliest
+            useful run; the anomaly window closes Sep 25, so running past Sep 30 would only churn
+            published dates). Gate verified against seven boundary dates. `data/leaf/` was added to
+            the workflow's `git add` set — without that the refresh would have run and been thrown
+            away every morning.
+      - [x] **Follow-up (b) October observations: format decided and shipped.**
+            `data/leaf/observations.json` is the hand-maintained file, seeded empty with its schema,
+            its weekly reading plan, and the three grading sources. An entry names a town **or** an
+            elevation band (the published reports describe the season by band, so a band entry
+            scores every town inside it) and must carry a `source_id`; a test fails the suite if one
+            appears without a source. `scripts/score_leaf.py` joins observations to predictions using
+            the July scoring rules — unchanged, so nothing is graded on a curve — and writes
+            `data/leaf/scores.json`; it runs daily in the workflow. `/leaf` renders "nothing is
+            scored yet" until `summary.scored_rows` goes above zero, then switches to the scoreboard
+            on its own. **Weekly cadence: read all three sources every Monday, Sept 21 through Nov 9**
+            (plan in `docs/leaf-model.md` §Grading in practice and in the observations file).
+      - [x] **Busy-ness Index up-weight WIRED.** `compute_busyness.py` gained a 0–15 `leaf`
+            component: the share of tracked towns whose predicted window covers the date, scaled to
+            the cap. The registry's flat `leaf-season-2026` placeholder now carries
+            `superseded_by: data/leaf/predictions.json` and the engine skips any season with that
+            field, so the fact is never double-counted; a test guards the flag. The curve runs ~0.8
+            pts in early October, peaks ~11.7 on Oct 19, and decays to ~1.7 by November, which is
+            the shape the flat "all of October" range could not produce.
+      - [ ] **Still open: traffic v2 corridors.** Same predicted peak dates feed corridor load
+            (Parkway approaches, US-321 into Blowing Rock). Waits on traffic v2.
+      - [ ] **Still open: cross-confirmation against lodging high-share** — the headline trick from
+            spec §3b ("leaf model says peak Oct 17 + 95% of hotels price Oct 17–18 high"). Both
+            signals now exist in the same artifact (`data/demand/index/{date}.json` carries the leaf
+            component and the hotel component side by side); nothing yet *reads* them together and
+            says so out loud. That belongs to the `/tourism` build.
+      - (c) Boone's elevation is hardcoded (not in locations.json) — still fine, still noted.
 
 - [x] **left917.net partner event feed — SHIPPED 2026-07-25 (PR #141, owner-directed).**
       left917.net = independent High Country news/events site (Watauga/Ashe/Avery) that plans to

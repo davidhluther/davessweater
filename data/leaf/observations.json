@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "target_year": 2026,
+  "updated": "2026-08-31",
+  "purpose": "Observed peak fall color, recorded by hand from the published grading sources, so the predicted windows in predictions.json can be scored. Written before the season starts so the rules are fixed before any observation exists.",
+  "how_to_record": "One entry per reading. Either name a town with `slug`, or, when the source reports by elevation band the way the regional reports do, give `applies_to_elevation_ft` and every tracked town inside that band is scored against it. `observed` is a single ISO date or a {start, end} band. `observed_on` is the day we read the source, which is not the same as the day the color peaked. Never infer an observation from our own prediction, and never record a reading whose source you did not actually open.",
+  "cadence": {
+    "plan": "Read all three sources once a week, Mondays, from September 21 through November 9. Grandfather Mountain starts posting dated galleries around September 20 and is the high-elevation leading indicator; High Country Host reports by elevation band across the whole footprint; WataugaOnline is the Boone-elevation check.",
+    "weekly_steps": [
+      "Open each grading source in data/events/registry.json (grading_sources, purpose = leaf-model grading).",
+      "For each source, decide whether it is calling anything at peak this week, and at what elevation.",
+      "Append an entry here for every new peak call, with its source id and the URL you read.",
+      "Run python3 scripts/score_leaf.py to refresh data/leaf/scores.json.",
+      "Commit both files together so the score always ships with the observation that produced it."
+    ],
+    "why_manual": "All three sources are human-judged prose and photo galleries, not data feeds. No station reports a peak-color number. Scraping a judgment call would dress an eyeball read up as a measurement, so we read them by eye and say so."
+  },
+  "sources": [
+    { "id": "fall-color-grandfather", "band_ft": { "min": 4500, "max": 6000 } },
+    { "id": "fall-color-highcountryhost", "band_ft": { "min": 1000, "max": 6000 } },
+    { "id": "fall-color-wataugaonline", "band_ft": { "min": 2500, "max": 3600 } }
+  ],
+  "observations": []
+}

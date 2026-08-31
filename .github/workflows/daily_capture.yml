@@ -168,8 +168,34 @@ jobs:
         run: python scripts/capture_town_signals.py
         continue-on-error: true
 
+      # Leaf model: refresh the published peak-color windows once September
+      # temperatures exist. Self-gating by date rather than trusting a human to
+      # remember: the model needs 12 captured September days and the Open-Meteo
+      # archive trails about six, so the earliest useful run is around Sep 18.
+      # It stops after Sep 30 because the anomaly window closes Sep 25 and the
+      # answer is settled by then; running past that would only churn published
+      # dates for nothing. Outside the window the step is a no-op.
+      - name: Refresh leaf peak-color windows (mid-September onward)
+        run: |
+          TODAY=$(TZ=America/New_York date +%m-%d)
+          if [[ "$TODAY" > "09-17" && "$TODAY" < "10-01" ]]; then
+            echo "In the refresh window ($TODAY); rerunning the leaf model."
+            python scripts/predict_leaf.py --refresh
+          else
+            echo "Outside the Sep 18-30 refresh window ($TODAY); leaving predictions as they are."
+          fi
+        continue-on-error: true
+
+      # Leaf grading: rescore the published windows against whatever observations
+      # have been recorded by hand in data/leaf/observations.json. Writes an empty
+      # scoreboard until the first October observation lands, which is correct.
+      - name: Score leaf peak-color windows
+        run: python scripts/score_leaf.py
+        continue-on-error: true
+
       # Busy-ness Index v0: 14-day forward regional demand score built from the
-      # hotel, STR, events, alerts, and forecast captures above. Fail-soft; exits 0.
+      # hotel, STR, events, alerts, and forecast captures above, plus the leaf
+      # model's per-town peak windows. Fail-soft; exits 0.
       - name: Compute Busy-ness Index (tourism forecast v0)
         run: python scripts/compute_busyness.py
         continue-on-error: true
@@ -178,7 +204,7 @@ jobs:
         run: |
           git config user.name "DavesSweaterBot"
           git config user.email "bot@davessweater.com"
-          git add data/predictions/ data/locations/ data/demand/ data/alerts/ data/events/ data/attention/ data/rivers/ data/calibration/ data/substack_feed.json data/fireworks_forecast.json data/roads_forecast.json data/road_conditions/
+          git add data/predictions/ data/locations/ data/demand/ data/alerts/ data/events/ data/attention/ data/rivers/ data/calibration/ data/leaf/ data/substack_feed.json data/fireworks_forecast.json data/roads_forecast.json data/road_conditions/
           git commit -m "Daily capture $(date +%Y-%m-%d)" || echo "No changes to commit"
           git pull origin main --no-rebase -X ours || true
           git push origin main || (sleep 5 && git pull origin main --no-rebase -X ours && git push origin main)

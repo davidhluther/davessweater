@@ -7,9 +7,12 @@ graded on the same terms as every forecast on the site. Every forecast is a clai
 about tomorrow; a peak-color window is a claim about October, and we grade our own
 the same way we grade the temperature calls.
 
-Status: draft. The math runs, the hindcast checks out against documented ground truth,
-and the scorer is built and tested. It is not wired into the daily GitHub Actions and
-there is no site page yet. It runs on demand while it earns its first live fall.
+Status: draft, and published. The math runs, the hindcast checks out against documented
+ground truth, and the scorer is built and tested. As of 2026-08-31 the per-town windows
+render on every `/weather/{slug}` page, the cross-town view and this methodology are
+public at `/leaf`, the predicted windows drive the leaf term in the tourism Busy-ness
+Index, and the daily workflow refreshes the model inside a September date gate and
+rescores it every morning. It is still a first live fall, and the page says so.
 
 ## The model in one line
 
@@ -95,6 +98,37 @@ High Country Host's elevation-banded weekly report, and WataugaOnline's Boone-el
 report. All three are human-judged, not data feeds, so October grading reads them by eye
 rather than scraping them.
 
+### Grading in practice
+
+The weekly loop, from **September 21 through November 9**:
+
+1. **Monday, read all three sources.** They are listed in `data/events/registry.json`
+   under `grading_sources` with `purpose: "leaf-model grading"`, which is the same list
+   `/leaf` cites, so the page can never name a source the scorer was not pointed at.
+2. **Record every new peak call** as an entry in `data/leaf/observations.json`. An entry
+   names either one town (`slug`) or an elevation band (`applies_to_elevation_ft`),
+   because the published reports describe the season by band rather than town by town; a
+   band observation scores every tracked town inside it. `observed` is a single ISO date
+   or a `{start, end}` range. `observed_on` is the day you read the source, which is not
+   the day the color peaked. Two sources calling the same town differently both get
+   recorded — they are scored as two rows on purpose, because averaging them before
+   scoring would hide the disagreement.
+3. **Never infer an observation from our own prediction**, and never record a reading
+   whose source you did not actually open. An entry with no `source_id` is not an
+   observation, and `tests/test_score_leaf.py` fails the suite if one appears.
+4. **Rescore.** `python3 scripts/score_leaf.py` joins the two files and writes
+   `data/leaf/scores.json`. The daily capture workflow also runs it every morning, so a
+   committed observation shows up on `/leaf` on the next build without anyone doing
+   anything else.
+5. **Commit the observation and the score together**, so a number on the site always
+   ships with the reading that produced it.
+
+`/leaf` renders the empty state — "nothing is scored yet" — until the first observation
+lands, and switches to the scoreboard on its own once `summary.scored_rows` is above
+zero. The summary's **mean signed error** is the number to watch across seasons: mean
+absolute error says how far off we were, and only the signed version says whether we run
+systematically early or late, which is the one honest basis for changing a constant.
+
 ## Hindcast
 
 Run it with `python3 scripts/predict_leaf.py --hindcast`. It grades the model at three
@@ -144,9 +178,24 @@ ungraded rather than inventing a target.
   simplification; real peaks hold longer at valley elevations than the symmetric window
   implies.
 
+## Downstream: the Busy-ness Index
+
+The tourism Busy-ness Index (`scripts/compute_busyness.py`) takes its leaf term straight
+from this artifact. For each forecast date it computes the **share of tracked places whose
+predicted window covers that date** and scales it to a 0–15 component, capped below the
+lodging signals because those measure demand directly rather than predicting it.
+
+This replaced a flat placeholder. The event registry used to carry a `leaf-season-2026`
+row asserting "October 1 to November 1, uniformly," which could not distinguish the third
+weekend of October from the first. The row still exists for its provenance but now carries
+`superseded_by: data/leaf/predictions.json`, and the engine skips any season with that
+field, so the same fact is never counted twice. The resulting curve rises from about 1
+point in early October to roughly 12 around October 19 and falls away through early
+November, which is the shape a flat date range could not produce.
+
 ## Where it goes next
 
 The graded 2026 season is the first real test and the point of shipping the core early —
-maximum validation runway before it goes public. Downstream, predicted peak weekends feed
-the tourism Busy-ness Index as a demand up-weight and inform the traffic v2 corridors.
-Both wait on the model proving itself against a live, graded fall first.
+maximum validation runway. The remaining downstream consumer is traffic v2, where the same
+predicted peak dates inform corridor load on the Parkway approaches and US-321 into
+Blowing Rock. That one waits on the model proving itself against a live, graded fall.
