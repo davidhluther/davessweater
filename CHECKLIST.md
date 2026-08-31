@@ -13,7 +13,7 @@ One line each; detail lives in the linked sections below. Prune as they close.
       `planning/2026-07-28-left917-courtesy-ping-draft.md` as a record; do not send, stop
       surfacing. (The compute_busyness event-feed wiring idea survives separately if a
       session ever picks it up on its own merits.)
-- [x] **AirROI Redistribution Addendum — PERMISSION OBTAINED (David, confirmed 2026-08-31), with a naming caveat: the vendor is not to be named (scope of the caveat — data-surface attribution vs. marketing/case-study copy — pending David's clarification; do not edit attribution surfaces until it lands).** Ingest wiring dispatched same day. Travelpayouts backup token remains optional/owner (optional, upgrades
+- [x] **AirROI Redistribution Addendum — PERMISSION OBTAINED (David, confirmed 2026-08-31), with a naming caveat RESOLVED by David 2026-08-31: indirect references are fine; the vendor must not be INDICATED AS THE SOURCE where that is not allowed — visible "Data source: <vendor>" attributions on public surfaces become indirect descriptors (change riding the pigasus site-copy PR); internal code references may keep the name.** Ingest wiring dispatched same day. Travelpayouts backup token remains optional/owner (optional, upgrades
       the tourism demand signal before its page ships Sept 2). Draft email and steps were
       provided 2026-07-25 under Tourism forecast.
 - [ ] **Disavow upload still pending** (standing, David-side, since 2026-08-20): 443
