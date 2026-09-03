@@ -32,6 +32,7 @@ export const ogPath = {
   reportCard: (month: string) => `/og/report-card/${month}.png`,
   // Static routes get a plain path rather than a function: there is one card.
   leaf: "/og/leaf.png",
+  tourism: "/og/tourism.png",
 } as const;
 
 /** Alt text, carried over verbatim from the retired image routes. */
@@ -45,6 +46,8 @@ export const ogAlt = {
     "A Dave's Sweater monthly report card: Boone forecast accuracy, scored and published free.",
   leaf:
     "Predicted peak fall color windows for the NC High Country, by elevation, graded against what happens.",
+  tourism:
+    "How busy Boone and the NC High Country will be, scored from lodging, events, and peak fall color.",
 } as const;
 
 /** Ready-made `openGraph.images` entry for a card. */

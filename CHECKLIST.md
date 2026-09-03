@@ -108,11 +108,15 @@ as Static). This pass added no routes and did not move the number.
       modules use. `/leaf` is in `sitemap.ts` stamped from the model's `generated_at`
       (verified in the built sitemap: `2026-07-26T05:28:18.309Z`), `changeFrequency:
       weekly` because the model reruns on demand, not daily.
-- [ ] **Internal links to `/tourism`** (after the Sept 2 build). Same footer row, label
-      "Busy-ness Index"; plus `src/app/roads/page.tsx` (traffic and crowding are the same
-      reader) and the `/api` docs page once `/api/v1/tourism` exists. Sitemap entry
-      stamped from the index artifact's own generated date.
-- [~] **OG/social cards for `/leaf` and `/tourism`.** House pattern is prerendered static
+- [x] **Internal links to `/tourism` — DONE 2026-09-03 with the `/tourism` build.** All three
+      staged slots landed as specified: `SiteFooter.tsx` ("Busy-ness Index", all 61 URLs),
+      a contextual paragraph in `src/app/roads/page.tsx` (bad roads and full roads are the
+      same reader's question), and the `/api` docs page, which now carries the
+      `/api/v1/tourism` endpoint row and a region-wide feed card. `/tourism` is in
+      `sitemap.ts` stamped from the index artifact's own `computed_at` (verified in the
+      built sitemap: `2026-09-02T14:17:08.373Z`), `changeFrequency: daily` because the
+      engine reruns every morning with the captures.
+- [x] **OG/social cards for `/leaf` and `/tourism`.** House pattern is prerendered static
       cards, NOT `opengraph-image` routes — a dynamic image route costs a Serverless
       Function against the Hobby cap of 12 and that cap is what froze production for two
       days in August. Follow `src/lib/ogStatic.ts` + `scripts/generate_og_images.mjs`
@@ -123,7 +127,11 @@ as Static). This pass added no routes and did not move the number.
       in `scripts/og/cards.tsx` from the same predictions the page reads (its subtitle
       names the season's two bookends, so it restates itself when the model reruns), and
       `public/og/leaf.png` is written by `prebuild` (44 cards, up from 43). Budget still
-      reports 10 of 10. `/tourism` remains open.
+      reports 10 of 10. **`/tourism` DONE 2026-09-03** — `ogPath.tourism` / `ogAlt.tourism`
+      added, the card is built in `scripts/og/cards.tsx` from the same index the page reads
+      (its subtitle names the weekend call and its score, so it restates itself every
+      morning the engine runs), and `public/og/tourism.png` is written by `prebuild`.
+      Budget still reports 10 of 10. **This item is now closed.**
 - [ ] **Decide whether town-page metadata gets a seasonal fall-color variant.** Not done
       deliberately: a peak window in the meta description goes stale in November and
       title/description churn across 17 pages during the ramp is a real risk. The on-page
@@ -1650,8 +1658,41 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
         ~4-6 wks of baseline; STR lead-time decay documented as v0 bias). Day-one index: **Aug 1 =
         77 "slammed"** (App Summer + Horse Show + 87% hotels high + Sat) vs mid-week 11–13 calm.
         Both wired into daily_capture.yml; 262 tests green. Index history accrues daily from today.
-  - [ ] **Tourism v1 page** (route + name = orchestrator default `/tourism` unless owner renames):
-        build ~Labor Day when the baseline matures — index data will be ready.
+  - [x] **Tourism v1 page `/tourism` — SHIPPED 2026-09-03.** Static route, no dynamic segment,
+        zero new functions (budget holds at 10 of 10; the build reports `○ /tourism`). The JSON
+        API rides the existing `/api/v1/[endpoint]` catch-all as one more HANDLERS entry and the
+        RSS feed rides the existing `/feed/[town]/[feed]` route at the reserved region slug, so
+        neither costs a function either. Carries: this weekend's call with the engine's own named
+        drivers, a vs-typical percentile, the 14-day horizon with every driver printed as the
+        engine wrote it, the event overlay joined back to the registry, a 30-day heat calendar
+        from lodging high-share, the weekend median-rate trend, the full formula, and the
+        limitations stated plainly. WebPage + Dataset (CC BY 4.0, with a DataDownload pointing at
+        the API) + BreadcrumbList + FAQPage schema.
+        - **The "vs typical" derivation is new and is the reason this shipped now.**
+          `src/lib/tourism.ts` holds it as pure, unit-tested functions (37 new vitest). A night is
+          ranked against the archive of every `(issued, target)` pair the engine has ever written
+          (560 observations as of the build), holding TWO things constant: **day class**
+          (Fri/Sat vs the rest, matching the engine's own weekend bonus) and **lead time**
+          (±2 days), because STR fill rises continuously as a date approaches and that bias is
+          documented-but-uncorrected in the engine. A night is never compared against itself, and
+          below 12 comparable nights the page prints NO percentage rather than a shaky one.
+          Live result on the ship-day data: Sat 2026-09-05 scored 82, busier than 92% of 54
+          comparable weekend nights, median 52. Fri 09-04 came out at the 50th percentile.
+        - **Why the math is TypeScript and not in `compute_busyness.py`:** the engine stays the
+          single capture point; this is aggregation ACROSS what it captured, like the scoreboard.
+          Putting it site-side means it applies to the whole archive immediately instead of only
+          to days scored after a deployment.
+        - **Weekend rate trend reads at a MATCHED LEAD TIME** (3 days, ±3). Lining up each
+          weekend's newest reading would compare a night read yesterday against one read two weeks
+          out and call the drift seasonality. A weekend never read at a matching lead is dropped
+          and named on the page rather than fudged.
+        - **Cross-confirmation is wired and honest.** `crossConfirmation()` reads the leaf and
+          hotel components out of the same artifact and reports nights where both are up. It finds
+          nothing in September (no date is inside a predicted peak window), so the page says that
+          out loud instead of hiding the empty section. This closes the "nothing yet reads them
+          together" item below.
+        - Gates: 419 vitest, 608 pytest, copy_lint 0 errors, eslint clean, `next build` green,
+          function budget 10 of 10.
   - [ ] **Business Demand Partner — bring-your-own-data custom predictors (owner vision
         2026-07-25; spec §3c).** Local businesses contribute their own daily series (covers/sales/
         any one number per day) → per-business calibrated forecast built on our regional feature
@@ -1938,10 +1979,12 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
         NC ABC** = DOCUMENTED-ONLY (`data/calibration/README.md`): both are xlsx/PDF behind dated landing
         pages, no stable CSV → out of stdlib scope; ingest notes recorded for a future capture. +21 tests
         (328→349 green). Backlog items (1)(7)(8) still open.
-- [ ] **v1 page** (`/tourism` or report-franchise slug — owner call): Busy-ness Index headline +
-      30-day heat calendar + weekend rate trend + event/weather overlays. GATE: ~4–6 weeks of
-      baseline (~Labor Day if v0 ships now — in time for leaf season). Grade the index itself later
-      (vs occupancy tax / traffic actuals) — on-brand.
+- [x] **v1 page — SHIPPED 2026-09-03 at `/tourism`.** Full detail in the "Tourism v1 page" entry
+      above (single source; do not mirror it here). Headline + 30-day heat calendar + weekend rate
+      trend + event overlay all landed, plus a vs-typical percentile the spec did not ask for and
+      the 6 weeks of baseline finally supports. **Still open: grading the index itself** against
+      occupancy-tax receipts and traffic actuals — the on-brand endgame, and the only thing that
+      converts these declared priors into calibrated ones. Nothing blocks it but a season.
 - [ ] **Owner (optional, upgrades the signal):** (a) email AirROI re: Redistribution Addendum +
       retention waiver (adds the dominant STR segment's booking pace) — draft email + steps provided
       2026-07-25; (b) free Travelpayouts signup → token as GH secret `TRAVELPAYOUTS_TOKEN`
@@ -1993,11 +2036,12 @@ Design: `planning/specs/2026-07-25-tourism-forecast-design.md`. Source vetting +
             the shape the flat "all of October" range could not produce.
       - [ ] **Still open: traffic v2 corridors.** Same predicted peak dates feed corridor load
             (Parkway approaches, US-321 into Blowing Rock). Waits on traffic v2.
-      - [ ] **Still open: cross-confirmation against lodging high-share** — the headline trick from
-            spec §3b ("leaf model says peak Oct 17 + 95% of hotels price Oct 17–18 high"). Both
-            signals now exist in the same artifact (`data/demand/index/{date}.json` carries the leaf
-            component and the hotel component side by side); nothing yet *reads* them together and
-            says so out loud. That belongs to the `/tourism` build.
+      - [x] **Cross-confirmation against lodging high-share — DONE 2026-09-03 with `/tourism`.**
+            `crossConfirmation()` in `src/lib/tourism.ts` recovers both shares from the published
+            component points (so it can never drift from what the score actually contains) and the
+            page prints every night where our leaf model and the hotels independently agree. It is
+            correctly empty in September and says so rather than rendering a hollow section; it
+            turns on by itself when October dates enter the 14-day horizon.
       - (c) Boone's elevation is hardcoded (not in locations.json) — still fine, still noted.
 
 - [x] **left917.net partner event feed — SHIPPED 2026-07-25 (PR #141, owner-directed).**
@@ -2050,7 +2094,9 @@ handlers: forecast/today/scores/verdict/towns + tourism later; prerendered RSS v
       sitewide footer link. Vercel data tracing: `outputFileTracingIncludes` → data/**/*.json (no
       PNGs), verified in .nft.json. 232 vitest + lint + build green; endpoints curled; RSS validates;
       mobile checked 390px (/api) + 390/300px (/widget). Deviations logged in the PR: /feed/index
-      folded into /api docs; /api/v1/tourism waits for tourism v1.
+      folded into /api docs; /api/v1/tourism waited for tourism v1 and SHIPPED 2026-09-03 with it,
+      as a HANDLERS entry in the existing catch-all (zero new functions), alongside a region-wide
+      `/feed/high-country/busyness.xml`.
   - [x] **Post-deploy check — ✅ COMPLETE 2026-07-28 (both halves).** API half verified 2026-07-26: prod
         curl `davessweater.com/api/v1/forecast` returns 200 with real forecast JSON (license + attribution
         present; Lambda data tracing works) and `feed/boone/verdict.xml` returns 200; re-confirmed 07-28

@@ -18,10 +18,12 @@ export default function SiteFooter() {
               not indexed" with no crawl on record as of 2026-08-30. The footer
               renders on every page, so this gives it a site-wide inbound link from
               pages Googlebot is crawling daily. /leaf joined it 2026-08-31 on
-              the same reasoning; /tourism takes the same slot when it ships. */}
+              the same reasoning, and /tourism on 2026-09-02. */}
           <Link href="/roads" className="text-white/85 underline underline-offset-2">Road conditions</Link>
           <span className="mx-2">|</span>
           <Link href="/leaf" className="text-white/85 underline underline-offset-2">Leaf forecast</Link>
+          <span className="mx-2">|</span>
+          <Link href="/tourism" className="text-white/85 underline underline-offset-2">Busy-ness Index</Link>
           <span className="mx-2">|</span>
           <Link href="/api" className="text-white/85 underline underline-offset-2">Free Data and API</Link>
           <span className="mx-2">|</span>Not affiliated with or endorsed by Ray&apos;s Weather. We just check the math.

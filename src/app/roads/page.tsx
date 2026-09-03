@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import SectionBand from "@/components/SectionBand";
 import JsonLd from "@/components/JsonLd";
 import RoadConditionsBlock from "@/components/RoadConditions";
@@ -55,6 +56,17 @@ export default async function RoadsPage() {
           Will the roads be bad tomorrow morning? We forecast the surface from the snow, ice, and temperature we
           already track, then check ourselves against what NCDOT actually reports. Live closures and Blue
           Ridge Parkway alerts, too, for Watauga, Avery, and Ashe.
+        </p>
+        {/* Whether the road is bad and whether the road is full are the same
+            question to the same reader, so the two forecasts point at each
+            other. Staged as a LINK SLOT by the fall-readiness sweep. */}
+        <p className="mt-3 max-w-2xl ds-body text-muted">
+          Bad weather is not the only reason a drive up here goes wrong.{" "}
+          <Link href="/tourism" className="text-foreground underline underline-offset-2">
+            The Busy-ness Index
+          </Link>{" "}
+          scores how crowded the next two weeks look, from what the hotels are charging and what is
+          on the calendar.
         </p>
       </SectionBand>
       <RoadConditionsBlock forecast={forecast} conditions={conditions} scores={scores} />

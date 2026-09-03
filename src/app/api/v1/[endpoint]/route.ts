@@ -1,7 +1,11 @@
 // The whole public JSON API behind one route file, dispatching on the endpoint
 // segment: /api/v1/forecast, /api/v1/today, /api/v1/scores, /api/v1/verdict,
-// /api/v1/towns. Every public URL is exactly what it was when these were five
-// sibling route files.
+// /api/v1/towns, /api/v1/tourism. Every public URL is exactly what it was when
+// the first five were sibling route files.
+//
+// A new endpoint is a new entry in HANDLERS below and NOTHING ELSE. Adding a
+// sibling route file instead would cost another Serverless Function against a
+// budget that is already full -- which is the whole reason this file exists.
 //
 // WHY ONE FILE INSTEAD OF FIVE
 // Vercel Hobby refuses a deployment carrying more than 12 Serverless Functions,
@@ -24,6 +28,7 @@ import { jsonError, corsPreflight } from "@/lib/apiResponse";
 import { forecast } from "@/lib/api/v1/forecast";
 import { scores } from "@/lib/api/v1/scores";
 import { today } from "@/lib/api/v1/today";
+import { tourism } from "@/lib/api/v1/tourism";
 import { towns } from "@/lib/api/v1/towns";
 import { verdict } from "@/lib/api/v1/verdict";
 
@@ -31,6 +36,7 @@ const HANDLERS: Record<string, (request: Request) => Promise<Response>> = {
   forecast,
   scores,
   today,
+  tourism,
   towns,
   verdict,
 };
