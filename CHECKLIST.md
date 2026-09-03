@@ -43,6 +43,46 @@ must read in reader voice, not build-notes voice. Fixed:
 - Branch `provisional-note-reader-voice-2026-09-01`, PR opened, not merged — see PR link
   in git history / open PRs.
 
+## Leaf model benchmark against a published regional forecast (2026-09-03)
+Internal benchmark of our 18-place leaf model against the established regional expert's published
+method and 2025 observations, logged before the season so both sides can be scored on identical
+terms. **The analysis is local-only** — `planning/analysis/2026-09-03-fall-color-guy-benchmark.md`,
+inside the gitignored `planning/` tree, because this repo is public and that tree is where
+competitive analysis belongs. It is not published, not cited on the site, and his forecasts never
+enter `data/leaf/observations.json`, which already bars grading a forecast against a forecast.
+
+- [x] **Head-to-head logged** — his hedged Oct 10–20 band for 2,500–4,000 ft (as of 2026-08-04)
+      against our 18 windows (as of 2026-07-26), with the coverage asymmetry stated both ways.
+- [x] **2025 backcast run.** `predict_leaf.py --year 2025`, scored against four dated peak
+      statements from his 2025 archive: 4/4 windows hit, mean abs error 3.5 days, mean signed −0.5,
+      mean score 95.5. Read with the caveat in the doc — 2025 was a cool September in which our
+      thermal term pushed us early and the ±5-day window absorbed the miss.
+- [x] **The continuity-at-risk flag on `fall-color-wataugaonline` is resolved in fact:** he is
+      publishing actively at a new address of his own (five posts Jul 26 – Aug 31 2026). The
+      registry note in `data/events/registry.json` still says the question is open and should be
+      updated in the next change that touches that file.
+- [ ] **Diagnose the empty Parkway alerts feed.** `data/road_conditions/*.json` has carried
+      `parkway_alerts: []` for at least 25 straight days (Aug 7–31) while NPS lists five closed NC
+      segments. Two candidates: `NPS_API_KEY` unset in Actions (the code writes an empty section and
+      logs to stderr, and `fetch_ok` covers only the DriveNC calls, so the file looks identical
+      either way), or the `alerts?parkCode=blri` endpoint not carrying road closures at all. One
+      call with a valid key settles it. If it is the endpoint, the NPS roadevents dataset is the fix.
+      **Also fix the silent-failure shape**: `fetch_ok` should cover the NPS leg, or the file should
+      carry a separate `nps_fetch_ok`, so an empty Parkway section is never unverifiable again.
+- [ ] **Grade both sides, week of November 10.** Not earlier — after his last report and after the
+      valley windows close Nov 6. Method, scoring rules, and the three-column comparison (our July
+      call, our post-refresh September call, his last pre-peak statement) are specified in §6 of the
+      local analysis doc, which also holds the weekly log of his 2026 statements, each marked
+      prediction or observation.
+- [ ] **Post-season constant review (after the Nov 10 grading, not before).** Two items from §4 of
+      the doc: whether the ±7-day thermal clamp should widen to ±10 (his 2018 case would have been
+      truncated by 7), and whether a second refresh pass around Oct 5–7 on the *full* September mean
+      is worth building — his best regression uses full September (R² 0.62), ours uses Sep 1–25.
+      **Settled and requiring no work:** do NOT add a precipitation or drought term to the timing
+      model. He regressed monthly, seasonal, and cumulative precipitation and the Palmer Drought
+      Index against 18 years of peak dates and found no relationship. Drought drives leaf drop and
+      color quality, not timing. Detail and citations are in the local analysis doc.
+
 ## Fall readiness sweep (2026-08-30, from OVERALL IA)
 Brief executed: `IA-BRIEF-2026-08-30-fall-readiness.md` (deleted on landing, per its own
 instruction). Local checkout was 24 commits stale and carried one unpushed commit
