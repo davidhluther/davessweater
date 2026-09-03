@@ -48,7 +48,38 @@ describe("/api/v1/[endpoint]", () => {
     const res = await call("sweaters");
     expect(res.status).toBe(404);
     const body = await res.json();
-    expect(body.valid_endpoints).toEqual(["forecast", "scores", "today", "towns", "verdict"]);
+    expect(body.valid_endpoints).toEqual([
+      "forecast", "scores", "today", "tourism", "towns", "verdict",
+    ]);
+  });
+
+  it("serves the Busy-ness Index against the real committed archive", async () => {
+    const res = await call("tourism");
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.region).toBe("North Carolina High Country");
+    expect(body.horizon.length).toBeGreaterThan(0);
+    expect(body.scale.max).toBe(100);
+    // Every scored day carries a band the page can render.
+    for (const d of body.horizon) {
+      expect(["calm", "typical", "busy", "slammed"]).toContain(d.band);
+    }
+    // The weekend call names a date inside the horizon it came from.
+    expect(body.horizon.some((d: { date: string }) => d.date === body.weekend.call.date)).toBe(true);
+    // summary detail withholds the component breakdown.
+    expect(body.horizon[0].components).toBeUndefined();
+  });
+
+  it("adds components, events and lodging only at detail=full", async () => {
+    const body = await (await call("tourism", "?detail=full")).json();
+    expect(body.horizon[0].components).toBeDefined();
+    expect(Array.isArray(body.events)).toBe(true);
+    expect(body).toHaveProperty("lodging");
+    expect(body).toHaveProperty("cross_confirmed");
+  });
+
+  it("rejects a detail value it does not serve", async () => {
+    expect((await call("tourism", "?detail=everything")).status).toBe(400);
   });
 
   it("answers the CORS preflight", async () => {

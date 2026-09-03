@@ -63,6 +63,13 @@ const ENDPOINTS: Endpoint[] = [
     desc: "The town registry: slugs, names, coordinates, elevation, scored-day counts.",
     example: "/api/v1/towns",
   },
+  {
+    method: "GET",
+    path: "/api/v1/tourism",
+    params: "detail (summary|full)",
+    desc: "The High Country Busy-ness Index: how crowded the next 14 days look, and why.",
+    example: "/api/v1/tourism?detail=full",
+  },
 ];
 
 const WIDGET_SNIPPET = `<script src="${SITE_BASE}/widget.js"
@@ -133,9 +140,31 @@ export default async function ApiDocsPage() {
       <h2 className="mt-8 ds-h2 text-foreground">RSS feeds</h2>
       <p className="mt-1 ds-body text-muted">
         Prerendered feeds for readers that do not speak JSON. Each town past the gate gets 1, 3, and 5-day forecast
-        feeds plus a daily Right/Wrong Ray verdict feed.
+        feeds plus a daily Right/Wrong Ray verdict feed, and the region gets the Busy-ness Index.
       </p>
       <div className="mt-4 space-y-4">
+        <div className="rounded-2xl border border-border bg-background p-4">
+          <h3 className="ds-h4 text-foreground">High Country (region-wide)</h3>
+          <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+            <li>
+              <a
+                href="/feed/high-country/busyness.xml"
+                target="_blank"
+                rel="noopener"
+                className="text-orange-600 underline underline-offset-2"
+              >
+                Busy-ness Index
+              </a>
+            </li>
+          </ul>
+          <p className="mt-2 ds-caption">
+            One item per scored day, with the drivers behind it.{" "}
+            <Link href="/tourism" className="text-foreground underline underline-offset-2">
+              The index and its methodology
+            </Link>
+            .
+          </p>
+        </div>
         {towns.map((t) => (
           <div key={t.slug} className="rounded-2xl border border-border bg-background p-4">
             <h3 className="ds-h4 text-foreground">{t.name}</h3>

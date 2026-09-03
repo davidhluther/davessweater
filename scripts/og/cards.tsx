@@ -12,6 +12,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { allTowns } from "@/lib/towns";
 import { fmtPeakWindow, getLeafPredictions, leafBookends, leafByPeak } from "@/lib/leaf";
+import { getBusynessIndex, upcomingWeekend, weekdayLong } from "@/lib/tourism";
 import { getBlogPosts, getReportCards, postSlug, postCategoryOf } from "@/lib/data";
 import { CATEGORIES, POST_CATEGORIES } from "@/content/resources";
 import { fmtLongDate } from "@/lib/dates";
@@ -67,6 +68,25 @@ async function collectCards(): Promise<Card[]> {
       title: "When the leaves peak in the High Country",
       subtitle: `${first.name} ${fmtPeakWindow(first.peak_start, first.peak_end)}, ${last.name} ${fmtPeakWindow(last.peak_start, last.peak_end)}. ${leaf.predictions.length} towns, graded in October.`,
       path: "/leaf",
+    });
+  }
+
+  // The /tourism hub. Same reasoning as /leaf: a static route could carry an
+  // opengraph-image.tsx without costing a function, but the card is built from
+  // the same committed data as the page and there is no reason to render it per
+  // request. The subtitle restates itself every morning the engine runs, so the
+  // card never advertises last week's weekend.
+  const busyness = await getBusynessIndex();
+  if (busyness) {
+    const call = upcomingWeekend(busyness.index.horizon, busyness.issued);
+    const peak = call?.peak ?? busyness.index.horizon[0];
+    const drivers = peak.drivers.slice(0, 2).join(". ");
+    cards.push({
+      url: ogPath.tourism,
+      kicker: "BUSY-NESS INDEX",
+      title: "How busy will Boone be?",
+      subtitle: `${weekdayLong(peak.date)} ${fmtLongDate(peak.date)} scores ${Math.round(peak.score)} of 100: ${peak.band}. ${drivers}`,
+      path: "/tourism",
     });
   }
 

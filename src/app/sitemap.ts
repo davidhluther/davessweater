@@ -3,6 +3,7 @@ import { getBlogPosts, getReportCards, postSlug, postCategoryOf } from "@/lib/da
 import { allTowns, latestComparisonDate } from "@/lib/towns";
 import { getRoadsForecast } from "@/lib/roads";
 import { getLeafPredictions } from "@/lib/leaf";
+import { getBusynessIndex } from "@/lib/tourism";
 import { CATEGORIES } from "@/content/resources";
 
 /**
@@ -34,6 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   //   /weather hub          → the newest comparison across the towns it lists
   //   /roads                → the roads artifact's own generated_at
   //   /leaf                 → the leaf model's own generated_at
+  //   /tourism              → the Busy-ness Index artifact's own computed_at
   // Everything genuinely undated — /about, /methodology, /shop, /api,
   // /resources* — still omits the field, which is the honest answer for a page
   // whose content did not change just because the site rebuilt.
@@ -44,6 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const booneDate = comparisonDates.get("boone") ?? null;
   const roadsDate = (await getRoadsForecast())?.generated_at ?? null;
   const leafDate = (await getLeafPredictions())?.generated_at ?? null;
+  const busynessDate = (await getBusynessIndex())?.index.computed_at ?? null;
   const routes = [
     { url: base, ...stamp(booneDate), changeFrequency: "daily" as const, priority: 1 },
     { url: `${base}/right-wrong-ray`, ...stamp(booneDate), changeFrequency: "daily" as const, priority: 0.7 },
@@ -51,6 +54,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // The leaf model reruns on demand, not daily, so this URL is honest about
     // changing weekly rather than claiming a daily refresh it does not get.
     { url: `${base}/leaf`, ...stamp(leafDate), changeFrequency: "weekly" as const, priority: 0.7 },
+    // The index engine reruns every morning with the captures, so this URL is
+    // honest about changing daily -- unlike /leaf, whose model reruns on demand.
+    { url: `${base}/tourism`, ...stamp(busynessDate), changeFrequency: "daily" as const, priority: 0.7 },
     { url: `${base}/shop`, changeFrequency: "daily" as const, priority: 0.7 },
   ];
   // The free-data hub (JSON API, RSS feeds, widget docs).
