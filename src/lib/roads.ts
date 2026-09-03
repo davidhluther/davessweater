@@ -51,6 +51,20 @@ export type ParkwayAlert = {
   url: string | null;
 };
 
+// From NPS's `roadevents` feed (WZDx) — a separate system from `alerts` that
+// carries the seasonal/incident closures shown on NPS's own BRP road-status
+// page. Found 2026-09-03: `alerts` genuinely returns zero Parkway entries
+// while this feed carries the real closures.
+export type ParkwayRoadEvent = {
+  name: string | null;
+  road: string | null;
+  description: string | null;
+  event_type: string | null;
+  vehicle_impact: string | null;
+  start_date: string | null;
+  end_date: string | null;
+};
+
 export type RoadConditions = {
   fetched_at: string;
   date: string;
@@ -61,10 +75,14 @@ export type RoadConditions = {
    * genuine zero-alert response both leave `parkway_alerts: []`; this field
    * is what tells them apart (older files predate it and omit it). */
   nps_fetch_ok?: boolean;
+  /** Same distinguishability pattern as `nps_fetch_ok`, for the separate
+   * `roadevents` (WZDx) leg — older files predate it and omit it. */
+  nps_roadevents_fetch_ok?: boolean;
   counties_tracked: string[];
   incidents: RoadIncident[];
   road_conditions: RoadConditionRow[];
   parkway_alerts: ParkwayAlert[];
+  parkway_road_events?: ParkwayRoadEvent[];
   worst_actual_level: RoadLevel;
 };
 

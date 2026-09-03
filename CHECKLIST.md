@@ -76,6 +76,22 @@ enter `data/leaf/observations.json`, which already bars grading a forecast again
       distinguishable records instead of both silently becoming `parkway_alerts: []`. Covered by
       `tests/test_capture_roads.py` (4 new tests); `nps_fetch_ok` is optional on `RoadConditions` in
       `src/lib/roads.ts` since older files predate it. Branch `nps-alerts-visibility-2026-09-03`.
+- [x] **Found and shipped the "different NPS data source" flagged above (2026-09-03).** developer.nps.gov
+      publishes a public `/roadevents` endpoint (confirmed via its live swagger spec,
+      `nps.gov/subjects/developer/customcf/swagger.json`) — a WZDx (Work Zone Data Exchange) feed, a
+      genuinely separate system from `/alerts`. `capture_roads.py` now fetches
+      `roadevents?parkCode=blri&api_key=…` as a second NPS leg with the same fetch-ok/genuine-empty
+      distinguishability pattern (`nps_roadevents_fetch_ok`), parses each feature's
+      `properties.core_details` (name, description, event_type, road_names) into `parkway_road_events`.
+      `RoadConditions.tsx` renders a "Blue Ridge Parkway closures" block from it, above the general
+      "Blue Ridge Parkway alerts" block, with an updated source line naming both NPS feeds; the
+      empty-state copy now names its basis and links to NPS's own BRP closures page instead of implying
+      the road is clear. 7 new pytest cases in `tests/test_capture_roads.py` (mirroring the alerts
+      tests); `ParkwayRoadEvent`/`nps_roadevents_fetch_ok`/`parkway_road_events` added to
+      `src/lib/roads.ts`. Not yet live-verified against a real API key (none available locally) — first
+      `daily_capture` run after merge is the real-world check; watch `nps_roadevents_fetch_ok` and
+      `parkway_road_events` in the next committed `data/road_conditions/*.json`. Mobile-verified at
+      375px via a local fixture (not committed). Branch `nps-alerts-visibility-2026-09-03`.
 - [ ] **Grade both sides, week of November 10.** Not earlier — after his last report and after the
       valley windows close Nov 6. Method, scoring rules, and the three-column comparison (our July
       call, our post-refresh September call, his last pre-peak statement) are specified in §6 of the

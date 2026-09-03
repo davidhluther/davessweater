@@ -18,6 +18,16 @@ Sources (all free; DriveNC + NPS keyed):
     IsFullClosure, Severity, County.
   - NPS `alerts?parkCode=blri` — Blue Ridge Parkway closures/alerts (the BRP
     closes in winter). Fields: data[].{title, category, description, url}.
+  - NPS `roadevents?parkCode=blri` — a second, separate NPS system: the WZDx
+    (Work Zone Data Exchange) feed behind NPS's own BRP road-status page.
+    2026-09-03 finding: `alerts` genuinely returned zero Parkway entries for
+    25 straight days while NPS's public closures page listed five closed NC
+    segments — the two systems don't share data. `roadevents` returns a list
+    of GeoJSON FeatureCollections; each feature's `properties.core_details`
+    carries {name, description, event_type, road_names} plus top-level
+    start_date/end_date/vehicle_impact. This is the feed that actually
+    reflects seasonal/incident closures; `alerts` remains for general NPS
+    notices (fire, wildlife, facility).
 
 Keys come from env (DRIVENC_API_KEY / NPS_API_KEY), mirroring the GitHub secrets;
 never hardcoded. Throttle: DriveNC allows 10 calls/60s — we make two, spaced.
@@ -50,6 +60,7 @@ NPS_API_KEY = os.environ.get("NPS_API_KEY", "")
 
 DRIVENC_BASE = "https://www.drivenc.gov/api/v2/get"
 NPS_ALERTS = "https://developer.nps.gov/api/v1/alerts?parkCode=blri"
+NPS_ROADEVENTS = "https://developer.nps.gov/api/v1/roadevents?parkCode=blri"
 
 # The four road-surface fields DriveNC exposes per county row.
 _COND_FIELDS = ("Overall for Public Display", "Interstates", "US/NC Routes", "Secondary Roads")
@@ -107,6 +118,33 @@ def norm_alert(a: dict) -> dict:
     }
 
 
+def _road_events_from_feature_collections(payload) -> list:
+    """`roadevents` returns a list of GeoJSON FeatureCollections (one per
+    matched park); flatten to their `features`. Tolerate a bare
+    FeatureCollection too, in case NPS ever collapses the wrapper."""
+    collections = payload if isinstance(payload, list) else [payload] if isinstance(payload, dict) else []
+    features = []
+    for coll in collections:
+        if isinstance(coll, dict):
+            features.extend(coll.get("features") or [])
+    return features
+
+
+def norm_roadevent(f: dict) -> dict:
+    props = f.get("properties") or {}
+    core = props.get("core_details") or {}
+    road_names = core.get("road_names") or []
+    return {
+        "name": core.get("name"),
+        "road": ", ".join(road_names) if road_names else None,
+        "description": core.get("description"),
+        "event_type": core.get("event_type"),  # "work-zone" or "detour"/"incident"
+        "vehicle_impact": props.get("vehicle_impact"),
+        "start_date": props.get("start_date"),
+        "end_date": props.get("end_date"),
+    }
+
+
 def worst_level(conditions: list[dict]) -> str:
     """Map DriveNC road-surface condition text -> our LEVELS (worst wins).
 
@@ -134,8 +172,10 @@ def main() -> int:
     incidents: list[dict] = []
     conditions: list[dict] = []
     alerts: list[dict] = []
+    road_events: list[dict] = []
     fetch_ok = False
     nps_fetch_ok = False
+    nps_roadevents_fetch_ok = False
 
     if DRIVENC_API_KEY:
         conds, ok_c = _get(f"{DRIVENC_BASE}/roadconditions?key={DRIVENC_API_KEY}")
@@ -156,19 +196,28 @@ def main() -> int:
     if NPS_API_KEY:
         nps, nps_fetch_ok = _get(f"{NPS_ALERTS}&api_key={NPS_API_KEY}")
         alerts = [norm_alert(a) for a in _as_list(nps)]
+        nps_re, nps_roadevents_fetch_ok = _get(f"{NPS_ROADEVENTS}&api_key={NPS_API_KEY}")
+        road_events = [
+            norm_roadevent(f) for f in _road_events_from_feature_collections(nps_re)
+        ] if nps_roadevents_fetch_ok else []
     else:
         print("NOTE: NPS_API_KEY unset — writing empty Parkway section", file=sys.stderr)
 
     out = {
         "fetched_at": now.isoformat(),
         "date": now.date().isoformat(),
-        "source": "DriveNC v2 roadconditions + event (NCDOT Div. 11) + NPS blri alerts",
+        "source": (
+            "DriveNC v2 roadconditions + event (NCDOT Div. 11) + NPS blri alerts "
+            "+ NPS blri roadevents (WZDx)"
+        ),
         "fetch_ok": fetch_ok,
         "nps_fetch_ok": nps_fetch_ok,
+        "nps_roadevents_fetch_ok": nps_roadevents_fetch_ok,
         "counties_tracked": sorted(COUNTIES),
         "incidents": incidents,
         "road_conditions": conditions,
         "parkway_alerts": alerts,
+        "parkway_road_events": road_events,
         "worst_actual_level": worst_level(conditions),
     }
     OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -176,8 +225,9 @@ def main() -> int:
     out_path.write_text(json.dumps(out, indent=2) + "\n")
     print(
         f"Wrote {out_path} ({len(incidents)} incidents, {len(conditions)} county rows, "
-        f"{len(alerts)} Parkway alerts, worst={out['worst_actual_level']}, "
-        f"fetch_ok={fetch_ok}, nps_fetch_ok={nps_fetch_ok})"
+        f"{len(alerts)} Parkway alerts, {len(road_events)} Parkway road events, "
+        f"worst={out['worst_actual_level']}, fetch_ok={fetch_ok}, nps_fetch_ok={nps_fetch_ok}, "
+        f"nps_roadevents_fetch_ok={nps_roadevents_fetch_ok})"
     )
     return 0
 

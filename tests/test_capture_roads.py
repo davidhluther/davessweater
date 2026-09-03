@@ -111,3 +111,91 @@ def test_nps_fetch_ok_distinguishes_failure_from_empty(monkeypatch, tmp_path):
 
     assert missing_key_out["parkway_alerts"] == empty_result_out["parkway_alerts"] == []
     assert missing_key_out["nps_fetch_ok"] != empty_result_out["nps_fetch_ok"]
+
+
+# --- roadevents (WZDx) leg -------------------------------------------------
+# 2026-09-03: `alerts` was verified correct (genuinely empty); NPS's public
+# BRP closures page draws from a separate system. That system is the
+# `roadevents` endpoint (developer.nps.gov swagger: /roadevents, WZDx-shaped
+# FeatureCollection list). These tests cover that second leg with the same
+# fetch-ok/genuine-empty distinguishability pattern as the alerts tests above.
+
+_SAMPLE_FEATURE_COLLECTION = {
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "id": "13a5ed88-e452-440f-8daf-98707ed728b5",
+            "properties": {
+                "core_details": {
+                    "name": "MP 261.2-276.4 Closure",
+                    "description": "Closed for seasonal maintenance.",
+                    "event_type": "work-zone",
+                    "road_names": ["Blue Ridge Parkway"],
+                },
+                "start_date": "2026-08-01T00:00:00Z",
+                "end_date": "2026-09-15T00:00:00Z",
+                "vehicle_impact": "all-lanes-closed",
+            },
+        }
+    ],
+}
+
+
+def test_roadevents_fetch_ok_true_with_closures(monkeypatch, tmp_path):
+    """Key present, roadevents reachable, features present -> ok=True, parsed events."""
+    _no_drivenc_key(monkeypatch)
+    monkeypatch.setattr(cr, "NPS_API_KEY", "real-key")
+    monkeypatch.setattr(cr, "OUT_DIR", tmp_path)
+
+    def fake_urlopen(req, timeout=None):
+        return _FakeResp([_SAMPLE_FEATURE_COLLECTION])
+
+    monkeypatch.setattr(cr, "urlopen", fake_urlopen)
+    cr.main()
+
+    out = json.loads(next(tmp_path.glob("*.json")).read_text())
+    assert out["nps_roadevents_fetch_ok"] is True
+    assert len(out["parkway_road_events"]) == 1
+    ev = out["parkway_road_events"][0]
+    assert ev["road"] == "Blue Ridge Parkway"
+    assert ev["description"] == "Closed for seasonal maintenance."
+    assert ev["event_type"] == "work-zone"
+
+
+def test_roadevents_fetch_ok_false_on_key_missing(monkeypatch, tmp_path):
+    """No key at all -> ok=False, events=[] (never attempted)."""
+    _no_drivenc_key(monkeypatch)
+    monkeypatch.setattr(cr, "NPS_API_KEY", "")
+    monkeypatch.setattr(cr, "OUT_DIR", tmp_path)
+
+    def fake_urlopen(req, timeout=None):
+        raise AssertionError("should not fetch NPS without a key")
+
+    monkeypatch.setattr(cr, "urlopen", fake_urlopen)
+    cr.main()
+
+    out = json.loads(next(tmp_path.glob("*.json")).read_text())
+    assert out["nps_roadevents_fetch_ok"] is False
+    assert out["parkway_road_events"] == []
+
+
+def test_roadevents_fetch_ok_distinguishes_failure_from_empty(monkeypatch, tmp_path):
+    """The core regression check, mirrored for the roadevents leg."""
+    _no_drivenc_key(monkeypatch)
+    monkeypatch.setattr(cr, "NPS_API_KEY", "")
+    monkeypatch.setattr(cr, "OUT_DIR", tmp_path)
+    cr.main()
+    missing_key_out = json.loads(next(tmp_path.glob("*.json")).read_text())
+
+    monkeypatch.setattr(cr, "NPS_API_KEY", "real-key")
+
+    def fake_urlopen(req, timeout=None):
+        return _FakeResp([{"type": "FeatureCollection", "features": []}])
+
+    monkeypatch.setattr(cr, "urlopen", fake_urlopen)
+    cr.main()
+    empty_result_out = json.loads(next(tmp_path.glob("*.json")).read_text())
+
+    assert missing_key_out["parkway_road_events"] == empty_result_out["parkway_road_events"] == []
+    assert missing_key_out["nps_roadevents_fetch_ok"] != empty_result_out["nps_roadevents_fetch_ok"]
