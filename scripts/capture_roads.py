@@ -135,6 +135,7 @@ def main() -> int:
     conditions: list[dict] = []
     alerts: list[dict] = []
     fetch_ok = False
+    nps_fetch_ok = False
 
     if DRIVENC_API_KEY:
         conds, ok_c = _get(f"{DRIVENC_BASE}/roadconditions?key={DRIVENC_API_KEY}")
@@ -153,7 +154,7 @@ def main() -> int:
         print("NOTE: DRIVENC_API_KEY unset — writing empty DriveNC sections", file=sys.stderr)
 
     if NPS_API_KEY:
-        nps, _ = _get(f"{NPS_ALERTS}&api_key={NPS_API_KEY}")
+        nps, nps_fetch_ok = _get(f"{NPS_ALERTS}&api_key={NPS_API_KEY}")
         alerts = [norm_alert(a) for a in _as_list(nps)]
     else:
         print("NOTE: NPS_API_KEY unset — writing empty Parkway section", file=sys.stderr)
@@ -163,6 +164,7 @@ def main() -> int:
         "date": now.date().isoformat(),
         "source": "DriveNC v2 roadconditions + event (NCDOT Div. 11) + NPS blri alerts",
         "fetch_ok": fetch_ok,
+        "nps_fetch_ok": nps_fetch_ok,
         "counties_tracked": sorted(COUNTIES),
         "incidents": incidents,
         "road_conditions": conditions,
@@ -174,7 +176,8 @@ def main() -> int:
     out_path.write_text(json.dumps(out, indent=2) + "\n")
     print(
         f"Wrote {out_path} ({len(incidents)} incidents, {len(conditions)} county rows, "
-        f"{len(alerts)} Parkway alerts, worst={out['worst_actual_level']}, fetch_ok={fetch_ok})"
+        f"{len(alerts)} Parkway alerts, worst={out['worst_actual_level']}, "
+        f"fetch_ok={fetch_ok}, nps_fetch_ok={nps_fetch_ok})"
     )
     return 0
 

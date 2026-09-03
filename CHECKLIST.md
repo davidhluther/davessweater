@@ -61,14 +61,21 @@ enter `data/leaf/observations.json`, which already bars grading a forecast again
       publishing actively at a new address of his own (five posts Jul 26 – Aug 31 2026). The
       registry note in `data/events/registry.json` still says the question is open and should be
       updated in the next change that touches that file.
-- [ ] **Diagnose the empty Parkway alerts feed.** `data/road_conditions/*.json` has carried
-      `parkway_alerts: []` for at least 25 straight days (Aug 7–31) while NPS lists five closed NC
-      segments. Two candidates: `NPS_API_KEY` unset in Actions (the code writes an empty section and
-      logs to stderr, and `fetch_ok` covers only the DriveNC calls, so the file looks identical
-      either way), or the `alerts?parkCode=blri` endpoint not carrying road closures at all. One
-      call with a valid key settles it. If it is the endpoint, the NPS roadevents dataset is the fix.
-      **Also fix the silent-failure shape**: `fetch_ok` should cover the NPS leg, or the file should
-      carry a separate `nps_fetch_ok`, so an empty Parkway section is never unverifiable again.
+- [x] **Diagnosed the empty Parkway alerts feed (2026-09-03).** `NPS_API_KEY` is a configured GitHub
+      Actions secret (present since 2026-07-25, well before the 25-day empty streak) and works fine —
+      the same run's `capture_nps_visits.py` leg pulled 564 months of data with it. Live-verified the
+      NPS alerts endpoint directly (`GET alerts?parkCode=blri`, 2026-09-03): it genuinely returns
+      `data: []` right now. **Root cause is a data-source mismatch, not a bug**: NPS's Alerts API
+      (park-wide advisories) and the Blue Ridge Parkway's road-closures page draw from two different
+      systems — the five closed NC segments the benchmark cites aren't modeled as "alerts" at all, so
+      no key or parsing fix recovers them from this endpoint. Getting real closure data would mean a
+      *different* NPS data source (a roadevents/closures feed, if NPS publishes one as an API — not
+      confirmed) — a separate, scoped investigation, not this fix. **Shipped the durable fix regardless
+      of outcome**: `capture_roads.py` now tracks `nps_fetch_ok` separately from `fetch_ok` (which
+      stays DriveNC-only), so a future auth failure and a genuine zero-alert response write
+      distinguishable records instead of both silently becoming `parkway_alerts: []`. Covered by
+      `tests/test_capture_roads.py` (4 new tests); `nps_fetch_ok` is optional on `RoadConditions` in
+      `src/lib/roads.ts` since older files predate it. Branch `nps-alerts-visibility-2026-09-03`.
 - [ ] **Grade both sides, week of November 10.** Not earlier — after his last report and after the
       valley windows close Nov 6. Method, scoring rules, and the three-column comparison (our July
       call, our post-refresh September call, his last pre-peak statement) are specified in §6 of the

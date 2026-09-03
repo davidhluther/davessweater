@@ -56,6 +56,11 @@ export type RoadConditions = {
   date: string;
   source: string;
   fetch_ok: boolean;
+  /** Whether the NPS Blue Ridge Parkway alerts leg itself succeeded — distinct
+   * from `fetch_ok` (DriveNC only). A missing/invalid NPS_API_KEY and a
+   * genuine zero-alert response both leave `parkway_alerts: []`; this field
+   * is what tells them apart (older files predate it and omit it). */
+  nps_fetch_ok?: boolean;
   counties_tracked: string[];
   incidents: RoadIncident[];
   road_conditions: RoadConditionRow[];
