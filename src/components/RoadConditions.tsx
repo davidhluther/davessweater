@@ -53,6 +53,7 @@ export default function RoadConditionsBlock({
   const closures = (conditions?.incidents ?? []).filter((i) => i.closed);
   const otherIncidents = (conditions?.incidents ?? []).filter((i) => !i.closed);
   const alerts = conditions?.parkway_alerts ?? [];
+  const parkwayEvents = conditions?.parkway_road_events ?? [];
 
   return (
     <>
@@ -115,9 +116,22 @@ export default function RoadConditionsBlock({
           </p>
         ) : (
           <>
-            {closures.length === 0 && otherIncidents.length === 0 && alerts.length === 0 ? (
+            {closures.length === 0 &&
+            otherIncidents.length === 0 &&
+            alerts.length === 0 &&
+            parkwayEvents.length === 0 ? (
               <p className="mt-2 ds-body text-muted">
-                No active closures, incidents, or Blue Ridge Parkway alerts reported for Watauga, Avery, or Ashe.
+                No active closures or incidents reported for Watauga, Avery, or Ashe, and no Blue Ridge Parkway
+                closures reported by{" "}
+                <a
+                  href="https://www.nps.gov/blri/planyourvisit/current-road-closures.htm"
+                  rel="nofollow noopener"
+                  target="_blank"
+                  className="text-teal underline underline-offset-2"
+                >
+                  NPS&apos;s own Parkway closures feed
+                </a>
+                .
               </p>
             ) : (
               <div className="mt-2 space-y-4">
@@ -134,9 +148,22 @@ export default function RoadConditionsBlock({
                     </ul>
                   </div>
                 )}
+                {parkwayEvents.length > 0 && (
+                  <div>
+                    <h3 className="ds-h4 text-red-700">Blue Ridge Parkway closures</h3>
+                    <ul className="mt-1 space-y-1 ds-body text-muted">
+                      {parkwayEvents.map((e, k) => (
+                        <li key={`pe${k}`}>
+                          <span className="font-medium text-foreground">{e.road ?? e.name ?? "Parkway segment"}</span>
+                          {e.description ? <> &mdash; {e.description}</> : ""}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 {alerts.length > 0 && (
                   <div>
-                    <h3 className="ds-h4 text-foreground">Blue Ridge Parkway</h3>
+                    <h3 className="ds-h4 text-foreground">Blue Ridge Parkway alerts</h3>
                     <ul className="mt-1 space-y-1 ds-body text-muted">
                       {alerts.map((a, k) => (
                         <li key={`p${k}`}>
@@ -178,7 +205,8 @@ export default function RoadConditionsBlock({
               >
                 DriveNC.gov
               </a>{" "}
-              (Division 11) and the National Park Service. Scoped to Watauga, Avery, and Ashe counties.
+              (Division 11) and the National Park Service&apos;s alerts and roadevents (WZDx) feeds for the Blue
+              Ridge Parkway. Scoped to Watauga, Avery, and Ashe counties.
             </p>
           </>
         )}

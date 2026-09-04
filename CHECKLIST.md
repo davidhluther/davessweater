@@ -80,6 +80,69 @@ must read in reader voice, not build-notes voice. Fixed:
 - Branch `provisional-note-reader-voice-2026-09-01`, PR opened, not merged — see PR link
   in git history / open PRs.
 
+## Leaf model benchmark against a published regional forecast (2026-09-03)
+Internal benchmark of our 18-place leaf model against the established regional expert's published
+method and 2025 observations, logged before the season so both sides can be scored on identical
+terms. **The analysis is local-only** — `planning/analysis/2026-09-03-fall-color-guy-benchmark.md`,
+inside the gitignored `planning/` tree, because this repo is public and that tree is where
+competitive analysis belongs. It is not published, not cited on the site, and his forecasts never
+enter `data/leaf/observations.json`, which already bars grading a forecast against a forecast.
+
+- [x] **Head-to-head logged** — his hedged Oct 10–20 band for 2,500–4,000 ft (as of 2026-08-04)
+      against our 18 windows (as of 2026-07-26), with the coverage asymmetry stated both ways.
+- [x] **2025 backcast run.** `predict_leaf.py --year 2025`, scored against four dated peak
+      statements from his 2025 archive: 4/4 windows hit, mean abs error 3.5 days, mean signed −0.5,
+      mean score 95.5. Read with the caveat in the doc — 2025 was a cool September in which our
+      thermal term pushed us early and the ±5-day window absorbed the miss.
+- [x] **The continuity-at-risk flag on `fall-color-wataugaonline` is resolved in fact:** he is
+      publishing actively at a new address of his own (five posts Jul 26 – Aug 31 2026). The
+      registry note in `data/events/registry.json` still says the question is open and should be
+      updated in the next change that touches that file.
+- [x] **Diagnosed the empty Parkway alerts feed (2026-09-03).** `NPS_API_KEY` is a configured GitHub
+      Actions secret (present since 2026-07-25, well before the 25-day empty streak) and works fine —
+      the same run's `capture_nps_visits.py` leg pulled 564 months of data with it. Live-verified the
+      NPS alerts endpoint directly (`GET alerts?parkCode=blri`, 2026-09-03): it genuinely returns
+      `data: []` right now. **Root cause is a data-source mismatch, not a bug**: NPS's Alerts API
+      (park-wide advisories) and the Blue Ridge Parkway's road-closures page draw from two different
+      systems — the five closed NC segments the benchmark cites aren't modeled as "alerts" at all, so
+      no key or parsing fix recovers them from this endpoint. Getting real closure data would mean a
+      *different* NPS data source (a roadevents/closures feed, if NPS publishes one as an API — not
+      confirmed) — a separate, scoped investigation, not this fix. **Shipped the durable fix regardless
+      of outcome**: `capture_roads.py` now tracks `nps_fetch_ok` separately from `fetch_ok` (which
+      stays DriveNC-only), so a future auth failure and a genuine zero-alert response write
+      distinguishable records instead of both silently becoming `parkway_alerts: []`. Covered by
+      `tests/test_capture_roads.py` (4 new tests); `nps_fetch_ok` is optional on `RoadConditions` in
+      `src/lib/roads.ts` since older files predate it. Branch `nps-alerts-visibility-2026-09-03`.
+- [x] **Found and shipped the "different NPS data source" flagged above (2026-09-03).** developer.nps.gov
+      publishes a public `/roadevents` endpoint (confirmed via its live swagger spec,
+      `nps.gov/subjects/developer/customcf/swagger.json`) — a WZDx (Work Zone Data Exchange) feed, a
+      genuinely separate system from `/alerts`. `capture_roads.py` now fetches
+      `roadevents?parkCode=blri&api_key=…` as a second NPS leg with the same fetch-ok/genuine-empty
+      distinguishability pattern (`nps_roadevents_fetch_ok`), parses each feature's
+      `properties.core_details` (name, description, event_type, road_names) into `parkway_road_events`.
+      `RoadConditions.tsx` renders a "Blue Ridge Parkway closures" block from it, above the general
+      "Blue Ridge Parkway alerts" block, with an updated source line naming both NPS feeds; the
+      empty-state copy now names its basis and links to NPS's own BRP closures page instead of implying
+      the road is clear. 7 new pytest cases in `tests/test_capture_roads.py` (mirroring the alerts
+      tests); `ParkwayRoadEvent`/`nps_roadevents_fetch_ok`/`parkway_road_events` added to
+      `src/lib/roads.ts`. Not yet live-verified against a real API key (none available locally) — first
+      `daily_capture` run after merge is the real-world check; watch `nps_roadevents_fetch_ok` and
+      `parkway_road_events` in the next committed `data/road_conditions/*.json`. Mobile-verified at
+      375px via a local fixture (not committed). Branch `nps-alerts-visibility-2026-09-03`.
+- [ ] **Grade both sides, week of November 10.** Not earlier — after his last report and after the
+      valley windows close Nov 6. Method, scoring rules, and the three-column comparison (our July
+      call, our post-refresh September call, his last pre-peak statement) are specified in §6 of the
+      local analysis doc, which also holds the weekly log of his 2026 statements, each marked
+      prediction or observation.
+- [ ] **Post-season constant review (after the Nov 10 grading, not before).** Two items from §4 of
+      the doc: whether the ±7-day thermal clamp should widen to ±10 (his 2018 case would have been
+      truncated by 7), and whether a second refresh pass around Oct 5–7 on the *full* September mean
+      is worth building — his best regression uses full September (R² 0.62), ours uses Sep 1–25.
+      **Settled and requiring no work:** do NOT add a precipitation or drought term to the timing
+      model. He regressed monthly, seasonal, and cumulative precipitation and the Palmer Drought
+      Index against 18 years of peak dates and found no relationship. Drought drives leaf drop and
+      color quality, not timing. Detail and citations are in the local analysis doc.
+
 ## Fall readiness sweep (2026-08-30, from OVERALL IA)
 Brief executed: `IA-BRIEF-2026-08-30-fall-readiness.md` (deleted on landing, per its own
 instruction). Local checkout was 24 commits stale and carried one unpushed commit
