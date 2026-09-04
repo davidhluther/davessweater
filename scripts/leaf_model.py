@@ -1,5 +1,5 @@
 """
-leaf_model.py — pure-function core for the High Country fall leaf-color model (v0-draft).
+leaf_model.py — pure-function core for the High Country fall leaf-color model.
 
 No I/O. Shared by predict_leaf.py (predict + grade) and exercised directly by
 tests. Same philosophy as scoring.py / traffic_model.py: transparent, declared
@@ -32,6 +32,19 @@ Three ingredients, in order of authority:
    early-fall data exists yet (e.g. running in July for the coming fall), the
    term is zero and the prediction is pure elevation climatology — recorded
    honestly in the prediction's `basis`.
+
+TWO VERSIONS LIVE HERE (since 2026-09-04):
+
+  leaf-v0-draft — the July 2026 constants, FROZEN. data/leaf/predictions.json was
+      generated with them on 2026-07-26 and is a graded artifact: it is scored in
+      November exactly as published. Nothing in this file may change a v0 number.
+  leaf-v1 — calibrated 2026-09-04 against 18 years of published High Country
+      peak-color observations at a 3,300 ft reference elevation, using our own
+      Open-Meteo temperature series rather than the observer's station record.
+      Adopted at the September refresh, graded separately from v0.
+
+Every constant is per-version in PARAMS below; the module-level names are v0's
+values, kept so a reader (and the frozen artifact) can still see them by name.
 
 Falsifiable by construction: the constants are named, the elevation gradient is
 a straight line a reader can check against any two towns, and every prediction
@@ -78,55 +91,171 @@ GRADE_TOL_DAYS = 3       # within 3 days of observed peak = full credit
 GRADE_PENALTY_PER_DAY = 6  # points lost per day of error beyond the tolerance
 
 
-def elevation_shift_days(elevation_ft: float) -> float:
+# ── versioned parameters ─────────────────────────────────────────────────────
+# Each version is a complete, self-contained parameter set. v0 is frozen: its
+# numbers produced data/leaf/predictions.json on 2026-07-26 and that file is
+# graded as published. v1's numbers come from scripts/fit_leaf_v1.py, which
+# regenerates every figure in docs/leaf-model.md's calibration section.
+
+DEFAULT_VERSION = "leaf-v1"
+
+PARAMS = {
+    "leaf-v0-draft": {
+        "ref_elevation_ft": REF_ELEVATION_FT,
+        "ref_peak_month": REF_PEAK_MONTH,
+        "ref_peak_day": REF_PEAK_DAY,
+        "days_per_1000ft": DAYS_PER_1000FT,
+        # One thermal window, one coefficient, one climatology rule.
+        "thermal_window": {"start": (9, 1), "end": (9, 25)},
+        "days_per_degf": DAYS_PER_DEGF,
+        "max_thermal_shift_days": MAX_THERMAL_SHIFT_DAYS,
+        "climatology": {"mode": "rolling", "years": 6},
+        "half_window_days": HALF_WINDOW_DAYS,
+        "grade_tol_days": GRADE_TOL_DAYS,
+        "grade_penalty_per_day": GRADE_PENALTY_PER_DAY,
+        "provenance": "First-guess priors, declared not fitted (July 2026).",
+    },
+    "leaf-v1": {
+        # Anchor: UNCHANGED from v0, and now corroborated rather than assumed.
+        # The observed record's mean peak at 3,300 ft is October 16.5 (n=17);
+        # walking that up 1,700 ft at the declared lapse implies an October 5.5
+        # anchor at 5,000 ft, and the 2017-2025 era implies October 6.8. v0's
+        # October 6 sits between them, so it stays.
+        "ref_elevation_ft": 5000,
+        "ref_peak_month": 10,
+        "ref_peak_day": 6,
+        # Lapse: UNCHANGED. The historical record is single-elevation and says
+        # nothing about the gradient, so there is nothing here to fit it on.
+        "days_per_1000ft": 6.5,
+        # Thermal: the full calendar month of September is the best predictor
+        # (R2 0.673 on our series; 0.588 for Sep 1-25), so v1 fits BOTH windows
+        # and uses whichever the calendar can actually supply -- see `passes`.
+        "thermal_window": {"start": (9, 1), "end": (9, 30)},
+        "days_per_degf": 1.80,
+        # Clamp widened 7 -> 10. The one historical case the old clamp would
+        # have truncated is 2019: a +4.8 degF September anomaly implies +8.6
+        # days, and the observed delay was +12.5. A 7-day clamp makes the
+        # model's single largest documented miss larger on purpose.
+        "max_thermal_shift_days": 10,
+        # Climatology: a fixed long-term normal, not a 6-year rolling one. The
+        # coefficient was fitted against anomalies from an 18-year mean; a
+        # 6-year window over 2020-2025 sits 1.3 degF cooler than that mean at
+        # Boone, and the coefficient would multiply that offset into about
+        # 2.3 days of spurious delay every year.
+        "climatology": {"mode": "fixed_span", "start_year": 2008, "end_year": 2025},
+        "half_window_days": 5,
+        # Grading rules are IDENTICAL to v0's on purpose: two model versions
+        # graded on one unchanged ruler is the only way the comparison means
+        # anything.
+        "grade_tol_days": 3,
+        "grade_penalty_per_day": 6,
+        # Provisional pass: the September refresh runs before the month ends and
+        # before the archive catches up, so the first v1 pass uses Sep 1-25 with
+        # the coefficient fitted on THAT window (1.65, not 1.80). The final pass
+        # in early October uses the full month. Both are published and graded.
+        "passes": {
+            "provisional": {
+                "thermal_window": {"start": (9, 1), "end": (9, 25)},
+                "days_per_degf": 1.65,
+            },
+            "final": {
+                "thermal_window": {"start": (9, 1), "end": (9, 30)},
+                "days_per_degf": 1.80,
+            },
+        },
+        "provenance": ("Calibrated 2026-09-04 against 18 years of published High Country "
+                       "peak-color observations at a 3,300 ft reference elevation, paired "
+                       "with our own Open-Meteo September temperature series. "
+                       "See scripts/fit_leaf_v1.py and docs/leaf-model.md."),
+    },
+}
+
+
+def get_params(version: str | None = None, pass_name: str | None = None) -> dict:
+    """The parameter set for `version` (default: the adopted model), optionally
+    specialized to a named pass. Raises on an unknown version rather than
+    silently falling back -- a typo must not quietly grade the wrong model."""
+    version = version or DEFAULT_VERSION
+    if version not in PARAMS:
+        raise KeyError(f"unknown leaf model version {version!r}; "
+                       f"known: {sorted(PARAMS)}")
+    params = dict(PARAMS[version])
+    if pass_name:
+        passes = params.get("passes") or {}
+        if pass_name not in passes:
+            raise KeyError(f"model {version!r} has no pass {pass_name!r}; "
+                           f"known: {sorted(passes)}")
+        params.update(passes[pass_name])
+        params["pass"] = pass_name
+    return params
+
+
+def _p(params=None, version=None, pass_name=None) -> dict:
+    """Resolve a parameter set from an explicit dict, or a version (+ pass)."""
+    if params is not None:
+        return params
+    return get_params(version, pass_name)
+
+
+def elevation_shift_days(elevation_ft: float, params=None, version=None) -> float:
     """Days the peak moves relative to the reference elevation. Positive = later
     (lower than reference); negative = earlier (higher than reference)."""
-    return (REF_ELEVATION_FT - elevation_ft) * DAYS_PER_1000FT / 1000.0
+    p = _p(params, version)
+    return (p["ref_elevation_ft"] - elevation_ft) * p["days_per_1000ft"] / 1000.0
 
 
-def thermal_shift_days(temp_anomaly_f):
-    """Bounded peak shift for an early-fall temperature anomaly (this year's mean
+def thermal_shift_days(temp_anomaly_f, params=None, version=None, pass_name=None):
+    """Bounded peak shift for a September temperature anomaly (this year's mean
     minus the town's normal). Warmer (positive anomaly) ⇒ later peak. Returns 0.0
     when no anomaly is available (pure-climatology mode)."""
     if temp_anomaly_f is None:
         return 0.0
-    raw = DAYS_PER_DEGF * temp_anomaly_f
-    if raw > MAX_THERMAL_SHIFT_DAYS:
-        return float(MAX_THERMAL_SHIFT_DAYS)
-    if raw < -MAX_THERMAL_SHIFT_DAYS:
-        return float(-MAX_THERMAL_SHIFT_DAYS)
+    p = _p(params, version, pass_name)
+    raw = p["days_per_degf"] * temp_anomaly_f
+    cap = p["max_thermal_shift_days"]
+    if raw > cap:
+        return float(cap)
+    if raw < -cap:
+        return float(-cap)
     return float(raw)
 
 
-def peak_center_date(elevation_ft: float, year: int, temp_anomaly_f=None) -> date:
+def peak_center_date(elevation_ft: float, year: int, temp_anomaly_f=None,
+                     params=None, version=None, pass_name=None) -> date:
     """The predicted peak-color center date for a town at `elevation_ft` in
     `year`, combining the photoperiod anchor, elevation lapse, and (optional)
     thermal modulation. Rounded to the nearest whole day."""
-    ref = date(year, REF_PEAK_MONTH, REF_PEAK_DAY)
-    shift = elevation_shift_days(elevation_ft) + thermal_shift_days(temp_anomaly_f)
+    p = _p(params, version, pass_name)
+    ref = date(year, p["ref_peak_month"], p["ref_peak_day"])
+    shift = elevation_shift_days(elevation_ft, p) + thermal_shift_days(temp_anomaly_f, p)
     return ref + timedelta(days=round(shift))
 
 
-def predict_window(elevation_ft: float, year: int, temp_anomaly_f=None) -> dict:
+def predict_window(elevation_ft: float, year: int, temp_anomaly_f=None,
+                   params=None, version=None, pass_name=None) -> dict:
     """Full per-town prediction: center + start/end window + the component parts
     that produced it (so a reader can reconstruct the number by hand)."""
-    elev_shift = elevation_shift_days(elevation_ft)
-    therm_shift = thermal_shift_days(temp_anomaly_f)
-    center = peak_center_date(elevation_ft, year, temp_anomaly_f)
-    start = center - timedelta(days=HALF_WINDOW_DAYS)
-    end = center + timedelta(days=HALF_WINDOW_DAYS)
+    p = _p(params, version, pass_name)
+    elev_shift = elevation_shift_days(elevation_ft, p)
+    therm_shift = thermal_shift_days(temp_anomaly_f, p)
+    center = peak_center_date(elevation_ft, year, temp_anomaly_f, p)
+    half = p["half_window_days"]
+    start = center - timedelta(days=half)
+    end = center + timedelta(days=half)
     return {
         "peak_start": start.isoformat(),
         "peak_center": center.isoformat(),
         "peak_end": end.isoformat(),
         "components": {
-            "reference_date": date(year, REF_PEAK_MONTH, REF_PEAK_DAY).isoformat(),
-            "reference_elevation_ft": REF_ELEVATION_FT,
+            "reference_date": date(year, p["ref_peak_month"], p["ref_peak_day"]).isoformat(),
+            "reference_elevation_ft": p["ref_elevation_ft"],
             "elevation_shift_days": round(elev_shift, 2),
             "thermal_shift_days": round(therm_shift, 2),
             "temp_anomaly_f": (round(temp_anomaly_f, 2)
                                if temp_anomaly_f is not None else None),
-            "half_window_days": HALF_WINDOW_DAYS,
+            "half_window_days": half,
+            "days_per_degf": p["days_per_degf"],
+            "max_thermal_shift_days": p["max_thermal_shift_days"],
         },
     }
 
@@ -168,7 +297,7 @@ def _grade_label(score: float) -> str:
     return "wrong"
 
 
-def score_prediction(prediction: dict, observed) -> dict:
+def score_prediction(prediction: dict, observed, params=None, version=None) -> dict:
     """Grade a predicted window against an observed peak.
 
     `prediction` is a predict_window() dict (needs peak_start/center/end).
@@ -179,6 +308,7 @@ def score_prediction(prediction: dict, observed) -> dict:
     positive = predicted late), a window-hit bool (did the observed peak fall
     inside our predicted window / overlap it), a 0–100 score, and a grade label.
     """
+    p = _p(params, version)
     pred_center = _parse_date(prediction["peak_center"])
     pred_start = _parse_date(prediction["peak_start"])
     pred_end = _parse_date(prediction["peak_end"])
@@ -192,7 +322,7 @@ def score_prediction(prediction: dict, observed) -> dict:
     # (for a single observed date this reduces to "date is inside the window").
     window_hit = (pred_start <= obs_end) and (obs_start <= pred_end)
 
-    penalty = GRADE_PENALTY_PER_DAY * max(0, abs_error_days - GRADE_TOL_DAYS)
+    penalty = p["grade_penalty_per_day"] * max(0, abs_error_days - p["grade_tol_days"])
     score = round(max(0.0, 100.0 - penalty), 1)
 
     return {

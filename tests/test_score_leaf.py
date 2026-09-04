@@ -12,6 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
+import score_leaf  # noqa: E402  (version-separation tests read its module-level pairing)
 from score_leaf import build, grading_source_ids, observation_covers, score_all, summarize
 
 NOW = datetime(2026, 10, 20, 9, 0, 0)
@@ -304,3 +305,37 @@ def test_shipped_observations_carry_their_evidence():
         assert entry.get("source_id"), "an observation with no source is not an observation"
         assert entry.get("source_url"), "an observation must name the page it was read from"
         assert entry.get("evidence"), "an observation must say what the source actually said"
+
+
+# ── version separation (2026-09-04) ──────────────────────────────────────────
+
+def test_each_prediction_file_has_its_own_scoreboard():
+    """No two model versions may share a scoreboard path, and no scoreboard may
+    be written by two versions -- a mean across versions describes neither."""
+    preds = [p for p, _ in score_leaf.VERSION_FILES]
+    outs = [o for _, o in score_leaf.VERSION_FILES]
+    assert len(set(preds)) == len(preds)
+    assert len(set(outs)) == len(outs)
+    assert not set(preds) & set(outs)
+
+
+def test_the_frozen_july_artifact_is_still_the_v0_pairing():
+    pairing = dict(score_leaf.VERSION_FILES)
+    v0 = score_leaf.LEAF_DIR / "predictions.json"
+    assert pairing[v0] == score_leaf.LEAF_DIR / "scores.json"
+
+
+def test_scoreboard_carries_the_version_and_pass_it_graded():
+    predictions = {
+        "model_version": "leaf-v1",
+        "model_pass": "provisional",
+        "calibration": "calibrated against 18 years of published observations",
+        "target_year": 2026,
+        "predictions": [{"slug": "boone", "name": "Boone", "elevation_ft": 3333,
+                         "peak_start": "2026-10-12", "peak_center": "2026-10-17",
+                         "peak_end": "2026-10-22"}],
+    }
+    out = score_leaf.build(predictions, {"observations": []}, datetime(2026, 11, 10))
+    assert out["model_version"] == "leaf-v1"
+    assert out["model_pass"] == "provisional"
+    assert "18 years" in out["calibration"]

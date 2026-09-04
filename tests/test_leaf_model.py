@@ -37,17 +37,24 @@ def test_thermal_none_is_zero():
 
 
 def test_thermal_warm_delays_peak():
-    # positive anomaly (warmer) ⇒ positive (later) shift
-    assert lm.thermal_shift_days(2.0) == lm.DAYS_PER_DEGF * 2.0
+    # positive anomaly (warmer) ⇒ positive (later) shift. Asserted per version,
+    # since the coefficient is the constant that leaf-v1 recalibrated.
+    for version in lm.PARAMS:
+        coef = lm.PARAMS[version]["days_per_degf"]
+        assert lm.thermal_shift_days(2.0, version=version) == coef * 2.0
 
 
 def test_thermal_cool_advances_peak():
-    assert lm.thermal_shift_days(-2.0) == -lm.DAYS_PER_DEGF * 2.0
+    for version in lm.PARAMS:
+        coef = lm.PARAMS[version]["days_per_degf"]
+        assert lm.thermal_shift_days(-2.0, version=version) == -coef * 2.0
 
 
 def test_thermal_clamps_both_directions():
-    assert lm.thermal_shift_days(100.0) == lm.MAX_THERMAL_SHIFT_DAYS
-    assert lm.thermal_shift_days(-100.0) == -lm.MAX_THERMAL_SHIFT_DAYS
+    for version in lm.PARAMS:
+        cap = lm.PARAMS[version]["max_thermal_shift_days"]
+        assert lm.thermal_shift_days(100.0, version=version) == cap
+        assert lm.thermal_shift_days(-100.0, version=version) == -cap
 
 
 # ── peak center date ─────────────────────────────────────────────────────────
@@ -181,3 +188,100 @@ def test_meh_band():
     assert r["abs_error_days"] == 9
     assert r["score"] == 64.0
     assert r["grade"] == "meh"
+
+
+# ── version separation (leaf-v1 calibration, 2026-09-04) ─────────────────────
+#
+# Two parameter sets live in the model at once. These tests exist because the
+# failure mode that matters is silent: a v0 number produced with v1 constants
+# looks exactly like a v0 number, and data/leaf/predictions.json is a graded
+# artifact that must stay reproducible from its declared version forever.
+
+def test_v0_parameters_are_frozen_at_their_july_values():
+    p = lm.get_params("leaf-v0-draft")
+    assert p["days_per_degf"] == 1.5
+    assert p["max_thermal_shift_days"] == 7
+    assert p["ref_peak_day"] == 6
+    assert p["ref_elevation_ft"] == 5000
+    assert p["days_per_1000ft"] == 6.5
+    assert p["half_window_days"] == 5
+    assert p["thermal_window"] == {"start": (9, 1), "end": (9, 25)}
+    assert p["climatology"] == {"mode": "rolling", "years": 6}
+
+
+def test_v1_ships_the_fitted_constants():
+    p = lm.get_params("leaf-v1")
+    assert p["days_per_degf"] == 1.80          # fitted on our own temperature series
+    assert p["max_thermal_shift_days"] == 10   # widened from 7; see docs/leaf-model.md
+    assert p["thermal_window"] == {"start": (9, 1), "end": (9, 30)}
+    assert p["climatology"]["mode"] == "fixed_span"
+    # anchor and lapse are deliberately unchanged from v0
+    assert (p["ref_peak_day"], p["ref_elevation_ft"], p["days_per_1000ft"]) == (6, 5000, 6.5)
+
+
+def test_v1_provenance_names_no_person_or_site():
+    """The owner's no-cite ruling: the calibration source is described, never named."""
+    text = lm.get_params("leaf-v1")["provenance"].lower()
+    assert "18 years" in text
+    for forbidden in ("neufeld", "fallcolorguy", "fall color guy", "appalachian state"):
+        assert forbidden not in text
+
+
+def test_the_two_versions_grade_on_the_same_ruler():
+    v0, v1 = lm.get_params("leaf-v0-draft"), lm.get_params("leaf-v1")
+    assert v0["grade_tol_days"] == v1["grade_tol_days"]
+    assert v0["grade_penalty_per_day"] == v1["grade_penalty_per_day"]
+    assert v0["half_window_days"] == v1["half_window_days"]
+
+
+def test_versions_diverge_only_once_a_thermal_signal_exists():
+    # No anomaly: both versions are pure elevation climatology and must agree,
+    # which is why the July artifact's centers are reproducible under either.
+    assert (lm.predict_window(3333, 2026, None, version="leaf-v0-draft")["peak_center"]
+            == lm.predict_window(3333, 2026, None, version="leaf-v1")["peak_center"])
+    # With one, v1's steeper coefficient pushes a warm year later than v0.
+    warm0 = lm.predict_window(3333, 2026, 3.0, version="leaf-v0-draft")["peak_center"]
+    warm1 = lm.predict_window(3333, 2026, 3.0, version="leaf-v1")["peak_center"]
+    assert warm1 > warm0
+
+
+def test_v1_clamp_is_wider_than_v0s():
+    # A +8 degF anomaly saturates both clamps, in opposite eras of the model.
+    assert lm.thermal_shift_days(8.0, version="leaf-v0-draft") == 7.0
+    assert lm.thermal_shift_days(8.0, version="leaf-v1") == 10.0
+    assert lm.thermal_shift_days(-8.0, version="leaf-v1") == -10.0
+
+
+def test_v1_provisional_pass_uses_its_own_fitted_coefficient():
+    # The provisional pass reads a partial month (Sep 1-25) and so carries the
+    # coefficient fitted on THAT window, not the full-month one.
+    prov = lm.get_params("leaf-v1", "provisional")
+    final = lm.get_params("leaf-v1", "final")
+    assert prov["days_per_degf"] == 1.65
+    assert final["days_per_degf"] == 1.80
+    assert prov["thermal_window"]["end"] == (9, 25)
+    assert final["thermal_window"]["end"] == (9, 30)
+    assert prov["pass"] == "provisional"
+    # everything else is inherited, not redeclared
+    assert prov["max_thermal_shift_days"] == final["max_thermal_shift_days"] == 10
+
+
+def test_unknown_version_raises_rather_than_falling_back():
+    import pytest
+    with pytest.raises(KeyError):
+        lm.get_params("leaf-v2-imaginary")
+    with pytest.raises(KeyError):
+        lm.get_params("leaf-v1", "midseason")
+    with pytest.raises(KeyError):
+        lm.get_params("leaf-v0-draft", "provisional")   # v0 has no passes
+
+
+def test_prediction_records_which_constants_produced_it():
+    c = lm.predict_window(3333, 2026, 2.0, version="leaf-v1")["components"]
+    assert c["days_per_degf"] == 1.80
+    assert c["max_thermal_shift_days"] == 10
+
+
+def test_default_version_is_the_adopted_model():
+    assert lm.DEFAULT_VERSION == "leaf-v1"
+    assert lm.MODEL_VERSION == "leaf-v0-draft"   # the frozen artifact's version string
