@@ -29,6 +29,10 @@ export interface LeafComponents {
   thermal_shift_days: number;
   temp_anomaly_f: number | null;
   half_window_days: number;
+  /** Peak-day shift per °F of thermal anomaly (leaf_model.PARAMS[version].days_per_degf). */
+  days_per_degf?: number;
+  /** Hard clamp on the thermal shift, either direction, in days. */
+  max_thermal_shift_days?: number;
 }
 
 export interface LeafThermal {

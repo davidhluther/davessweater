@@ -312,9 +312,14 @@ temperatures for each year's thermal term.
 
 Every band hit its window. The high and mid bands land within a day or two of center; the
 Boone band scores lower because its documented peak is a wide ten-day span and the score
-measures distance to that span's center. Both years ran about 2°F cool over early
-September against the six-year normal, which pulled the predicted centers a few days
-earlier, the thermal term behaving as designed.
+measures distance to that span's center. This table runs the frozen `leaf-v0-draft`
+parameters, so both years are read against v0's six-year *rolling* normal (the six years
+immediately before each target year) — both ran about 2°F cool against that normal, which
+pulled the predicted centers a few days earlier, the thermal term behaving as designed. v1
+changed the normal itself: it fits a fixed 2008–2025 span instead of a rolling six-year
+window (see "What the climatological normal had to change" under Calibration), so a v1
+hindcast run against these same years would
+compare against a different, and warmer, normal — a rerun this table has not yet had.
 
 **Read this honestly.** The public NC-mountains reports describe peak by elevation band in
 the same language across years; they do not publish a year-specific calendar peak date. So

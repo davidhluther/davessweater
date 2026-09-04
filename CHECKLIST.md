@@ -219,6 +219,28 @@ enter `data/leaf/observations.json`, which already bars grading a forecast again
 - [ ] **November grading is now a THREE-way comparison, not two.** The frozen v0 July call,
       the v1 September/October passes, and his last pre-peak statement, scored on the same
       unchanged ruler. Do not average v0 and v1 into one season number.
+- [x] **Review-fix pass — DONE 2026-09-04** (same branch, before merge). An independent
+      review blocked the branch on one sev-1 plus two sev-2s; all three fixed:
+      - **SEV-1:** `/leaf`'s third methodology paragraph and the "temperature coefficient
+        is a first guess" bullet hardcoded v0 constants (six-year normal, 1.5 days/°F,
+        ±7-day clamp) even when v1 is the model actually rendering. Both now read
+        `components.days_per_degf`, `components.max_thermal_shift_days`, and
+        `thermal.normal_years` off the artifact, with v0-compatible fallbacks (6 / 1.5 / 7)
+        for the frozen `predictions.json`, which predates these two component fields. The
+        bullet is now version-aware: v0 keeps the honest "first guess" framing; v1 states
+        its real provenance (fitted on 18 years of published observations, fragile without
+        its two warm years). Verified rendered for both versions at 390px, zero overflow.
+      - **SEV-2:** Added `tests/test_predict_leaf.py` (16 tests) covering
+        `climatology_years()`'s fixed-span branch, `compute_anomaly` (including the
+        target-year self-exclusion), `_september_only`, `output_path` version/pass mapping,
+        and the overwrite guard (`main()` refuses without `--allow-overwrite`, and does not
+        touch the existing file).
+      - **SEV-2:** `docs/leaf-model.md`'s hindcast section named the normal used
+        ("the six-year normal") without saying it was v0's rolling window specifically, or
+        that v1 changed it to a fixed 2008–2025 span — now states both and cross-references
+        the calibration section.
+      - `python3 scripts/copy_lint.py`: 0 errors. `pytest`: 658 passed (was 642). `npm test`:
+        382 passed. `npm run build`: green, `/leaf` static.
 
 ## Fall readiness sweep (2026-08-30, from OVERALL IA)
 Brief executed: `IA-BRIEF-2026-08-30-fall-readiness.md` (deleted on landing, per its own

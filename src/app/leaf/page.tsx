@@ -83,6 +83,14 @@ export default async function LeafPage() {
   const refElev = predictions[0].components.reference_elevation_ft.toLocaleString();
   const refDate = predictions[0].components.reference_date;
   const halfWindow = predictions[0].components.half_window_days;
+  // v0-compatible fallbacks: the July 2026 draft's declared constants (6-year
+  // rolling normal, 1.5 days/°F, ±7-day clamp). v1's fitted values (18-year
+  // fixed normal, 1.80 days/°F, ±10-day clamp) come straight off the artifact
+  // once they're present, so this paragraph always describes the model it is
+  // actually rendering, not whichever one shipped first.
+  const daysPerDegf = predictions[0].components.days_per_degf ?? 1.5;
+  const maxThermalShift = predictions[0].components.max_thermal_shift_days ?? 7;
+  const normalYears = predictions[0].thermal?.normal_years ?? 6;
   const scored = board?.summary.scored_rows ?? 0;
 
   const jsonLd = [
@@ -227,10 +235,10 @@ export default async function LeafPage() {
         <h3 className="mt-6 ds-h3">3. Temperature nudges it</h3>
         <p className="mt-2 ds-body text-white/70">
           A warm early autumn delays the shutdown. A cold snap hurries it along. We compare each
-          town&apos;s September temperatures against that town&apos;s own normal from the prior six
-          years, and shift the peak 1.5 days per degree, hard-clamped to a week in either direction.
-          The clamp is deliberate. Daylight and elevation own the prediction. Temperature only
-          nudges.
+          town&apos;s September temperatures against that town&apos;s own {normalYears}-year normal,
+          and shift the peak {daysPerDegf} days per degree, hard-clamped to {maxThermalShift} days in
+          either direction. The clamp is deliberate. Daylight and elevation own the prediction.
+          Temperature only nudges.
         </p>
         <p className="mt-3 ds-body text-white/70">
           {anyThermal ? (
@@ -276,11 +284,25 @@ export default async function LeafPage() {
           </li>
           <li>
             <strong className="text-foreground">
-              The temperature coefficient is a first guess.
+              {data.model_version === "leaf-v1"
+                ? "The temperature coefficient is fitted, and thin."
+                : "The temperature coefficient is a first guess."}
             </strong>{" "}
-            September mean temperature stands in for the real drivers, which are cool nights, sunny
-            days, first frost, and drought stress. That number gets corrected by grading, not by
-            argument.
+            {data.model_version === "leaf-v1" ? (
+              <>
+                It comes from 18 years of published High Country peak-color observations, not a
+                declared prior. Two of those years carried most of the warm-anomaly signal, so the
+                fit is fragile without them. September mean temperature still stands in for the real
+                drivers (cool nights, sunny days, first frost, drought stress), and gets re-checked as
+                more graded seasons land.
+              </>
+            ) : (
+              <>
+                September mean temperature stands in for the real drivers, which are cool nights,
+                sunny days, first frost, and drought stress. That number gets corrected by grading,
+                not by argument.
+              </>
+            )}
           </li>
           <li>
             <strong className="text-foreground">Ground truth is a judgment call.</strong> No station
