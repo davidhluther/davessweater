@@ -58,6 +58,27 @@ matched the PR's own numbers exactly: chart hint `text-white/50` on `teal-700` =
 over white = 4.48:1 (needs 4.5:1). Rebased onto `main` (one conflict, resolved keeping
 main's copy fix + the PR's color fix), `npm test` 382/382 · lint clean · `next build`
 green, merged via squash (PR #157, `5f7e751c`), prod Vercel deploy confirmed green.
+## Busy-ness index provisional_note reader voice (2026-09-01)
+`provisional_note` in `data/demand/index/<date>.json` is quoted **verbatim** on a
+public pigasus-assessment/pigasus-group page (deliberate downstream ruling), so it
+must read in reader voice, not build-notes voice. Fixed:
+- [x] **Composing code fixed.** `scripts/compute_busyness.py` — `PROVISIONAL_NOTE`
+      (was build-notes prose: "no historical baseline yet — bands are absolute, not
+      vs-typical; baseline unlocks ~4-6 weeks after 2026-07-25") now reads: "This index
+      is new and has no seasonal baseline yet, so each score is an absolute level on
+      its own 0-100 scale, not a comparison to a typical night. A vs-typical baseline
+      will be added once several more weeks of history accumulate." The unlock-date
+      machinery moved out of the prose into three new top-level output fields —
+      `baseline_unlock_after` ("2026-07-25"), `baseline_unlock_weeks_min` (4),
+      `baseline_unlock_weeks_max` (6) — so no operational data was lost, just moved.
+- [x] **Newest committed data file hand-edited to match.** `data/demand/index/2026-08-31.json`
+      (the newest file on `origin/main`, what downstream reads) was hand-edited rather
+      than regenerated, because re-running the script stamps a new dated file
+      (`2026-09-01.json` once the day rolled) rather than overwriting the prior day's —
+      regenerating would not have touched the file downstream actually reads.
+- [x] Tests green: 382 vitest, 616 pytest.
+- Branch `provisional-note-reader-voice-2026-09-01`, PR opened, not merged — see PR link
+  in git history / open PRs.
 
 ## Fall readiness sweep (2026-08-30, from OVERALL IA)
 Brief executed: `IA-BRIEF-2026-08-30-fall-readiness.md` (deleted on landing, per its own

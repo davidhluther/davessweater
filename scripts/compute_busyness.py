@@ -84,9 +84,17 @@ ATHLETICS_LABEL = {
 DATE_FILE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}\.json$")
 
 PROVISIONAL_NOTE = (
-    "no historical baseline yet — bands are absolute, not vs-typical; "
-    "baseline unlocks ~4-6 weeks after 2026-07-25"
+    "This index is new and has no seasonal baseline yet, so each score is an "
+    "absolute level on its own 0-100 scale, not a comparison to a typical "
+    "night. A vs-typical baseline will be added once several more weeks of "
+    "history accumulate."
 )
+# Machine-relevant baseline-unlock facts, kept out of the reader-facing prose
+# note above (downstream consumers quote provisional_note verbatim, so it must
+# stay reader voice — see CHECKLIST.md).
+BASELINE_UNLOCK_AFTER = "2026-07-25"
+BASELINE_UNLOCK_WEEKS_MIN = 4
+BASELINE_UNLOCK_WEEKS_MAX = 6
 
 
 # ── component scoring (pure) ────────────────────────────────────────────────
@@ -478,6 +486,9 @@ def main() -> int:
         "computed_at": now.isoformat(),
         "provisional": True,
         "provisional_note": PROVISIONAL_NOTE,
+        "baseline_unlock_after": BASELINE_UNLOCK_AFTER,
+        "baseline_unlock_weeks_min": BASELINE_UNLOCK_WEEKS_MIN,
+        "baseline_unlock_weeks_max": BASELINE_UNLOCK_WEEKS_MAX,
         "horizon": horizon,
         "missing_inputs": inp["missing_inputs"],
     }
