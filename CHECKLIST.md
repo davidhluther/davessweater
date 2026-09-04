@@ -129,6 +129,48 @@ enter `data/leaf/observations.json`, which already bars grading a forecast again
       `daily_capture` run after merge is the real-world check; watch `nps_roadevents_fetch_ok` and
       `parkway_road_events` in the next committed `data/road_conditions/*.json`. Mobile-verified at
       375px via a local fixture (not committed). Branch `nps-alerts-visibility-2026-09-03`.
+- [x] **The continuity-at-risk flag on `fall-color-wataugaonline` is resolved, in the registry
+      itself (2026-09-03).** `data/events/registry.json`'s flag now says so directly: he is
+      publishing actively at fallcolorguy.org (five posts Jul 26 – Aug 31 2026).
+- [x] **fallcolorguy.org registered as a fourth grading source (2026-09-03, owner ruling).**
+      Owner permitted ingesting his OBSERVATIONS as structured facts (place, elevation band, date,
+      peak status) — facts aren't ownable, his prose is. Added to `data/events/registry.json`'s
+      `grading_sources` as `fall-color-fallcolorguy`, `purpose: "leaf-model grading"`, **and
+      `internal_only: true`** — his predictions still never enter `observations.json` (same rule as
+      every other source), and `internal_only` keeps him off the public `/leaf` page (owner's
+      no-cite ruling) while still letting `score_leaf.py` grade against him like any other source.
+      The filter lives in exactly one place: `src/lib/leaf.ts`'s `getLeafGradingSources()` drops any
+      `internal_only` row before the page ever sees it; `score_leaf.py` has no such filter and reads
+      the registry directly. Verified: only `src/app/leaf/page.tsx` consumes `getLeafGradingSources`,
+      so there's no second public surface to check.
+- [x] **Backfilled the four 2025 observation rows (benchmark doc §3a, rows A–D) plus two ungraded
+      constraints (rows E, F) into `data/leaf/observations.json`.** These are facts, now permitted.
+      Each carries `year: 2025` — new to the schema — because `score_leaf.py`'s town/band matching
+      has no year awareness on its own, and joining 2025 facts against the live 2026 predictions
+      would have silently corrupted this season's scoreboard. Added a year gate to `score_all()`
+      that refuses (with a stated reason, same as every other refusal) any observation whose `year`
+      disagrees with the predictions file's `target_year`. Confirmed by running `score_leaf.py`
+      after the backfill: all six new rows are refused (four on the year mismatch, two — E and F —
+      on the pre-existing "no observed date" path, since they're one-sided constraints recorded via
+      a new `constraint` object rather than an invented peak date), `data/leaf/scores.json` still
+      reports zero scored rows for 2026, exactly as it should this early in the season.
+      `tests/test_score_leaf.py` extended: year-gate cases, the `internal_only`/grading-inclusion
+      guard, and a guard on the six backfilled rows staying provenance-only. 628 pytest green.
+- [x] **`ds-leaf-grading` weekly scheduled task created (2026-09-03)** — it was referenced in
+      `observations.json`'s own prose ("the ds-leaf-grading scheduled task reads the sources every
+      Monday") but had never actually been created. Now exists (Mondays, Sep 21–Nov 9 self-gated,
+      `~/.claude/scheduled-tasks/ds-leaf-grading/SKILL.md`): reads all `purpose: "leaf-model
+      grading"` sources including fallcolorguy.org, extracts observation-class statements only into
+      `observations.json` per its hard rules, and logs any prediction-class statements to the
+      benchmark doc's §6 log instead (they feed the November head-to-head, never ground truth).
+- [ ] **Diagnose the empty Parkway alerts feed.** `data/road_conditions/*.json` has carried
+      `parkway_alerts: []` for at least 25 straight days (Aug 7–31) while NPS lists five closed NC
+      segments. Two candidates: `NPS_API_KEY` unset in Actions (the code writes an empty section and
+      logs to stderr, and `fetch_ok` covers only the DriveNC calls, so the file looks identical
+      either way), or the `alerts?parkCode=blri` endpoint not carrying road closures at all. One
+      call with a valid key settles it. If it is the endpoint, the NPS roadevents dataset is the fix.
+      **Also fix the silent-failure shape**: `fetch_ok` should cover the NPS leg, or the file should
+      carry a separate `nps_fetch_ok`, so an empty Parkway section is never unverifiable again.
 - [ ] **Grade both sides, week of November 10.** Not earlier — after his last report and after the
       valley windows close Nov 6. Method, scoring rules, and the three-column comparison (our July
       call, our post-refresh September call, his last pre-peak statement) are specified in §6 of the

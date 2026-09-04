@@ -341,8 +341,10 @@ export default async function LeafPage() {
               ))}
             </ul>
             <p className="mt-3 ds-caption">
-              All three are human-judged reports, not data feeds, which is why we read them rather
-              than scrape them.
+              These are human-judged reports, not data feeds, which is why we read them rather than
+              scrape them. A source that publishes a prediction rather than an observation is not on
+              this list, however good the prediction is. Grading a forecast against another forecast
+              is not grading.
             </p>
           </>
         ) : null}
@@ -371,7 +373,6 @@ export default async function LeafPage() {
 function gradingSourceLabel(id: string): string {
   const labels: Record<string, string> = {
     "fall-color-grandfather": "Grandfather Mountain's dated fall color gallery",
-    "fall-color-highcountryhost": "High Country Host's NC mountains color report",
     "fall-color-wataugaonline": "WataugaOnline's fall color report",
   };
   return labels[id] ?? id;
@@ -381,8 +382,6 @@ function gradingSourceRole(id: string): string {
   const roles: Record<string, string> = {
     "fall-color-grandfather":
       "The high-elevation leading indicator, above 5,000 feet, where color turns first.",
-    "fall-color-highcountryhost":
-      "The regional weekly, reported by elevation band across the whole footprint.",
     "fall-color-wataugaonline": "The Boone-elevation check, closest to where most readers live.",
   };
   return roles[id] ?? "";

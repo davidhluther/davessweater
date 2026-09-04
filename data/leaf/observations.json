@@ -1,24 +1,101 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target_year": 2026,
-  "updated": "2026-08-31",
-  "purpose": "Observed peak fall color, recorded by hand from the published grading sources, so the predicted windows in predictions.json can be scored. Written before the season starts so the rules are fixed before any observation exists.",
-  "how_to_record": "One entry per reading. Either name a town with `slug`, or, when the source reports by elevation band the way the regional reports do, give `applies_to_elevation_ft` and every tracked town inside that band is scored against it. `observed` is a single ISO date or a {start, end} band. `observed_on` is the day we read the source, which is not the same as the day the color peaked. Never infer an observation from our own prediction, and never record a reading whose source you did not actually open.",
-  "cadence": {
-    "plan": "Read all three sources once a week, Mondays, from September 21 through November 9. Grandfather Mountain starts posting dated galleries around September 20 and is the high-elevation leading indicator; High Country Host reports by elevation band across the whole footprint; WataugaOnline is the Boone-elevation check.",
-    "weekly_steps": [
-      "Open each grading source in data/events/registry.json (grading_sources, purpose = leaf-model grading).",
-      "For each source, decide whether it is calling anything at peak this week, and at what elevation.",
-      "Append an entry here for every new peak call, with its source id and the URL you read.",
-      "Run python3 scripts/score_leaf.py to refresh data/leaf/scores.json.",
-      "Commit both files together so the score always ships with the observation that produced it."
-    ],
-    "why_manual": "All three sources are human-judged prose and photo galleries, not data feeds. No station reports a peak-color number. Scraping a judgment call would dress an eyeball read up as a measurement, so we read them by eye and say so."
-  },
-  "sources": [
-    { "id": "fall-color-grandfather", "band_ft": { "min": 4500, "max": 6000 } },
-    { "id": "fall-color-highcountryhost", "band_ft": { "min": 1000, "max": 6000 } },
-    { "id": "fall-color-wataugaonline", "band_ft": { "min": 2500, "max": 3600 } }
+  "updated": "2026-09-03",
+  "purpose": "Observed peak fall color, read from the published grading sources, so the predicted windows in predictions.json can be scored. Written before the season starts so the rules are fixed before any observation exists.",
+  "recorded_by": "The ds-leaf-grading scheduled task reads the sources every Monday and appends entries here. Anything a person adds by hand follows the same schema and is equally welcome.",
+  "how_to_record": "One entry per reading. Either name a town with `slug`, or, when the source reports by elevation band the way the regional reports do, give `applies_to_elevation_ft` and every tracked town inside that band is scored against it. `observed` is a single ISO date or a {start, end} band. `observed_on` is the day the source was read, which is not the day the color peaked. Every entry carries `source_id`, `source_url`, and an `evidence` paraphrase of what the source actually said, so any call can be audited against the page it came from. An entry may also carry `year` (the season the observation describes) -- scripts/score_leaf.py refuses to join an observation whose `year` disagrees with predictions.json's `target_year`, so a prior season's facts can be kept on record without being scored against the current season's windows.",
+  "hard_rules": [
+    "Never record an observation from a source that publishes a PREDICTION rather than an observation. Grading our forecast against another forecast is not grading. This is why fall-color-highcountryhost carries purpose 'leaf-model benchmark' in the registry and must never appear here.",
+    "Never infer an observation from our own prediction, and never record a reading whose source was not actually opened.",
+    "An entry with no source_id is not an observation. tests/test_score_leaf.py fails the suite if one appears.",
+    "Record what the source said, not what it implies about our score. A source describing 'past peak' constrains the peak from above and is worth recording as such; a source saying 'still green' constrains it from below. Neither is a peak date, and neither should be written down as one. A constraint like this is recorded WITHOUT an `observed` field (use `constraint` instead, see below) -- score_leaf.py then refuses it for the honest reason 'no observed date', which is exactly the ungraded-but-on-the-record outcome this rule requires. Never invent a fake peak date to give a constraint a scoreable `observed`.",
+    "When a source is ambiguous about timing but IS naming a peak (not just a constraint), record a {start, end} band rather than inventing a single date. A wide honest band scores worse than a lucky guess, which is correct.",
+    "fallcolorguy.org (source_id fall-color-fallcolorguy) is internal-only: owner ruling 2026-09-03 permits ingesting his OBSERVATIONS as structured facts (place, elevation band, date, peak status) because facts are not ownable -- his prose is. His PREDICTIONS never enter this file (log them in planning/analysis/2026-09-03-fall-color-guy-benchmark.md's benchmark log instead). No verbatim prose from him is ever recorded here, only paraphrased `evidence`. The registry's `internal_only: true` flag on his row keeps him off the public /leaf page regardless of what happens in this file (src/lib/leaf.ts:getLeafGradingSources)."
   ],
-  "observations": []
+  "confidence_levels": {
+    "explicit": "The source named a peak, or a peak range, in so many words.",
+    "inferred": "The source described conditions from which a peak is readable (a 9-of-10 color rating, 'past peak at this elevation'), but did not use the word.",
+    "weak": "The reading is a judgment call worth recording with its uncertainty. Scored like any other, and flagged so a person can overrule it.",
+    "constraint": "The source bounds a peak from one side ('past peak by X', 'still good through Y') without naming a date. Recorded with a `constraint` object instead of `observed`, and never scored -- score_leaf.py's normal 'no observed date' refusal is the mechanism, not a special case."
+  },
+  "cadence": {
+    "plan": "Every Monday from September 21 through November 9, the ds-leaf-grading scheduled task reads each grading source, appends any new peak call here with its evidence, reruns scripts/score_leaf.py, and commits both files together.",
+    "why_not_scraped": "All the sources are human-judged prose and photo galleries. No station reports a peak-color number. A scraper would dress a judgment call up as a measurement, so each page is read and the reading is recorded with the evidence behind it."
+  },
+  "source_status_2026": {
+    "fall-color-grandfather": "Confirmed readable 2026-08-31; its 2025 archive ran daily Sep 22 to Oct 31 with explicit elevation language. The one source we are confident about for 2026.",
+    "fall-color-wataugaonline": "Confirmed readable, rich 2025 archive with dated peak calls. Continuity flag resolved 2026-09-03: it republished Dr. Howard Neufeld, who retired from App State (posted 2026-07-27) but kept publishing at fallcolorguy.org (see below), so the reporting itself continues at a new address even if this page's republication is now a secondary question.",
+    "fall-color-highcountryhost": "Not an observation source. Static elevation-to-week prediction only, verified 2026-08-31. Benchmark, never ground truth.",
+    "fall-color-fallcolorguy": "Added 2026-09-03 as a fourth registered grading source (owner ruling, David) -- Dr. Howard Neufeld's own site, successor to the wataugaonline republication above and the reference point for Southern Appalachian peak-color timing. INTERNAL ONLY: `internal_only: true` in the registry keeps it off the public /leaf page (owner's no-cite ruling); score_leaf.py still grades against it like any other source carrying the grading purpose. Observations only -- his predictions never enter this file. Four 2025 backcast rows backfilled below from planning/analysis/2026-09-03-fall-color-guy-benchmark.md #3a; each carries `year: 2025` so score_leaf.py refuses to join them against the live 2026 predictions -- they are provenance/backcast record only, not live grading input."
+  },
+  "observations": [
+    {
+      "applies_to_elevation_ft": {"min": 3300, "max": 4000},
+      "observed": {"start": "2025-10-12", "end": "2025-10-18"},
+      "observed_on": "2025-10-15",
+      "year": 2025,
+      "source_id": "fall-color-fallcolorguy",
+      "source_url": "https://fallcolorguy.org/fall-color-reports",
+      "confidence": "explicit",
+      "evidence": "Oct 15, 2025 report: peak is happening now in the Boone-Grandfather corridor (Blowing Rock to Linville Falls on the Blue Ridge Parkway), having started about Sunday (Oct 12), lasting into the weekend.",
+      "backfill_note": "Benchmark doc row A. Backcast/provenance only -- see `year` above and the benchmark doc's §3a/§3b for how this was used to sanity-check the 2025 backcast (scored against the Boone town prediction there, not via this file)."
+    },
+    {
+      "slug": "blowing-rock",
+      "observed": {"start": "2025-10-14", "end": "2025-10-15"},
+      "observed_on": "2025-10-09",
+      "year": 2025,
+      "source_id": "fall-color-fallcolorguy",
+      "source_url": "https://fallcolorguy.org/fall-color-reports",
+      "confidence": "explicit",
+      "evidence": "Oct 9, 2025 report on the Blowing Rock-Grandfather section: nearing peak, expected the middle of the following week; the weekends of Oct 10-12 and Oct 17-19 bracket the peak.",
+      "backfill_note": "Benchmark doc row B. Backcast/provenance only -- see `year` above."
+    },
+    {
+      "applies_to_elevation_ft": {"min": 3000, "max": 3600},
+      "observed": "2025-10-18",
+      "observed_on": "2025-10-18",
+      "year": 2025,
+      "source_id": "fall-color-fallcolorguy",
+      "source_url": "https://fallcolorguy.org/fall-color-reports",
+      "confidence": "explicit",
+      "evidence": "Oct 18, 2025 report: this is the peak now for the Deep Gap to Doughton Park section of the Blue Ridge Parkway (MP 291.8 north).",
+      "backfill_note": "Benchmark doc row C. Backcast/provenance only -- see `year` above."
+    },
+    {
+      "applies_to_elevation_ft": {"min": 5100, "max": 5500},
+      "observed": {"start": "2025-09-20", "end": "2025-09-27"},
+      "observed_on": "2025-09-16",
+      "year": 2025,
+      "source_id": "fall-color-fallcolorguy",
+      "source_url": "https://fallcolorguy.org/fall-color-reports",
+      "confidence": "inferred",
+      "evidence": "Sep 16, 2025 report on Graveyard Fields (5,120 ft) and Craggy Gardens: go the coming weekend or the next to catch it near peak.",
+      "weakness_flag": "Graveyard Fields and Craggy Gardens are in the Asheville corridor, outside our 18-town footprint. The only tracked town this band reaches is beech-mountain (5,436 ft), and that match is a coarse elevation-band proxy for a different mountain range, not a direct read on Beech itself. Recorded with this weakness noted rather than dropped, per the benchmark doc's §3a treatment of this row.",
+      "backfill_note": "Benchmark doc row D. Backcast/provenance only -- see `year` above."
+    },
+    {
+      "applies_to_elevation_ft": {"min": 3000},
+      "observed_on": "2025-10-25",
+      "year": 2025,
+      "source_id": "fall-color-fallcolorguy",
+      "source_url": "https://fallcolorguy.org/fall-color-reports",
+      "confidence": "constraint",
+      "constraint": {"direction": "peak_by_or_before", "date": "2025-10-25"},
+      "evidence": "Oct 25, 2025 report: past peak for the High Country and most locations above 3,000 ft; 50-75% leafless.",
+      "backfill_note": "Benchmark doc row E. Deliberately carries no `observed` -- a one-sided constraint, not a peak date (hard_rules above). score_leaf.py's normal 'no observed date' refusal records this as ungraded, which is correct."
+    },
+    {
+      "applies_to_elevation_ft": {"max": 2500},
+      "observed_on": "2025-10-25",
+      "year": 2025,
+      "source_id": "fall-color-fallcolorguy",
+      "source_url": "https://fallcolorguy.org/fall-color-reports",
+      "confidence": "constraint",
+      "constraint": {"direction": "good_through_at_least", "date": "2025-11-08"},
+      "evidence": "Oct 25, 2025 report: color below 2,500 ft / in the foothills parks is good into the first week of November, some locations into the second.",
+      "backfill_note": "Benchmark doc row F. Deliberately carries no `observed`, same as row E above."
+    }
+  ]
 }

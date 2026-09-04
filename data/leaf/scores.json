@@ -1,9 +1,9 @@
 {
-  "scored_at": "2026-09-03T10:20:46.328262-04:00",
+  "scored_at": "2026-09-03T19:52:01.791637-04:00",
   "model_version": "leaf-v0-draft",
   "target_year": 2026,
   "grading": "Scored once observed peaks arrive: abs/signed day error, window-hit bool, 0\u2013100 (full within 3 days, \u22126/day beyond).",
-  "observations_updated": "2026-08-31",
+  "observations_updated": "2026-09-03",
   "summary": {
     "scored_rows": 0,
     "towns_scored": 0,
@@ -12,5 +12,120 @@
     "mean_signed_error_days": null,
     "window_hit_rate": null
   },
-  "scores": []
+  "scores": [],
+  "rejected_observations": [
+    {
+      "observation": {
+        "applies_to_elevation_ft": {
+          "min": 3300,
+          "max": 4000
+        },
+        "observed": {
+          "start": "2025-10-12",
+          "end": "2025-10-18"
+        },
+        "observed_on": "2025-10-15",
+        "year": 2025,
+        "source_id": "fall-color-fallcolorguy",
+        "source_url": "https://fallcolorguy.org/fall-color-reports",
+        "confidence": "explicit",
+        "evidence": "Oct 15, 2025 report: peak is happening now in the Boone-Grandfather corridor (Blowing Rock to Linville Falls on the Blue Ridge Parkway), having started about Sunday (Oct 12), lasting into the weekend.",
+        "backfill_note": "Benchmark doc row A. Backcast/provenance only -- see `year` above and the benchmark doc's \u00a73a/\u00a73b for how this was used to sanity-check the 2025 backcast (scored against the Boone town prediction there, not via this file)."
+      },
+      "reason": "observation year 2025 does not match predictions' target_year 2026 -- recorded for backcast/provenance, not live grading"
+    },
+    {
+      "observation": {
+        "slug": "blowing-rock",
+        "observed": {
+          "start": "2025-10-14",
+          "end": "2025-10-15"
+        },
+        "observed_on": "2025-10-09",
+        "year": 2025,
+        "source_id": "fall-color-fallcolorguy",
+        "source_url": "https://fallcolorguy.org/fall-color-reports",
+        "confidence": "explicit",
+        "evidence": "Oct 9, 2025 report on the Blowing Rock-Grandfather section: nearing peak, expected the middle of the following week; the weekends of Oct 10-12 and Oct 17-19 bracket the peak.",
+        "backfill_note": "Benchmark doc row B. Backcast/provenance only -- see `year` above."
+      },
+      "reason": "observation year 2025 does not match predictions' target_year 2026 -- recorded for backcast/provenance, not live grading"
+    },
+    {
+      "observation": {
+        "applies_to_elevation_ft": {
+          "min": 3000,
+          "max": 3600
+        },
+        "observed": "2025-10-18",
+        "observed_on": "2025-10-18",
+        "year": 2025,
+        "source_id": "fall-color-fallcolorguy",
+        "source_url": "https://fallcolorguy.org/fall-color-reports",
+        "confidence": "explicit",
+        "evidence": "Oct 18, 2025 report: this is the peak now for the Deep Gap to Doughton Park section of the Blue Ridge Parkway (MP 291.8 north).",
+        "backfill_note": "Benchmark doc row C. Backcast/provenance only -- see `year` above."
+      },
+      "reason": "observation year 2025 does not match predictions' target_year 2026 -- recorded for backcast/provenance, not live grading"
+    },
+    {
+      "observation": {
+        "applies_to_elevation_ft": {
+          "min": 5100,
+          "max": 5500
+        },
+        "observed": {
+          "start": "2025-09-20",
+          "end": "2025-09-27"
+        },
+        "observed_on": "2025-09-16",
+        "year": 2025,
+        "source_id": "fall-color-fallcolorguy",
+        "source_url": "https://fallcolorguy.org/fall-color-reports",
+        "confidence": "inferred",
+        "evidence": "Sep 16, 2025 report on Graveyard Fields (5,120 ft) and Craggy Gardens: go the coming weekend or the next to catch it near peak.",
+        "weakness_flag": "Graveyard Fields and Craggy Gardens are in the Asheville corridor, outside our 18-town footprint. The only tracked town this band reaches is beech-mountain (5,436 ft), and that match is a coarse elevation-band proxy for a different mountain range, not a direct read on Beech itself. Recorded with this weakness noted rather than dropped, per the benchmark doc's \u00a73a treatment of this row.",
+        "backfill_note": "Benchmark doc row D. Backcast/provenance only -- see `year` above."
+      },
+      "reason": "observation year 2025 does not match predictions' target_year 2026 -- recorded for backcast/provenance, not live grading"
+    },
+    {
+      "observation": {
+        "applies_to_elevation_ft": {
+          "min": 3000
+        },
+        "observed_on": "2025-10-25",
+        "year": 2025,
+        "source_id": "fall-color-fallcolorguy",
+        "source_url": "https://fallcolorguy.org/fall-color-reports",
+        "confidence": "constraint",
+        "constraint": {
+          "direction": "peak_by_or_before",
+          "date": "2025-10-25"
+        },
+        "evidence": "Oct 25, 2025 report: past peak for the High Country and most locations above 3,000 ft; 50-75% leafless.",
+        "backfill_note": "Benchmark doc row E. Deliberately carries no `observed` -- a one-sided constraint, not a peak date (hard_rules above). score_leaf.py's normal 'no observed date' refusal records this as ungraded, which is correct."
+      },
+      "reason": "no observed date"
+    },
+    {
+      "observation": {
+        "applies_to_elevation_ft": {
+          "max": 2500
+        },
+        "observed_on": "2025-10-25",
+        "year": 2025,
+        "source_id": "fall-color-fallcolorguy",
+        "source_url": "https://fallcolorguy.org/fall-color-reports",
+        "confidence": "constraint",
+        "constraint": {
+          "direction": "good_through_at_least",
+          "date": "2025-11-08"
+        },
+        "evidence": "Oct 25, 2025 report: color below 2,500 ft / in the foothills parks is good into the first week of November, some locations into the second.",
+        "backfill_note": "Benchmark doc row F. Deliberately carries no `observed`, same as row E above."
+      },
+      "reason": "no observed date"
+    }
+  ]
 }

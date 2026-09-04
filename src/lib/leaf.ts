@@ -90,6 +90,10 @@ export interface LeafGradingSource {
   purpose: string;
   url: string;
   notes?: string;
+  /** Owner's no-cite ruling for this source (2026-09-03, fallcolorguy.org): the
+   *  registry still gates score_leaf.py by `purpose`, but a source flagged
+   *  internal_only must never be named or linked on a public page. */
+  internal_only?: boolean;
 }
 
 export interface LeafPredictions {
@@ -129,12 +133,21 @@ export async function getLeafScoreboard(): Promise<LeafScoreboard | null> {
  * The published fall-color reports we grade against, read from the event
  * registry so the page cites exactly what the scorer was pointed at. Filtered
  * by the registry's own `purpose` field rather than by a list kept here.
+ *
+ * Also drops any source flagged `internal_only` (fallcolorguy.org, 2026-09-03
+ * owner ruling: his site is used as a data source but never named or linked on
+ * a public page). score_leaf.py has no such filter -- it grades against every
+ * source carrying the grading purpose, internal_only or not. This function is
+ * the ONLY place that boundary is enforced, so any new public consumer of
+ * grading sources must call this, not read the registry directly.
  */
 export async function getLeafGradingSources(): Promise<LeafGradingSource[]> {
   const registry = await readJson<{ grading_sources?: LeafGradingSource[] }>(
     join(DATA, "events", "registry.json")
   );
-  return (registry?.grading_sources ?? []).filter((s) => s.purpose === "leaf-model grading");
+  return (registry?.grading_sources ?? []).filter(
+    (s) => s.purpose === "leaf-model grading" && !s.internal_only
+  );
 }
 
 /** One town's window. Slugs match the location registry exactly, Boone included. */
