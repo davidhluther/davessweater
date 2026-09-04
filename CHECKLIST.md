@@ -57,10 +57,40 @@ enter `data/leaf/observations.json`, which already bars grading a forecast again
       statements from his 2025 archive: 4/4 windows hit, mean abs error 3.5 days, mean signed −0.5,
       mean score 95.5. Read with the caveat in the doc — 2025 was a cool September in which our
       thermal term pushed us early and the ±5-day window absorbed the miss.
-- [x] **The continuity-at-risk flag on `fall-color-wataugaonline` is resolved in fact:** he is
-      publishing actively at a new address of his own (five posts Jul 26 – Aug 31 2026). The
-      registry note in `data/events/registry.json` still says the question is open and should be
-      updated in the next change that touches that file.
+- [x] **The continuity-at-risk flag on `fall-color-wataugaonline` is resolved, in the registry
+      itself (2026-09-03).** `data/events/registry.json`'s flag now says so directly: he is
+      publishing actively at fallcolorguy.org (five posts Jul 26 – Aug 31 2026).
+- [x] **fallcolorguy.org registered as a fourth grading source (2026-09-03, owner ruling).**
+      Owner permitted ingesting his OBSERVATIONS as structured facts (place, elevation band, date,
+      peak status) — facts aren't ownable, his prose is. Added to `data/events/registry.json`'s
+      `grading_sources` as `fall-color-fallcolorguy`, `purpose: "leaf-model grading"`, **and
+      `internal_only: true`** — his predictions still never enter `observations.json` (same rule as
+      every other source), and `internal_only` keeps him off the public `/leaf` page (owner's
+      no-cite ruling) while still letting `score_leaf.py` grade against him like any other source.
+      The filter lives in exactly one place: `src/lib/leaf.ts`'s `getLeafGradingSources()` drops any
+      `internal_only` row before the page ever sees it; `score_leaf.py` has no such filter and reads
+      the registry directly. Verified: only `src/app/leaf/page.tsx` consumes `getLeafGradingSources`,
+      so there's no second public surface to check.
+- [x] **Backfilled the four 2025 observation rows (benchmark doc §3a, rows A–D) plus two ungraded
+      constraints (rows E, F) into `data/leaf/observations.json`.** These are facts, now permitted.
+      Each carries `year: 2025` — new to the schema — because `score_leaf.py`'s town/band matching
+      has no year awareness on its own, and joining 2025 facts against the live 2026 predictions
+      would have silently corrupted this season's scoreboard. Added a year gate to `score_all()`
+      that refuses (with a stated reason, same as every other refusal) any observation whose `year`
+      disagrees with the predictions file's `target_year`. Confirmed by running `score_leaf.py`
+      after the backfill: all six new rows are refused (four on the year mismatch, two — E and F —
+      on the pre-existing "no observed date" path, since they're one-sided constraints recorded via
+      a new `constraint` object rather than an invented peak date), `data/leaf/scores.json` still
+      reports zero scored rows for 2026, exactly as it should this early in the season.
+      `tests/test_score_leaf.py` extended: year-gate cases, the `internal_only`/grading-inclusion
+      guard, and a guard on the six backfilled rows staying provenance-only. 628 pytest green.
+- [x] **`ds-leaf-grading` weekly scheduled task created (2026-09-03)** — it was referenced in
+      `observations.json`'s own prose ("the ds-leaf-grading scheduled task reads the sources every
+      Monday") but had never actually been created. Now exists (Mondays, Sep 21–Nov 9 self-gated,
+      `~/.claude/scheduled-tasks/ds-leaf-grading/SKILL.md`): reads all `purpose: "leaf-model
+      grading"` sources including fallcolorguy.org, extracts observation-class statements only into
+      `observations.json` per its hard rules, and logs any prediction-class statements to the
+      benchmark doc's §6 log instead (they feed the November head-to-head, never ground truth).
 - [ ] **Diagnose the empty Parkway alerts feed.** `data/road_conditions/*.json` has carried
       `parkway_alerts: []` for at least 25 straight days (Aug 7–31) while NPS lists five closed NC
       segments. Two candidates: `NPS_API_KEY` unset in Actions (the code writes an empty section and

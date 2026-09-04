@@ -18,6 +18,22 @@ An observation names either one town (`slug`) or an elevation band
 by band rather than town by town. A band observation scores every tracked town
 inside it, and each score records which observation produced it.
 
+Observations are accepted ONLY from registry sources whose `purpose` is
+"leaf-model grading". That check exists because one registry source turned out
+to publish a static elevation-to-week PREDICTION rather than in-season
+observations (verified 2026-08-31, now `purpose: leaf-model benchmark`).
+Scoring our forecast against somebody else's forecast is not scoring, it just
+measures whether two guesses agree. A rejected observation is named on stderr
+and in the artifact rather than silently dropped.
+
+An observation may also carry a `year` field. When present and it does not
+match the predictions file's `target_year`, the observation is refused with a
+reason rather than joined -- added 2026-09-03 for the fallcolorguy.org 2025
+backcast rows in observations.json, which are real facts worth keeping on
+record but must never be scored against the current season's windows just
+because observation_covers() matches on slug/elevation alone with no year
+awareness otherwise.
+
 The summary's mean SIGNED error is the number worth watching across seasons: it
 says whether the model runs systematically early or late, which is the only
 honest basis for changing a constant later. Mean absolute error says how far off
@@ -43,6 +59,8 @@ LEAF_DIR = BASE_DIR / "data" / "leaf"
 PREDICTIONS_PATH = LEAF_DIR / "predictions.json"
 OBSERVATIONS_PATH = LEAF_DIR / "observations.json"
 OUT_PATH = LEAF_DIR / "scores.json"
+REGISTRY_PATH = BASE_DIR / "data" / "events" / "registry.json"
+GRADING_PURPOSE = "leaf-model grading"
 
 
 def load_json(path: Path):
@@ -50,6 +68,17 @@ def load_json(path: Path):
         return json.loads(path.read_text())
     except (OSError, ValueError):
         return None
+
+
+def grading_source_ids(registry: dict | None) -> set[str]:
+    """Registry sources allowed to produce an observation.
+
+    Purpose is the gate, not a hardcoded list here, so demoting a source in the
+    registry takes it out of grading everywhere at once -- the scorer, the
+    weekly task, and the page's cited list all read the same field.
+    """
+    sources = (registry or {}).get("grading_sources") or []
+    return {s["id"] for s in sources if s.get("purpose") == GRADING_PURPOSE and s.get("id")}
 
 
 def observation_covers(observation: dict, prediction: dict) -> bool:
@@ -72,17 +101,45 @@ def observation_covers(observation: dict, prediction: dict) -> bool:
     return True
 
 
-def score_all(predictions: dict, observations: dict) -> list[dict]:
-    """One scored row per (town, observation) pair we can actually match.
+def score_all(predictions: dict, observations: dict,
+              allowed_sources: set[str] | None = None) -> tuple[list[dict], list[dict]]:
+    """One scored row per (town, observation) pair we can actually match, plus
+    the observations that were refused and why.
 
     A town observed by two sources is scored twice, deliberately: the sources
     disagree sometimes, and averaging them away before scoring would hide the
     disagreement inside a single number.
+
+    `allowed_sources` is the set of registry ids with a grading purpose. Passing
+    None disables the check, which is for unit tests only -- main() always passes
+    the real set.
     """
+    target_year = predictions.get("target_year")
     rows = []
+    rejected = []
     for observation in observations.get("observations") or []:
         observed = observation.get("observed")
+        source_id = observation.get("source_id")
         if not observed:
+            rejected.append({"observation": observation, "reason": "no observed date"})
+            continue
+        if not source_id:
+            rejected.append({"observation": observation, "reason": "no source_id"})
+            continue
+        obs_year = observation.get("year")
+        if obs_year is not None and target_year is not None and obs_year != target_year:
+            rejected.append({
+                "observation": observation,
+                "reason": f"observation year {obs_year} does not match predictions' target_year "
+                          f"{target_year} -- recorded for backcast/provenance, not live grading",
+            })
+            continue
+        if allowed_sources is not None and source_id not in allowed_sources:
+            rejected.append({
+                "observation": observation,
+                "reason": f"source '{source_id}' does not carry purpose '{GRADING_PURPOSE}' "
+                          f"in the registry, so it cannot produce an observation",
+            })
             continue
         for prediction in predictions.get("predictions") or []:
             if not observation_covers(observation, prediction):
@@ -100,7 +157,7 @@ def score_all(predictions: dict, observations: dict) -> list[dict]:
                 **result,
             })
     rows.sort(key=lambda r: (-r["elevation_ft"], r["slug"]))
-    return rows
+    return rows, rejected
 
 
 def summarize(rows: list[dict]) -> dict:
@@ -125,8 +182,9 @@ def summarize(rows: list[dict]) -> dict:
     }
 
 
-def build(predictions: dict, observations: dict, now: datetime) -> dict:
-    rows = score_all(predictions, observations)
+def build(predictions: dict, observations: dict, now: datetime,
+          allowed_sources: set[str] | None = None) -> dict:
+    rows, rejected = score_all(predictions, observations, allowed_sources)
     return {
         "scored_at": now.isoformat(),
         "model_version": predictions.get("model_version"),
@@ -135,6 +193,9 @@ def build(predictions: dict, observations: dict, now: datetime) -> dict:
         "observations_updated": observations.get("updated"),
         "summary": summarize(rows),
         "scores": rows,
+        # Refusals are published, not swallowed. An observation that silently
+        # vanished would look identical to one that was never recorded.
+        "rejected_observations": rejected,
     }
 
 
@@ -152,7 +213,11 @@ def main() -> int:
         print(f"No observations file at {OBSERVATIONS_PATH}; nothing to score.", file=sys.stderr)
         return 0
 
-    out = build(predictions, observations, datetime.now(NY))
+    allowed = grading_source_ids(load_json(REGISTRY_PATH))
+    if not allowed:
+        print(f"No grading sources in {REGISTRY_PATH}; refusing to score rather than "
+              f"accepting observations from anywhere.", file=sys.stderr)
+    out = build(predictions, observations, datetime.now(NY), allowed)
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUT_PATH.write_text(json.dumps(out, indent=2) + "\n")
     if not args.quiet:
@@ -163,6 +228,8 @@ def main() -> int:
                   f"mean signed error {s['mean_signed_error_days']} days.")
         else:
             print(f"Wrote {OUT_PATH}: no observations recorded yet.")
+        for r in out["rejected_observations"]:
+            print(f"REFUSED an observation: {r['reason']}", file=sys.stderr)
     return 0
 
 
