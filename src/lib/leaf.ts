@@ -29,6 +29,10 @@ export interface LeafComponents {
   thermal_shift_days: number;
   temp_anomaly_f: number | null;
   half_window_days: number;
+  /** Peak-day shift per °F of thermal anomaly (leaf_model.PARAMS[version].days_per_degf). */
+  days_per_degf?: number;
+  /** Hard clamp on the thermal shift, either direction, in days. */
+  max_thermal_shift_days?: number;
 }
 
 export interface LeafThermal {
@@ -114,9 +118,28 @@ async function readJson<T>(path: string): Promise<T | null> {
   }
 }
 
+/**
+ * The prediction files, newest model first. The page shows the most recently
+ * published forecast; the older files stay on disk because each is graded
+ * separately in November.
+ *
+ * predictions.json is the frozen July leaf-v0-draft call and is never
+ * regenerated, so it is the LAST fallback rather than the default: once the
+ * September refresh publishes leaf-v1, that is the live forecast.
+ */
+const LEAF_PREDICTION_FILES = [
+  "predictions-v1.json",
+  "predictions-v1-provisional.json",
+  "predictions.json",
+] as const;
+
 /** The whole artifact, or null when the model has not been run for this repo. */
 export async function getLeafPredictions(): Promise<LeafPredictions | null> {
-  return readJson<LeafPredictions>(join(DATA, "leaf", "predictions.json"));
+  for (const file of LEAF_PREDICTION_FILES) {
+    const found = await readJson<LeafPredictions>(join(DATA, "leaf", file));
+    if (found?.predictions?.length) return found;
+  }
+  return null;
 }
 
 /**

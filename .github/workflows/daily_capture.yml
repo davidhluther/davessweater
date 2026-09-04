@@ -168,28 +168,41 @@ jobs:
         run: python scripts/capture_town_signals.py
         continue-on-error: true
 
-      # Leaf model: refresh the published peak-color windows once September
+      # Leaf model: publish the calibrated leaf-v1 windows once September
       # temperatures exist. Self-gating by date rather than trusting a human to
-      # remember: the model needs 12 captured September days and the Open-Meteo
-      # archive trails about six, so the earliest useful run is around Sep 18.
-      # It stops after Sep 30 because the anomaly window closes Sep 25 and the
-      # answer is settled by then; running past that would only churn published
-      # dates for nothing. Outside the window the step is a no-op.
-      - name: Refresh leaf peak-color windows (mid-September onward)
+      # remember, and TWO passes, because the model's best thermal predictor is
+      # the full calendar month of September and the archive trails about six
+      # days:
+      #   Sep 18-30  provisional pass (Sep 1-25 mean) -- a fresh forecast is
+      #              public before any peak arrives.
+      #   Oct 6-12   final pass (full September mean) -- still ahead of the
+      #              3,000 ft peak, and ahead of the valley windows by weeks.
+      # Each pass writes its OWN file and each is graded separately; a revised
+      # forecast that is only graded after revision is not graded at all.
+      # data/leaf/predictions.json is NOT regenerated: it is the frozen July
+      # leaf-v0-draft call and it is scored in November exactly as published.
+      # predict_leaf.py refuses to overwrite an existing prediction file, so a
+      # rerun inside either window is a no-op rather than a rewrite.
+      - name: Refresh leaf peak-color windows (leaf-v1, two passes)
         run: |
           TODAY=$(TZ=America/New_York date +%m-%d)
           if [[ "$TODAY" > "09-17" && "$TODAY" < "10-01" ]]; then
-            echo "In the refresh window ($TODAY); rerunning the leaf model."
-            python scripts/predict_leaf.py --refresh
+            echo "In the provisional window ($TODAY); running leaf-v1 provisional."
+            python scripts/predict_leaf.py --model-version leaf-v1 --pass provisional --refresh
+          elif [[ "$TODAY" > "10-05" && "$TODAY" < "10-13" ]]; then
+            echo "In the final window ($TODAY); running leaf-v1 final."
+            python scripts/predict_leaf.py --model-version leaf-v1 --pass final --refresh
           else
-            echo "Outside the Sep 18-30 refresh window ($TODAY); leaving predictions as they are."
+            echo "Outside both leaf refresh windows ($TODAY); leaving predictions as they are."
           fi
         continue-on-error: true
 
       # Leaf grading: rescore the published windows against whatever observations
       # have been recorded by hand in data/leaf/observations.json. Writes an empty
       # scoreboard until the first October observation lands, which is correct.
-      - name: Score leaf peak-color windows
+      # Grades every prediction file present -- the frozen v0 July call and each
+      # v1 pass -- into its own scoreboard. Never merged into one average.
+      - name: Score leaf peak-color windows (every model version, separately)
         run: python scripts/score_leaf.py
         continue-on-error: true
 

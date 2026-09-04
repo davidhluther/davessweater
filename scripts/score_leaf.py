@@ -3,7 +3,7 @@
 score_leaf.py — grade the published peak-color windows against what actually
 happened.
 
-Reads the predictions the model wrote (data/leaf/predictions.json) and the
+Reads a predictions file the model wrote and the
 observations recorded by hand from the fall-color grading sources
 (data/leaf/observations.json), scores every town we have an observation for,
 and writes data/leaf/scores.json.
@@ -39,6 +39,19 @@ says whether the model runs systematically early or late, which is the only
 honest basis for changing a constant later. Mean absolute error says how far off
 we were; signed error says which way, and which way is what calibration needs.
 
+TWO MODEL VERSIONS ARE GRADED SEPARATELY (2026-09-04). data/leaf/predictions.json
+is the frozen July `leaf-v0-draft` call; the September refresh publishes
+`leaf-v1` (provisional and final passes) to its own files. Each prediction file
+is scored into its own scoreboard, never merged: a revised forecast that is only
+graded after revision is not graded at all, and a mean taken across two model
+versions is a number about neither. Run with no arguments and every prediction
+file present is scored; --predictions/--out grade exactly one.
+
+    predictions file                          scoreboard
+    data/leaf/predictions.json                data/leaf/scores.json
+    data/leaf/predictions-v1-provisional.json data/leaf/scores-v1-provisional.json
+    data/leaf/predictions-v1.json             data/leaf/scores-v1.json
+
 Stdlib only. Exits 0 with an empty scoreboard when no observations exist yet,
 which is the correct state for most of the year.
 """
@@ -59,6 +72,14 @@ LEAF_DIR = BASE_DIR / "data" / "leaf"
 PREDICTIONS_PATH = LEAF_DIR / "predictions.json"
 OBSERVATIONS_PATH = LEAF_DIR / "observations.json"
 OUT_PATH = LEAF_DIR / "scores.json"
+
+# Every (predictions, scoreboard) pair the scorer knows about, graded
+# independently. Order is the order they are reported in.
+VERSION_FILES = [
+    (LEAF_DIR / "predictions.json", LEAF_DIR / "scores.json"),
+    (LEAF_DIR / "predictions-v1-provisional.json", LEAF_DIR / "scores-v1-provisional.json"),
+    (LEAF_DIR / "predictions-v1.json", LEAF_DIR / "scores-v1.json"),
+]
 REGISTRY_PATH = BASE_DIR / "data" / "events" / "registry.json"
 GRADING_PURPOSE = "leaf-model grading"
 
@@ -188,6 +209,8 @@ def build(predictions: dict, observations: dict, now: datetime,
     return {
         "scored_at": now.isoformat(),
         "model_version": predictions.get("model_version"),
+        "model_pass": predictions.get("model_pass"),
+        "calibration": predictions.get("calibration"),
         "target_year": predictions.get("target_year"),
         "grading": predictions.get("grading"),
         "observations_updated": observations.get("updated"),
@@ -199,16 +222,42 @@ def build(predictions: dict, observations: dict, now: datetime,
     }
 
 
+def score_one(pred_path: Path, out_path: Path, observations: dict,
+              allowed: set[str], quiet: bool) -> bool:
+    """Grade one prediction file into its own scoreboard. Returns False when
+    there was nothing to grade."""
+    predictions = load_json(pred_path)
+    if not predictions or not predictions.get("predictions"):
+        return False
+    out = build(predictions, observations, datetime.now(NY), allowed)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(out, indent=2) + "\n")
+    if not quiet:
+        s = out["summary"]
+        label = out.get("model_version") or pred_path.name
+        if out.get("model_pass"):
+            label += f"/{out['model_pass']}"
+        if s["scored_rows"]:
+            print(f"Wrote {out_path}: [{label}] {s['scored_rows']} scored row(s) across "
+                  f"{s['towns_scored']} town(s); mean score {s['mean_score']}, "
+                  f"mean signed error {s['mean_signed_error_days']} days.")
+        else:
+            print(f"Wrote {out_path}: [{label}] no observations recorded yet.")
+        for r in out["rejected_observations"]:
+            print(f"REFUSED an observation ({label}): {r['reason']}", file=sys.stderr)
+    return True
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--quiet", action="store_true", help="suppress the per-run summary line")
+    ap.add_argument("--predictions", type=Path, default=None,
+                    help="grade exactly this prediction file (default: every known one)")
+    ap.add_argument("--out", type=Path, default=None,
+                    help="scoreboard path, when --predictions is given")
     args = ap.parse_args()
 
-    predictions = load_json(PREDICTIONS_PATH)
     observations = load_json(OBSERVATIONS_PATH)
-    if not predictions or not (predictions.get("predictions")):
-        print(f"No predictions at {PREDICTIONS_PATH}; nothing to score.", file=sys.stderr)
-        return 0
     if observations is None:
         print(f"No observations file at {OBSERVATIONS_PATH}; nothing to score.", file=sys.stderr)
         return 0
@@ -217,19 +266,20 @@ def main() -> int:
     if not allowed:
         print(f"No grading sources in {REGISTRY_PATH}; refusing to score rather than "
               f"accepting observations from anywhere.", file=sys.stderr)
-    out = build(predictions, observations, datetime.now(NY), allowed)
-    OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUT_PATH.write_text(json.dumps(out, indent=2) + "\n")
-    if not args.quiet:
-        s = out["summary"]
-        if s["scored_rows"]:
-            print(f"Wrote {OUT_PATH}: {s['scored_rows']} scored row(s) across "
-                  f"{s['towns_scored']} town(s); mean score {s['mean_score']}, "
-                  f"mean signed error {s['mean_signed_error_days']} days.")
-        else:
-            print(f"Wrote {OUT_PATH}: no observations recorded yet.")
-        for r in out["rejected_observations"]:
-            print(f"REFUSED an observation: {r['reason']}", file=sys.stderr)
+
+    if args.predictions:
+        pairs = [(args.predictions,
+                  args.out or args.predictions.with_name(
+                      args.predictions.name.replace("predictions", "scores")))]
+    else:
+        pairs = VERSION_FILES
+
+    graded = 0
+    for pred_path, out_path in pairs:
+        if score_one(pred_path, out_path, observations, allowed, args.quiet):
+            graded += 1
+    if not graded:
+        print("No prediction files found; nothing to score.", file=sys.stderr)
     return 0
 
 

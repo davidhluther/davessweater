@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "created": "2026-09-04",
+  "purpose": "Training set for the leaf model's thermal calibration (leaf-v1). Per-year observed peak fall-color date at a 3,300 ft reference elevation in the Boone-to-Grandfather corridor, 2008-2025, paired with the September mean daily temperature published alongside it.",
+  "provenance": {
+    "source_id": "fall-color-fallcolorguy",
+    "internal_only": true,
+    "document": "Fall Color Studies: 'Are There Any Trends in the Timing of Peak Fall Leaf Color' (.docx), linked from the site's Fall Color Studies page",
+    "document_url": "https://fallcolorguy.org/fall-color-studies",
+    "read_on": "2026-09-04",
+    "extraction_method": "The document's per-year values are published as charts, not tables. Each year's peak day and September mean was read off the charts and CROSS-VALIDATED across three independent figures in the same document: the peak-day-vs-year scatter, the September-mean-by-year bar chart, and the peak-day-vs-September-temperature scatter. All 17 graded pairs agree across all three figures, and the pairs reproduce the document's own stated regression (slope 1.9015, intercept -106.42, R2 0.62) to three decimal places -- see scripts/fit_leaf_v1.py's 'published series' line. Values are therefore digitized, not transcribed, and carry roughly +-0.1 degF / +-0 days of reading error.",
+    "owner_ruling": "David, 2026-09-03/09-04: this record may be used to TRAIN the model. Facts (dates, temperatures, elevations) are ingestable; prose is not. Nothing user-facing cites the source -- see docs/leaf-model.md's provenance line and the registry's internal_only flag."
+  },
+  "reference": {
+    "elevation_ft": 3300,
+    "geography": "Boone to Grandfather Mountain corridor, western North Carolina",
+    "peak_definition": "The observer's own weekly declaration of landscape-scale peak color (all species together, not species-specific). The charted value is the midpoint of the week declared peak, so each date carries roughly +-3 days of intrinsic resolution.",
+    "temperature_definition": "Mean of daily high and low, averaged over the full calendar month of September, from the observer's own station record -- NOT from the Open-Meteo archive the model uses. scripts/fit_leaf_v1.py cross-checks the two series."
+  },
+  "notes": [
+    "2024 has a September mean but NO observed peak: the record excludes it because of Hurricane Helene.",
+    "The published long-term September mean is 64.7 degF over these 18 years, with a stated range of 62.1 (2012) to 69.4 (2018). Both endpoints are reproduced below.",
+    "Drought and precipitation were tested against peak timing in the same document -- monthly totals, seasonal totals, cumulative amounts, and the Palmer Drought Index -- and none showed a significant relationship. Recorded in docs/leaf-model.md as a tested exclusion; no precipitation term belongs in the date model."
+  ],
+  "years": [
+    {"year": 2008, "observed_peak": "2008-10-15", "september_mean_f": 63.8},
+    {"year": 2009, "observed_peak": "2009-10-15", "september_mean_f": 62.4},
+    {"year": 2010, "observed_peak": "2010-10-22", "september_mean_f": 64.9},
+    {"year": 2011, "observed_peak": "2011-10-12", "september_mean_f": 63.2},
+    {"year": 2012, "observed_peak": "2012-10-12", "september_mean_f": 62.1},
+    {"year": 2013, "observed_peak": "2013-10-16", "september_mean_f": 63.5},
+    {"year": 2014, "observed_peak": "2014-10-15", "september_mean_f": 64.0},
+    {"year": 2015, "observed_peak": "2015-10-14", "september_mean_f": 65.2},
+    {"year": 2016, "observed_peak": "2016-10-17", "september_mean_f": 67.1},
+    {"year": 2017, "observed_peak": "2017-10-12", "september_mean_f": 64.5},
+    {"year": 2018, "observed_peak": "2018-10-24", "september_mean_f": 69.4},
+    {"year": 2019, "observed_peak": "2019-10-29", "september_mean_f": 68.3},
+    {"year": 2020, "observed_peak": "2020-10-13", "september_mean_f": 63.7},
+    {"year": 2021, "observed_peak": "2021-10-20", "september_mean_f": 65.1},
+    {"year": 2022, "observed_peak": "2022-10-12", "september_mean_f": 63.0},
+    {"year": 2023, "observed_peak": "2023-10-18", "september_mean_f": 64.2},
+    {"year": 2024, "observed_peak": null, "september_mean_f": 65.6,
+     "excluded_reason": "Hurricane Helene; the source excludes 2024 from its peak-timing record."},
+    {"year": 2025, "observed_peak": "2025-10-15", "september_mean_f": 64.8}
+  ],
+  "published_statistics": {
+    "regression_full_september": {"slope_days_per_f": 1.9015, "intercept": -106.42, "r2": 0.62, "p": "<.001"},
+    "regression_without_2018_2019": {"r2": 0.25, "p": 0.056},
+    "regression_latter_half_september_r2": 0.60,
+    "regression_august_or_october_r2_max": 0.32,
+    "regression_peak_day_vs_year_r2": 0.02,
+    "ci_95_peak_date_2008_2016": {"start": "10-12", "end": "10-16"},
+    "ci_95_peak_date_2017_2025": {"start": "10-16", "end": "10-20"},
+    "variance_days2_2008_2016": 9.0,
+    "variance_days2_2017_2025": 38.1,
+    "variance_ratio_p": 0.060,
+    "september_mean_f_long_term": 64.7
+  }
+}
