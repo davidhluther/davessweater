@@ -23,8 +23,9 @@ in the same change that completes a task. Do not rely on chat memory; this file 
         Console read worked with 0 units; the connector needed an explicit `account: "default"` parameter
         (two accounts are configured) — the RUNBOOK does not mention it and the first call errored.
         B and C still open.
-- [ ] **Owner gate:** David flips `dry_run` and `push_enabled` in `experiments/STATE.json` (through
-      `experiments/lane.sh state flag …`) for exit test C; `apply_without_approval` stays false until he
+- [x] **Owner gate FLIPPED 2026-09-09 (David's ruling B):** `dry_run` off, `push_enabled` on — the approved
+      `foscoe-title-meta-ctr` experiment applies at the next Wednesday run (2026-09-16) with the revert
+      recorded first (exit test C); `apply_without_approval` stays false until he
       lifts it in writing after four clean experiments.
 - Standing rules the lane enforces: cash $0; Ahrefs/Semrush 0 units (denied); no new dynamic route family
   (function budget is at 10/10 — `scripts/check_function_budget.py` runs before every apply); no edits to
