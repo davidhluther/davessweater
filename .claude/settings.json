@@ -1,0 +1,154 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git branch --show-current)",
+      "Bash(git branch --list:*)",
+      "Bash(git worktree list:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull --rebase origin main)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push origin main)",
+      "Bash(git revert:*)",
+      "Bash(git ls-files:*)",
+      "Bash(bash experiments/lane.sh:*)",
+      "Bash(python3 scripts/check_function_budget.py:*)",
+      "Bash(npx vitest run:*)",
+      "Bash(npm run lint:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(grep:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(wc:*)",
+      "Bash(date:*)",
+      "WebFetch(domain:davessweater.com)",
+      "WebFetch(domain:www.davessweater.com)",
+      "mcp__google-search-console__list_sites",
+      "mcp__google-search-console__query_search_analytics",
+      "mcp__google-search-console__get_top_pages",
+      "mcp__google-search-console__get_keyword_trend",
+      "mcp__google-search-console__compare_performance",
+      "mcp__google-search-console__inspect_url",
+      "mcp__google-search-console__list_sitemaps",
+      "mcp__google-search-console__find_keyword_opportunities",
+      "mcp__google-search-console__query_by_search_type",
+      "mcp__google-search-console__query_by_search_appearance",
+      "mcp__b6d489fe-03ef-4db0-9cb4-78ed9fa5375f__add-tasks",
+      "mcp__b6d489fe-03ef-4db0-9cb4-78ed9fa5375f__find-tasks",
+      "mcp__b6d489fe-03ef-4db0-9cb4-78ed9fa5375f__find-completed-tasks",
+      "mcp__b6d489fe-03ef-4db0-9cb4-78ed9fa5375f__find-comments",
+      "mcp__b6d489fe-03ef-4db0-9cb4-78ed9fa5375f__user-info",
+      "mcp__7456e8e6-d245-4359-bb7e-fa6b1a7809a2__send_message",
+      "Read",
+      "Glob",
+      "Grep",
+      "Edit(src/**)",
+      "Edit(public/**)",
+      "Edit(experiments/**)",
+      "Edit(STATUS.md)",
+      "Edit(CHECKLIST.md)",
+      "Write(experiments/**)",
+      "Write(STATUS.md)"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git checkout -- :*)",
+      "Bash(git branch -D:*)",
+      "Bash(git worktree remove:*)",
+      "Bash(rm -rf:*)",
+      "Bash(rm -r:*)",
+      "Bash(vercel:*)",
+      "Bash(npx vercel:*)",
+      "Bash(npm install:*)",
+      "Bash(npm i :*)",
+      "Bash(pip install:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Edit(data/**)",
+      "Write(data/**)",
+      "Edit(src/app/api/**)",
+      "Write(src/app/api/**)",
+      "Edit(next.config.ts)",
+      "Edit(vercel.json)",
+      "Edit(.github/**)",
+      "Write(.github/**)",
+      "Edit(package.json)",
+      "Edit(.claude/**)",
+      "Write(.claude/**)",
+      "Edit(src/lib/api/**)",
+      "Edit(scripts/**)",
+      "Write(scripts/**)",
+      "mcp__ahrefs__*",
+      "mcp__070c107f-03f8-4e89-a538-d5553f4d8074__*",
+      "mcp__89cf023b-a576-472e-b8f8-1b081ff30986__*",
+      "mcp__7456e8e6-d245-4359-bb7e-fa6b1a7809a2__reply",
+      "mcp__7456e8e6-d245-4359-bb7e-fa6b1a7809a2__forward",
+      "mcp__7456e8e6-d245-4359-bb7e-fa6b1a7809a2__trash_message",
+      "mcp__7456e8e6-d245-4359-bb7e-fa6b1a7809a2__trash_thread",
+      "mcp__b6d489fe-03ef-4db0-9cb4-78ed9fa5375f__delete-object",
+      "mcp__b6d489fe-03ef-4db0-9cb4-78ed9fa5375f__complete-tasks",
+      "mcp__a518d0c3-06a7-4aab-a480-9e965e009373__deploy_to_vercel",
+      "mcp__a518d0c3-06a7-4aab-a480-9e965e009373__buy_domain",
+      "mcp__a518d0c3-06a7-4aab-a480-9e965e009373__buy_pro",
+      "mcp__a518d0c3-06a7-4aab-a480-9e965e009373__buy_credits",
+      "mcp__a518d0c3-06a7-4aab-a480-9e965e009373__buy_addon",
+      "mcp__a518d0c3-06a7-4aab-a480-9e965e009373__pause_project"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/Projects/shared-skills/dev-env/hooks/boundary-guard.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/Projects/shared-skills/dev-env/hooks/stop-run-record.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/Projects/shared-skills/dev-env/hooks/notify.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/Projects/shared-skills/dev-env/hooks/notify.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  },
+  "_notes": {
+    "lane4-ds-experiments-2026-09-08": "Refactor 2 Lane 4 (experiments) committed allowlist. This repository is PUBLIC, so this file states rules only. Allowed: git read + add/commit, rebase-pull and the exact push form (gated by experiments/STATE.json push_enabled), git revert (the one-command revert every experiment records first), the lane wrapper and the pre-apply checks (function budget, vitest, lint), Search Console READ tools (the measurement instrument), Todoist add/find (the approval gate lives there), Gmail send_message to David's own address only (RUNBOOK restricts the recipient), WebFetch of davessweater.com to verify a live page, and edits under src/, public/, experiments/ plus the two ledgers. Denied: force pushes and history rewrites, deletes, any Vercel CLI/MCP deploy or purchase, package installs, network fetches from the shell, every Ahrefs/Semrush tool (0 units by rule), and edits to data/ (user data), API routes, next.config.ts, vercel.json, .github/, package.json, scripts/ and this settings file (deploy-config and traced-payload risk \u2014 see CHECKLIST, the 08-21 outage)."
+  }
+}

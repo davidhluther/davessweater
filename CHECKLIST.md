@@ -4,6 +4,25 @@ This file is the durable single source of truth for outstanding work. Read it at
 start of each session and keep it current — check items off, add new ones, and update it
 in the same change that completes a task. Do not rely on chat memory; this file wins.
 
+## Experiments lane (Refactor 2 Lane 4, 2026-09-08) — one reversible $0 experiment a week
+
+- [x] **Skeleton landed 2026-09-08** — `experiments/RUNBOOK.md` (propose → approval gate → apply →
+      measure via Search Console → conclude), `experiments/STATE.json`, `experiments/LEDGER.md` (the
+      durable record), `experiments/lane.sh` (shared lane helpers), `experiments/scripts/digest.py`,
+      `.claude/settings.json` (first committed allowlist + hooks for this repo — rules only). Routine
+      `ds-experiments-weekly` Wednesdays 08:00; dead-man Thursdays 08:00. Runs in the lane worktree
+      `~/Projects/worktrees/ds-experiments` on `main`, never in the main checkout.
+- [ ] **Exit test A** (dry run proposes one experiment, applies nothing, digest arrives) ·
+      **B** (forced failure + dead-man) · **C** (David approves one experiment in Todoist; the lane
+      applies it; the next digest shows it measuring with the revert recorded).
+- [ ] **Owner gate:** David flips `dry_run` and `push_enabled` in `experiments/STATE.json` (through
+      `experiments/lane.sh state flag …`) for exit test C; `apply_without_approval` stays false until he
+      lifts it in writing after four clean experiments.
+- Standing rules the lane enforces: cash $0; Ahrefs/Semrush 0 units (denied); no new dynamic route family
+  (function budget is at 10/10 — `scripts/check_function_budget.py` runs before every apply); no edits to
+  `data/`, API routes, `next.config.ts`, `vercel.json`, `.github/`, `package.json`; one-command revert
+  recorded before applying.
+
 ## FALL-CRITICAL, OWNER (2026-08-30)
 Peak color in the High Country runs roughly Oct 5–25 and search interest ramps from early
 September, so the fall runway is about five weeks. These are the items only David can move.

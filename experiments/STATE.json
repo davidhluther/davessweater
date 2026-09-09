@@ -1,0 +1,25 @@
+{
+  "schema": "refactor-2 lane STATE v1 (ds-experiments, Lane 4)",
+  "lane": "ds-experiments",
+  "dry_run": true,
+  "push_enabled": false,
+  "apply_without_approval": false,
+  "last_run": null,
+  "run_id": null,
+  "last_status": null,
+  "digest_last_sent": null,
+  "digest_last_path": null,
+  "active_experiment": null,
+  "completed_experiments": [],
+  "open_decisions": [],
+  "budget": {
+    "cash_usd_cap": 0,
+    "ahrefs_units_cap_per_run": 0,
+    "token_ceiling_note": "one experiment per week; the run stops and reports PARTIAL if it would exceed the weekly measurement pass's typical run or the app's session limits"
+  },
+  "todoist": {
+    "label": "ds-experiments",
+    "project": "Work"
+  },
+  "notes": "David never edits this file. Written only by shared-skills/dev-env/lane/run_state.py through experiments/lane.sh (set/append for active_experiment and completed_experiments). dry_run: proposes and measures, never applies, labels the digest. push_enabled gates git push (an applied change only reaches production through a push to main). apply_without_approval: false until David lifts the gate in writing after four clean experiments. This repo is PUBLIC: everything here is public."
+}

@@ -3,7 +3,9 @@ __pycache__/
 *.pyc
 
 # Local tooling (preview launch config, etc.)
-.claude/
+# Refactor 2: the committed allowlist is tracked; everything else under .claude/ stays local
+.claude/*
+!.claude/settings.json
 
 # Local-only context — never commit to this public repo.
 orange-pi-handoff.md
@@ -50,3 +52,6 @@ planning/
 
 # design gate capture output — not source (shared-skills/design-gate/)
 .design-gate/
+
+# Refactor 2 lane lock (experiments lane)
+EXECUTING.lock
