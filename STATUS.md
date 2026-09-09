@@ -5,11 +5,12 @@ Schema (Refactor 2): Live / Parked / Decisions for David / Done (dated). Task-le
 
 ## Live
 
-- **Experiments lane (Refactor 2 Lane 4) — BUILT 2026-09-08, DRY RUN; exit tests pending.** Routine
-  `ds-experiments-weekly` Wednesdays 08:00 runs `experiments/RUNBOOK.md` in the lane worktree
-  (`~/Projects/worktrees/ds-experiments`, on `main`); dead-man `ds-experiments-deadman` Thursdays 08:00.
-  State `experiments/STATE.json`; durable record `experiments/LEDGER.md`. $0 cash, 0 Ahrefs units, one
-  reversible experiment at a time, applied only after a completed Todoist decision. Last run: none yet.
+- **Experiments lane (Refactor 2 Lane 4) — DRY RUN, exit test A ran 2026-09-08 (run `2026-09-08-2417bb`,
+  status OK).** Routine `ds-experiments-weekly` Wednesdays 08:00 runs `experiments/RUNBOOK.md` in the lane
+  worktree (`~/Projects/worktrees/ds-experiments`, on `main`); dead-man `ds-experiments-deadman` Thursdays
+  08:00. Active experiment: none — `foscoe-title-meta-ctr` PROPOSED, awaiting David's Todoist approval
+  (`d-20260908-5ef7`); nothing applied (dry run). $0 cash, 0 Ahrefs units. Digest:
+  `experiments/digests/2026-09-08.md`. State `experiments/STATE.json`; record `experiments/LEDGER.md`.
 
 ## Parked
 
@@ -21,6 +22,8 @@ Schema (Refactor 2): Live / Parked / Decisions for David / Done (dated). Task-le
 
 ## Done (dated)
 
+- 2026-09-08 — Exit test A (dry run): proposed `foscoe-title-meta-ctr`, applied nothing, queued one
+  approval decision, digest built and sent.
 - 2026-09-08 — Experiments lane skeleton landed (RUNBOOK, STATE, LEDGER, wrapper, digest builder,
   committed allowlist + hooks). Builder: the Refactor 2 session.
 

@@ -15,6 +15,12 @@ in the same change that completes a task. Do not rely on chat memory; this file 
 - [ ] **Exit test A** (dry run proposes one experiment, applies nothing, digest arrives) ·
       **B** (forced failure + dead-man) · **C** (David approves one experiment in Todoist; the lane
       applies it; the next digest shows it measuring with the revert recorded).
+      - **A RAN 2026-09-08** (run `2026-09-08-2417bb`, status OK): proposed exactly one experiment
+        (`foscoe-title-meta-ctr`, `experiments/proposals/2026-09-08-foscoe-title-meta-ctr.md`), applied
+        nothing, queued one approval decision (`d-20260908-5ef7`), built and emailed the digest. Search
+        Console read worked with 0 units; the connector needed an explicit `account: "default"` parameter
+        (two accounts are configured) — the RUNBOOK does not mention it and the first call errored.
+        B and C still open.
 - [ ] **Owner gate:** David flips `dry_run` and `push_enabled` in `experiments/STATE.json` (through
       `experiments/lane.sh state flag …`) for exit test C; `apply_without_approval` stays false until he
       lifts it in writing after four clean experiments.

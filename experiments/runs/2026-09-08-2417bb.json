@@ -1,0 +1,50 @@
+{
+  "run_id": "2026-09-08-2417bb",
+  "started": "2026-09-08T20:53:26-04:00",
+  "dry_run": true,
+  "steps": [
+    {
+      "name": "preflight",
+      "status": "ok",
+      "note": "on main, clean tree, rebase-pull clean; run 2026-09-08-2417bb (EXIT TEST A, dry run)",
+      "at": "2026-09-08T20:53:31-04:00"
+    },
+    {
+      "name": "read-decisions",
+      "status": "ok",
+      "note": "STATE.open_decisions empty (first run) \u2014 no Todoist tasks to read back",
+      "at": "2026-09-08T20:53:41-04:00"
+    },
+    {
+      "name": "measure",
+      "status": "skip",
+      "note": "no active experiment",
+      "at": "2026-09-08T20:53:41-04:00"
+    },
+    {
+      "name": "propose",
+      "status": "ok",
+      "note": "foscoe-title-meta-ctr \u2014 one page, title+description, metric CTR on foscoe-intent queries, 28d window",
+      "at": "2026-09-08T20:55:46-04:00"
+    },
+    {
+      "name": "apply",
+      "status": "skip",
+      "note": "dry_run true (EXIT TEST A) \u2014 nothing applied; also push_enabled false and the approval decision d-20260908-5ef7 is unresolved",
+      "at": "2026-09-08T20:56:06-04:00"
+    },
+    {
+      "name": "queue-decisions",
+      "status": "ok",
+      "note": "1",
+      "at": "2026-09-08T20:56:06-04:00"
+    }
+  ],
+  "what_changed": [],
+  "decisions_resolved": [],
+  "ahrefs_units": 0,
+  "next_proposal": [
+    "foscoe-title-meta-ctr \u2014 a snippet that names the deliverable and fits in 155 chars lifts CTR on foscoe-intent queries off 0.00% \u00b7 metric CTR (Search Console) \u00b7 window 28d \u00b7 revert git revert"
+  ],
+  "cost": "cash $0 \u00b7 units 0 \u00b7 Opus 5 (single session, no subagents) \u00b7 ~20 tool calls"
+}
