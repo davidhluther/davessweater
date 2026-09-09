@@ -115,8 +115,8 @@ Gmail `send_message` to **davidhluther@gmail.com only**, subject `DS experiments
 `find-projects` (`searchText: "Work"`, exact name match) and pass that `projectId` on EVERY `add-tasks`
 call — parent tasks and sub-tasks alike (a sub-task carries `parentId` AND `projectId`); never rely on a
 default project. Every task carries the label `ds-experiments`. After creating, `fetch-object` each task
-and confirm `projectId` equals the Work id; anything elsewhere is moved with `project-move` and
-re-verified. Nothing lands in Inbox. Record the Work id in the step note.
+and confirm `projectId` equals the Work id; anything elsewhere is moved with `update-tasks` (`projectId` = the Work id — a move; re-pass
+`parentId` for a sub-task) and re-verified. Nothing lands in Inbox. Record the Work id in the step note.
 Then Todoist, per the standard in `~/Projects/shared-skills/dev-env/lane/README.md` (David, 2026-09-09):
 1. ONE parent task: content `DS experiments digest — <date>` (+ ` — DRY RUN`), due today as
    `YYYY-MM-DD`; description = summary tier ONLY: the digest's header line, the counts (proposed ·
