@@ -1,0 +1,58 @@
+{
+  "run_id": "2026-09-08-5a548a",
+  "started": "2026-09-08T21:07:33-04:00",
+  "dry_run": true,
+  "steps": [
+    {
+      "name": "preflight",
+      "status": "fail",
+      "note": "rebase-pull failed (cannot pull with rebase: unstaged changes) and tracked file experiments/lane.sh is modified \u2014 EXIT TEST B injected notify failure; continuing read-only",
+      "at": "2026-09-08T21:07:39-04:00"
+    },
+    {
+      "name": "read-decisions",
+      "status": "ok",
+      "note": "d-20260908-5ef7 still open \u2014 Todoist 6hRqfvCP6p7F8pWf not completed, no comments; proposal file approved: false. No approval to apply.",
+      "at": "2026-09-08T21:08:09-04:00"
+    },
+    {
+      "name": "measure",
+      "status": "skip",
+      "note": "no active_experiment \u2014 nothing applied yet (dry run applied nothing in run 2026-09-08-2417bb); 0 Search Console calls",
+      "at": "2026-09-08T21:08:21-04:00"
+    },
+    {
+      "name": "propose",
+      "status": "skip",
+      "note": "foscoe-title-meta-ctr already proposed 2026-09-08 and its approval decision d-20260908-5ef7 is still open; one experiment at a time \u2014 no second proposal raised",
+      "at": "2026-09-08T21:08:22-04:00"
+    },
+    {
+      "name": "apply",
+      "status": "skip",
+      "note": "dry_run true \u2014 applies nothing; also unapproved (d-20260908-5ef7 open) and push_enabled false",
+      "at": "2026-09-08T21:08:28-04:00"
+    },
+    {
+      "name": "queue-decisions",
+      "status": "ok",
+      "note": "0 new decisions \u2014 d-20260908-5ef7 carries over unresolved; nothing costing cash or units arose",
+      "at": "2026-09-08T21:08:28-04:00"
+    },
+    {
+      "name": "ledger",
+      "status": "ok",
+      "note": "STATUS.md Live bullet replaced (run 2026-09-08-5a548a, PARTIAL); LEDGER.md foscoe row verdict cell updated in place",
+      "at": "2026-09-08T21:08:51-04:00"
+    }
+  ],
+  "what_changed": [],
+  "decisions_resolved": [],
+  "ahrefs_units": null,
+  "this_week": [
+    "EXIT TEST B (dry run): preflight FAILED as designed (dirty tree blocks rebase-pull); foscoe-title-meta-ctr still awaiting approval, nothing applied, nothing measuring"
+  ],
+  "next_proposal": [
+    "foscoe-title-meta-ctr (carried) \u2014 snippet naming the deliverable in ~155 chars lifts CTR off 0.00% \u00b7 metric CTR on foscoe-named queries (Search Console) \u00b7 window 28d \u00b7 revert git revert"
+  ]
+}
