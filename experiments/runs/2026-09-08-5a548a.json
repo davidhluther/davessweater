@@ -44,15 +44,57 @@
       "status": "ok",
       "note": "STATUS.md Live bullet replaced (run 2026-09-08-5a548a, PARTIAL); LEDGER.md foscoe row verdict cell updated in place",
       "at": "2026-09-08T21:08:51-04:00"
+    },
+    {
+      "name": "commit",
+      "status": "fail",
+      "note": "commit itself LANDED (f6510958, staged by name: STATE.json runs/ digests/ proposals/ LEDGER.md STATUS.md); step marked fail because the rebase-pull half failed: 'error: cannot pull with rebase: You have unstaged changes. error: please commit or stash them.' \u2014 experiments/lane.sh holds the EXIT TEST B injection and is deliberately not repaired or staged",
+      "at": "2026-09-08T21:09:19-04:00"
+    },
+    {
+      "name": "push",
+      "status": "skip",
+      "note": "push_enabled false",
+      "at": "2026-09-08T21:09:19-04:00"
+    },
+    {
+      "name": "digest",
+      "status": "ok",
+      "note": "experiments/digests/2026-09-08-5a548a-dry-run.md",
+      "at": "2026-09-08T21:09:27-04:00"
+    },
+    {
+      "name": "email",
+      "status": "ok",
+      "note": "sent to davidhluther@gmail.com, gmail id 1a083b6bb7ae8954, subject 'DS experiments digest \u2014 2026-09-08 \u2014 DRY RUN (EXIT TEST B)'",
+      "at": "2026-09-08T21:09:51-04:00"
+    },
+    {
+      "name": "notify",
+      "status": "fail",
+      "note": "bash experiments/lane.sh notify 2026-09-08-5a548a exited 1: 'EXIT TEST B: forced failure in notify' \u2014 injected failure, not repaired, run continued",
+      "at": "2026-09-08T21:09:59-04:00"
+    },
+    {
+      "name": "todoist",
+      "status": "skip",
+      "note": "the only open decision d-20260908-5ef7 already carries todoist_id 6hRqfvCP6p7F8pWf; no new decisions raised this run",
+      "at": "2026-09-08T21:09:59-04:00"
     }
   ],
   "what_changed": [],
   "decisions_resolved": [],
-  "ahrefs_units": null,
+  "ahrefs_units": 0,
   "this_week": [
     "EXIT TEST B (dry run): preflight FAILED as designed (dirty tree blocks rebase-pull); foscoe-title-meta-ctr still awaiting approval, nothing applied, nothing measuring"
   ],
   "next_proposal": [
     "foscoe-title-meta-ctr (carried) \u2014 snippet naming the deliverable in ~155 chars lifts CTR off 0.00% \u00b7 metric CTR on foscoe-named queries (Search Console) \u00b7 window 28d \u00b7 revert git revert"
-  ]
+  ],
+  "cost": "cash $0 \u00b7 units 0 \u00b7 Opus 5 (single session, no subagents) \u00b7 ~20 tool calls",
+  "finished": "2026-09-08T21:10:03-04:00",
+  "minutes": 2.5,
+  "digest_sent": true,
+  "digest_path": "experiments/digests/2026-09-08-5a548a-dry-run.md",
+  "status": "failed:preflight,commit,notify"
 }
