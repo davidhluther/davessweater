@@ -108,13 +108,31 @@ path), one line, replace the previous. `experiments/LEDGER.md` row updated in pl
 ## 8. Digest — UNCONDITIONAL
 `bash experiments/lane.sh digest` → `step digest ok "<path>"`. Never skip.
 
-## 9. Deliver — email to self + Todoist
+## 9. Deliver — email to self + Todoist (no information loss)
 Gmail `send_message` to **davidhluther@gmail.com only**, subject `DS experiments digest — <date>`
 (+ ` — DRY RUN`), body = the digest verbatim. `step email ok|fail`. `bash experiments/lane.sh notify <run_id>`.
-Todoist `add-tasks` for each decision without a `todoist_id`: content = title (prefix `[DRY RUN]` when
-dry), description = ONE LINE `<question> · default: <default> · <decision id>`, label `ds-experiments`,
-project `Work`, due next Tuesday as an explicit `YYYY-MM-DD` (the day before the next fire);
-`<state> todoist <decision_id> <task_id>`. `step todoist ok|fail|skip`.
+**Todoist filing (David's ruling, 2026-09-09):** at run start resolve the project id of `Work` with
+`find-projects` (`searchText: "Work"`, exact name match) and pass that `projectId` on EVERY `add-tasks`
+call — parent tasks and sub-tasks alike (a sub-task carries `parentId` AND `projectId`); never rely on a
+default project. Every task carries the label `ds-experiments`. After creating, `fetch-object` each task
+and confirm `projectId` equals the Work id; anything elsewhere is moved with `project-move` and
+re-verified. Nothing lands in Inbox. Record the Work id in the step note.
+Then Todoist, per the standard in `~/Projects/shared-skills/dev-env/lane/README.md` (David, 2026-09-09):
+1. ONE parent task: content `DS experiments digest — <date>` (+ ` — DRY RUN`), due today as
+   `YYYY-MM-DD`; description = summary tier ONLY: the digest's header line, the counts (proposed ·
+   applied · measuring · concluded · decisions · units · cash), and "Full digest in the first comment;
+   file: experiments/digests/<run_id>.md". `<state> note parent_task "<id>"`.
+2. `add-comments` on the parent: the FULL digest verbatim, untruncated; over 12,000 characters → split
+   at line boundaries into consecutive comments `(part n of N)`, never cut. The last part ends with
+   `Sources:` + GitHub blob links (`https://github.com/davidhluther/davessweater/blob/main/<path>`) to the
+   experiment's proposal file, `experiments/LEDGER.md`, the run record `experiments/runs/<run_id>.json`,
+   and the digest file — "(links resolve once pushed)" when `push_enabled` is false.
+3. One SUB-TASK per decision without a `todoist_id` (`parentId` = the parent): content = title (prefix
+   `[DRY RUN]` when dry), description = ONE LINE `<question> · default: <default> · <decision id>`, due
+   next Tuesday as `YYYY-MM-DD` (the day before the next fire); `<state> todoist <decision_id> <task_id>`.
+   The approval-gate decision ("Run experiment <name>?") is one of these sub-tasks; completing it is the
+   approval step 1 reads back.
+`step todoist ok|fail|skip`.
 
 ## 10. Finish — always last
 ```bash

@@ -54,7 +54,11 @@
       "Edit(STATUS.md)",
       "Edit(CHECKLIST.md)",
       "Write(experiments/**)",
-      "Write(STATUS.md)"
+      "Write(STATUS.md)",
+      "mcp__b6d489fe-03ef-4db0-9cb4-78ed9fa5375f__find-projects",
+      "mcp__b6d489fe-03ef-4db0-9cb4-78ed9fa5375f__fetch-object",
+      "mcp__b6d489fe-03ef-4db0-9cb4-78ed9fa5375f__project-move",
+      "mcp__b6d489fe-03ef-4db0-9cb4-78ed9fa5375f__add-comments"
     ],
     "deny": [
       "Bash(git push --force:*)",
@@ -149,6 +153,7 @@
     ]
   },
   "_notes": {
-    "lane4-ds-experiments-2026-09-08": "Refactor 2 Lane 4 (experiments) committed allowlist. This repository is PUBLIC, so this file states rules only. Allowed: git read + add/commit, rebase-pull and the exact push form (gated by experiments/STATE.json push_enabled), git revert (the one-command revert every experiment records first), the lane wrapper and the pre-apply checks (function budget, vitest, lint), Search Console READ tools (the measurement instrument), Todoist add/find (the approval gate lives there), Gmail send_message to David's own address only (RUNBOOK restricts the recipient), WebFetch of davessweater.com to verify a live page, and edits under src/, public/, experiments/ plus the two ledgers. Denied: force pushes and history rewrites, deletes, any Vercel CLI/MCP deploy or purchase, package installs, network fetches from the shell, every Ahrefs/Semrush tool (0 units by rule), and edits to data/ (user data), API routes, next.config.ts, vercel.json, .github/, package.json, scripts/ and this settings file (deploy-config and traced-payload risk \u2014 see CHECKLIST, the 08-21 outage)."
+    "lane4-ds-experiments-2026-09-08": "Refactor 2 Lane 4 (experiments) committed allowlist. This repository is PUBLIC, so this file states rules only. Allowed: git read + add/commit, rebase-pull and the exact push form (gated by experiments/STATE.json push_enabled), git revert (the one-command revert every experiment records first), the lane wrapper and the pre-apply checks (function budget, vitest, lint), Search Console READ tools (the measurement instrument), Todoist add/find (the approval gate lives there), Gmail send_message to David's own address only (RUNBOOK restricts the recipient), WebFetch of davessweater.com to verify a live page, and edits under src/, public/, experiments/ plus the two ledgers. Denied: force pushes and history rewrites, deletes, any Vercel CLI/MCP deploy or purchase, package installs, network fetches from the shell, every Ahrefs/Semrush tool (0 units by rule), and edits to data/ (user data), API routes, next.config.ts, vercel.json, .github/, package.json, scripts/ and this settings file (deploy-config and traced-payload risk \u2014 see CHECKLIST, the 08-21 outage).",
+    "todoist-2026-09-09": "Todoist delivery amendment + filing ruling (David 2026-09-09): find-projects to resolve the Work project id at run start, fetch-object to verify each created task, project-move to correct strays, add-comments for the full-digest comments."
   }
 }
