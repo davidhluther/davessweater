@@ -12,8 +12,10 @@ in the same change that completes a task. Do not rely on chat memory; this file 
       `.claude/settings.json` (first committed allowlist + hooks for this repo — rules only). Routine
       `ds-experiments-weekly` Wednesdays 08:00; dead-man Thursdays 08:00. Runs in the lane worktree
       `~/Projects/worktrees/ds-experiments` on `main`, never in the main checkout.
-- [ ] **Exit test A** (dry run proposes one experiment, applies nothing, digest arrives) ·
-      **B** (forced failure + dead-man) · **C** (David approves one experiment in Todoist; the lane
+- [x] **Exit test A PASSED 2026-09-08** (run `2026-09-08-2417bb`: proposed `foscoe-title-meta-ctr`, applied
+      nothing, digest emailed, approval task created) · **[x] B PASSED 2026-09-08** (run `2026-09-08-5a548a`
+      named the forced `notify` failure in a PARTIAL digest that still shipped; the dead-man emailed
+      "DS experiments run missed" against a faked stale state) · **[ ] C** (David approves one experiment in Todoist; the lane
       applies it; the next digest shows it measuring with the revert recorded).
       - **A RAN 2026-09-08** (run `2026-09-08-2417bb`, status OK): proposed exactly one experiment
         (`foscoe-title-meta-ctr`, `experiments/proposals/2026-09-08-foscoe-title-meta-ctr.md`), applied
