@@ -5,13 +5,17 @@ Schema (Refactor 2): Live / Parked / Decisions for David / Done (dated). Task-le
 
 ## Live
 
-- **Experiments lane (Refactor 2 Lane 4) — DRY RUN, exit test B ran 2026-09-08 (run `2026-09-08-5a548a`,
-  status PARTIAL: preflight and notify FAILED as designed by the exit-test injections; every other step
-  completed).** Routine `ds-experiments-weekly` Wednesdays 08:00 runs `experiments/RUNBOOK.md` in the lane
-  worktree (`~/Projects/worktrees/ds-experiments`, on `main`); dead-man `ds-experiments-deadman` Thursdays
-  08:00. Active experiment: none — `foscoe-title-meta-ctr` PROPOSED, still awaiting David's Todoist approval
-  (`d-20260908-5ef7`); nothing applied (dry run). $0 cash, 0 Ahrefs units. Digest:
-  `experiments/digests/2026-09-08-5a548a-dry-run.md`. State `experiments/STATE.json`; record `experiments/LEDGER.md`.
+- **Experiments lane (Refactor 2 Lane 4) — DRY RUN, run `2026-09-09-0d748b` 2026-09-09, status OK (all
+  steps ran; measure/propose/apply skipped by design, see below).** Routine `ds-experiments-weekly`
+  Wednesdays 08:00 runs `experiments/RUNBOOK.md` in the lane worktree
+  (`~/Projects/worktrees/ds-experiments`, on `main`); dead-man `ds-experiments-deadman` Thursdays 08:00.
+  Active experiment: none. `foscoe-title-meta-ctr` is now **APPROVED** — David completed
+  `d-20260908-5ef7` on 2026-09-09 with no refusing comment — but it was **not applied**: `dry_run` is
+  true and `push_enabled` false, and an unpushed change never reaches production. One decision open:
+  `d-20260909-1868`, take the lane out of dry run and apply it. Baseline re-verified from Search Console
+  (0 units): 534 foscoe-intent impressions, 0 clicks, position 10.4. $0 cash, 0 Ahrefs units. Digest:
+  `experiments/digests/2026-09-09-0d748b-dry-run.md`. State `experiments/STATE.json`; record
+  `experiments/LEDGER.md`.
 
 ## Parked
 

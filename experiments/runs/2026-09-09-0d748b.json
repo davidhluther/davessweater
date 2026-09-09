@@ -1,0 +1,60 @@
+{
+  "run_id": "2026-09-09-0d748b",
+  "started": "2026-09-09T08:04:48-04:00",
+  "dry_run": true,
+  "steps": [
+    {
+      "name": "preflight",
+      "status": "ok",
+      "note": "on main, clean tree, rebase-pull OK; dry_run=true push_enabled=false apply_without_approval=false active_experiment=null; run 2026-09-09-0d748b",
+      "at": "2026-09-09T08:04:56-04:00"
+    },
+    {
+      "name": "read-decisions",
+      "status": "ok",
+      "note": "1 open decision read; d-20260908-5ef7 completed with no refusing comment = approval recorded",
+      "at": "2026-09-09T08:05:18-04:00"
+    },
+    {
+      "name": "measure",
+      "status": "skip",
+      "note": "no active experiment (active_experiment=null); nothing to measure",
+      "at": "2026-09-09T08:05:32-04:00"
+    },
+    {
+      "name": "propose",
+      "status": "skip",
+      "note": "an approved-but-unapplied experiment already exists (foscoe-title-meta-ctr, approved 2026-09-09 07:43 EDT); proposing a second would break one-experiment-at-a-time. Baseline re-verified from Search Console 2026-08-11..2026-09-07 (0 units): foscoe-intent impressions 534 (was 535), clicks 0, CTR 0.00%, weighted avg position 10.4 \u2014 the defect and the baseline both hold.",
+      "at": "2026-09-09T08:06:06-04:00"
+    },
+    {
+      "name": "apply",
+      "status": "skip",
+      "note": "dry_run=true and push_enabled=false \u2014 an unpushed change never reaches production; the approval gate itself is satisfied (d-20260908-5ef7 resolved approved), so this is the only remaining blocker",
+      "at": "2026-09-09T08:06:12-04:00"
+    },
+    {
+      "name": "queue-decisions",
+      "status": "ok",
+      "note": "1",
+      "at": "2026-09-09T08:06:22-04:00"
+    },
+    {
+      "name": "ledger",
+      "status": "ok",
+      "note": "STATUS.md Live bullet replaced; LEDGER.md foscoe-title-meta-ctr row updated in place (APPROVED, not applied)",
+      "at": "2026-09-09T08:06:55-04:00"
+    }
+  ],
+  "what_changed": [],
+  "decisions_resolved": [
+    "d-20260908-5ef7: David completed the task 6hRqfvCP6p7F8pWf at 2026-09-09 07:43 EDT with no comment: default accepted (approve). NOTE: the task was a [DRY RUN] approval and STATE.dry_run is still true + push_enabled false, so the experiment is APPROVED but NOT APPLIED this run."
+  ],
+  "ahrefs_units": null,
+  "next_proposal": [
+    "foscoe-title-meta-ctr \u2014 APPROVED, awaiting apply; blocked by dry_run=true and push_enabled=false, not by the decision gate. Baseline re-verified 2026-09-09: 534 foscoe-intent impressions, 0 clicks, position 10.4."
+  ],
+  "this_week": [
+    "no experiment applied \u2014 foscoe-title-meta-ctr is approved and staged; the lane is still in dry run with push disabled. One decision raised: take the lane live for this experiment."
+  ]
+}
