@@ -44,17 +44,53 @@
       "status": "ok",
       "note": "STATUS.md Live bullet replaced; LEDGER.md foscoe-title-meta-ctr row updated in place (APPROVED, not applied)",
       "at": "2026-09-09T08:06:55-04:00"
+    },
+    {
+      "name": "commit",
+      "status": "ok",
+      "note": "477a8608 experiments 2026-09-09: approved, not applied (dry run); named paths only, rebase-pull clean after commit",
+      "at": "2026-09-09T08:07:04-04:00"
+    },
+    {
+      "name": "push",
+      "status": "skip",
+      "note": "push_enabled=false",
+      "at": "2026-09-09T08:07:04-04:00"
+    },
+    {
+      "name": "digest",
+      "status": "ok",
+      "note": "experiments/digests/2026-09-09-0d748b-dry-run.md",
+      "at": "2026-09-09T08:07:12-04:00"
+    },
+    {
+      "name": "email",
+      "status": "ok",
+      "note": "sent to davidhluther@gmail.com, message 1a086110c342efb0",
+      "at": "2026-09-09T08:07:44-04:00"
+    },
+    {
+      "name": "todoist",
+      "status": "ok",
+      "note": "1 task created: 6hRx7PQxQ4cRRQG7 due 2026-09-15, label ds-experiments, project Work",
+      "at": "2026-09-09T08:08:00-04:00"
     }
   ],
   "what_changed": [],
   "decisions_resolved": [
     "d-20260908-5ef7: David completed the task 6hRqfvCP6p7F8pWf at 2026-09-09 07:43 EDT with no comment: default accepted (approve). NOTE: the task was a [DRY RUN] approval and STATE.dry_run is still true + push_enabled false, so the experiment is APPROVED but NOT APPLIED this run."
   ],
-  "ahrefs_units": null,
+  "ahrefs_units": 0,
   "next_proposal": [
     "foscoe-title-meta-ctr \u2014 APPROVED, awaiting apply; blocked by dry_run=true and push_enabled=false, not by the decision gate. Baseline re-verified 2026-09-09: 534 foscoe-intent impressions, 0 clicks, position 10.4."
   ],
   "this_week": [
     "no experiment applied \u2014 foscoe-title-meta-ctr is approved and staged; the lane is still in dry run with push disabled. One decision raised: take the lane live for this experiment."
-  ]
+  ],
+  "cost": "cash $0 \u00b7 units 0 \u00b7 Opus 5 orchestrator only, no subagents \u00b7 ~20 tool calls",
+  "finished": "2026-09-09T08:08:04-04:00",
+  "minutes": 3.3,
+  "digest_sent": true,
+  "digest_path": "experiments/digests/2026-09-09-0d748b-dry-run.md",
+  "status": "ok"
 }
