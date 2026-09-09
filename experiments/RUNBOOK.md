@@ -95,8 +95,9 @@ allowed classes that seems worth it, a revert David should confirm. `<state> dec
 ## 6. Hygiene — commit on main, by name
 Stage only `experiments/STATE.json`, `experiments/runs/`, `experiments/digests/`, `experiments/proposals/`,
 `experiments/LEDGER.md`, `STATUS.md`, `CHECKLIST.md` (only the lane's own section). Never `git add -A`.
-Message `experiments <date>: <status>`. `git pull --rebase origin main` first. `step commit ok|fail`.
-Push only if `push_enabled`: `git push origin main` → `step push ok|skip|fail`.
+Message `experiments <date>: <status>`; COMMIT FIRST, then `git pull --rebase origin main` (the rebase refuses a
+dirty tree — exit test A finding), then push only if `push_enabled`: `git push origin main`.
+`step commit ok|fail` · `step push ok|skip|fail`.
 Record the run's cost line: `<state> cost "cash $0 · units 0 · <model tiers> · <n> tool calls"` and
 `<state> meter 0` (the Ahrefs units field; it must read 0).
 
