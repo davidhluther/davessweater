@@ -982,6 +982,45 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       env flag returns the count to 7. Not done here — it removes the hosted editor, which is an owner
       decision, not a cleanup.
 
+### ⚠️ FUNCTION STORAGE at quota — 2026-09-04 — INVESTIGATED, prune awaiting owner go-ahead
+The hosting account hit **100% of its included Function Storage** (10 GB) and 75% of
+Deployment Storage. Storage is consumed by *retained deployments*, so this is a
+build-history problem, not a live-site problem: production is healthy and the most
+recent deploy is green. Measured 2026-09-04 by summing each retained deployment's
+distinct Lambda sizes over the deployments API (`/v11/deployments/{id}/builds`,
+grouping the route entries by `lambda.functionName` — the raw output list double-counts,
+since every route reports the size of the whole Lambda it belongs to). Reproduce with
+`python3 scripts/measure_function_storage.py`.
+
+- [x] **✅ ROOT CAUSE: the pre-fix deployments from the 2026-08-21 outage are still retained.**
+      A DS deployment built *before* the `outputFileTracingExcludes` fix carries **29 Lambdas
+      at ~202 MiB each = 5.3 GiB per deployment**. After the fix it is **2 Lambdas totalling
+      ~37 MiB** — a 144x reduction. **44 of those pre-fix deployments are still retained**
+      (2026-07-28 → 2026-08-22, all READY), holding **153.8 GiB** between them. They are
+      ~95% of this project's entire retained function storage.
+- [x] **✅ No regression in current builds.** The last 22 deployments all sit at 36.8–37.8 MiB
+      across 2 Lambdas, flat. In particular the tourism work's build-time warning about
+      `tourism.ts` matching 11,476 files in output tracing **did not** cost payload — function
+      count stayed at 2 and size did not move. The `outputFileTracingExcludes` entry is holding.
+- [ ] **OWNER DECISION — delete the 44 pre-fix deployments.** Irreversible, so not executed
+      without David's word. Verified safe: **the current production deployment is not in the
+      set**, and every one of the 44 predates the payload fix, so rolling back to any of them
+      would restore the broken-payload build anyway. Deleting them takes this project's
+      retained function storage from **156.3 GiB → 2.5 GiB**. Errored deployments cost nothing
+      (they hold no Lambdas), so there is nothing to reclaim there.
+      Prune command, once approved:
+      `vercel api -X DELETE "/v13/deployments/<id>"` per id, or the dashboard's per-deployment
+      Delete. Get the id list from `python3 scripts/measure_function_storage.py --list-fat`
+      (it excludes the live production deployment by construction) rather than pasting ids here,
+      so the list can never go stale against the live account.
+- [ ] **STRUCTURAL — pruning alone is a one-time fix; the cadence refills it.** The data
+      pipeline pushes to `main` 2x daily and each push is a deployment, so this project alone
+      produced **199 deployments in 38 days** (3–14/day, counting PR previews). Even at the
+      healthy 37 MiB, ~70 retained deployments is ~7.8 GiB. Options, cheapest first: cut the
+      deploy cadence (the two daily data commits do not each need their own build — coalescing
+      them is the same lever as the webhook-coalescing note above), or prune on a schedule.
+      Worth deciding before the next quota mail rather than after.
+
 ## Promotion-readiness audit — RAN 2026-06-25 → risk register
 Multi-agent audit (Dims 1–4, adversarially verified) complete. 24 findings → 22 verified + 2 critic → a
 12-entry prioritized register. **Full detail: `planning/audits/2026-06-25-promotion-readiness-risk-register.md`.**
