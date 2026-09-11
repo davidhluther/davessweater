@@ -29,10 +29,12 @@
       "title": "Take ds-experiments out of dry run and apply foscoe-title-meta-ctr?",
       "question": "The approval gate is satisfied: the decision task was completed 2026-09-09 07:43 EDT with no refusing comment, so foscoe-title-meta-ctr is approved. It still cannot apply because STATE.dry_run is true and STATE.push_enabled is false, and an unpushed change never reaches production. Note the approval task was prefixed [DRY RUN], so confirm the approval was meant for a real apply. Applying means: edit generateMetadata in src/app/weather/[slug]/page.tsx for slug foscoe only (16 town pages stay as controls), run the function-budget check + vitest + lint, commit on main, push, verify live, then measure CTR for 28 days. Revert is one git revert of that commit. Cash $0, units 0.",
       "default": "leave dry_run on \u2014 the lane keeps proposing and measuring but applies nothing until David sets dry_run false and push_enabled true",
-      "status": "open",
+      "status": "resolved",
       "raised": "2026-09-09T08:06:22-04:00",
       "run_id": "2026-09-09-0d748b",
-      "todoist_id": "6hRx7PQxQ4cRRQG7"
+      "todoist_id": "6hRx7PQxQ4cRRQG7",
+      "outcome": "Todoist task 6hRx7PQxQ4cRRQG7 completed 2026-09-09 08:09 EDT with no ruling comment. The lane's own flags already record the outcome and it is NOT the stated untouched-default: STATE.dry_run false and push_enabled true, set 2026-09-09 08:50:49 EDT - the lane was taken live. Recorded as ruled live per those flags, not per the default text. Source: experiments/STATE.json dry_run_set_at. foscoe-title-meta-ctr stays APPROVED (d-20260908-5ef7) and is now unblocked to apply. Recorded by the org-board responder 2026-09-09 09:15 EDT.",
+      "resolved": "2026-09-09T09:16:03-04:00"
     }
   ],
   "budget": {
