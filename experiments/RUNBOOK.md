@@ -121,8 +121,8 @@ path), one line, replace the previous. `experiments/LEDGER.md` row updated in pl
 ## 9. Deliver — email to self + Todoist (no information loss)
 Gmail `send_message` to **davidhluther@gmail.com only**, subject `DS experiments digest — <date>`
 (+ ` — DRY RUN`), body = the digest verbatim. `step email ok|fail`. `bash experiments/lane.sh notify <run_id>`.
-**Todoist filing (David's ruling, 2026-09-09):** at run start resolve the project id of `Work` with
-`find-projects` (`searchText: "Work"`, exact name match) and pass that `projectId` on EVERY `add-tasks`
+**Todoist filing (David's ruling, 2026-09-09):** at run start resolve the project id of `DavesSweater` with
+`find-projects` (`searchText: "DavesSweater"`, exact name match) and pass that `projectId` on EVERY `add-tasks`
 call — parent tasks and sub-tasks alike (a sub-task carries `parentId` AND `projectId`); never rely on a
 default project. Every task carries the label `ds-experiments`. After creating, `fetch-object` each task
 and confirm `projectId` equals the DavesSweater id; anything elsewhere is moved with `update-tasks` (`projectId` = the DavesSweater id — a move; re-pass
