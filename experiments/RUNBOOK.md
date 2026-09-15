@@ -28,6 +28,14 @@ on another site. Every change records a ONE-COMMAND revert (`git revert <sha>`) 
 Applying needs a completed Todoist decision while `STATE.apply_without_approval` is false (David lifts
 it in writing after four clean experiments). Proposing, measuring, and reporting need no approval.
 
+**Usage-limit deaths (David, 2026-09-15):** before `start`, run `bash experiments/lane.sh state reap`. If it prints
+`REAPED failed-because-usage-limit … RETRY_AT <iso>`, the previous run died on a usage or rate limit: the
+outcome and the reset time are now in STATE and the run record, the lock is released — continue with a
+fresh `start`. If you yourself hit a usage or rate-limit error mid-run and can still act: run
+`bash experiments/lane.sh state finish --sent no`, then `create_scheduled_task` ONE one-shot retry of this routine at the
+reset time the CLI reported + 15 min (id `<routine>-retry-<date>`), and stop. The dead-man reports the
+cause, never "died mid-way".
+
 ## 0. Start — state, lock, guard
 ```bash
 cd ~/Projects/worktrees/ds-experiments && git rev-parse --abbrev-ref HEAD && git status --porcelain | head
