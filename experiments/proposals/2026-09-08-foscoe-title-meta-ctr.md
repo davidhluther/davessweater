@@ -85,3 +85,28 @@ position and impression volume so a ranking shift cannot be misread as a snippet
 
 **Grade of the underlying claim:** the truncation defect is *verified* (195 characters, counted).
 The claim that a better snippet lifts CTR at this position is *untested* — that is the experiment.
+
+## Baseline re-verification — 2026-09-16 (run 2026-09-16-f3945d)
+
+The pre-registered baseline above is NOT rewritten; this is a dated re-read of the same
+instrument so a stale number never passes for a fresh one.
+
+Window 2026-08-18 .. 2026-09-14 (28 days, GSC lags ~2 days), `sc-domain:davessweater.com`:
+
+- Page `/weather/foscoe` total: **675 impressions · 1 click · 0.15% CTR · position 10.0**
+  (2026-09-08 read: 957 / 1 / — / —; 2026-09-09 re-read: 534 / 0 / 0.00% / 10.4)
+- Foscoe-named queries, the metric's own denominator: **403 impressions · 0 clicks · 0.00% CTR**
+  — "foscoe nc weather" 134 (pos 10.4), "weather foscoe" 117 (pos 10.2), "foscoe weather" 99
+  (pos 10.8), "weather foscoe nc" 36 (pos 10.0), "weather in foscoe nc" 17 (pos 10.5).
+
+The hypothesis still has something to explain: eight days on from approval, foscoe-intent CTR is
+still exactly 0.00% and average position is effectively flat (10.3 → ~10.4). The single page-level
+click came from outside the foscoe-named set and does not touch the metric.
+
+Note the impression drift: 535 → 403 foscoe-intent impressions across shifted windows. The
+pre-registered safety endpoint fires below 300 for the measurement window, so the experiment is
+still measurable, but the margin has narrowed — if impressions keep sliding, the 28-day window
+should be re-baselined at apply time rather than measured against the 2026-09-08 numbers.
+
+**State on 2026-09-16: approved, still not applied.** Not blocked by the gate — blocked first by
+`dry_run` (lifted 2026-09-09 08:50 EDT) and this run by a failed preflight (see the run record).

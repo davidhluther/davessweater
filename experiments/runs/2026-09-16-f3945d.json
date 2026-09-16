@@ -1,0 +1,59 @@
+{
+  "run_id": "2026-09-16-f3945d",
+  "started": "2026-09-16T12:14:51-04:00",
+  "dry_run": false,
+  "steps": [
+    {
+      "name": "preflight",
+      "status": "fail",
+      "note": "on main, but two tracked files are modified by other sessions and uncommitted: .claude/settings.json (lane is DENIED from editing it) and experiments/deadman-log.md (appended by the ds-experiments-deadman run at 2026-09-16T12:11 EDT, not committed). git pull --rebase origin main refused: 'cannot pull with rebase: You have unstaged changes'. Continuing read-only per RUNBOOK step 0: no experiment apply this run.",
+      "at": "2026-09-16T12:15:08-04:00"
+    },
+    {
+      "name": "read-decisions",
+      "status": "ok",
+      "note": "no open decisions: d-20260908-5ef7 (approval gate for foscoe-title-meta-ctr) resolved APPROVED 2026-09-09 07:43 EDT, d-20260909-1868 resolved (lane taken live: dry_run false, push_enabled true, set 2026-09-09 08:50:49 EDT). DavesSweater Todoist project id 6hWM6rRQFvmfhMhg (find-projects, exact name match). Org-board card 6hRxMjg3R6wMWJgf carries no refusing comment from David.",
+      "at": "2026-09-16T12:15:43-04:00"
+    },
+    {
+      "name": "measure",
+      "status": "skip",
+      "note": "STATE.active_experiment is null - nothing applied, so nothing to measure. foscoe-title-meta-ctr is approved but has never been applied.",
+      "at": "2026-09-16T12:15:43-04:00"
+    },
+    {
+      "name": "propose",
+      "status": "skip",
+      "note": "not proposing a new experiment: foscoe-title-meta-ctr is already approved and unapplied, and the lane runs one experiment at a time. Re-verified its baseline instead (0 units): 2026-08-18..09-14, page 675 impressions / 1 click / 0.15% / pos 10.0; foscoe-named queries 403 impressions / 0 clicks / 0.00% CTR / pos ~10.4. Live metadata confirmed unchanged (generateMetadata in src/app/weather/[slug]/page.tsx, description still 195 chars). Re-verification appended to experiments/proposals/2026-09-08-foscoe-title-meta-ctr.md; pre-registered baseline left intact.",
+      "at": "2026-09-16T12:16:21-04:00"
+    },
+    {
+      "name": "apply",
+      "status": "fail",
+      "note": "APPROVED EXPERIMENT NOT APPLIED FOR THE SECOND RUN. Gate conditions that ARE met: dry_run false, push_enabled true, decision d-20260908-5ef7 resolved APPROVED, change class allowed (generateMetadata string in src/app/weather/[slug]/page.tsx). Blocker: RUNBOOK step 0 preflight failed - .claude/settings.json and experiments/deadman-log.md are modified and uncommitted by other sessions, so 'git pull --rebase origin main' refuses (unstaged changes) and the branch is 3 commits behind origin/main. Applying on a stale, dirty tree would commit other sessions' work or produce an unrebasable commit. Neither file is one this lane may stage: settings.json is in the lane's DENIED edit list, deadman-log.md is outside step 6's staging allowlist. Continuing read-only per step 0.",
+      "at": "2026-09-16T12:16:26-04:00"
+    },
+    {
+      "name": "queue-decisions",
+      "status": "ok",
+      "note": "1",
+      "at": "2026-09-16T12:16:38-04:00"
+    },
+    {
+      "name": "ledger",
+      "status": "ok",
+      "note": "STATUS.md Live bullet replaced (run id, PARTIAL status, approved-but-unapplied experiment, d-20260916-d245, digest path); experiments/LEDGER.md foscoe row updated in place - baseline cell now carries the 2026-09-16 re-verification, verdict cell records the second blocked apply and its cause.",
+      "at": "2026-09-16T12:17:02-04:00"
+    }
+  ],
+  "what_changed": [],
+  "decisions_resolved": [],
+  "ahrefs_units": 0,
+  "this_week": [
+    "approved experiment foscoe-title-meta-ctr NOT applied for the second run - preflight failed on a dirty worktree (.claude/settings.json + experiments/deadman-log.md, both from other sessions); baseline re-verified at 0 units: foscoe-named queries 403 impressions / 0 clicks / 0.00% CTR / pos ~10.4 (2026-08-18..09-14)"
+  ],
+  "next_proposal": [
+    "none - foscoe-title-meta-ctr (approved, unapplied) holds the single-experiment slot until it applies and measures; one experiment at a time"
+  ],
+  "cost": "cash $0 \u00b7 units 0 \u00b7 session Opus 5 (designated Sonnet 5), no sub-agents \u00b7 ~20 tool calls"
+}

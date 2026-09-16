@@ -5,8 +5,8 @@
   "push_enabled": true,
   "apply_without_approval": false,
   "last_run": "2026-09-09T08:08:04-04:00",
-  "run_id": "2026-09-09-0d748b",
-  "last_status": "ok",
+  "run_id": "2026-09-16-f3945d",
+  "last_status": "running",
   "digest_last_sent": "2026-09-09T08:08:04-04:00",
   "digest_last_path": "experiments/digests/2026-09-09-0d748b-dry-run.md",
   "active_experiment": null,
@@ -35,6 +35,16 @@
       "todoist_id": "6hRx7PQxQ4cRRQG7",
       "outcome": "Todoist task 6hRx7PQxQ4cRRQG7 completed 2026-09-09 08:09 EDT with no ruling comment. The lane's own flags already record the outcome and it is NOT the stated untouched-default: STATE.dry_run false and push_enabled true, set 2026-09-09 08:50:49 EDT - the lane was taken live. Recorded as ruled live per those flags, not per the default text. Source: experiments/STATE.json dry_run_set_at. foscoe-title-meta-ctr stays APPROVED (d-20260908-5ef7) and is now unblocked to apply. Recorded by the org-board responder 2026-09-09 09:15 EDT.",
       "resolved": "2026-09-09T09:16:03-04:00"
+    },
+    {
+      "id": "d-20260916-d245",
+      "title": "Clear the ds-experiments worktree so the approved foscoe experiment can finally apply?",
+      "question": "foscoe-title-meta-ctr has been APPROVED since 2026-09-09 07:43 EDT and has still never been applied: on 09-09 the lane was in dry run, and today (09-16) RUNBOOK step 0 preflight failed because two tracked files in ~/Projects/worktrees/ds-experiments are modified and uncommitted by OTHER sessions - .claude/settings.json (a session added mcp__scheduled-tasks__list_task_runs; the lane is DENIED from editing this file) and experiments/deadman-log.md (the ds-experiments-deadman run appended its 2026-09-16T12:11 MISSED row and did not commit it). With those present, 'git pull --rebase origin main' refuses and the worktree sits 3 commits behind origin/main, so the lane cannot apply on a current tree. Both files are outside the lane's own staging allowlist, so it cannot clear them itself. Meanwhile the hypothesis is undiminished: foscoe-named queries are still 403 impressions / 0 clicks / 0.00% CTR over 2026-08-18..09-14. Fix options: (a) commit or discard those two files so next Tuesday's run applies cleanly; (b) have the deadman routine commit its own deadman-log.md row as part of its run, which is what causes this most weeks.",
+      "default": "commit or discard the two stray files before the next Tuesday run (option a) - the lane applies foscoe-title-meta-ctr on 2026-09-22 with no further approval needed, since d-20260908-5ef7 already stands",
+      "status": "open",
+      "raised": "2026-09-16T12:16:34-04:00",
+      "run_id": "2026-09-16-f3945d",
+      "todoist_id": null
     }
   ],
   "budget": {
