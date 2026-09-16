@@ -44,6 +44,36 @@
       "status": "ok",
       "note": "STATUS.md Live bullet replaced (run id, PARTIAL status, approved-but-unapplied experiment, d-20260916-d245, digest path); experiments/LEDGER.md foscoe row updated in place - baseline cell now carries the 2026-09-16 re-verification, verdict cell records the second blocked apply and its cause.",
       "at": "2026-09-16T12:17:02-04:00"
+    },
+    {
+      "name": "commit",
+      "status": "ok",
+      "note": "0958a025 'experiments 2026-09-16: PARTIAL' - staged by name only (experiments/STATE.json, experiments/runs/, experiments/proposals/, experiments/LEDGER.md, STATUS.md); no git add -A. The two stray files from other sessions were deliberately left unstaged.",
+      "at": "2026-09-16T12:17:22-04:00"
+    },
+    {
+      "name": "push",
+      "status": "fail",
+      "note": "push_enabled is true, but the post-commit 'git pull --rebase origin main' still refused ('cannot pull with rebase: You have unstaged changes' - .claude/settings.json and experiments/deadman-log.md remain modified by other sessions and are outside this lane's staging allowlist). 'git push origin main' was then rejected non-fast-forward: local main is 3 behind / 1 ahead of origin/main. Commit 0958a025 is local-only and will push cleanly once the stray files are committed or discarded (decision d-20260916-d245). No force push attempted - forbidden by the allowlist.",
+      "at": "2026-09-16T12:17:22-04:00"
+    },
+    {
+      "name": "digest",
+      "status": "ok",
+      "note": "experiments/digests/2026-09-16-f3945d.md",
+      "at": "2026-09-16T12:17:29-04:00"
+    },
+    {
+      "name": "email",
+      "status": "ok",
+      "note": "sent to davidhluther@gmail.com only, subject 'DS experiments digest - 2026-09-16', body = digest verbatim; gmail message id 1a0ab0298b564617",
+      "at": "2026-09-16T12:17:53-04:00"
+    },
+    {
+      "name": "todoist",
+      "status": "ok",
+      "note": "DavesSweater project id 6hWM6rRQFvmfhMhg (resolved by find-projects, exact name match) passed on every add-tasks call. Parent 6hWcvj3VqJGvC578 (summary tier, due 2026-09-16, label ds-experiments); full 6,032-char digest posted verbatim as ONE comment 6hWcvm4CMH8MCQG8 (under the 12,000 split threshold) ending with the four GitHub Sources links plus an explicit note that this run's commit 0958a025 is unpushed, so the run-record and digest links 404 until it lands. One sub-task 6hWcvmPHvP5XpCp8 for decision d-20260916-d245 (parentId set, due 2026-09-22). fetch-object confirmed BOTH tasks carry projectId 6hWM6rRQFvmfhMhg - nothing in Inbox or Work, no move needed.",
+      "at": "2026-09-16T12:18:26-04:00"
     }
   ],
   "what_changed": [],
@@ -55,5 +85,13 @@
   "next_proposal": [
     "none - foscoe-title-meta-ctr (approved, unapplied) holds the single-experiment slot until it applies and measures; one experiment at a time"
   ],
-  "cost": "cash $0 \u00b7 units 0 \u00b7 session Opus 5 (designated Sonnet 5), no sub-agents \u00b7 ~20 tool calls"
+  "cost": "cash $0 \u00b7 units 0 \u00b7 session Opus 5 (designated Sonnet 5), no sub-agents \u00b7 ~20 tool calls",
+  "parent_task": [
+    "6hWcvj3VqJGvC578"
+  ],
+  "finished": "2026-09-16T12:18:30-04:00",
+  "minutes": 3.7,
+  "digest_sent": true,
+  "digest_path": "experiments/digests/2026-09-16-f3945d.md",
+  "status": "failed:preflight,apply,push"
 }
