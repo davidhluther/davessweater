@@ -1,0 +1,55 @@
+{
+  "run_id": "2026-09-16-bb33af",
+  "started": "2026-09-16T12:20:46-04:00",
+  "dry_run": false,
+  "steps": [
+    {
+      "name": "preflight",
+      "status": "ok",
+      "note": "on main, rebase clean to af941fd6, no tracked files modified \u2014 the two stray files that failed the 12:16 run (.claude/settings.json, experiments/deadman-log.md) are now committed upstream; dry_run false, push_enabled true, apply_without_approval false, active_experiment null",
+      "at": "2026-09-16T12:20:53-04:00"
+    },
+    {
+      "name": "read-decisions",
+      "status": "ok",
+      "note": "DavesSweater project id 6hWM6rRQFvmfhMhg. One open decision read: d-20260916-d245 (6hWcvmPHvP5XpCp8) \u2014 still open, 0 comments, but its blocking condition was cleared upstream by af941fd6; resolved as overtaken-by-events. Approval gate d-20260908-5ef7 (foscoe-title-meta-ctr) already stands APPROVED since 2026-09-09 07:43 EDT \u2014 apply is unblocked.",
+      "at": "2026-09-16T12:21:25-04:00"
+    },
+    {
+      "name": "measure",
+      "status": "skip",
+      "note": "active_experiment is null \u2014 nothing applied yet, so nothing to measure. The approved foscoe-title-meta-ctr has never reached production (blocked 09-09 by dry run, 09-16 12:15 by a dirty worktree); its baseline is re-measured in step 4.",
+      "at": "2026-09-16T12:21:34-04:00"
+    },
+    {
+      "name": "propose",
+      "status": "skip",
+      "note": "No new proposal: foscoe-title-meta-ctr is already proposed and APPROVED (d-20260908-5ef7) and has never been applied. One experiment at a time \u2014 proposing a second before this one reaches production would break the lane's own limit. Proceeding to apply the standing proposal instead.",
+      "at": "2026-09-16T12:21:39-04:00"
+    },
+    {
+      "name": "apply",
+      "status": "fail",
+      "note": "BLOCKED by the pre-apply gate, not by the approval gate. All four apply conditions were met for the first time (dry_run false, push_enabled true, d-20260908-5ef7 APPROVED, change inside the allowed title/meta class) and the edit was made and verified (title 58 chars, description 140 chars, exactly the proposal's strings, src/app/weather/[slug]/page.tsx only, foscoe-only ternary, 16 towns untouched). check_function_budget.py PASSED (10 bundles of 10, no new route family). Then: 'npx vitest run' FAILED with MODULE_NOT_FOUND (vitest.config.ts cannot resolve vite) and 'npm run lint' is unrunnable for the same reason \u2014 this lane worktree has NO node_modules directory (only the main checkout ~/Projects/DavesSweater has one) and 'npm install' is DENIED by the committed allowlist. RUNBOOK step 4 requires 'npx vitest run (must pass)'; it did not run at all, so the gate is unsatisfied and applying would be a workaround. Per the lane rule this is a FAILED step naming the tool: npm install (denied) / npx vitest run (cannot resolve). The working-tree edit was REVERSED with Edit so it cannot dirty next week's run; git status shows src/ pristine. Evidence the change is low-risk but UNVERIFIED: all 36 test files are under src/lib/__tests__ plus sitemap/v1Route; none covers page metadata. This blocker is structural and will recur every week until fixed.",
+      "at": "2026-09-16T12:22:41-04:00"
+    },
+    {
+      "name": "reap",
+      "status": "fail",
+      "note": "failed-because-abandoned \u00b7 run was 0.0 h old and never finished",
+      "at": "2026-09-16T12:23:05-04:00"
+    }
+  ],
+  "what_changed": [],
+  "decisions_resolved": [
+    "d-20260916-d245: Overtaken by events, NOT by David's ruling \u2014 Todoist task 6hWcvmPHvP5XpCp8 is still open and uncommented as of 2026-09-16 12:22 EDT. The decision's own default (option a: commit or discard the two stray files) was satisfied at 2026-09-16 by commit af941fd6 on origin/main, which committed BOTH blocking files (.claude/settings.json +1 line, experiments/deadman-log.md +1 line). This run therefore rebased clean, preflight passed, and the lane proceeds to apply foscoe-title-meta-ctr on the standing approval d-20260908-5ef7. David can tick the task off; no further ruling is needed."
+  ],
+  "ahrefs_units": null,
+  "finished": "2026-09-16T12:23:05-04:00",
+  "status": "failed-because-abandoned",
+  "abandoned": {
+    "age_hours": 0.0,
+    "reaped_at": "2026-09-16T12:23:05-04:00",
+    "note": "unfinished, no usage-limit evidence; most likely stopped on a permission prompt or killed"
+  }
+}

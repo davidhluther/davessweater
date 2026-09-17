@@ -5,8 +5,8 @@
   "push_enabled": true,
   "apply_without_approval": false,
   "last_run": "2026-09-16T12:18:30-04:00",
-  "run_id": "2026-09-16-f3945d",
-  "last_status": "failed:preflight,apply,push",
+  "run_id": "2026-09-16-bb33af",
+  "last_status": "failed-because-abandoned",
   "digest_last_sent": "2026-09-16T12:18:30-04:00",
   "digest_last_path": "experiments/digests/2026-09-16-f3945d.md",
   "active_experiment": null,
@@ -41,10 +41,22 @@
       "title": "Clear the ds-experiments worktree so the approved foscoe experiment can finally apply?",
       "question": "foscoe-title-meta-ctr has been APPROVED since 2026-09-09 07:43 EDT and has still never been applied: on 09-09 the lane was in dry run, and today (09-16) RUNBOOK step 0 preflight failed because two tracked files in ~/Projects/worktrees/ds-experiments are modified and uncommitted by OTHER sessions - .claude/settings.json (a session added mcp__scheduled-tasks__list_task_runs; the lane is DENIED from editing this file) and experiments/deadman-log.md (the ds-experiments-deadman run appended its 2026-09-16T12:11 MISSED row and did not commit it). With those present, 'git pull --rebase origin main' refuses and the worktree sits 3 commits behind origin/main, so the lane cannot apply on a current tree. Both files are outside the lane's own staging allowlist, so it cannot clear them itself. Meanwhile the hypothesis is undiminished: foscoe-named queries are still 403 impressions / 0 clicks / 0.00% CTR over 2026-08-18..09-14. Fix options: (a) commit or discard those two files so next Tuesday's run applies cleanly; (b) have the deadman routine commit its own deadman-log.md row as part of its run, which is what causes this most weeks.",
       "default": "commit or discard the two stray files before the next Tuesday run (option a) - the lane applies foscoe-title-meta-ctr on 2026-09-22 with no further approval needed, since d-20260908-5ef7 already stands",
-      "status": "open",
+      "status": "resolved",
       "raised": "2026-09-16T12:16:34-04:00",
       "run_id": "2026-09-16-f3945d",
-      "todoist_id": "6hWcvmPHvP5XpCp8"
+      "todoist_id": "6hWcvmPHvP5XpCp8",
+      "outcome": "Overtaken by events, NOT by David's ruling \u2014 Todoist task 6hWcvmPHvP5XpCp8 is still open and uncommented as of 2026-09-16 12:22 EDT. The decision's own default (option a: commit or discard the two stray files) was satisfied at 2026-09-16 by commit af941fd6 on origin/main, which committed BOTH blocking files (.claude/settings.json +1 line, experiments/deadman-log.md +1 line). This run therefore rebased clean, preflight passed, and the lane proceeds to apply foscoe-title-meta-ctr on the standing approval d-20260908-5ef7. David can tick the task off; no further ruling is needed.",
+      "resolved": "2026-09-16T12:21:21-04:00"
+    },
+    {
+      "id": "d-20260916-2e88",
+      "title": "Give the ds-experiments worktree a node_modules so the lane can actually apply an experiment?",
+      "question": "Root cause found, and it is NOT last run's dirty-worktree theory (that one is cleared \u2014 af941fd6 committed both stray files and this run rebased clean, preflight passed, and all four apply conditions were satisfied for the first time since approval). The lane still could not apply, for a deeper reason: ~/Projects/worktrees/ds-experiments has NO node_modules. RUNBOOK step 4 mandates three pre-apply checks; check_function_budget.py passes (pure python, 10/10 bundles), but 'npx vitest run' dies with MODULE_NOT_FOUND (vitest.config.ts cannot resolve vite) and 'npm run lint' cannot run either. 'npm install' is DENIED by the committed allowlist, so the lane cannot fix this itself, and it never will: this repeats every week and the lane can never apply ANY experiment under the current setup. foscoe-title-meta-ctr has now been approved and unapplied for 7 days across three runs. The edit itself was made and verified this run (title 58 chars, description 140 chars, foscoe-only ternary, 16 towns untouched, src/ only) and then reversed so it would not dirty next week's run. Fix options: (a) one-time 'npm ci' in the worktree \u2014 /node_modules is gitignored so it cannot dirty the tree, but it needs a refresh whenever package.json changes; (b) symlink the main checkout's node_modules into the worktree \u2014 cheapest, one command, though the main checkout currently sits on branch leaf-v1-calibration-2026-09-04 so its dependency tree is not guaranteed to match main's package.json; (c) allowlist 'Bash(npm ci)' for this lane so it self-heals \u2014 note the deny list bars npm install deliberately (traced-payload risk, the 08-21 outage); (d) relax RUNBOOK step 4 to require only the checks the worktree can run \u2014 honest, but it ships metadata changes to a PUBLIC production site with no test or lint gate. Evidence on risk if you pick (d): all 36 test files live under src/lib/__tests__ plus sitemap/v1Route, and none covers page metadata, so this specific change is very unlikely to be test-covered \u2014 but 'unlikely to be covered' is not 'the check passed'. Cash $0, units 0 either way.",
+      "default": "option (a) \u2014 David runs 'npm ci' once in ~/Projects/worktrees/ds-experiments; the lane then applies foscoe-title-meta-ctr on 2026-09-22 with no further approval, since d-20260908-5ef7 already stands",
+      "status": "open",
+      "raised": "2026-09-16T12:22:55-04:00",
+      "run_id": "2026-09-16-bb33af",
+      "todoist_id": null
     }
   ],
   "budget": {
@@ -60,5 +72,11 @@
   },
   "notes": "David never edits this file. Written only by shared-skills/dev-env/lane/run_state.py through experiments/lane.sh (set/append for active_experiment and completed_experiments). dry_run: proposes and measures, never applies, labels the digest. push_enabled gates git push (an applied change only reaches production through a push to main). apply_without_approval: false until David lifts the gate in writing after four clean experiments. This repo is PUBLIC: everything here is public.",
   "dry_run_set_at": "2026-09-09T08:50:49-04:00",
-  "push_enabled_set_at": "2026-09-09T08:50:49-04:00"
+  "push_enabled_set_at": "2026-09-09T08:50:49-04:00",
+  "last_failure": {
+    "cause": "abandoned",
+    "run_id": "2026-09-16-bb33af",
+    "age_hours": 0.0,
+    "reaped_at": "2026-09-16T12:23:05-04:00"
+  }
 }
