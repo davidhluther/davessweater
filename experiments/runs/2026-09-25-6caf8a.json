@@ -1,0 +1,46 @@
+{
+  "run_id": "2026-09-25-6caf8a",
+  "started": "2026-09-25T10:41:38-04:00",
+  "dry_run": false,
+  "steps": [
+    {
+      "name": "preflight",
+      "status": "ok",
+      "note": "rebase clean after committing pending STATUS.md run-record rows (dc024281); on main",
+      "at": "2026-09-25T10:42:39-04:00"
+    },
+    {
+      "name": "read-decisions",
+      "status": "skip",
+      "note": "only open decision is d-20260916-2e88 (node_modules fix), todoist_id null \u2014 never filed; nothing to read back. Will file in step 9.",
+      "at": "2026-09-25T10:42:44-04:00"
+    },
+    {
+      "name": "measure",
+      "status": "skip",
+      "note": "active_experiment is null \u2014 foscoe-title-meta-ctr is approved but never applied, so nothing is in a measuring state",
+      "at": "2026-09-25T10:42:48-04:00"
+    },
+    {
+      "name": "propose",
+      "status": "skip",
+      "note": "foscoe-title-meta-ctr is still an unconcluded experiment (approved d-20260908-5ef7, never applied) \u2014 one experiment at a time means no new proposal until it applies or is abandoned; proceeding to attempt apply in step 4 instead",
+      "at": "2026-09-25T10:42:55-04:00"
+    },
+    {
+      "name": "apply",
+      "status": "fail",
+      "note": "npx vitest run: Cannot find module 'vitest/config' \u2014 node_modules absent in this worktree, npm install/ci denied by allowlist; npm run lint blocked same reason. check_function_budget.py passed (10/10). foscoe-title-meta-ctr remains APPROVED (d-20260908-5ef7) but cannot apply until node_modules exists (decision d-20260916-2e88, open since 2026-09-16, never filed to Todoist)",
+      "at": "2026-09-25T10:43:10-04:00"
+    },
+    {
+      "name": "queue-decisions",
+      "status": "ok",
+      "note": "0 new decisions; 1 standing decision (d-20260916-2e88) carries forward and will be filed to Todoist in step 9 since todoist_id is still null",
+      "at": "2026-09-25T10:43:17-04:00"
+    }
+  ],
+  "what_changed": [],
+  "decisions_resolved": [],
+  "ahrefs_units": null
+}
