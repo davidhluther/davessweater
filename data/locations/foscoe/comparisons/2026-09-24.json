@@ -1,0 +1,701 @@
+{
+  "date": "2026-09-24",
+  "location": "Foscoe",
+  "location_slug": "foscoe",
+  "actuals": {
+    "date": "2026-09-24",
+    "fetched_at": "2026-09-25T11:12:56.473162-04:00",
+    "location": "Foscoe",
+    "location_slug": "foscoe",
+    "high_f": 59.8,
+    "low_f": 49.0,
+    "wind_mph": 9.1,
+    "gust_mph": 23.0,
+    "precip_type": "rain",
+    "rain_in": 0.28,
+    "snow_in": 0.0,
+    "precip_in": 0.28,
+    "weather_code": 61,
+    "conditions": "Slight rain",
+    "category": "rain"
+  },
+  "sources": {
+    "googleweather": {
+      "prediction": {
+        "date": "2026-09-24",
+        "high_f": 56.9,
+        "low_f": 46.0,
+        "wind_mph": 5.0,
+        "precip_type": "rain",
+        "rain_in": 0.061,
+        "snow_in": 0.0,
+        "precip_prob": 45,
+        "fields_provided": [
+          "high",
+          "low",
+          "wind",
+          "precip_type",
+          "rain_amount"
+        ]
+      },
+      "score": {
+        "score": 83.7,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 4
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip": true
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 24.3,
+            "max": 30,
+            "scored": true,
+            "predicted": 56.9,
+            "actual": 59.8,
+            "error": 2.9
+          },
+          "low_temp": {
+            "points": 24.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 46.0,
+            "actual": 49.0,
+            "error": 3.0
+          },
+          "wind": {
+            "points": 17.8,
+            "max": 20,
+            "scored": true,
+            "predicted": 5.0,
+            "actual": 9.1,
+            "error": 4.1
+          },
+          "precip": {
+            "points": 17.6,
+            "max": 20,
+            "scored": true,
+            "predicted": 0.061,
+            "actual": 0.28,
+            "error": 0.219,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    },
+    "metno": {
+      "prediction": {
+        "date": "2026-09-24",
+        "high_f": 62.1,
+        "low_f": 49.8,
+        "wind_mph": 6.9,
+        "precip_type": "rain",
+        "rain_in": 0.012,
+        "snow_in": null,
+        "precip_prob": null,
+        "fields_provided": [
+          "high",
+          "low",
+          "wind",
+          "precip_type",
+          "rain_amount"
+        ]
+      },
+      "score": {
+        "score": 92.7,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 5
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip": true
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 26.1,
+            "max": 30,
+            "scored": true,
+            "predicted": 62.1,
+            "actual": 59.8,
+            "error": 2.3
+          },
+          "low_temp": {
+            "points": 30.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 49.8,
+            "actual": 49.0,
+            "error": 0.8
+          },
+          "wind": {
+            "points": 20.0,
+            "max": 20,
+            "scored": true,
+            "predicted": 6.9,
+            "actual": 9.1,
+            "error": 2.2
+          },
+          "precip": {
+            "points": 16.6,
+            "max": 20,
+            "scored": true,
+            "predicted": 0.012,
+            "actual": 0.28,
+            "error": 0.268,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    },
+    "nws": {
+      "prediction": {
+        "date": "2026-09-24",
+        "high_f": 56.0,
+        "low_f": 42.0,
+        "wind_mph": 5.0,
+        "precip_type": "rain",
+        "rain_in": null,
+        "snow_in": null,
+        "precip_prob": 47,
+        "fields_provided": [
+          "high",
+          "low",
+          "wind",
+          "precip_type"
+        ]
+      },
+      "score": {
+        "score": 61.4,
+        "grade": {
+          "verdict": "meh",
+          "ray_count": 3
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip": false
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 21.6,
+            "max": 30,
+            "scored": true,
+            "predicted": 56.0,
+            "actual": 59.8,
+            "error": 3.8
+          },
+          "low_temp": {
+            "points": 12.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 42.0,
+            "actual": 49.0,
+            "error": 7.0
+          },
+          "wind": {
+            "points": 17.8,
+            "max": 20,
+            "scored": true,
+            "predicted": 5.0,
+            "actual": 9.1,
+            "error": 4.1
+          },
+          "precip": {
+            "points": 10.0,
+            "max": 20,
+            "scored": true,
+            "predicted": null,
+            "actual": 0.28,
+            "error": null,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    },
+    "openmeteo": {
+      "prediction": {
+        "date": "2026-09-24",
+        "high_f": 57.6,
+        "low_f": 50.6,
+        "wind_mph": 5.9,
+        "precip_type": "rain",
+        "rain_in": 0.157,
+        "snow_in": 0.0,
+        "precip_in": 0.157,
+        "precip_prob": 66,
+        "weather_code": 61,
+        "conditions": "Slight rain",
+        "category": "rain",
+        "fields_provided": [
+          "high",
+          "low",
+          "wind",
+          "precip_type",
+          "rain_amount",
+          "snow_amount"
+        ]
+      },
+      "score": {
+        "score": 93.7,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 5
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip": true
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 26.4,
+            "max": 30,
+            "scored": true,
+            "predicted": 57.6,
+            "actual": 59.8,
+            "error": 2.2
+          },
+          "low_temp": {
+            "points": 28.2,
+            "max": 30,
+            "scored": true,
+            "predicted": 50.6,
+            "actual": 49.0,
+            "error": 1.6
+          },
+          "wind": {
+            "points": 19.6,
+            "max": 20,
+            "scored": true,
+            "predicted": 5.9,
+            "actual": 9.1,
+            "error": 3.2
+          },
+          "precip": {
+            "points": 19.5,
+            "max": 20,
+            "scored": true,
+            "predicted": 0.157,
+            "actual": 0.28,
+            "error": 0.123,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    },
+    "openweathermap": {
+      "prediction": {
+        "date": "2026-09-24",
+        "high_f": 57.0,
+        "low_f": 47.1,
+        "wind_mph": 6.3,
+        "precip_type": "rain",
+        "rain_in": 0.011,
+        "snow_in": null,
+        "precip_prob": 31,
+        "fields_provided": [
+          "high",
+          "low",
+          "wind",
+          "precip_type",
+          "rain_amount"
+        ]
+      },
+      "score": {
+        "score": 88.5,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 4
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip": true
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 24.6,
+            "max": 30,
+            "scored": true,
+            "predicted": 57.0,
+            "actual": 59.8,
+            "error": 2.8
+          },
+          "low_temp": {
+            "points": 27.3,
+            "max": 30,
+            "scored": true,
+            "predicted": 47.1,
+            "actual": 49.0,
+            "error": 1.9
+          },
+          "wind": {
+            "points": 20.0,
+            "max": 20,
+            "scored": true,
+            "predicted": 6.3,
+            "actual": 9.1,
+            "error": 2.8
+          },
+          "precip": {
+            "points": 16.6,
+            "max": 20,
+            "scored": true,
+            "predicted": 0.011,
+            "actual": 0.28,
+            "error": 0.269,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    },
+    "raysweather": {
+      "prediction": {
+        "date": "2026-09-24",
+        "high_f": 58,
+        "low_f": 42,
+        "golfballs": 2,
+        "icon_day": "Day/02_Rain/11_Ovc_Rain_Fog.png",
+        "icon_night": "Night/01_Dry/04_Brk_Clouds.png",
+        "precip_type": "rain",
+        "fields_provided": [
+          "high",
+          "low",
+          "precip_type"
+        ]
+      },
+      "score": {
+        "score": 49.6,
+        "grade": {
+          "verdict": "wrong",
+          "ray_count": 2
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": false,
+          "precip": false
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 27.6,
+            "max": 30,
+            "scored": true,
+            "predicted": 58,
+            "actual": 59.8,
+            "error": 1.8
+          },
+          "low_temp": {
+            "points": 12.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 42,
+            "actual": 49.0,
+            "error": 7.0
+          },
+          "wind": {
+            "points": null,
+            "max": 20,
+            "scored": false,
+            "predicted": null,
+            "actual": 9.1,
+            "error": null
+          },
+          "precip": {
+            "points": 10.0,
+            "max": 20,
+            "scored": true,
+            "predicted": null,
+            "actual": 0.28,
+            "error": null,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    },
+    "tomorrowio": {
+      "prediction": {
+        "date": "2026-09-24",
+        "high_f": 56.1,
+        "low_f": 45.3,
+        "wind_mph": 5.3,
+        "precip_type": "rain",
+        "rain_in": 0.06,
+        "snow_in": 0.0,
+        "precip_prob": 15,
+        "fields_provided": [
+          "high",
+          "low",
+          "wind",
+          "precip_type",
+          "rain_amount",
+          "snow_amount"
+        ]
+      },
+      "score": {
+        "score": 79.8,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 4
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip": true
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 21.9,
+            "max": 30,
+            "scored": true,
+            "predicted": 56.1,
+            "actual": 59.8,
+            "error": 3.7
+          },
+          "low_temp": {
+            "points": 21.9,
+            "max": 30,
+            "scored": true,
+            "predicted": 45.3,
+            "actual": 49.0,
+            "error": 3.7
+          },
+          "wind": {
+            "points": 18.4,
+            "max": 20,
+            "scored": true,
+            "predicted": 5.3,
+            "actual": 9.1,
+            "error": 3.8
+          },
+          "precip": {
+            "points": 17.6,
+            "max": 20,
+            "scored": true,
+            "predicted": 0.06,
+            "actual": 0.28,
+            "error": 0.22,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    },
+    "visualcrossing": {
+      "prediction": {
+        "date": "2026-09-24",
+        "high_f": 56.2,
+        "low_f": 50.3,
+        "wind_mph": 5.7,
+        "precip_type": "rain",
+        "rain_in": 1.069,
+        "snow_in": 0.0,
+        "precip_prob": 100,
+        "fields_provided": [
+          "high",
+          "low",
+          "wind",
+          "precip_type",
+          "rain_amount",
+          "snow_amount"
+        ]
+      },
+      "score": {
+        "score": 80.5,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 4
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip": true
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 22.2,
+            "max": 30,
+            "scored": true,
+            "predicted": 56.2,
+            "actual": 59.8,
+            "error": 3.6
+          },
+          "low_temp": {
+            "points": 29.1,
+            "max": 30,
+            "scored": true,
+            "predicted": 50.3,
+            "actual": 49.0,
+            "error": 1.3
+          },
+          "wind": {
+            "points": 19.2,
+            "max": 20,
+            "scored": true,
+            "predicted": 5.7,
+            "actual": 9.1,
+            "error": 3.4
+          },
+          "precip": {
+            "points": 10.0,
+            "max": 20,
+            "scored": true,
+            "predicted": 1.069,
+            "actual": 0.28,
+            "error": 0.789,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    },
+    "weatherapi": {
+      "prediction": {
+        "date": "2026-09-24",
+        "high_f": 55.9,
+        "low_f": 49.1,
+        "wind_mph": 3.6,
+        "precip_type": "rain",
+        "rain_in": 0.59,
+        "snow_in": 0.0,
+        "precip_prob": 93,
+        "fields_provided": [
+          "high",
+          "low",
+          "wind",
+          "precip_type",
+          "rain_amount",
+          "snow_amount"
+        ]
+      },
+      "score": {
+        "score": 82.1,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 4
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip": true
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 21.3,
+            "max": 30,
+            "scored": true,
+            "predicted": 55.9,
+            "actual": 59.8,
+            "error": 3.9
+          },
+          "low_temp": {
+            "points": 30.0,
+            "max": 30,
+            "scored": true,
+            "predicted": 49.1,
+            "actual": 49.0,
+            "error": 0.1
+          },
+          "wind": {
+            "points": 15.0,
+            "max": 20,
+            "scored": true,
+            "predicted": 3.6,
+            "actual": 9.1,
+            "error": 5.5
+          },
+          "precip": {
+            "points": 15.8,
+            "max": 20,
+            "scored": true,
+            "predicted": 0.59,
+            "actual": 0.28,
+            "error": 0.31,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    },
+    "composite": {
+      "prediction": {
+        "high_f": 57.2,
+        "low_f": 47.5,
+        "wind_mph": 5.5,
+        "precip_type": "rain",
+        "rain_in": 0.28,
+        "snow_in": 0.0,
+        "precip_in": 0.28,
+        "members": [
+          "googleweather",
+          "metno",
+          "nws",
+          "openmeteo",
+          "openweathermap",
+          "tomorrowio",
+          "visualcrossing",
+          "weatherapi"
+        ],
+        "member_count": 8
+      },
+      "score": {
+        "score": 92.5,
+        "grade": {
+          "verdict": "right",
+          "ray_count": 5
+        },
+        "coverage": {
+          "high_temp": true,
+          "low_temp": true,
+          "wind": true,
+          "precip": true
+        },
+        "breakdown": {
+          "high_temp": {
+            "points": 25.2,
+            "max": 30,
+            "scored": true,
+            "predicted": 57.2,
+            "actual": 59.8,
+            "error": 2.6
+          },
+          "low_temp": {
+            "points": 28.5,
+            "max": 30,
+            "scored": true,
+            "predicted": 47.5,
+            "actual": 49.0,
+            "error": 1.5
+          },
+          "wind": {
+            "points": 18.8,
+            "max": 20,
+            "scored": true,
+            "predicted": 5.5,
+            "actual": 9.1,
+            "error": 3.6
+          },
+          "precip": {
+            "points": 20.0,
+            "max": 20,
+            "scored": true,
+            "predicted": 0.28,
+            "actual": 0.28,
+            "error": 0.0,
+            "unit": "in_liquid"
+          }
+        }
+      }
+    }
+  }
+}
