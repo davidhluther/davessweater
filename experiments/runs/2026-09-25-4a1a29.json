@@ -44,6 +44,36 @@
       "status": "ok",
       "note": "STATUS.md Live bullet replaced; LEDGER.md foscoe row updated to APPLIED/measuring; CHECKLIST.md exit test C marked passed",
       "at": "2026-09-25T10:58:58-04:00"
+    },
+    {
+      "name": "commit",
+      "status": "ok",
+      "note": "502c1b5",
+      "at": "2026-09-25T11:00:21-04:00"
+    },
+    {
+      "name": "push",
+      "status": "ok",
+      "note": "502c1b5 pushed to origin/main",
+      "at": "2026-09-25T11:00:25-04:00"
+    },
+    {
+      "name": "digest",
+      "status": "ok",
+      "note": "experiments/digests/2026-09-25-4a1a29.md",
+      "at": "2026-09-25T11:00:38-04:00"
+    },
+    {
+      "name": "email",
+      "status": "fail",
+      "note": "mcp__7456e8e6-d245-4359-bb7e-fa6b1a7809a2__send_message not connected this session (ToolSearch: no match). Only generic 'claude.ai Gmail' is present, not the allowlisted server ID; not substituted per no-workaround rule. Digest exists at experiments/digests/2026-09-25-4a1a29.md but was not emailed.",
+      "at": "2026-09-25T11:00:42-04:00"
+    },
+    {
+      "name": "todoist",
+      "status": "fail",
+      "note": "mcp__b6d489fe-03ef-4db0-9cb4-78ed9fa5375f__find-projects/add-tasks/add-comments not connected this session (ToolSearch: no match). Only generic 'claude.ai Todoist' is present, not the allowlisted server ID; not substituted per no-workaround rule. No parent task filed, no decision sub-tasks filed (including d-20260925-f662, the connector-gap decision itself). See decision d-20260925-f662 for the remediation ask.",
+      "at": "2026-09-25T11:00:47-04:00"
     }
   ],
   "what_changed": [],
@@ -51,5 +81,13 @@
     "d-20260916-2e88: Overtaken by events, not by a Todoist ruling (task was never filed, todoist_id stayed null across 9 days/3 runs). The decision's own default \u2014 option (a), npm ci once in the worktree \u2014 is independently satisfied: node_modules now exists in ~/Projects/worktrees/ds-experiments (684 entries), and this run's own npx vitest run (382/382 passed) and npm run lint (clean) confirm it works. foscoe-title-meta-ctr applied this run on the standing approval d-20260908-5ef7 (sha 5c95c2423a72a46f3652eab7af479ba7da5f31bf)."
   ],
   "ahrefs_units": 0,
-  "cost": "cash $0 \u00b7 units 0 \u00b7 Sonnet 5 (session) \u00b7 ~40 tool calls"
+  "cost": "cash $0 \u00b7 units 0 \u00b7 Sonnet 5 (session) \u00b7 ~40 tool calls",
+  "this_week": [
+    "applied foscoe-title-meta-ctr (5c95c242) \u2014 window ends 2026-10-23; verified live: title tag reads 'Foscoe NC Weather: Today, 5-Day Forecast & Accuracy Grades | Dave's Sweater'"
+  ],
+  "finished": "2026-09-25T11:00:49-04:00",
+  "minutes": 6.7,
+  "digest_sent": false,
+  "digest_path": "experiments/digests/2026-09-25-4a1a29.md",
+  "status": "failed:read-decisions,email,todoist"
 }
