@@ -5,8 +5,8 @@
   "push_enabled": true,
   "apply_without_approval": false,
   "last_run": "2026-09-25T11:00:49-04:00",
-  "run_id": "2026-09-25-4a1a29",
-  "last_status": "failed:read-decisions,email,todoist",
+  "run_id": "2026-09-25-92578a",
+  "last_status": "running",
   "digest_last_sent": null,
   "digest_last_path": "experiments/digests/2026-09-25-4a1a29.md",
   "active_experiment": {
@@ -80,10 +80,12 @@
       "title": "Fix the missing Search Console / Todoist / Gmail connectors for this lane's scheduled session?",
       "question": "This run (2026-09-25) had NONE of the three project-scoped MCP connectors the RUNBOOK requires: mcp__google-search-console__* (measurement instrument), mcp__b6d489fe-03ef-4db0-9cb4-78ed9fa5375f__* (the allowlisted Todoist workspace), and mcp__7456e8e6-d245-4359-bb7e-fa6b1a7809a2__send_message (the allowlisted Gmail account) all failed to appear anywhere in ToolSearch \u2014 not connecting, not requiring auth, simply absent. Only the generic claude.ai Todoist/Gmail connectors were present, and those are NOT the allowlisted server IDs, so they were not substituted (no workaround, per RUNBOOK \u00a70/\u00a71). Practical effect: could not re-verify the foscoe baseline before applying (used the 2026-09-16 numbers instead, 9 days old), could not read back or file any Todoist decisions, and step 9 (email + Todoist digest delivery) will fail this run \u2014 the digest will exist as a file but reach nobody. If this recurs next Tuesday, the closed loop cannot measure foscoe's CTR window either.",
       "default": "check whether this session's MCP config differs from prior successful runs (e.g. shared-skills/dev-env/lane config, or the scheduled-task's connector list) and reconnect the three servers before 2026-10-02",
-      "status": "open",
+      "status": "resolved",
       "raised": "2026-09-25T10:57:55-04:00",
       "run_id": "2026-09-25-4a1a29",
-      "todoist_id": null
+      "todoist_id": null,
+      "outcome": "Overtaken by events: this run's ToolSearch loaded mcp__google-search-console__*, mcp__claude_ai_Todoist__*, and mcp__claude_ai_Gmail__* without issue (the RUNBOOK's own note that these generic claude_ai_ names are the allowlisted accounts under different client naming was correct). No connector fix needed; last week's absence looks like a one-run gap, not a standing misconfiguration. If it recurs, re-open.",
+      "resolved": "2026-09-25T11:29:02-04:00"
     }
   ],
   "budget": {

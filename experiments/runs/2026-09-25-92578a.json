@@ -1,0 +1,51 @@
+{
+  "run_id": "2026-09-25-92578a",
+  "started": "2026-09-25T11:27:58-04:00",
+  "dry_run": false,
+  "steps": [
+    {
+      "name": "preflight",
+      "status": "ok",
+      "note": "on main, rebased clean after committing local STATUS.md log line",
+      "at": "2026-09-25T11:28:11-04:00"
+    },
+    {
+      "name": "read-decisions",
+      "status": "ok",
+      "note": "1 open decision (d-20260925-f662), no todoist_id yet \u2014 nothing to read back; will be filed in step 9",
+      "at": "2026-09-25T11:28:28-04:00"
+    },
+    {
+      "name": "measure",
+      "status": "ok",
+      "note": "foscoe-title-meta-ctr day 1/28, no signal yet (SC lag)",
+      "at": "2026-09-25T11:28:45-04:00"
+    },
+    {
+      "name": "propose",
+      "status": "skip",
+      "note": "active_experiment already set (foscoe-title-meta-ctr, measuring) \u2014 one experiment at a time",
+      "at": "2026-09-25T11:28:48-04:00"
+    },
+    {
+      "name": "apply",
+      "status": "skip",
+      "note": "no pending experiment to apply \u2014 foscoe-title-meta-ctr already applied this morning; none proposed this run",
+      "at": "2026-09-25T11:28:52-04:00"
+    },
+    {
+      "name": "queue-decisions",
+      "status": "ok",
+      "note": "0 new decisions; resolved 1 stale one (d-20260925-f662, connectors fine this run)",
+      "at": "2026-09-25T11:29:06-04:00"
+    }
+  ],
+  "what_changed": [],
+  "decisions_resolved": [
+    "d-20260925-f662: Overtaken by events: this run's ToolSearch loaded mcp__google-search-console__*, mcp__claude_ai_Todoist__*, and mcp__claude_ai_Gmail__* without issue (the RUNBOOK's own note that these generic claude_ai_ names are the allowlisted accounts under different client naming was correct). No connector fix needed; last week's absence looks like a one-run gap, not a standing misconfiguration. If it recurs, re-open."
+  ],
+  "ahrefs_units": null,
+  "this_week": [
+    "measuring foscoe-title-meta-ctr \u2014 day 1 of 28 (applied today 10:57, sha 5c95c24); pre-change SC data (09-11..09-23, 2-day lag) still shows 0 clicks/83 impr/0.00% CTR/pos 10.3 \u2014 too early for any signal"
+  ]
+}
