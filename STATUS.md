@@ -5,21 +5,23 @@ Schema (Refactor 2): Live / Parked / Decisions for David / Done (dated). Task-le
 
 ## Live
 
-- **Experiments lane (Refactor 2 Lane 4) — run `2026-09-25-6caf8a` 2026-09-25, status PARTIAL (apply
-  FAILED — infrastructure; preflight, commit, push, ledger and digest ran).** Routine
-  `ds-experiments-weekly` Wednesdays 08:00 runs `experiments/RUNBOOK.md` in the lane worktree
-  (`~/Projects/worktrees/ds-experiments`, on `main`); dead-man `ds-experiments-deadman` Thursdays 08:00.
-  Two runs (2026-09-17, 2026-09-24 ×2) were MISSED entirely before this one — see dead-man log. Active
-  experiment: none. `foscoe-title-meta-ctr` is **still APPROVED and still not applied, now for the third
-  attempted run** — the approval gate is satisfied (`d-20260908-5ef7`, 2026-09-09) and the lane is live
-  (`dry_run` false, `push_enabled` true since 2026-09-09 08:50), but the worktree has **no `node_modules`**:
-  `npx vitest run` fails with `Cannot find module 'vitest/config'` and `npm run lint` can't run either;
-  `npm install`/`npm ci` are denied by the committed allowlist, so the lane cannot fix this itself and
-  never will under the current setup (`check_function_budget.py` passes, 10/10 bundles — that check alone
-  is not enough gate to ship on). Standing decision `d-20260916-2e88` (raised 2026-09-16, open 9 days,
-  never filed to Todoist until this run) asks David to run `npm ci` once in the worktree — cheapest fix,
-  root cause confirmed unchanged this run. $0 cash, 0 Ahrefs units. Digest:
-  `experiments/digests/2026-09-25-6caf8a.md`. State `experiments/STATE.json`; record
+- **Experiments lane (Refactor 2 Lane 4) — run `2026-09-25-4a1a29` 2026-09-25, status PARTIAL (apply OK;
+  Todoist read-back and delivery FAILED — infrastructure; preflight, apply, commit, push, ledger and
+  digest ran).** Routine `ds-experiments-weekly` Wednesdays 08:00 runs `experiments/RUNBOOK.md` in the
+  lane worktree (`~/Projects/worktrees/ds-experiments`, on `main`); dead-man `ds-experiments-deadman`
+  Thursdays 08:00. The `node_modules` blocker (`d-20260916-2e88`) is **resolved** — the worktree now has
+  it (684 entries) and this run's `npx vitest run` (382/382) and `npm run lint` (clean) both passed.
+  `foscoe-title-meta-ctr` **applied this run**, sha `5c95c2423a72a46f3652eab7af479ba7da5f31bf`, pushed to
+  `origin/main`; active experiment status `measuring`, window ends 2026-10-23, revert
+  `git revert 5c95c2423a72a46f3652eab7af479ba7da5f31bf`. New blocker found this run: the project-scoped
+  MCP connectors the RUNBOOK requires — Search Console, the allowlisted Todoist workspace
+  (`mcp__b6d489fe-…`), and the allowlisted Gmail account (`mcp__7456e8e6-…`) — were **all absent** from
+  this session (not failed-to-connect, simply not present); only the generic claude.ai Todoist/Gmail
+  connectors were available and were **not** substituted (wrong server IDs, no workaround per RUNBOOK).
+  Effect: baseline used for `foscoe-title-meta-ctr` is the 2026-09-16 re-verification (9 days old, not a
+  same-day pull), no Todoist decisions were read back or filed, and the digest could not be emailed or
+  posted to Todoist this run — see new decision `d-20260925-f662`. $0 cash, 0 Ahrefs units. Digest:
+  `experiments/digests/2026-09-25-4a1a29.md`. State `experiments/STATE.json`; record
   `experiments/LEDGER.md`.
 
 ## Parked

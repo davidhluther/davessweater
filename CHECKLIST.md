@@ -15,8 +15,15 @@ in the same change that completes a task. Do not rely on chat memory; this file 
 - [x] **Exit test A PASSED 2026-09-08** (run `2026-09-08-2417bb`: proposed `foscoe-title-meta-ctr`, applied
       nothing, digest emailed, approval task created) · **[x] B PASSED 2026-09-08** (run `2026-09-08-5a548a`
       named the forced `notify` failure in a PARTIAL digest that still shipped; the dead-man emailed
-      "DS experiments run missed" against a faked stale state) · **[ ] C** (David approves one experiment in Todoist; the lane
-      applies it; the next digest shows it measuring with the revert recorded).
+      "DS experiments run missed" against a faked stale state) · **[x] C PASSED 2026-09-25** (run
+      `2026-09-25-4a1a29`: `foscoe-title-meta-ctr` applied, sha `5c95c2423a72a46f3652eab7af479ba7da5f31bf`,
+      pushed to `origin/main`, `active_experiment` shows `measuring` with the revert recorded
+      (`git revert 5c95c2423a72a46f3652eab7af479ba7da5f31bf`), window ends 2026-10-23 — three weeks late
+      on the approval (2026-09-09) because of two separate blockers, both now cleared: dirty worktree
+      (2026-09-16) and missing `node_modules` (2026-09-16 → 2026-09-25). This run also found the
+      `mcp__google-search-console__*` / Todoist / Gmail connectors absent from the session entirely, so
+      the digest could not be emailed or filed to Todoist — see `d-20260925-f662` in
+      `experiments/STATE.json`).
       - **A RAN 2026-09-08** (run `2026-09-08-2417bb`, status OK): proposed exactly one experiment
         (`foscoe-title-meta-ctr`, `experiments/proposals/2026-09-08-foscoe-title-meta-ctr.md`), applied
         nothing, queued one approval decision (`d-20260908-5ef7`), built and emailed the digest. Search

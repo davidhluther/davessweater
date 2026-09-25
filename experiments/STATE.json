@@ -5,11 +5,26 @@
   "push_enabled": true,
   "apply_without_approval": false,
   "last_run": "2026-09-25T10:46:38-04:00",
-  "run_id": "2026-09-25-6caf8a",
-  "last_status": "failed:apply,email,todoist",
+  "run_id": "2026-09-25-4a1a29",
+  "last_status": "running",
   "digest_last_sent": null,
   "digest_last_path": "experiments/digests/2026-09-25-6caf8a.md",
-  "active_experiment": null,
+  "active_experiment": {
+    "name": "foscoe-title-meta-ctr",
+    "status": "measuring",
+    "applied_at": "2026-09-25T10:57:00-04:00",
+    "applied_sha": "5c95c2423a72a46f3652eab7af479ba7da5f31bf",
+    "window_end": "2026-10-23",
+    "metric": "CTR on foscoe-intent queries (Search Console)",
+    "baseline": {
+      "foscoe_intent_impressions": 403,
+      "foscoe_intent_clicks": 0,
+      "foscoe_intent_ctr": "0.00%",
+      "foscoe_intent_avg_position": 10.4,
+      "as_of": "2026-09-16 re-verification, window 2026-08-18..09-14"
+    },
+    "revert_cmd": "git revert 5c95c2423a72a46f3652eab7af479ba7da5f31bf"
+  },
   "completed_experiments": [],
   "open_decisions": [
     {
@@ -53,9 +68,21 @@
       "title": "Give the ds-experiments worktree a node_modules so the lane can actually apply an experiment?",
       "question": "Root cause found, and it is NOT last run's dirty-worktree theory (that one is cleared \u2014 af941fd6 committed both stray files and this run rebased clean, preflight passed, and all four apply conditions were satisfied for the first time since approval). The lane still could not apply, for a deeper reason: ~/Projects/worktrees/ds-experiments has NO node_modules. RUNBOOK step 4 mandates three pre-apply checks; check_function_budget.py passes (pure python, 10/10 bundles), but 'npx vitest run' dies with MODULE_NOT_FOUND (vitest.config.ts cannot resolve vite) and 'npm run lint' cannot run either. 'npm install' is DENIED by the committed allowlist, so the lane cannot fix this itself, and it never will: this repeats every week and the lane can never apply ANY experiment under the current setup. foscoe-title-meta-ctr has now been approved and unapplied for 7 days across three runs. The edit itself was made and verified this run (title 58 chars, description 140 chars, foscoe-only ternary, 16 towns untouched, src/ only) and then reversed so it would not dirty next week's run. Fix options: (a) one-time 'npm ci' in the worktree \u2014 /node_modules is gitignored so it cannot dirty the tree, but it needs a refresh whenever package.json changes; (b) symlink the main checkout's node_modules into the worktree \u2014 cheapest, one command, though the main checkout currently sits on branch leaf-v1-calibration-2026-09-04 so its dependency tree is not guaranteed to match main's package.json; (c) allowlist 'Bash(npm ci)' for this lane so it self-heals \u2014 note the deny list bars npm install deliberately (traced-payload risk, the 08-21 outage); (d) relax RUNBOOK step 4 to require only the checks the worktree can run \u2014 honest, but it ships metadata changes to a PUBLIC production site with no test or lint gate. Evidence on risk if you pick (d): all 36 test files live under src/lib/__tests__ plus sitemap/v1Route, and none covers page metadata, so this specific change is very unlikely to be test-covered \u2014 but 'unlikely to be covered' is not 'the check passed'. Cash $0, units 0 either way.",
       "default": "option (a) \u2014 David runs 'npm ci' once in ~/Projects/worktrees/ds-experiments; the lane then applies foscoe-title-meta-ctr on 2026-09-22 with no further approval, since d-20260908-5ef7 already stands",
-      "status": "open",
+      "status": "resolved",
       "raised": "2026-09-16T12:22:55-04:00",
       "run_id": "2026-09-16-bb33af",
+      "todoist_id": null,
+      "outcome": "Overtaken by events, not by a Todoist ruling (task was never filed, todoist_id stayed null across 9 days/3 runs). The decision's own default \u2014 option (a), npm ci once in the worktree \u2014 is independently satisfied: node_modules now exists in ~/Projects/worktrees/ds-experiments (684 entries), and this run's own npx vitest run (382/382 passed) and npm run lint (clean) confirm it works. foscoe-title-meta-ctr applied this run on the standing approval d-20260908-5ef7 (sha 5c95c2423a72a46f3652eab7af479ba7da5f31bf).",
+      "resolved": "2026-09-25T10:57:47-04:00"
+    },
+    {
+      "id": "d-20260925-f662",
+      "title": "Fix the missing Search Console / Todoist / Gmail connectors for this lane's scheduled session?",
+      "question": "This run (2026-09-25) had NONE of the three project-scoped MCP connectors the RUNBOOK requires: mcp__google-search-console__* (measurement instrument), mcp__b6d489fe-03ef-4db0-9cb4-78ed9fa5375f__* (the allowlisted Todoist workspace), and mcp__7456e8e6-d245-4359-bb7e-fa6b1a7809a2__send_message (the allowlisted Gmail account) all failed to appear anywhere in ToolSearch \u2014 not connecting, not requiring auth, simply absent. Only the generic claude.ai Todoist/Gmail connectors were present, and those are NOT the allowlisted server IDs, so they were not substituted (no workaround, per RUNBOOK \u00a70/\u00a71). Practical effect: could not re-verify the foscoe baseline before applying (used the 2026-09-16 numbers instead, 9 days old), could not read back or file any Todoist decisions, and step 9 (email + Todoist digest delivery) will fail this run \u2014 the digest will exist as a file but reach nobody. If this recurs next Tuesday, the closed loop cannot measure foscoe's CTR window either.",
+      "default": "check whether this session's MCP config differs from prior successful runs (e.g. shared-skills/dev-env/lane config, or the scheduled-task's connector list) and reconnect the three servers before 2026-10-02",
+      "status": "open",
+      "raised": "2026-09-25T10:57:55-04:00",
+      "run_id": "2026-09-25-4a1a29",
       "todoist_id": null
     }
   ],
@@ -78,5 +105,6 @@
     "run_id": "2026-09-16-bb33af",
     "age_hours": 0.0,
     "reaped_at": "2026-09-16T12:23:05-04:00"
-  }
+  },
+  "active_experiment_set_at": "2026-09-25T10:57:12-04:00"
 }

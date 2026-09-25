@@ -1,0 +1,55 @@
+{
+  "run_id": "2026-09-25-4a1a29",
+  "started": "2026-09-25T10:54:08-04:00",
+  "dry_run": false,
+  "steps": [
+    {
+      "name": "preflight",
+      "status": "ok",
+      "note": "on main, rebased clean origin/main after committing stray stop-hook STATUS.md line (3dcb2a6a); node_modules now present (684 entries) \u2014 the 09-16/09-25 blocker is resolved",
+      "at": "2026-09-25T10:55:47-04:00"
+    },
+    {
+      "name": "read-decisions",
+      "status": "fail",
+      "note": "mcp__b6d489fe-03ef-4db0-9cb4-78ed9fa5375f__find-tasks / find-completed-tasks / find-comments not connected this session (ToolSearch: no match, not in the requires-auth or failed-to-connect lists either \u2014 the connector is simply absent). Only the generic 'claude.ai Todoist' server is present, which is not the allowlisted server ID and was not substituted. Of the 4 open_decisions, 3 already carry status:resolved from prior runs (unaffected); d-20260916-2e88 is status:open but todoist_id:null so no read-back was due regardless \u2014 its default (npm ci) is independently satisfied: node_modules now has 684 entries.",
+      "at": "2026-09-25T10:55:53-04:00"
+    },
+    {
+      "name": "measure",
+      "status": "skip",
+      "note": "active_experiment is null; also moot this run \u2014 mcp__google-search-console__* tools not connected this session (ToolSearch: no match), so no measurement was possible regardless",
+      "at": "2026-09-25T10:55:55-04:00"
+    },
+    {
+      "name": "apply",
+      "status": "ok",
+      "note": "applied foscoe-title-meta-ctr sha 5c95c2423a72a46f3652eab7af479ba7da5f31bf; pre-apply checks all passed (function budget 10/10, vitest 382/382, lint clean) now that node_modules is present; pushed to origin/main; active_experiment set to measuring, window_end 2026-10-23; baseline carried forward from 2026-09-16 re-verification (403/0/0.00%/pos10.4) since Search Console tools were unavailable this run to pull a same-day re-baseline",
+      "at": "2026-09-25T10:57:40-04:00"
+    },
+    {
+      "name": "queue-decisions",
+      "status": "ok",
+      "note": "1 new decision (d-20260925-f662, the connector gap); 1 prior decision resolved (d-20260916-2e88, overtaken by events); 3 already resolved from prior runs untouched",
+      "at": "2026-09-25T10:57:57-04:00"
+    },
+    {
+      "name": "propose",
+      "status": "skip",
+      "note": "one-experiment-at-a-time: foscoe-title-meta-ctr applied this run and is now in measuring status through 2026-10-23; no new proposal queued",
+      "at": "2026-09-25T10:58:00-04:00"
+    },
+    {
+      "name": "ledger",
+      "status": "ok",
+      "note": "STATUS.md Live bullet replaced; LEDGER.md foscoe row updated to APPLIED/measuring; CHECKLIST.md exit test C marked passed",
+      "at": "2026-09-25T10:58:58-04:00"
+    }
+  ],
+  "what_changed": [],
+  "decisions_resolved": [
+    "d-20260916-2e88: Overtaken by events, not by a Todoist ruling (task was never filed, todoist_id stayed null across 9 days/3 runs). The decision's own default \u2014 option (a), npm ci once in the worktree \u2014 is independently satisfied: node_modules now exists in ~/Projects/worktrees/ds-experiments (684 entries), and this run's own npx vitest run (382/382 passed) and npm run lint (clean) confirm it works. foscoe-title-meta-ctr applied this run on the standing approval d-20260908-5ef7 (sha 5c95c2423a72a46f3652eab7af479ba7da5f31bf)."
+  ],
+  "ahrefs_units": 0,
+  "cost": "cash $0 \u00b7 units 0 \u00b7 Sonnet 5 (session) \u00b7 ~40 tool calls"
+}
