@@ -37,9 +37,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   // dynamic-segment image route costs a Serverless Function against the Vercel
   // Hobby cap of 12. See src/lib/ogStatic.ts.
   const card = ogImage(ogPath.weather(slug), ogAlt.weather);
-  const title = `${town.name}, NC weather: Multi-source forecast, graded`;
-  const description =
-    `The forecast for ${town.name}, NC from every source we track, blended into one consensus and graded daily against ${town.name}'s own actuals. Its own data at its own coordinates, not a stamped regional copy.`;
+  // foscoe-title-meta-ctr (experiments/proposals/2026-09-08-foscoe-title-meta-ctr.md):
+  // single-slug snippet test, 16 other town pages stay on the template as controls.
+  const title = slug === "foscoe"
+    ? "Foscoe NC Weather: Today, 5-Day Forecast & Accuracy Grades"
+    : `${town.name}, NC weather: Multi-source forecast, graded`;
+  const description = slug === "foscoe"
+    ? "Today's Foscoe, NC forecast and the 5-day outlook, blended from every source we track and graded daily against Foscoe's own actual readings."
+    : `The forecast for ${town.name}, NC from every source we track, blended into one consensus and graded daily against ${town.name}'s own actuals. Its own data at its own coordinates, not a stamped regional copy.`;
   return {
     title,
     description,
