@@ -38,3 +38,5 @@ Schema (Refactor 2): Live / Parked / Decisions for David / Done (dated). Task-le
 ## Run records
 
 One row per session per day, written by the Stop hook (`shared-skills/dev-env/hooks/stop-run-record.sh`). Silence here means no session ran.
+- 2026-09-24 08:01 · session 2b32c07c · ds-experiments (main) · HEAD b4b0a03b · dirty 0
+- 2026-09-24 14:12 · session 401323fb · ds-experiments (main) · HEAD c4d2fb6b · dirty 1
