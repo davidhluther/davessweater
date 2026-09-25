@@ -5,20 +5,22 @@ Schema (Refactor 2): Live / Parked / Decisions for David / Done (dated). Task-le
 
 ## Live
 
-- **Experiments lane (Refactor 2 Lane 4) — run `2026-09-16-f3945d` 2026-09-16, status PARTIAL (preflight
-  and apply FAILED; digest, ledger and delivery ran).** Routine `ds-experiments-weekly` Wednesdays 08:00
-  runs `experiments/RUNBOOK.md` in the lane worktree (`~/Projects/worktrees/ds-experiments`, on `main`);
-  dead-man `ds-experiments-deadman` Thursdays 08:00. Active experiment: none.
-  `foscoe-title-meta-ctr` is **APPROVED and still not applied, now for the second run** — the gate is
-  satisfied (`d-20260908-5ef7`, 2026-09-09) and the lane is live (`dry_run` false, `push_enabled` true
-  since 2026-09-09 08:50), but step 0 preflight failed: `.claude/settings.json` and
-  `experiments/deadman-log.md` are modified and uncommitted by other sessions, `git pull --rebase origin
-  main` refuses, and the worktree sat 3 commits behind `origin/main`. Neither file is one this lane may
-  stage, so it cannot clear them itself. One decision open: `d-20260916-d245`, clear the worktree so the
-  experiment applies on 2026-09-22. Baseline re-verified from Search Console (0 units, 2026-08-18..09-14):
-  foscoe-named queries 403 impressions, 0 clicks, 0.00% CTR, position ~10.4 — the hypothesis is
-  undiminished. $0 cash, 0 Ahrefs units. Digest: `experiments/digests/2026-09-16-f3945d.md`. State
-  `experiments/STATE.json`; record `experiments/LEDGER.md`.
+- **Experiments lane (Refactor 2 Lane 4) — run `2026-09-25-6caf8a` 2026-09-25, status PARTIAL (apply
+  FAILED — infrastructure; preflight, commit, push, ledger and digest ran).** Routine
+  `ds-experiments-weekly` Wednesdays 08:00 runs `experiments/RUNBOOK.md` in the lane worktree
+  (`~/Projects/worktrees/ds-experiments`, on `main`); dead-man `ds-experiments-deadman` Thursdays 08:00.
+  Two runs (2026-09-17, 2026-09-24 ×2) were MISSED entirely before this one — see dead-man log. Active
+  experiment: none. `foscoe-title-meta-ctr` is **still APPROVED and still not applied, now for the third
+  attempted run** — the approval gate is satisfied (`d-20260908-5ef7`, 2026-09-09) and the lane is live
+  (`dry_run` false, `push_enabled` true since 2026-09-09 08:50), but the worktree has **no `node_modules`**:
+  `npx vitest run` fails with `Cannot find module 'vitest/config'` and `npm run lint` can't run either;
+  `npm install`/`npm ci` are denied by the committed allowlist, so the lane cannot fix this itself and
+  never will under the current setup (`check_function_budget.py` passes, 10/10 bundles — that check alone
+  is not enough gate to ship on). Standing decision `d-20260916-2e88` (raised 2026-09-16, open 9 days,
+  never filed to Todoist until this run) asks David to run `npm ci` once in the worktree — cheapest fix,
+  root cause confirmed unchanged this run. $0 cash, 0 Ahrefs units. Digest:
+  `experiments/digests/2026-09-25-6caf8a.md`. State `experiments/STATE.json`; record
+  `experiments/LEDGER.md`.
 
 ## Parked
 
