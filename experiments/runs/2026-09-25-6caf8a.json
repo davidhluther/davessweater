@@ -38,9 +38,51 @@
       "status": "ok",
       "note": "0 new decisions; 1 standing decision (d-20260916-2e88) carries forward and will be filed to Todoist in step 9 since todoist_id is still null",
       "at": "2026-09-25T10:43:17-04:00"
+    },
+    {
+      "name": "commit",
+      "status": "ok",
+      "note": "6893bb9d",
+      "at": "2026-09-25T10:44:56-04:00"
+    },
+    {
+      "name": "push",
+      "status": "ok",
+      "note": "pushed 6893bb9d to origin/main",
+      "at": "2026-09-25T10:44:56-04:00"
+    },
+    {
+      "name": "ledger",
+      "status": "ok",
+      "note": "STATUS.md Live bullet + LEDGER.md foscoe row updated for run 2026-09-25-6caf8a",
+      "at": "2026-09-25T10:45:48-04:00"
+    },
+    {
+      "name": "digest",
+      "status": "ok",
+      "note": "experiments/digests/2026-09-25-6caf8a.md",
+      "at": "2026-09-25T10:45:56-04:00"
+    },
+    {
+      "name": "email",
+      "status": "fail",
+      "note": "allowlisted tool mcp__7456e8e6-d245-4359-bb7e-fa6b1a7809a2__send_message not available in this session (only the unlisted generic 'claude.ai Gmail' connector connected) \u2014 not a permitted substitute per allowlist-only rule",
+      "at": "2026-09-25T10:46:33-04:00"
+    },
+    {
+      "name": "todoist",
+      "status": "fail",
+      "note": "allowlisted tools mcp__b6d489fe-03ef-4db0-9cb4-78ed9fa5375f__find-projects/add-tasks/add-comments/etc not available in this session (only the unlisted generic 'claude.ai Todoist' connector connected) \u2014 not a permitted substitute per allowlist-only rule; d-20260916-2e88 still not filed to Todoist",
+      "at": "2026-09-25T10:46:33-04:00"
     }
   ],
   "what_changed": [],
   "decisions_resolved": [],
-  "ahrefs_units": null
+  "ahrefs_units": 0,
+  "cost": "cash $0 \u00b7 units 0 \u00b7 sonnet-5 \u00b7 ~25 tool calls",
+  "finished": "2026-09-25T10:46:38-04:00",
+  "minutes": 5.0,
+  "digest_sent": false,
+  "digest_path": "experiments/digests/2026-09-25-6caf8a.md",
+  "status": "failed:apply,email,todoist"
 }
