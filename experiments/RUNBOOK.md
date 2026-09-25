@@ -5,7 +5,7 @@ Everything you need is in this file, `experiments/STATE.json`, `experiments/LEDG
 `CLAUDE.md` + `CHECKLIST.md`. Working directory: `~/Projects/worktrees/ds-experiments` (this repo's
 lane worktree, on `main` — the main checkout under `~/Projects/DavesSweater` belongs to other sessions
 and is never touched). Committed allowlist only (`.claude/settings.json`), no permission bypass: a tool the
-allowlist refuses is a FAILED step with the tool's name, never a workaround. Owner: DS IA. Builder: the
+allowlist refuses is a FAILED step with the tool's name, never a workaround. Connector names differ by client: an unattended run sees Gmail and Todoist as `mcp__claude_ai_Gmail__*` / `mcp__claude_ai_Todoist__*`. These are the same accounts as the allowlisted server-id names, are allowlisted too, and are not a workaround. Owner: DS IA. Builder: the
 Refactor 2 session (brief: `shared-skills/refactor-2/PHASE-4-LANE-4-EXPERIMENTS-BRIEF.md`).
 **This repository is PUBLIC.** Everything you write here is public: no private context, no personal,
 political, third-party, or infrastructure detail (see `CLAUDE.md`).
