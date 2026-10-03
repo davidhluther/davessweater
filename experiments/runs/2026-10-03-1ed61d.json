@@ -1,0 +1,50 @@
+{
+  "run_id": "2026-10-03-1ed61d",
+  "started": "2026-10-03T19:59:13-04:00",
+  "dry_run": false,
+  "steps": [
+    {
+      "name": "preflight",
+      "status": "ok",
+      "note": "on main, rebased clean onto origin/main with autostash; only STATUS.md modified (lane-owned)",
+      "at": "2026-10-03T19:59:18-04:00"
+    },
+    {
+      "name": "read-decisions",
+      "status": "ok",
+      "note": "1 open decision (d-20261003-b6f1, todoist 6hggf8pmhcCx58X8) still uncompleted, no comments; no completed ds-experiments tasks since 2026-09-20",
+      "at": "2026-10-03T19:59:31-04:00"
+    },
+    {
+      "name": "measure",
+      "status": "ok",
+      "note": "foscoe-title-meta-ctr day 7/28, still measuring; page-level GSC pull, 0 clicks post-apply vs 1 click baseline on 32 vs 675 impressions",
+      "at": "2026-10-03T19:59:31-04:00"
+    },
+    {
+      "name": "propose",
+      "status": "skip",
+      "note": "one experiment already active (foscoe-title-meta-ctr, measuring to 2026-10-23)",
+      "at": "2026-10-03T19:59:33-04:00"
+    },
+    {
+      "name": "apply",
+      "status": "skip",
+      "note": "an experiment is already active; one at a time",
+      "at": "2026-10-03T19:59:33-04:00"
+    },
+    {
+      "name": "queue-decisions",
+      "status": "ok",
+      "note": "0",
+      "at": "2026-10-03T19:59:33-04:00"
+    }
+  ],
+  "what_changed": [],
+  "decisions_resolved": [],
+  "ahrefs_units": 0,
+  "this_week": [
+    "measuring foscoe-title-meta-ctr \u2014 day 7 of 28 (data through 2026-10-01, GSC lag). Page-level /weather/foscoe: 32 impressions, 0 clicks, 0.00% CTR, pos 10.5 (2026-09-25..10-01). Baseline 2026-08-18..09-14: 675 impressions, 1 click, 0.15%, pos 10.0. Small post-window sample; query-level foscoe-intent check not run this pass. Window ends 2026-10-23."
+  ],
+  "cost": "cash 0 USD \u00b7 units 0 \u00b7 sonnet-5 session tier, no sub-agents \u00b7 22 tool calls"
+}
