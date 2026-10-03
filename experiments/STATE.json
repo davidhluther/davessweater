@@ -5,8 +5,8 @@
   "push_enabled": true,
   "apply_without_approval": false,
   "last_run": "2026-09-25T11:32:00-04:00",
-  "run_id": "2026-09-25-92578a",
-  "last_status": "ok",
+  "run_id": "2026-10-03-e64ce3",
+  "last_status": "running",
   "digest_last_sent": "2026-09-25T11:32:00-04:00",
   "digest_last_path": "experiments/digests/2026-09-25-92578a.md",
   "active_experiment": {
@@ -86,6 +86,16 @@
       "todoist_id": null,
       "outcome": "Overtaken by events: this run's ToolSearch loaded mcp__google-search-console__*, mcp__claude_ai_Todoist__*, and mcp__claude_ai_Gmail__* without issue (the RUNBOOK's own note that these generic claude_ai_ names are the allowlisted accounts under different client naming was correct). No connector fix needed; last week's absence looks like a one-run gap, not a standing misconfiguration. If it recurs, re-open.",
       "resolved": "2026-09-25T11:29:02-04:00"
+    },
+    {
+      "id": "d-20261003-b6f1",
+      "title": "Clear the uncommitted STATUS.md so the lane can rebase?",
+      "question": "The lane worktree has STATUS.md modified and uncommitted (not by this run), so git pull --rebase refuses and preflight failed on 2026-10-03; the foscoe experiment cannot be applied or pushed until the tree is clean. STATUS.md is the lane's own staging allowlist file, so the lane could commit it, but it was not the lane's edit.",
+      "default": "commit or discard the STATUS.md change in the ds-experiments worktree before the next Tuesday run",
+      "status": "open",
+      "raised": "2026-10-03T18:46:31-04:00",
+      "run_id": "2026-10-03-e64ce3",
+      "todoist_id": null
     }
   ],
   "budget": {

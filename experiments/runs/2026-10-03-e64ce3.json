@@ -1,0 +1,49 @@
+{
+  "run_id": "2026-10-03-e64ce3",
+  "started": "2026-10-03T18:46:14-04:00",
+  "dry_run": false,
+  "steps": [
+    {
+      "name": "preflight",
+      "status": "fail",
+      "note": "git pull --rebase refused: unstaged change in STATUS.md (allowed file, but rebase won't run on a dirty tree); tree left at pre-rebase main; continuing read-only",
+      "at": "2026-10-03T18:46:18-04:00"
+    },
+    {
+      "name": "read-decisions",
+      "status": "ok",
+      "note": "0 open decisions; all resolved per STATE.open_decisions",
+      "at": "2026-10-03T18:46:21-04:00"
+    },
+    {
+      "name": "measure",
+      "status": "ok",
+      "note": "foscoe window open; 32 impr, 0 clicks, 0.00% CTR over 2026-09-25..10-01",
+      "at": "2026-10-03T18:46:27-04:00"
+    },
+    {
+      "name": "propose",
+      "status": "skip",
+      "note": "one experiment already active (foscoe-title-meta-ctr, measuring)",
+      "at": "2026-10-03T18:46:28-04:00"
+    },
+    {
+      "name": "apply",
+      "status": "skip",
+      "note": "preflight failed: pull --rebase refused on dirty STATUS.md; no change applied, no push",
+      "at": "2026-10-03T18:46:28-04:00"
+    },
+    {
+      "name": "queue-decisions",
+      "status": "ok",
+      "note": "1",
+      "at": "2026-10-03T18:46:31-04:00"
+    }
+  ],
+  "what_changed": [],
+  "decisions_resolved": [],
+  "ahrefs_units": 0,
+  "this_week": [
+    "measuring foscoe-title-meta-ctr \u2014 day 8 of 28 (applied 2026-09-25, window ends 2026-10-23), foscoe CTR so far 0.00% on 32 impressions, avg position 10.5 (baseline 0.00% on 403, pos 10.4); GSC lags ~2 days"
+  ]
+}
