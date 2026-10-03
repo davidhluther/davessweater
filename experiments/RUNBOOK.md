@@ -41,7 +41,8 @@ cause, never "died mid-way".
 ## 0. Start — state, lock, guard
 ```bash
 cd ~/Projects/worktrees/ds-experiments && git rev-parse --abbrev-ref HEAD && git status --porcelain | head
-git fetch -q origin main && git pull -q --rebase origin main   # the pipeline bot commits to main several times a day
+git fetch -q origin main && git pull --rebase --autostash origin main   # the pipeline bot commits to main several times a day;
+# --autostash because the Stop hook leaves a session row in STATUS.md after every run (10-03: a plain pull refused)
 bash experiments/lane.sh state start
 ```
 `LOCKED …` → one transcript line and stop (the dead-man reports it). Not on `main`, rebase failed, or
