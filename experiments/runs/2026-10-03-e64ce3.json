@@ -38,6 +38,42 @@
       "status": "ok",
       "note": "1",
       "at": "2026-10-03T18:46:31-04:00"
+    },
+    {
+      "name": "commit",
+      "status": "ok",
+      "note": "lane files committed on main (local, not pushed)",
+      "at": "2026-10-03T18:46:47-04:00"
+    },
+    {
+      "name": "push",
+      "status": "fail",
+      "note": "non-fast-forward: origin/main ahead; pull --rebase refused on dirty STATUS.md; not forced",
+      "at": "2026-10-03T18:46:47-04:00"
+    },
+    {
+      "name": "ledger",
+      "status": "fail",
+      "note": "STATUS.md has another session's uncommitted edit; not touched, Live bullet not updated",
+      "at": "2026-10-03T18:46:49-04:00"
+    },
+    {
+      "name": "digest",
+      "status": "ok",
+      "note": "experiments/digests/2026-10-03-e64ce3.md",
+      "at": "2026-10-03T18:46:50-04:00"
+    },
+    {
+      "name": "email",
+      "status": "ok",
+      "note": "sent to davidhluther@gmail.com, subject DS experiments digest \u2014 2026-10-03",
+      "at": "2026-10-03T18:47:04-04:00"
+    },
+    {
+      "name": "todoist",
+      "status": "ok",
+      "note": "parent 6hggHFPCH2F9mhW8 in DavesSweater (6hWM6rRQFvmfhMhg), full digest comment, 1 decision sub-task 6hggHGM2mXCXcQh8",
+      "at": "2026-10-03T18:47:20-04:00"
     }
   ],
   "what_changed": [],
@@ -45,5 +81,13 @@
   "ahrefs_units": 0,
   "this_week": [
     "measuring foscoe-title-meta-ctr \u2014 day 8 of 28 (applied 2026-09-25, window ends 2026-10-23), foscoe CTR so far 0.00% on 32 impressions, avg position 10.5 (baseline 0.00% on 403, pos 10.4); GSC lags ~2 days"
-  ]
+  ],
+  "parent_task": [
+    "6hggHFPCH2F9mhW8"
+  ],
+  "finished": "2026-10-03T18:47:21-04:00",
+  "minutes": 1.1,
+  "digest_sent": true,
+  "digest_path": "experiments/digests/2026-10-03-e64ce3.md",
+  "status": "failed:preflight,push,ledger"
 }
