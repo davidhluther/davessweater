@@ -108,7 +108,8 @@ Stage only `experiments/STATE.json`, `experiments/runs/`, `experiments/digests/`
 Message `experiments <date>: <status>`; COMMIT FIRST, then `git pull --rebase origin main` (the rebase refuses a
 dirty tree — exit test A finding), then push only if `push_enabled`: `git push origin main`.
 `step commit ok|fail` · `step push ok|skip|fail`.
-Record the run's cost line: `<state> cost "cash $0 · units 0 · <model tiers> · <n> tool calls"` and
+Record the run's cost line: `<state> cost "cash 0 USD · units 0 · <model tiers> · <n> tool calls"` (never a `$` in a
+command: the shell would expand `$0`, so the headless allowlist refuses the whole call, as it did on 2026-10-03) and
 `<state> meter 0` (the Ahrefs units field; it must read 0).
 
 ## 7. Ledger rows
