@@ -1,0 +1,94 @@
+{
+  "run_id": "2026-10-03-2dc91a",
+  "started": "2026-10-03T19:45:56-04:00",
+  "dry_run": false,
+  "steps": [
+    {
+      "name": "preflight",
+      "status": "fail",
+      "note": "git pull --rebase refused: unstaged STATUS.md modification (tree dirty); continuing read-only",
+      "at": "2026-10-03T19:45:58-04:00"
+    },
+    {
+      "name": "read-decisions",
+      "status": "ok",
+      "note": "no open decisions carry a todoist_id; d-20261003-b6f1 has none (no read-back possible)",
+      "at": "2026-10-03T19:46:11-04:00"
+    },
+    {
+      "name": "measure",
+      "status": "ok",
+      "note": "foscoe-title-meta-ctr still in window; 0 clicks on 13 impressions since apply",
+      "at": "2026-10-03T19:46:13-04:00"
+    },
+    {
+      "name": "propose",
+      "status": "skip",
+      "note": "one experiment already active (foscoe-title-meta-ctr, measuring)",
+      "at": "2026-10-03T19:46:13-04:00"
+    },
+    {
+      "name": "apply",
+      "status": "skip",
+      "note": "active experiment in measurement; tracked STATUS.md dirty so rebase refused; push path not reached",
+      "at": "2026-10-03T19:46:13-04:00"
+    },
+    {
+      "name": "queue-decisions",
+      "status": "ok",
+      "note": "0",
+      "at": "2026-10-03T19:46:14-04:00"
+    },
+    {
+      "name": "digest",
+      "status": "ok",
+      "note": "experiments/digests/2026-10-03-2dc91a.md",
+      "at": "2026-10-03T19:46:20-04:00"
+    },
+    {
+      "name": "commit",
+      "status": "skip",
+      "note": "deferred to the finish commit at step 10; STATUS.md left as found (uncommitted, not the lane's edit)",
+      "at": "2026-10-03T19:46:20-04:00"
+    },
+    {
+      "name": "push",
+      "status": "skip",
+      "note": "rebase refused on dirty tree; push not attempted",
+      "at": "2026-10-03T19:46:21-04:00"
+    },
+    {
+      "name": "email",
+      "status": "ok",
+      "note": "sent to davidhluther@gmail.com, id 1a104297cee49b00",
+      "at": "2026-10-03T19:46:32-04:00"
+    },
+    {
+      "name": "todoist",
+      "status": "ok",
+      "note": "DavesSweater id 6hWM6rRQFvmfhMhg; parent 6hggf847jmHP82vg; sub-task 6hggf8pmhcCx58X8 for d-20261003-b6f1; both verified in project",
+      "at": "2026-10-03T19:46:45-04:00"
+    },
+    {
+      "name": "ledger",
+      "status": "skip",
+      "note": "STATUS.md left untouched: it carries an uncommitted change not made by this run (open decision d-20261003-b6f1)",
+      "at": "2026-10-03T19:46:46-04:00"
+    }
+  ],
+  "what_changed": [],
+  "decisions_resolved": [],
+  "ahrefs_units": 0,
+  "this_week": [
+    "measuring foscoe-title-meta-ctr \u2014 day 9 of 28 (window ends 2026-10-23), foscoe-named queries since apply 09-25..10-01: 13 impressions, 0 clicks, 0.00% CTR (baseline 403 impr / 28d, 0.00%); GSC lags ~2 days"
+  ],
+  "cost": "cash 0 USD \u00b7 units 0 \u00b7 sonnet tier inline \u00b7 22 tool calls",
+  "parent_task": [
+    "6hggf847jmHP82vg"
+  ],
+  "finished": "2026-10-03T19:46:47-04:00",
+  "minutes": 0.9,
+  "digest_sent": true,
+  "digest_path": "experiments/digests/2026-10-03-2dc91a.md",
+  "status": "failed:preflight"
+}
