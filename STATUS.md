@@ -5,18 +5,7 @@ Schema (Refactor 2): Live / Parked / Decisions for David / Done (dated). Task-le
 
 ## Live
 
-- **Experiments lane (Refactor 2 Lane 4) — run `2026-09-25-92578a` 2026-09-25, status OK (measure, hygiene,
-  ledger ran clean; digest + delivery pending step 8/9 later this run).** Routine `ds-experiments-weekly`
-  Wednesdays 08:00 runs `experiments/RUNBOOK.md` in the lane worktree
-  (`~/Projects/worktrees/ds-experiments`, on `main`); dead-man `ds-experiments-deadman` Thursdays 08:00.
-  Connector gap from the prior run (`d-20260925-f662`) did **not** recur — Search Console, Todoist, and
-  Gmail (via `mcp__claude_ai_*`) all loaded and worked this run; decision resolved as overtaken by events.
-  `foscoe-title-meta-ctr` remains **active**, applied `2026-09-25-4a1a29` at 10:57, sha
-  `5c95c2423a72a46f3652eab7af479ba7da5f31bf`, status `measuring`, day 1 of 28, window ends 2026-10-23,
-  revert `git revert 5c95c2423a72a46f3652eab7af479ba7da5f31bf`. No propose/apply this run (one experiment
-  at a time). Pre-change SC baseline unchanged: foscoe-named queries 0 clicks / 83 impr (09-11..09-23) /
-  0.00% CTR / pos 10.3 — too early to see effect. $0 cash, 0 Ahrefs units. State `experiments/STATE.json`;
-  record `experiments/LEDGER.md`.
+- **Experiments lane (Refactor 2 Lane 4) — run `2026-10-03-1ed61d` 2026-10-03, status OK (measure and hygiene ran clean; digest + delivery in step 8/9).** `foscoe-title-meta-ctr` remains **active**, day 7 of 28, window ends 2026-10-23, revert `git revert 5c95c2423a72a46f3652eab7af479ba7da5f31bf`. Page-level GSC 2026-09-25..10-01: 32 impr / 0 clicks. No propose or apply (one experiment at a time). $0 cash, 0 Ahrefs units. State `experiments/STATE.json`; record `experiments/LEDGER.md`.
 
 ## Parked
 
