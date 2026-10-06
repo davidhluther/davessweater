@@ -1,0 +1,660 @@
+{
+  "model_version": "leaf-v1",
+  "model_pass": "final",
+  "generated_at": "2026-10-06T12:48:17.182391-04:00",
+  "target_year": 2026,
+  "place_count": 18,
+  "method": "peak = Oct-6 photoperiod anchor at 5,000 ft + 6.5 days/1,000 ft elevation lapse + September thermal anomaly at 1.8 days/\u00b0F (Sep 1\u201330, clamped \u00b110 days); window \u00b15 days. See docs/leaf-model.md.",
+  "calibration": "Calibrated 2026-09-04 against 18 years of published High Country peak-color observations at a 3,300 ft reference elevation, paired with our own Open-Meteo September temperature series. See scripts/fit_leaf_v1.py and docs/leaf-model.md.",
+  "grading": "Scored once observed peaks arrive: abs/signed day error, window-hit bool, 0\u2013100 (full within 3 days, \u22126/day beyond).",
+  "predictions": [
+    {
+      "slug": "beech-mountain",
+      "name": "Beech Mountain",
+      "elevation_ft": 5436,
+      "county": "Avery",
+      "peak_start": "2026-10-03",
+      "peak_center": "2026-10-08",
+      "peak_end": "2026-10-13",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": -2.83,
+        "thermal_shift_days": 4.82,
+        "temp_anomaly_f": 2.68,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 56.97,
+        "normal_years": 18,
+        "current_mean_f": 59.64,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +2.7\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    },
+    {
+      "slug": "seven-devils",
+      "name": "Seven Devils",
+      "elevation_ft": 3970,
+      "county": "Avery/Watauga",
+      "peak_start": "2026-10-13",
+      "peak_center": "2026-10-18",
+      "peak_end": "2026-10-23",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": 6.7,
+        "thermal_shift_days": 5.04,
+        "temp_anomaly_f": 2.8,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 62.29,
+        "normal_years": 18,
+        "current_mean_f": 65.09,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +2.8\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    },
+    {
+      "slug": "banner-elk",
+      "name": "Banner Elk",
+      "elevation_ft": 3701,
+      "county": "Avery",
+      "peak_start": "2026-10-14",
+      "peak_center": "2026-10-19",
+      "peak_end": "2026-10-24",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": 8.44,
+        "thermal_shift_days": 4.09,
+        "temp_anomaly_f": 2.27,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 62.82,
+        "normal_years": 18,
+        "current_mean_f": 65.09,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +2.3\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    },
+    {
+      "slug": "blowing-rock",
+      "name": "Blowing Rock",
+      "elevation_ft": 3573,
+      "county": "Watauga",
+      "peak_start": "2026-10-15",
+      "peak_center": "2026-10-20",
+      "peak_end": "2026-10-25",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": 9.28,
+        "thermal_shift_days": 4.84,
+        "temp_anomaly_f": 2.69,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 63.32,
+        "normal_years": 18,
+        "current_mean_f": 66.01,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +2.7\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    },
+    {
+      "slug": "boone",
+      "name": "Boone",
+      "elevation_ft": 3333,
+      "county": "Watauga",
+      "peak_start": "2026-10-16",
+      "peak_center": "2026-10-21",
+      "peak_end": "2026-10-26",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": 10.84,
+        "thermal_shift_days": 3.98,
+        "temp_anomaly_f": 2.21,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 64.18,
+        "normal_years": 18,
+        "current_mean_f": 66.39,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +2.2\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    },
+    {
+      "slug": "foscoe",
+      "name": "Foscoe",
+      "elevation_ft": 3041,
+      "county": "Watauga",
+      "peak_start": "2026-10-17",
+      "peak_center": "2026-10-22",
+      "peak_end": "2026-10-27",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": 12.73,
+        "thermal_shift_days": 3.58,
+        "temp_anomaly_f": 1.99,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 64.72,
+        "normal_years": 18,
+        "current_mean_f": 66.7,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +2.0\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    },
+    {
+      "slug": "deep-gap",
+      "name": "Deep Gap",
+      "elevation_ft": 3002,
+      "county": "Watauga",
+      "peak_start": "2026-10-19",
+      "peak_center": "2026-10-24",
+      "peak_end": "2026-10-29",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": 12.99,
+        "thermal_shift_days": 5.2,
+        "temp_anomaly_f": 2.89,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 64.66,
+        "normal_years": 18,
+        "current_mean_f": 67.54,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +2.9\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    },
+    {
+      "slug": "west-jefferson",
+      "name": "West Jefferson",
+      "elevation_ft": 2976,
+      "county": "Ashe",
+      "peak_start": "2026-10-19",
+      "peak_center": "2026-10-24",
+      "peak_end": "2026-10-29",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": 13.16,
+        "thermal_shift_days": 4.72,
+        "temp_anomaly_f": 2.62,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 64.77,
+        "normal_years": 18,
+        "current_mean_f": 67.39,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +2.6\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    },
+    {
+      "slug": "todd",
+      "name": "Todd",
+      "elevation_ft": 2982,
+      "county": "Ashe/Watauga",
+      "peak_start": "2026-10-19",
+      "peak_center": "2026-10-24",
+      "peak_end": "2026-10-29",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": 13.12,
+        "thermal_shift_days": 4.52,
+        "temp_anomaly_f": 2.51,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 65.13,
+        "normal_years": 18,
+        "current_mean_f": 67.64,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +2.5\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    },
+    {
+      "slug": "jefferson",
+      "name": "Jefferson",
+      "elevation_ft": 2920,
+      "county": "Ashe",
+      "peak_start": "2026-10-19",
+      "peak_center": "2026-10-24",
+      "peak_end": "2026-10-29",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": 13.52,
+        "thermal_shift_days": 4.07,
+        "temp_anomaly_f": 2.26,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 64.63,
+        "normal_years": 18,
+        "current_mean_f": 66.89,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +2.3\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    },
+    {
+      "slug": "vilas",
+      "name": "Vilas",
+      "elevation_ft": 2746,
+      "county": "Watauga",
+      "peak_start": "2026-10-20",
+      "peak_center": "2026-10-25",
+      "peak_end": "2026-10-30",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": 14.65,
+        "thermal_shift_days": 4.72,
+        "temp_anomaly_f": 2.62,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 66.17,
+        "normal_years": 18,
+        "current_mean_f": 68.79,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +2.6\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    },
+    {
+      "slug": "spruce-pine",
+      "name": "Spruce Pine",
+      "elevation_ft": 2559,
+      "county": "Mitchell",
+      "peak_start": "2026-10-20",
+      "peak_center": "2026-10-25",
+      "peak_end": "2026-10-30",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": 15.87,
+        "thermal_shift_days": 3.4,
+        "temp_anomaly_f": 1.89,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 65.86,
+        "normal_years": 18,
+        "current_mean_f": 67.75,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +1.9\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    },
+    {
+      "slug": "burnsville",
+      "name": "Burnsville",
+      "elevation_ft": 2825,
+      "county": "Yancey",
+      "peak_start": "2026-10-20",
+      "peak_center": "2026-10-25",
+      "peak_end": "2026-10-30",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": 14.14,
+        "thermal_shift_days": 4.57,
+        "temp_anomaly_f": 2.54,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 65.86,
+        "normal_years": 18,
+        "current_mean_f": 68.4,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +2.5\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    },
+    {
+      "slug": "valle-crucis",
+      "name": "Valle Crucis",
+      "elevation_ft": 2677,
+      "county": "Watauga",
+      "peak_start": "2026-10-21",
+      "peak_center": "2026-10-26",
+      "peak_end": "2026-10-31",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": 15.1,
+        "thermal_shift_days": 4.72,
+        "temp_anomaly_f": 2.62,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 66.53,
+        "normal_years": 18,
+        "current_mean_f": 69.15,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +2.6\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    },
+    {
+      "slug": "sugar-grove",
+      "name": "Sugar Grove",
+      "elevation_ft": 2677,
+      "county": "Watauga",
+      "peak_start": "2026-10-21",
+      "peak_center": "2026-10-26",
+      "peak_end": "2026-10-31",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": 15.1,
+        "thermal_shift_days": 4.84,
+        "temp_anomaly_f": 2.69,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 66.36,
+        "normal_years": 18,
+        "current_mean_f": 69.05,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +2.7\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    },
+    {
+      "slug": "bakersville",
+      "name": "Bakersville",
+      "elevation_ft": 2471,
+      "county": "Mitchell",
+      "peak_start": "2026-10-22",
+      "peak_center": "2026-10-27",
+      "peak_end": "2026-11-01",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": 16.44,
+        "thermal_shift_days": 4.9,
+        "temp_anomaly_f": 2.72,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 67.11,
+        "normal_years": 18,
+        "current_mean_f": 69.82,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +2.7\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    },
+    {
+      "slug": "wilkesboro",
+      "name": "Wilkesboro",
+      "elevation_ft": 1024,
+      "county": "Wilkes",
+      "peak_start": "2026-10-31",
+      "peak_center": "2026-11-05",
+      "peak_end": "2026-11-10",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": 25.84,
+        "thermal_shift_days": 4.55,
+        "temp_anomaly_f": 2.53,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 70.58,
+        "normal_years": 18,
+        "current_mean_f": 73.11,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +2.5\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    },
+    {
+      "slug": "north-wilkesboro",
+      "name": "North Wilkesboro",
+      "elevation_ft": 1001,
+      "county": "Wilkes",
+      "peak_start": "2026-11-01",
+      "peak_center": "2026-11-06",
+      "peak_end": "2026-11-11",
+      "components": {
+        "reference_date": "2026-10-06",
+        "reference_elevation_ft": 5000,
+        "elevation_shift_days": 25.99,
+        "thermal_shift_days": 4.64,
+        "temp_anomaly_f": 2.58,
+        "half_window_days": 5,
+        "days_per_degf": 1.8,
+        "max_thermal_shift_days": 10
+      },
+      "thermal": {
+        "normal_f": 70.53,
+        "normal_years": 18,
+        "current_mean_f": 73.11,
+        "current_days": 30,
+        "window": {
+          "start": [
+            9,
+            1
+          ],
+          "end": [
+            9,
+            30
+          ]
+        }
+      },
+      "basis": "elevation-climatology + thermal anomaly +2.6\u00b0F vs 18-yr normal (warmer\u2192later) at 1.8 days/\u00b0F"
+    }
+  ]
+}
