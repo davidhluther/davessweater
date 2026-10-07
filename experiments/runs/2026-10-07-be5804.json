@@ -1,0 +1,49 @@
+{
+  "run_id": "2026-10-07-be5804",
+  "started": "2026-10-07T08:00:55-04:00",
+  "dry_run": false,
+  "steps": [
+    {
+      "name": "preflight",
+      "status": "ok",
+      "note": "on main, rebase clean (fast-forward 53d241bf..63b6a977, autostash restored cleanly), STATUS.md modified (allowed) + untracked .codex/ (not tracked)",
+      "at": "2026-10-07T08:01:07-04:00"
+    },
+    {
+      "name": "read-decisions",
+      "status": "ok",
+      "note": "open decision d-20261003-b6f1 (STATUS.md hygiene, todoist 6hggf8pmhcCx58X8) still open, no completion/comment; moot this run \u2014 autostash rebase succeeded despite dirty STATUS.md, hygiene step will commit it. No other open decisions with todoist_id pending.",
+      "at": "2026-10-07T08:01:35-04:00"
+    },
+    {
+      "name": "measure",
+      "status": "ok",
+      "note": "foscoe-title-meta-ctr day 12/28, window open until 2026-10-23; CTR still 0.00% (0/17 impr since apply), no verdict yet",
+      "at": "2026-10-07T08:01:54-04:00"
+    },
+    {
+      "name": "propose",
+      "status": "skip",
+      "note": "one experiment at a time; foscoe-title-meta-ctr still active/measuring until 2026-10-23",
+      "at": "2026-10-07T08:01:56-04:00"
+    },
+    {
+      "name": "apply",
+      "status": "skip",
+      "note": "no experiment ready to apply this run \u2014 foscoe-title-meta-ctr already applied (2026-09-25) and still measuring",
+      "at": "2026-10-07T08:01:59-04:00"
+    },
+    {
+      "name": "queue-decisions",
+      "status": "ok",
+      "note": "0",
+      "at": "2026-10-07T08:02:01-04:00"
+    }
+  ],
+  "what_changed": [],
+  "decisions_resolved": [],
+  "ahrefs_units": null,
+  "this_week": [
+    "measuring foscoe-title-meta-ctr \u2014 day 12 of 28 (applied 2026-09-25, window ends 2026-10-23), CTR so far 0.00% (0 clicks / 17 impressions, 2026-09-25..10-05, GSC lags ~2d) vs baseline 0.00% (403 impr / 0 clicks, pos 10.4); position has drifted slightly worse (~11-13 vs baseline 10.4) but sample is thin"
+  ]
+}
