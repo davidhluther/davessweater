@@ -249,7 +249,7 @@ def score_one(pred_path: Path, out_path: Path, observations: dict,
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__)
+    ap = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
     ap.add_argument("--quiet", action="store_true", help="suppress the per-run summary line")
     ap.add_argument("--predictions", type=Path, default=None,
                     help="grade exactly this prediction file (default: every known one)")
