@@ -48,7 +48,7 @@ MET Norway led August at 95.4, followed by Google at 95.3 and Visual Crossing at
 | National Weather Service | 80.7 | 24-7-0 |
 | Ray's Weather (paid) | 75.3 | 18-11-2 |
 
-Scores are the mean of each day's 0 to 100 grade. R-M-W is the count of days graded Right, Meh, and Wrong. OpenWeather's row covers 30 days. The iPhone slot in our tracker ran on an Open-Meteo fallback all month, so Apple Weather isn't listed as a separate forecaster.
+Scores are the mean of each day's 0 to 100 grade. R-M-W is the count of days graded Right, Meh, and Wrong.
 
 ### What does the R-M-W column mean?
 
@@ -83,11 +83,9 @@ Each forecast is graded out of 100, split across four fields:
 - Wind: 20
 - Precip: 20
 
-Temperature earns full credit inside 1°F and loses 3 points for each degree beyond. The precip field covers both whether it rained and how much, and it scores a "no rain" call as a zero-inch forecast. Ray's never publishes a numeric rain total, so on a wet-forecast day he forfeits the amount half of the field. The rule applies to every source equally, and [how the 100-point scoring works](/methodology) lays out the full model.
-
 ## What does a 15-point monthly gap actually mean?
 
-A 14.7-point gap is more than a letter grade. Open-Meteo's August was a solid A- and Ray's was a C. The gap widened from July's 13.2 points, though it is still well below June's 21.2 on today's rubric. Through August 31, across the 178 days Ray's has been scored since March 5, Open-Meteo averages 90.0 and Ray's 70.3, a 19.8-point difference on the same days.
+A 14.7-point gap is more than a letter grade. Open-Meteo's August was a solid A- and Ray's was a C. The gap widened from July's 13.2 points, though it is still well below June's 21.2. Through August 31, across the 178 days Ray's has been scored since March 5, Open-Meteo averages 90.0 and Ray's 70.3, a 19.8-point difference on the same days.
 
 Week by week, Ray's trailed Open-Meteo in all five blocks, by margins from 8.3 points (August 29 to 31) to 19.6 points (August 8 to 14). His best block, August 22 to 28, averaged 81.4.
 

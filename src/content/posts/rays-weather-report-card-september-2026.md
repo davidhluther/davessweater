@@ -48,7 +48,7 @@ MET Norway was the most accurate Boone forecast in September at 96.4, ahead of G
 | WeatherAPI | 85.7 | 28-1-1 |
 | Ray's Weather (paid) | 76.8 | 17-12-1 |
 
-Scores are the mean of each day's 0 to 100 grade. R-M-W is the count of days graded Right, Meh, and Wrong. As in August, the iPhone slot in our tracker ran on an Open-Meteo fallback all month, so we don't list Apple Weather as a separate forecaster.
+Scores are the mean of each day's 0 to 100 grade. R-M-W is the count of days graded Right, Meh, and Wrong.
 
 ### What does the R-M-W column mean?
 
@@ -81,11 +81,9 @@ Each forecast is graded out of 100, split across four fields:
 - Wind: 20
 - Precip: 20
 
-Temperature earns full credit inside 1°F and loses 3 points for each degree beyond. The precip field covers both whether it rained and how much. Ray's Weather never gives a numeric precip total, so on days when he calls for rain he forfeits the amount half of the field, and on dry-forecast days "no precip" counts as a zero-inch forecast that earns the points. See [how the 100-point scoring works](/methodology) for the full model.
-
 ## What does a 16-point monthly gap actually mean?
 
-A 16.0-point gap is more than a full letter grade. Open-Meteo turned in an A- and Ray's a C+. The gap has risen each month since July (13.2, then 14.7, then 16.0), though it remains below June's 21.2 on today's rubric. Week by week, Open-Meteo led in every block of the month, by as much as 19.7 points (September 1 to 7 and 22 to 28) and as little as 6.6 (September 29 and 30).
+A 16.0-point gap is more than a full letter grade. Open-Meteo turned in an A- and Ray's a C+. The gap has risen each month since July (13.2, then 14.7, then 16.0), though it remains below June's 21.2. Week by week, Open-Meteo led in every block of the month, by as much as 19.7 points (September 1 to 7 and 22 to 28) and as little as 6.6 (September 29 and 30).
 
 The summer as a whole reads cleanly. Across the 91 days of July, August, and September, Ray's averaged 76.5 and Open-Meteo 91.2, a 14.7-point gap, and Ray's came out ahead on 4 of those days. Since Ray's first scored day on March 5, across 208 days, Open-Meteo averages 90.4 and Ray's 71.2, a 19.2-point difference on the same days.
 

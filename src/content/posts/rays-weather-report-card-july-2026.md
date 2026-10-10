@@ -10,7 +10,7 @@ metaDescription: "July 2026 scored: Ray's Weather averaged 77.5 while free Open-
 ---
 # Ray's Weather Report Card: July 2026
 
-We scored 30 days of Boone forecasts in July 2026. Open-Meteo averaged 90.7 and Ray's Weather 77.5, a 13.2-point gap and the narrowest of the three summer months. Ray's logged no Wrong days, after six in June on today's rubric, and still finished last among the nine forecasters we track in Boone.
+We scored 30 days of Boone forecasts in July 2026. Open-Meteo averaged 90.7 and Ray's Weather 77.5, a 13.2-point gap and the narrowest of the three summer months. Ray's logged no Wrong days, after six in June, and still finished last among the nine forecasters we track in Boone.
 
 ## Key takeaways
 
@@ -22,11 +22,7 @@ We scored 30 days of Boone forecasts in July 2026. Open-Meteo averaged 90.7 and 
 
 ## How did Ray's Weather score in July 2026?
 
-Ray's Weather averaged 77.5 across 30 scored days in July 2026. That is a better month than June, when the same rubric puts him at 69.7. He posted 22 Right days and 8 Meh days. Open-Meteo went 30-0-0.
-
-The method hasn't changed. Around midday each day we capture what every source predicts, then grade it the next day against verified actuals from the Open-Meteo historical archive. July had 30 clean days to grade. The score is the mean of the daily 0 to 100 grades.
-
-One note on comparing months. We recalibrated the rubric on July 26 (temperature full credit now covers 1°F instead of 2°F, and the two precipitation fields became one) and rescored all history. Every number here uses the current rubric, including July's first 25 days. The June card, published before the change, shows Ray's at 73.3; rerun today, June comes out at 69.7.
+Ray's Weather averaged 77.5 across 30 scored days in July 2026. That is a better month than June, when he scored 69.7. He posted 22 Right days and 8 Meh days. Open-Meteo went 30-0-0.
 
 ### July 2026 at a glance
 
@@ -51,8 +47,6 @@ Google had the highest July average of the nine forecasters at 94.7, with MET No
 | Ray's Weather (paid) | 77.5 | 22-8-0 |
 
 Scores are the mean of each day's 0 to 100 grade. R-M-W is the count of days graded Right, Meh, and Wrong.
-
-We don't list Apple Weather this month. The iPhone slot in our tracker ran on an Open-Meteo fallback on 29 of 30 days, with one real Apple capture on July 1, so a separate Apple row would mostly be Open-Meteo counted twice.
 
 ### What does the R-M-W column mean?
 
@@ -85,15 +79,13 @@ Each forecast is graded out of 100, split across four fields:
 - Wind: 20
 - Precip: 20
 
-Sixty of those points are temperature, with full credit inside 1°F and 3 points off for each degree beyond. The precip field covers both whether it rained and how much. See [how the 100-point scoring works](/methodology) for the full model.
-
 ### The precip-amount rule
 
 Ray's Weather publishes a forecast of rain or snow but never a numeric total. On a dry-forecast day, "no precip" is scored as a zero-inch forecast, and Ray's earns those points. On a wet-forecast day, a rain call with no stated total forfeits the amount half of the field. A source can't gain by leaving the hard number blank, and the rule applies to every source the same way.
 
 ## What does a 13-point monthly gap actually mean?
 
-A 13.2-point gap means the paid forecast landed about a grade band below the free one, on average, for a whole month. Open-Meteo turned in an A- and Ray's a C+. The gap is smaller than June's 21.2 points on today's rubric, and it has not closed. Through July 31, across the 147 days Ray's has been scored since March 5, Open-Meteo averages 90.0 and Ray's 69.2, a 20.8-point difference on the same days.
+A 13.2-point gap means the paid forecast landed about a grade band below the free one, on average, for a whole month. Open-Meteo turned in an A- and Ray's a C+. The gap is smaller than June's 21.2 points, and it has not closed. Through July 31, across the 147 days Ray's has been scored since March 5, Open-Meteo averages 90.0 and Ray's 69.2, a 20.8-point difference on the same days.
 
 This is a short-range measurement. We grade a forecast captured around midday against the next day's actuals, so it says nothing about [seven- or ten-day lead time](/resources/articles/how-accurate-is-a-10-day-forecast). The longer argument lives in [is Ray's Weather accurate?](/resources/articles/is-rays-weather-accurate), and the June numbers are in the [June 2026 report card](/report-card/2026-06).
 
