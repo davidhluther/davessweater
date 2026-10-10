@@ -337,7 +337,7 @@ def report(functions: list[Function], budget: int, source: str) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    parser = argparse.ArgumentParser(description=__doc__.split("\n")[0], allow_abbrev=False)
     parser.add_argument(
         "--app-dir",
         type=Path,

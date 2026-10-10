@@ -13,7 +13,8 @@ export LANE_NEXT="- Next fire: Wednesday 08:00 (routine ds-experiments-weekly); 
 HELPERS="$HOME/Projects/shared-skills/dev-env/lane"
 case "$1" in
   state)  shift; exec python3 "$HELPERS/run_state.py" "$@" ;;
-  digest) shift; exec python3 experiments/scripts/digest.py "$@" ;;
-  notify) shift; printf '{"hook_event_name":"DigestReady","session_id":"%s","cwd":"%s"}' "${1:-experiments}" "$PWD" | bash "$HOME/Projects/shared-skills/dev-env/hooks/notify.sh"; echo "notified" ;;
+  digest) [ "$#" -eq 1 ] || { echo "usage: lane.sh digest (no arguments)"; exit 2; }; exec python3 experiments/scripts/digest.py ;;
+  notify) shift; case "$1" in [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ;; *) echo "usage: lane.sh notify <run_id>  (run_id = YYYY-MM-DD-xxxxxx)"; exit 2 ;; esac; [ "$#" -eq 1 ] || { echo "usage: lane.sh notify <run_id>"; exit 2; }
+          printf '{"hook_event_name":"DigestReady","session_id":"%s","cwd":"%s"}' "${1:-experiments}" "$PWD" | bash "$HOME/Projects/shared-skills/dev-env/hooks/notify.sh"; echo "notified" ;;
   *) echo "usage: lane.sh state <args> | lane.sh digest | lane.sh notify <run_id>"; exit 0 ;;
 esac

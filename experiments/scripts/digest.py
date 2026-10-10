@@ -29,7 +29,7 @@ def load(p, default):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("--run", default=None); a = ap.parse_args()
+    ap = argparse.ArgumentParser(allow_abbrev=False); ap.add_argument("--run", default=None); a = ap.parse_args()
     state = load(STATE, {})
     run_id = a.run or state.get("run_id")
     run = load(os.path.join(RUNS, f"{run_id}.json"), {}) if run_id else {}
