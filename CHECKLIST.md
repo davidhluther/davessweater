@@ -1729,7 +1729,7 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
       draft AND publish as soon as Aug 1** (no separate review gate for this one). **Report-card titles are Title Case** ("Ray's Weather
       Report Card: July 2026") — as are ALL blog-post titles now (the four live posts were retitled
       2026-07-08; H2/H3 stay sentence case).
-      **2026-10-10 catch-up DRAFTED, NOT PUBLISHED (branch `report-cards-jul-aug-sep-2026`):** July, August,
+      **2026-10-10 catch-up drafted; PUBLISHED 2026-10-11 12:51 ET by owner's choice (PR #171 merged, all three live):** July, August,
       and September 2026 cards written as `src/content/posts/rays-weather-report-card-{july,august,september}-2026.md`
       (`category: report-card`, `reportMonth: 2026-07/08/09`, `date: 2026-10-10`). Built from `data/comparisons/{yyyy-mm}-*.json`
       only (mean of daily scores, current rubric); every figure traced to those files. Copy lint 0 errors; the corpay
