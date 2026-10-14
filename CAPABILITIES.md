@@ -128,3 +128,5 @@ Things a reasonable contributor might assume exist. Each one is a decision, not 
    re-checking its proof — a proof pointer that no longer resolves is not a row.
 3. "Not found" is a search result, not a fact. Before writing that something does not
    exist here, check this file and the build logs, and say where you looked.
+
+- 2026-10-14 — Experiment preflight distinguishes verified uncommitted human authorization from an invalid or unverified state change before run bookkeeping. A dirty tree still fails preflight and stays read-only, with an explicit path-specific commit command for human review; the routine never auto-commits the authorization or bypasses admission. No experiment activation, site change or permission edit.
