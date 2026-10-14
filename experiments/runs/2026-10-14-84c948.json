@@ -1,0 +1,91 @@
+{
+  "run_id": "2026-10-14-84c948",
+  "started": "2026-10-14T09:40:46-04:00",
+  "dry_run": false,
+  "steps": [
+    {
+      "name": "preflight",
+      "status": "ok",
+      "note": "rebase clean; STATUS.md modified (allowed), .codex/ and experiments/STATE.json.guard untracked",
+      "at": "2026-10-14T09:40:54-04:00"
+    },
+    {
+      "name": "read-decisions",
+      "status": "ok",
+      "note": "1 open decision (d-20261003-b6f1) resolved: default accepted, STATUS.md rows are legit Stop-hook log entries, committed in step 6. Also flagging anomaly for digest: decision d-20260908-5ef7's approval task (6hRqfvCP6p7F8pWf) was filed in the wrong Todoist project (Corpay, 6grrr8hrVXPmJ89f) instead of DavesSweater; d-20261003-b6f1's task (6hggf8pmhcCx58X8) was filed in Sites (6hWM6rRQFvmfhMhg). No project literally named DavesSweater exists.",
+      "at": "2026-10-14T09:41:33-04:00"
+    },
+    {
+      "name": "measure",
+      "status": "ok",
+      "note": "window open (ends 2026-10-23); day 19/28; CTR still 0.00% (0/24 impressions since apply vs 0/403 baseline); no verdict yet",
+      "at": "2026-10-14T09:41:51-04:00"
+    },
+    {
+      "name": "propose",
+      "status": "skip",
+      "note": "active_experiment foscoe-title-meta-ctr still measuring (window open until 2026-10-23); one experiment at a time",
+      "at": "2026-10-14T09:41:54-04:00"
+    },
+    {
+      "name": "apply",
+      "status": "skip",
+      "note": "no new experiment awaiting apply this run; active experiment already applied (sha 5c95c242) and is in its measurement window",
+      "at": "2026-10-14T09:41:57-04:00"
+    },
+    {
+      "name": "queue-decisions",
+      "status": "ok",
+      "note": "0 \u2014 no new approval-gate decision this run (nothing proposed); existing active experiment's decision already resolved",
+      "at": "2026-10-14T09:42:03-04:00"
+    }
+  ],
+  "what_changed": [],
+  "decisions_resolved": [
+    "d-20261003-b6f1: David completed the task 6hggf8pmhcCx58X8 at 2026-10-13 11:46 EDT with no comment: default accepted (commit or discard the STATUS.md change before the next Tuesday run)."
+  ],
+  "ahrefs_units": 0,
+  "active_experiment": {
+    "name": "foscoe-title-meta-ctr",
+    "status": "measuring",
+    "applied_at": "2026-09-25T10:57:00-04:00",
+    "applied_sha": "5c95c2423a72a46f3652eab7af479ba7da5f31bf",
+    "window_end": "2026-10-23",
+    "metric": "CTR on foscoe-intent queries (Search Console)",
+    "baseline": {
+      "foscoe_intent_impressions": 403,
+      "foscoe_intent_clicks": 0,
+      "foscoe_intent_ctr": "0.00%",
+      "foscoe_intent_avg_position": 10.4,
+      "as_of": "2026-09-16 re-verification, window 2026-08-18..09-14"
+    },
+    "revert_cmd": "git revert 5c95c2423a72a46f3652eab7af479ba7da5f31bf",
+    "revision": "5c95c2423a72a46f3652eab7af479ba7da5f31bf",
+    "scope": {
+      "target": "/weather/foscoe title + meta description override (single slug)",
+      "controls": "16 other town pages stay on the template",
+      "approval": "d-20260908-5ef7; experiments/proposals/2026-09-08-foscoe-title-meta-ctr.md",
+      "window_end": "2026-10-23",
+      "metric": "CTR on foscoe-intent queries (Search Console)",
+      "revert": "git revert 5c95c2423a72a46f3652eab7af479ba7da5f31bf"
+    }
+  },
+  "active_experiment_authorization": {
+    "actor": "human",
+    "at": "2026-10-14T09:36:52-04:00",
+    "revision": "5c95c2423a72a46f3652eab7af479ba7da5f31bf",
+    "scope": {
+      "target": "/weather/foscoe title + meta description override (single slug)",
+      "controls": "16 other town pages stay on the template",
+      "approval": "d-20260908-5ef7; experiments/proposals/2026-09-08-foscoe-title-meta-ctr.md",
+      "window_end": "2026-10-23",
+      "metric": "CTR on foscoe-intent queries (Search Console)",
+      "revert": "git revert 5c95c2423a72a46f3652eab7af479ba7da5f31bf"
+    },
+    "payload_sha256": "01e6d6305905f1bf04510bf5d083ee527c0a97879831c47436fd97048c920431"
+  },
+  "this_week": [
+    "measuring foscoe-title-meta-ctr \u2014 day 19 of 28 (applied 2026-09-25, window ends 2026-10-23), CTR on foscoe-intent queries so far 0.00% (0 clicks / 24 impressions, 2026-09-25..10-12, SC lag ~2d) vs baseline 0.00% (0/403, 2026-08-18..09-14)"
+  ],
+  "cost": "cash 0 USD . units 0 . model sonnet-5 . ~20 tool calls"
+}

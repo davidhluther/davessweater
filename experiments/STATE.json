@@ -5,8 +5,8 @@
   "push_enabled": true,
   "apply_without_approval": false,
   "last_run": "2026-10-14T09:39:00-04:00",
-  "run_id": "2026-10-07-be5804",
-  "last_status": "failed:preflight",
+  "run_id": "2026-10-14-84c948",
+  "last_status": "running",
   "digest_last_sent": null,
   "digest_last_path": "experiments/digests/2026-10-07-be5804.md",
   "active_experiment": {
@@ -101,10 +101,12 @@
       "title": "Clear the uncommitted STATUS.md so the lane can rebase?",
       "question": "The lane worktree has STATUS.md modified and uncommitted (not by this run), so git pull --rebase refuses and preflight failed on 2026-10-03; the foscoe experiment cannot be applied or pushed until the tree is clean. STATUS.md is the lane's own staging allowlist file, so the lane could commit it, but it was not the lane's edit.",
       "default": "commit or discard the STATUS.md change in the ds-experiments worktree before the next Tuesday run",
-      "status": "open",
+      "status": "resolved",
       "raised": "2026-10-03T18:46:31-04:00",
       "run_id": "2026-10-03-e64ce3",
-      "todoist_id": "6hggf8pmhcCx58X8"
+      "todoist_id": "6hggf8pmhcCx58X8",
+      "outcome": "David completed the task 6hggf8pmhcCx58X8 at 2026-10-13 11:46 EDT with no comment: default accepted (commit or discard the STATUS.md change before the next Tuesday run).",
+      "resolved": "2026-10-14T09:41:25-04:00"
     }
   ],
   "budget": {

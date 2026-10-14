@@ -5,7 +5,7 @@ Schema (Refactor 2): Live / Parked / Decisions for David / Done (dated). Task-le
 
 ## Live
 
-- **Experiments lane (Refactor 2 Lane 4) — run `2026-10-07-be5804` 2026-10-07, status OK.** `foscoe-title-meta-ctr` remains **active**, day 12 of 28, window ends 2026-10-23, revert `git revert 5c95c2423a72a46f3652eab7af479ba7da5f31bf`. Query-level GSC 2026-09-25..10-05: 17 impr / 0 clicks / 0.00% CTR (baseline 403 impr / 0 clicks / 0.00%). No propose or apply (one experiment at a time). $0 cash, 0 Ahrefs units. State `experiments/STATE.json`; record `experiments/LEDGER.md`.
+- **Experiments lane (Refactor 2 Lane 4) — run `2026-10-14-84c948` 2026-10-14, status OK.** `foscoe-title-meta-ctr` remains **active**, day 19 of 28, window ends 2026-10-23, revert `git revert 5c95c2423a72a46f3652eab7af479ba7da5f31bf`. Query-level GSC 2026-09-25..10-12: 24 impr / 0 clicks / 0.00% CTR (baseline 403 impr / 0 clicks / 0.00%). No propose or apply (one experiment at a time). $0 cash, 0 Ahrefs units. State `experiments/STATE.json`; record `experiments/LEDGER.md`; digest `experiments/digests/2026-10-14-84c948.md`.
 
 ## Parked
 
@@ -35,3 +35,6 @@ One row per session per day, written by the Stop hook (`shared-skills/dev-env/ho
 - 2026-10-03 18:51 · session 04d8773d · ds-experiments (main) · HEAD 4d401b12 · dirty 2
 - 2026-10-03 19:47 · session 214fd6ca · ds-experiments (main) · HEAD 47e35de2 · dirty 2
 - 2026-10-03 20:00 · session ae439178 · ds-experiments (main) · HEAD 53d241bf · dirty 1
+- 2026-10-07 08:04 · session 756b234a · ds-experiments (main) · HEAD b13f7a74 · dirty 1
+- 2026-10-14 08:02 · session d1bb07fb · ds-experiments (main) · HEAD 900e9754 · dirty 3
+- 2026-10-14 09:39 · session 8ea9fea1 · ds-experiments (main) · HEAD 900e9754 · dirty 6
