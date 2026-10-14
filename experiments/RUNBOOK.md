@@ -40,12 +40,21 @@ cause, never "died mid-way".
 
 ## 0. Start — state, lock, guard
 ```bash
-cd ~/Projects/worktrees/ds-experiments && git rev-parse --abbrev-ref HEAD && git status --porcelain | head
+cd ~/Projects/worktrees/ds-experiments && git rev-parse --abbrev-ref HEAD && git status --porcelain
 git fetch -q origin main && git pull --rebase --autostash origin main   # the pipeline bot commits to main several times a day;
 # --autostash because the Stop hook leaves a session row in STATUS.md after every run (10-03: a plain pull refused)
 ```
 `LOCKED …` → one transcript line and stop (the dead-man reports it). Not on `main`, rebase failed, or
 tracked files modified other than `STATUS.md` → `step preflight fail "<what>"`, continue read-only.
+Use the **complete** tracked status, without `head` or any truncation.
+**Any failed preflight is a run-wide mutation prohibition for every later step.**
+Never apply an experiment, revert (including a window-close revert in step 2),
+stage, commit or push. Do not clear or advance the activation, archive an outcome,
+edit proposals or site files, or resolve/apply a decision. Record a skip for each
+mutating step. Only read-only inspection, permitted lane notes and step outcomes,
+and the unconditional digest/reporting allowed in read-only mode may proceed.
+This rule overrides later instructions to mutate, including steps 2, 4 and 6;
+no later success may erase the preflight failure.
 
 Assess tracked changes **before** `state start` changes STATE for run bookkeeping.
 When the only additional tracked change is `experiments/STATE.json`, run the
@@ -63,7 +72,7 @@ field must match the committed version. Record the preflight failure with that
 wording and this recovery command for a human to review and run:
 
 ```bash
-git add experiments/STATE.json && git commit -m "Record human experiment authorization" && git push origin main
+git add experiments/STATE.json && git commit -m "Record human experiment authorization" -- experiments/STATE.json && git push origin main
 ```
 
 Never run that recovery command automatically. Continue read-only and keep all
