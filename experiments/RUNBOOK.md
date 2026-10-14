@@ -43,12 +43,41 @@ cause, never "died mid-way".
 cd ~/Projects/worktrees/ds-experiments && git rev-parse --abbrev-ref HEAD && git status --porcelain | head
 git fetch -q origin main && git pull --rebase --autostash origin main   # the pipeline bot commits to main several times a day;
 # --autostash because the Stop hook leaves a session row in STATUS.md after every run (10-03: a plain pull refused)
-bash experiments/lane.sh state start
 ```
 `LOCKED …` → one transcript line and stop (the dead-man reports it). Not on `main`, rebase failed, or
 tracked files modified other than `STATUS.md` → `step preflight fail "<what>"`, continue read-only.
+
+Assess tracked changes **before** `state start` changes STATE for run bookkeeping.
+When the only additional tracked change is `experiments/STATE.json`, run the
+already-allowed `bash experiments/lane.sh state show`. It adds two computed fields:
+`authorized_experiment` verifies the active payload and its recorded authorization;
+`uncommitted_state_keys` lists the top-level STATE values changed from the committed
+copy. Do not run a new verification subcommand or direct Git diff/show probes.
+Recognize **uncommitted human authorization** only when the command succeeds,
+`authorized_experiment` is `true`, and `uncommitted_state_keys` is a list containing
+only `active_experiment`, `active_experiment_authorization` and, if changed, the
+helper-managed `active_experiment_set_at` equal to the authorization's `at`.
+An unavailable committed baseline gives a null key list and an error, not proof
+of an unchanged state. Every other STATE
+field must match the committed version. Record the preflight failure with that
+wording and this recovery command for a human to review and run:
+
+```bash
+git add experiments/STATE.json && git commit -m "Record human experiment authorization" && git push origin main
+```
+
+Never run that recovery command automatically. Continue read-only and keep all
+existing application gates. A false, null, unavailable or denied verification, an
+invalid or mismatched pair, or any other tracked change remains an unverified
+authorization/preflight failure; do not describe a verified authorization as
+hand-inserted or fabricated. A false result alone is not evidence of malicious
+tampering, and a cleared activation is not a verified active experiment.
+After capturing this assessment, run `bash experiments/lane.sh state start`.
+If admission succeeds, record the captured preflight result before continuing;
+run bookkeeping must not hide the original dirty-tree failure. If admission
+refuses, do not bypass it or manufacture a run record.
 `<state> show`: note `dry_run`, `push_enabled`, `apply_without_approval`, `active_experiment`.
-`step preflight ok`.
+`step preflight ok` only when the original assessment passed; never overwrite a failure.
 
 ## 1. Read decisions back from Todoist
 For each `STATE.open_decisions` entry with `status: open` and a `todoist_id`: `find-tasks` /
