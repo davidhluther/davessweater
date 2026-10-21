@@ -1,0 +1,109 @@
+{
+  "run_id": "2026-10-21-61b96e",
+  "started": "2026-10-21T08:00:48-04:00",
+  "dry_run": false,
+  "steps": [
+    {
+      "name": "preflight",
+      "status": "ok",
+      "note": "main, rebased to b4731dab; only STATUS.md modified",
+      "at": "2026-10-21T08:00:51-04:00"
+    },
+    {
+      "name": "read-decisions",
+      "status": "skip",
+      "note": "no open decisions in STATE",
+      "at": "2026-10-21T08:00:56-04:00"
+    },
+    {
+      "name": "measure",
+      "status": "ok",
+      "note": "window open (ends 10-23); 0 clicks on 94 foscoe-query impressions, 0.00% CTR, baseline 0.00%",
+      "at": "2026-10-21T08:01:21-04:00"
+    },
+    {
+      "name": "propose",
+      "status": "skip",
+      "note": "experiment foscoe-title-meta-ctr still active",
+      "at": "2026-10-21T08:01:26-04:00"
+    },
+    {
+      "name": "apply",
+      "status": "skip",
+      "note": "active experiment already applied; nothing new to apply",
+      "at": "2026-10-21T08:01:26-04:00"
+    },
+    {
+      "name": "queue-decisions",
+      "status": "ok",
+      "note": "0",
+      "at": "2026-10-21T08:01:27-04:00"
+    },
+    {
+      "name": "ledger",
+      "status": "ok",
+      "note": "LEDGER row + STATUS Live bullet updated",
+      "at": "2026-10-21T08:01:55-04:00"
+    }
+  ],
+  "what_changed": [],
+  "decisions_resolved": [],
+  "ahrefs_units": 0,
+  "execution_owner": {
+    "holder_pid": 50168,
+    "holder_process_start": "Wed Oct 21 12:00:05 2026",
+    "run_id": "d983f4f4-b6b4-4f57-a10f-d3a250b9bdf5",
+    "child_pid": 50178,
+    "child_process_start": "Wed Oct 21 12:00:05 2026",
+    "writer_pgid": 50178,
+    "session_id": "d983f4f4-b6b4-4f57-a10f-d3a250b9bdf5",
+    "lane_run_id": "2026-10-21-61b96e",
+    "started": "2026-10-21T08:00:48-04:00",
+    "cwd": "/Users/davidluther/Projects/worktrees/ds-experiments",
+    "note": "Live supervisor or bound writer excludes other writes; reads remain available."
+  },
+  "session_id": "d983f4f4-b6b4-4f57-a10f-d3a250b9bdf5",
+  "active_experiment": {
+    "name": "foscoe-title-meta-ctr",
+    "status": "measuring",
+    "applied_at": "2026-09-25T10:57:00-04:00",
+    "applied_sha": "5c95c2423a72a46f3652eab7af479ba7da5f31bf",
+    "window_end": "2026-10-23",
+    "metric": "CTR on foscoe-intent queries (Search Console)",
+    "baseline": {
+      "foscoe_intent_impressions": 403,
+      "foscoe_intent_clicks": 0,
+      "foscoe_intent_ctr": "0.00%",
+      "foscoe_intent_avg_position": 10.4,
+      "as_of": "2026-09-16 re-verification, window 2026-08-18..09-14"
+    },
+    "revert_cmd": "git revert 5c95c2423a72a46f3652eab7af479ba7da5f31bf",
+    "revision": "5c95c2423a72a46f3652eab7af479ba7da5f31bf",
+    "scope": {
+      "target": "/weather/foscoe title + meta description override (single slug)",
+      "controls": "16 other town pages stay on the template",
+      "approval": "d-20260908-5ef7; experiments/proposals/2026-09-08-foscoe-title-meta-ctr.md",
+      "window_end": "2026-10-23",
+      "metric": "CTR on foscoe-intent queries (Search Console)",
+      "revert": "git revert 5c95c2423a72a46f3652eab7af479ba7da5f31bf"
+    }
+  },
+  "active_experiment_authorization": {
+    "actor": "human",
+    "at": "2026-10-14T09:36:52-04:00",
+    "revision": "5c95c2423a72a46f3652eab7af479ba7da5f31bf",
+    "scope": {
+      "target": "/weather/foscoe title + meta description override (single slug)",
+      "controls": "16 other town pages stay on the template",
+      "approval": "d-20260908-5ef7; experiments/proposals/2026-09-08-foscoe-title-meta-ctr.md",
+      "window_end": "2026-10-23",
+      "metric": "CTR on foscoe-intent queries (Search Console)",
+      "revert": "git revert 5c95c2423a72a46f3652eab7af479ba7da5f31bf"
+    },
+    "payload_sha256": "01e6d6305905f1bf04510bf5d083ee527c0a97879831c47436fd97048c920431"
+  },
+  "this_week": [
+    "measuring foscoe-title-meta-ctr \u2014 day 26 of 28 (data through 10-19, ~2d lag): foscoe-named queries 94 impr / 0 clicks / 0.00% CTR, pos ~11 (baseline 403 impr / 0 clicks / 0.00%, pos 10.4); page-level 289 impr / 0 clicks, pos 10.0. No CTR lift yet; verdict due after window_end 2026-10-23"
+  ],
+  "cost": "cash 0 USD \u00b7 units 0 \u00b7 sonnet-5-5 \u00b7 ~30 tool calls"
+}
