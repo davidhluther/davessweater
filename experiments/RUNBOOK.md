@@ -100,7 +100,13 @@ no, or changes the design → do not apply; record and re-propose. `step read-de
 If `STATE.active_experiment` exists with status `measuring`: pull the metric for its pages via
 `query_search_analytics` (`siteUrl: "sc-domain:davessweater.com"`, dimensions `page` and `date`,
 the baseline window vs. applied-to-now; Search Console data lags ~2 days — say so). If `window_end`
-has passed: decide **kept / reverted / inconclusive** against the pre-registered metric and threshold;
+has passed: decide **kept / reverted / inconclusive** against the pre-registered metric and threshold.
+**When the proposal's front matter carries `rules:` (JSON), the verdict is arithmetic, not judgment:** write the
+window's numbers (`impressions`, `clicks`, `avg_position` for the metric's query set) to
+`experiments/runs/<run_id>-measured.json` and the baseline's to `experiments/runs/<run_id>-baseline.json`, run
+`/usr/bin/python3 /Users/davidluther/Projects/shared-skills/dev-env/local-steps/experiment-verdict/verdict.py <rules file> <baseline> <measured>`
+and use its `verdict` and `why` exactly (`revert` means reverted). Only rules marked `"preregistered": true` count; rules translated after a window closed (the 10/23 foscoe block is one, `"rules_source": "translated 10/23 from the prose threshold; not preregistered"`) return inconclusive / window_contract_missing until David supplies the approved baseline or authorizes a dated amendment. If you think it is wrong, say so in the note; never
+override it. Proposals without `rules:` keep the judgment path below;
 `reverted` → run the recorded `revert_cmd` (a `git revert`), commit, and push only if `push_enabled`;
 `<state> note results "<name> · <metric> · <baseline> → <now> · <verdict> · <one-line why>"`,
 `<state> append completed_experiments '<json of the experiment with verdict>'`, `<state> set active_experiment 'null'`,
@@ -116,7 +122,8 @@ with impressions and a weak CTR, a query cluster with no matching title). Write
 sentence), `metric` + `instrument` + `threshold` (what counts as a win), `baseline_window` (28 days,
 measured now: record the numbers), `measurement_window_days` (14 minimum; 28 for ranking effects),
 `change` (the exact file(s) and text), `revert_cmd` (`git revert <sha>` of the commit you will make),
-`cost_usd: 0`, `ahrefs_units: 0`, `approved: false`, `risk` (what could go wrong, and why it is
+`rules` (the threshold as JSON for `verdict.py`: `win`, `revert`, `min_impressions`, and `"preregistered": true`
+because it is written before anything is applied; it must say the same as `threshold`), `cost_usd: 0`, `ahrefs_units: 0`, `approved: false`, `risk` (what could go wrong, and why it is
 reversible). Then ONE decision (the approval gate): `<state> decision "Run experiment <name>?"
 "<hypothesis> · metric <metric> · window <n> days · revert: git revert of the applying commit — file:
 experiments/proposals/<file>" "approve if reversible and $0 (it applies only after this task is
