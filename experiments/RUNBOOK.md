@@ -104,8 +104,8 @@ has passed: decide **kept / reverted / inconclusive** against the pre-registered
 **When the proposal's front matter carries `rules:` (JSON), the verdict is arithmetic, not judgment:** write the
 window's numbers (`impressions`, `clicks`, `avg_position` for the metric's query set) to
 `experiments/runs/<run_id>-measured.json` and the baseline's to `experiments/runs/<run_id>-baseline.json`, run
-`/usr/bin/python3 /Users/davidluther/Projects/shared-skills/dev-env/local-steps/experiment-verdict/verdict.py <rules file> <baseline> <measured>`
-and use its `verdict` and `why` exactly (`revert` means reverted). Only rules marked `"preregistered": true` count; rules translated after a window closed (the 10/23 foscoe block is one, `"rules_source": "translated 10/23 from the prose threshold; not preregistered"`) return inconclusive / window_contract_missing until David supplies the approved baseline or authorizes a dated amendment. If you think it is wrong, say so in the note; never
+`/usr/bin/python3 /Users/davidluther/Projects/shared-skills/dev-env/local-steps/experiment-verdict/verdict.py <rules file> <baseline> <measured> --experiment <STATE.active_experiment.name>`
+and use its `verdict` and `why` exactly (`revert` means reverted). Only rules marked `"preregistered": true` count; rules translated after a window closed (the 10/23 foscoe block is one, `"rules_source": "translated 10/23 from the prose threshold; not preregistered"`) return inconclusive / window_contract_missing unless David authorized a dated amendment (recorded in that folder's amendments.json and repeated as `amendment` in the rules; foscoe has one, 10/23). If you think it is wrong, say so in the note; never
 override it. Proposals without `rules:` keep the judgment path below;
 `reverted` → run the recorded `revert_cmd` (a `git revert`), commit, and push only if `push_enabled`;
 `<state> note results "<name> · <metric> · <baseline> → <now> · <verdict> · <one-line why>"`,
