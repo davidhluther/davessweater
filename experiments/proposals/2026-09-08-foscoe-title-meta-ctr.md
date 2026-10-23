@@ -25,7 +25,7 @@ baseline:
     The remaining ~420 impressions are generic head terms ("weather" 165, "weather tomorrow" 152)
     where a site this size at position 10 will not win clicks and which this experiment ignores.
 measurement_window_days: 28
-rules: '{"win": [{"metric": "ctr", "op": ">=", "value": 0.01}], "revert": [{"metric": "avg_position", "op": "worse_by", "value": 1.0}, {"metric": "impressions", "op": "<", "value": 300}], "min_impressions": 100, "preregistered": false, "rules_source": "translated 10/23 from the prose threshold above; not preregistered", "amendment": {"date": "2026-10-23", "authorized_by": "David (selection, 10/23)", "window_contract": "v1", "window": "America/New_York days; application day 2026-09-25 excluded; test 2026-09-26..2026-10-23; baseline the same 28 days ending 2026-09-24"}}'
+rules: '{"win": [{"metric": "ctr", "op": ">=", "value": 0.01}], "revert": [{"metric": "avg_position", "op": "worse_by", "value": 1.0}, {"metric": "impressions", "op": "<", "value": 300}], "min_impressions": 100, "preregistered": false, "rules_source": "translated 10/23 from the prose threshold above; not preregistered", "amendment": {"experiment": "foscoe-title-meta-ctr", "date": "2026-10-23", "authorized_by": "David (selection, 10/23)", "window_contract": "v1", "window": "America/New_York days; application day 2026-09-25 excluded; test 2026-09-26..2026-10-23; baseline the same 28 days ending 2026-09-24"}}'
 change: >
   src/app/weather/[slug]/page.tsx, generateMetadata only. Add a narrow per-slug override that
   applies to slug === "foscoe" and to no other town, so the other 16 town pages stay untouched
