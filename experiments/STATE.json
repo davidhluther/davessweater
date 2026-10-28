@@ -5,8 +5,8 @@
   "push_enabled": true,
   "apply_without_approval": false,
   "last_run": "2026-10-21T08:03:02-04:00",
-  "run_id": "2026-10-21-61b96e",
-  "last_status": "ok",
+  "run_id": "2026-10-28-9bc5e4",
+  "last_status": "running",
   "digest_last_sent": "2026-10-21T08:03:02-04:00",
   "digest_last_path": "experiments/digests/2026-10-21-61b96e.md",
   "active_experiment": {
@@ -34,7 +34,25 @@
       "revert": "git revert 5c95c2423a72a46f3652eab7af479ba7da5f31bf"
     }
   },
-  "completed_experiments": [],
+  "completed_experiments": [
+    {
+      "name": "foscoe-title-meta-ctr",
+      "applied_sha": "5c95c2423a72a46f3652eab7af479ba7da5f31bf",
+      "verdict": "reverted",
+      "revert_sha": "40041a4b",
+      "baseline": {
+        "impressions": 264,
+        "clicks": 0,
+        "avg_position": 10.55
+      },
+      "measured": {
+        "impressions": 128,
+        "clicks": 0,
+        "avg_position": 11.3
+      },
+      "why": "impressions < 300 safety floor, decided under 2026-10-23 amendment"
+    }
+  ],
   "open_decisions": [
     {
       "id": "d-20260908-5ef7",
@@ -107,6 +125,16 @@
       "todoist_id": "6hggf8pmhcCx58X8",
       "outcome": "David completed the task 6hggf8pmhcCx58X8 at 2026-10-13 11:46 EDT with no comment: default accepted (commit or discard the STATUS.md change before the next Tuesday run).",
       "resolved": "2026-10-14T09:41:25-04:00"
+    },
+    {
+      "id": "d-20261028-9cb2",
+      "title": "Clear foscoe-title-meta-ctr from active_experiment?",
+      "question": "foscoe-title-meta-ctr closed 10/23 and verdict.py returned revert (0 clicks, 128 impressions vs 264 baseline, below the 300 floor); the lane reverted it in 40041a4b and pushed. active_experiment is a human-only gate key (LANE_HUMAN=1), so it still reads measuring and blocks the next proposal. Also note the verdict rests on a translated, non-preregistered rule and an impression collapse that ramp and seasonality likely explain, so the revert says nothing about snippet quality. Fix: a human clears active_experiment, then next Wednesday's run proposes the next experiment.",
+      "default": "clear active_experiment so the lane can propose next week",
+      "status": "open",
+      "raised": "2026-10-28T08:02:34-04:00",
+      "run_id": "2026-10-28-9bc5e4",
+      "todoist_id": null
     }
   ],
   "budget": {

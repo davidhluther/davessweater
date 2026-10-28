@@ -1,0 +1,115 @@
+{
+  "run_id": "2026-10-28-9bc5e4",
+  "started": "2026-10-28T08:01:08-04:00",
+  "dry_run": false,
+  "steps": [
+    {
+      "name": "preflight",
+      "status": "ok",
+      "note": "main, clean tracked tree, rebase ok (5 local commits replayed)",
+      "at": "2026-10-28T08:01:11-04:00"
+    },
+    {
+      "name": "read-decisions",
+      "status": "ok",
+      "note": "no open decisions with status open",
+      "at": "2026-10-28T08:01:16-04:00"
+    },
+    {
+      "name": "measure",
+      "status": "ok",
+      "note": "verdict revert (impressions 128 < 300 floor); reverted 40041a4b, pushed; active_experiment clear is human-gated, left set",
+      "at": "2026-10-28T08:02:12-04:00"
+    },
+    {
+      "name": "propose",
+      "status": "skip",
+      "note": "active_experiment still set (human-gated key; foscoe concluded reverted this run); one at a time, so no new proposal until David clears it",
+      "at": "2026-10-28T08:02:31-04:00"
+    },
+    {
+      "name": "apply",
+      "status": "skip",
+      "note": "nothing approved to apply",
+      "at": "2026-10-28T08:02:32-04:00"
+    },
+    {
+      "name": "queue-decisions",
+      "status": "ok",
+      "note": "1",
+      "at": "2026-10-28T08:02:36-04:00"
+    },
+    {
+      "name": "ledger",
+      "status": "ok",
+      "note": "LEDGER row updated; no ds-experiments Live bullet in STATUS.md to replace",
+      "at": "2026-10-28T08:02:44-04:00"
+    },
+    {
+      "name": "digest",
+      "status": "ok",
+      "note": "experiments/digests/2026-10-28-9bc5e4.md",
+      "at": "2026-10-28T08:02:48-04:00"
+    }
+  ],
+  "what_changed": [],
+  "decisions_resolved": [],
+  "ahrefs_units": 0,
+  "execution_owner": {
+    "holder_pid": 31136,
+    "holder_process_start": "Wed Oct 28 12:00:05 2026",
+    "run_id": "bc02fe6f-aca1-4795-a7e9-221a0edf4d93",
+    "child_pid": 31161,
+    "child_process_start": "Wed Oct 28 12:00:08 2026",
+    "writer_pgid": 31161,
+    "session_id": "bc02fe6f-aca1-4795-a7e9-221a0edf4d93",
+    "lane_run_id": "2026-10-28-9bc5e4",
+    "started": "2026-10-28T08:01:08-04:00",
+    "cwd": "/Users/davidluther/Projects/worktrees/ds-experiments",
+    "note": "Live supervisor or bound writer excludes other writes; reads remain available."
+  },
+  "session_id": "bc02fe6f-aca1-4795-a7e9-221a0edf4d93",
+  "active_experiment": {
+    "name": "foscoe-title-meta-ctr",
+    "status": "measuring",
+    "applied_at": "2026-09-25T10:57:00-04:00",
+    "applied_sha": "5c95c2423a72a46f3652eab7af479ba7da5f31bf",
+    "window_end": "2026-10-23",
+    "metric": "CTR on foscoe-intent queries (Search Console)",
+    "baseline": {
+      "foscoe_intent_impressions": 403,
+      "foscoe_intent_clicks": 0,
+      "foscoe_intent_ctr": "0.00%",
+      "foscoe_intent_avg_position": 10.4,
+      "as_of": "2026-09-16 re-verification, window 2026-08-18..09-14"
+    },
+    "revert_cmd": "git revert 5c95c2423a72a46f3652eab7af479ba7da5f31bf",
+    "revision": "5c95c2423a72a46f3652eab7af479ba7da5f31bf",
+    "scope": {
+      "target": "/weather/foscoe title + meta description override (single slug)",
+      "controls": "16 other town pages stay on the template",
+      "approval": "d-20260908-5ef7; experiments/proposals/2026-09-08-foscoe-title-meta-ctr.md",
+      "window_end": "2026-10-23",
+      "metric": "CTR on foscoe-intent queries (Search Console)",
+      "revert": "git revert 5c95c2423a72a46f3652eab7af479ba7da5f31bf"
+    }
+  },
+  "active_experiment_authorization": {
+    "actor": "human",
+    "at": "2026-10-14T09:36:52-04:00",
+    "revision": "5c95c2423a72a46f3652eab7af479ba7da5f31bf",
+    "scope": {
+      "target": "/weather/foscoe title + meta description override (single slug)",
+      "controls": "16 other town pages stay on the template",
+      "approval": "d-20260908-5ef7; experiments/proposals/2026-09-08-foscoe-title-meta-ctr.md",
+      "window_end": "2026-10-23",
+      "metric": "CTR on foscoe-intent queries (Search Console)",
+      "revert": "git revert 5c95c2423a72a46f3652eab7af479ba7da5f31bf"
+    },
+    "payload_sha256": "01e6d6305905f1bf04510bf5d083ee527c0a97879831c47436fd97048c920431"
+  },
+  "results": [
+    "foscoe-title-meta-ctr \u00b7 CTR on foscoe-intent queries \u00b7 0/264 impr (0.00%, pos 10.55) \u2192 0/128 impr (0.00%, pos 11.30) \u00b7 reverted \u00b7 impressions below 300 safety floor under 10/23 amendment; win rule (CTR>=1%) not met; reverted in 40041a4b"
+  ],
+  "cost": "cash 0 USD \u00b7 units 0 \u00b7 sonnet-5-5 \u00b7 about 45 tool calls"
+}
