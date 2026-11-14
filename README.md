@@ -91,7 +91,7 @@ Hosted on **Vercel** (`vercel.json`: `framework: nextjs`, `outputDirectory: .nex
 
 ## Write-ups
 
-The systems behind the site are written up as case studies on [David Luther's portfolio](https://davidhluther.github.io/lab/): [the scoring rubric](https://davidhluther.github.io/case-studies/scoring-rubric/), [the self-grading forecast](https://davidhluther.github.io/case-studies/self-grading-forecast/), and [the indexing forensics](https://davidhluther.github.io/case-studies/indexing-forensics/).
+The systems behind the site are written up as case studies on [David Luther's portfolio](https://davidhluther.github.io/lab/), covering [the scoring rubric](https://davidhluther.github.io/case-studies/scoring-rubric/), [the self-grading forecast](https://davidhluther.github.io/case-studies/self-grading-forecast/), and [the indexing forensics](https://davidhluther.github.io/case-studies/indexing-forensics/).
 
 ---
 
