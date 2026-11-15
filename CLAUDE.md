@@ -35,7 +35,7 @@ Other owner rules live in `docs/agent/design-type-scale.md`. Read it before any 
 | Change scoring or sweater logic | `docs/agent/scoring.md` | `src/`, `docs/agent/shop.md` | `scripts/scoring.py`, `scripts/compare.py`, `scripts/rescore_history.py` | `scripts/`, `data/comparisons/` |
 | Edit site design or type | `docs/agent/design-type-scale.md`, `docs/DESIGN-BANLIST.md` | `data/` | `scripts/copy_lint.py`, `.design-gate.json` | `src/` |
 | Write content or posts | `docs/agent/content-production.md`, `docs/agent/premise-voice.md` | `docs/agent/scoring.md` | `guidelines/seo/`, `data/scores.json`, `scripts/copy_lint.py` (see `docs/agent/design-type-scale.md`) | `src/content/posts/` |
-| Deploy | `docs/agent/deployment.md` | `data/`, `docs/agent/scoring.md` | `vercel.json`, `scripts/prepare_public.mjs` | `main` (production) |
+| Deploy | `docs/agent/deployment.md` | `data/`, `docs/agent/scoring.md` | `vercel.json`, `scripts/prepare_public.mjs` | a PR to `main`; merge only after the owner's yes (production) |
 | Add a roadmap item | `docs/agent/roadmap.md` | `src/`, `scripts/` | `CHECKLIST.md` | `CHECKLIST.md` for scheduled work; the "Future Ideas" list in `docs/agent/roadmap.md` for unscheduled ideas |
 | Work on the swag shop | `docs/agent/shop.md` | `data/`, `docs/agent/scoring.md` | `src/app/shop` | `src/app/shop` |
 
