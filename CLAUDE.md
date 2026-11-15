@@ -10,6 +10,8 @@ A Python data pipeline (stdlib) writes `data/*.json` through daily GitHub Action
 
 ## Must-know rules
 
+**Read `AGENTS.md` before writing any code.** It holds the Next.js 16 rule: this Next differs from training data, so check `node_modules/next/dist/docs/` first.
+
 **Merging to `main` triggers a Vercel production deploy.** Every push to `main` runs `next build` and goes live at davessweater.com. Work on a branch and merge only when ready.
 
 **Mobile check is mandatory (owner rule, 2026-07-08):** every UI change gets verified at iPhone width
@@ -29,10 +31,10 @@ Other owner rules live in `docs/agent/design-type-scale.md`. Read it before any 
 
 | Job | Read | Skip | Use | Save to |
 |---|---|---|---|---|
-| Run or debug the daily pipeline | `docs/agent/pipeline.md` | `src/`, `docs/agent/design-type-scale.md` | `scripts/capture_openmeteo.py`, `scripts/capture_rays.py`, `scripts/compare.py` | `data/` |
+| Run or debug the daily pipeline | `docs/agent/pipeline.md`, `docs/agent/scoring.md` | `src/`, `docs/agent/design-type-scale.md` | `scripts/capture_openmeteo.py`, `scripts/capture_rays.py`, `scripts/compare.py` | `data/` |
 | Change scoring or sweater logic | `docs/agent/scoring.md` | `src/`, `docs/agent/shop.md` | `scripts/scoring.py`, `scripts/compare.py`, `scripts/rescore_history.py` | `scripts/`, `data/comparisons/` |
-| Edit site design or type | `docs/agent/design-type-scale.md`, `docs/DESIGN-BANLIST.md` | `scripts/`, `data/` | `scripts/copy_lint.py`, `.design-gate.json` | `src/` |
-| Write content or posts | `docs/agent/content-production.md`, `docs/agent/premise-voice.md` | `scripts/`, `data/` | `guidelines/seo/` | `src/content/posts/` |
+| Edit site design or type | `docs/agent/design-type-scale.md`, `docs/DESIGN-BANLIST.md` | `data/` | `scripts/copy_lint.py`, `.design-gate.json` | `src/` |
+| Write content or posts | `docs/agent/content-production.md`, `docs/agent/premise-voice.md` | `docs/agent/design-type-scale.md` | `guidelines/seo/`, `data/scores.json`, `scripts/copy_lint.py` | `src/content/posts/` |
 | Deploy | `docs/agent/deployment.md` | `data/`, `docs/agent/scoring.md` | `vercel.json`, `scripts/prepare_public.mjs` | `main` (production) |
 | Add a roadmap item | `docs/agent/roadmap.md` | `src/`, `scripts/` | `CHECKLIST.md` | `CHECKLIST.md` |
 | Work on the swag shop | `docs/agent/shop.md` | `data/`, `docs/agent/scoring.md` | `src/app/shop` | `src/app/shop` |
