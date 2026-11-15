@@ -12,7 +12,7 @@ A Python data pipeline (stdlib) writes `data/*.json` through daily GitHub Action
 
 **Read `AGENTS.md` before writing any code.** It holds the Next.js 16 rule: this Next differs from training data, so check `node_modules/next/dist/docs/` first.
 
-**Merging to `main` triggers a Vercel production deploy.** Every push to `main` runs `next build` and goes live at davessweater.com. Work on a branch and merge only when ready.
+**Merging to `main` triggers a Vercel production deploy.** Every push to `main` runs `next build` and goes live at davessweater.com. Work on a branch. Merge to `main` only after the owner says yes in chat for that merge; a request to ship is not that yes until the owner confirms it.
 
 **Mobile check is mandatory (owner rule, 2026-07-08):** every UI change gets verified at iPhone width
 before it ships — 390x844 viewport (via Chrome device emulation or `next start` + devtools), checking for
@@ -31,12 +31,12 @@ Other owner rules live in `docs/agent/design-type-scale.md`. Read it before any 
 
 | Job | Read | Skip | Use | Save to |
 |---|---|---|---|---|
-| Run or debug the daily pipeline | `docs/agent/pipeline.md`, `docs/agent/scoring.md` | `src/`, `docs/agent/design-type-scale.md` | `scripts/capture_openmeteo.py`, `scripts/capture_rays.py`, `scripts/compare.py` | `data/` |
+| Run or debug the daily pipeline | `docs/agent/pipeline.md`, `docs/agent/scoring.md` | `src/`, `docs/agent/design-type-scale.md` | `scripts/capture_openmeteo.py`, `scripts/capture_rays.py`, `scripts/compare.py`, `scripts/scoring.py` | `data/`, or `scripts/` for a code fix |
 | Change scoring or sweater logic | `docs/agent/scoring.md` | `src/`, `docs/agent/shop.md` | `scripts/scoring.py`, `scripts/compare.py`, `scripts/rescore_history.py` | `scripts/`, `data/comparisons/` |
 | Edit site design or type | `docs/agent/design-type-scale.md`, `docs/DESIGN-BANLIST.md` | `data/` | `scripts/copy_lint.py`, `.design-gate.json` | `src/` |
-| Write content or posts | `docs/agent/content-production.md`, `docs/agent/premise-voice.md` | `docs/agent/design-type-scale.md` | `guidelines/seo/`, `data/scores.json`, `scripts/copy_lint.py` | `src/content/posts/` |
+| Write content or posts | `docs/agent/content-production.md`, `docs/agent/premise-voice.md` | `docs/agent/scoring.md` | `guidelines/seo/`, `data/scores.json`, `scripts/copy_lint.py` (see `docs/agent/design-type-scale.md`) | `src/content/posts/` |
 | Deploy | `docs/agent/deployment.md` | `data/`, `docs/agent/scoring.md` | `vercel.json`, `scripts/prepare_public.mjs` | `main` (production) |
-| Add a roadmap item | `docs/agent/roadmap.md` | `src/`, `scripts/` | `CHECKLIST.md` | `CHECKLIST.md` |
+| Add a roadmap item | `docs/agent/roadmap.md` | `src/`, `scripts/` | `CHECKLIST.md` | `CHECKLIST.md` for scheduled work; the "Future Ideas" list in `docs/agent/roadmap.md` for unscheduled ideas |
 | Work on the swag shop | `docs/agent/shop.md` | `data/`, `docs/agent/scoring.md` | `src/app/shop` | `src/app/shop` |
 
 ## Where moved detail lives
