@@ -54,7 +54,9 @@ so the owner notices a skipped run instead of a slowly staling site.
 
 Usage: python scripts/check_freshness.py [--date YYYY-MM-DD] [--traffic-only]
 --traffic-only runs the three traffic checks alone and REQUIRES the private
-traffic store to be mounted (the traffic workflow's own backstop). Without it
+traffic store to be mounted (the sentinel mounts it read-only and runs this as
+a second step; moved out of traffic_actuals.yml 2026-11-16 so a missed traffic
+cron still alerts). Without it
 the traffic checks skip when the store is absent, which is the normal state of
 a public checkout since the dataset moved out on 2026-08-13 (TomTom terms).
 Default date ("today") is the current date in America/New_York.
@@ -70,8 +72,8 @@ import traffic_paths as tp
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 # The traffic dataset moved to the private store on 2026-08-13 (TomTom terms —
 # see CHECKLIST.md). A plain public checkout has no traffic data at all, so the
-# three traffic checks SKIP unless the store is mounted. The traffic workflow,
-# which does mount it, runs this with --traffic-only, where an unmounted store
+# three traffic checks SKIP unless the store is mounted. The freshness sentinel
+# mounts it read-only and runs this with --traffic-only, where an unmounted store
 # is itself a failure.
 TRAFFIC_DIR = tp.traffic_dir()
 EST = ZoneInfo("America/New_York")
@@ -174,8 +176,8 @@ def _check_traffic_freshness(today: str, subdir: str, label: str, allowed: int):
     dated *.json is within `allowed` days of `today`.
 
     Skips (and passes) when the private store is not mounted, the normal state of
-    a public checkout since the dataset moved out on 2026-08-13. The traffic
-    workflow mounts the store and runs with --traffic-only, where an unmounted
+    a public checkout since the dataset moved out on 2026-08-13. The freshness
+    sentinel mounts the store and runs with --traffic-only, where an unmounted
     store fails instead of skipping."""
     if not traffic_store_mounted():
         return True, (f"traffic {label}: SKIPPED — private traffic store not mounted "
@@ -228,7 +230,7 @@ def check_traffic_actuals_freshness(today: str):
 
 def check_traffic_store_mounted():
     """True when the private traffic store is mounted. Only asserted in
-    --traffic-only mode, which runs inside the traffic workflow after it has
+    --traffic-only mode, which the freshness sentinel runs after it has
     checked the private data out; anywhere else an absent store is expected."""
     if traffic_store_mounted():
         return True, f"traffic store: mounted at {TRAFFIC_DIR}"

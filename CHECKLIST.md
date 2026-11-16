@@ -4,6 +4,26 @@ This file is the durable single source of truth for outstanding work. Read it at
 start of each session and keep it current — check items off, add new ones, and update it
 in the same change that completes a task. Do not rely on chat memory; this file wins.
 
+## Argon audit pipeline gaps (2026-11-16) — PR open, awaiting owner merge
+
+- [x] **D6 (high)** `compare.py`: `latest_forecasts.json` + `forecast_5day.json` now rebuild on
+      every `run_daily_comparison` exit path (no actuals, nothing scored, scored). Archive lag no
+      longer freezes the homepage forecast. Both builders always run; one failing re-raises after.
+- [x] **D8 (high)** Traffic freshness check moved from `traffic_actuals.yml` into
+      `freshness_sentinel.yml`, which mounts the private store read-only. A missed traffic cron now
+      alerts. Uses the existing `DS_PRIVATE_DATA_KEY` secret.
+- [x] **D3 (med)** `_best_rays_prediction`: exact-date match only. A capture whose `daily[]` has rows
+      but none on the target date stays unscored (no `daily[0]` / nearest-future fallback). A capture
+      with no `daily[]` still scores from its strip.
+- [x] **D7 (med)** Traffic grading gated on `comparisons/{yesterday}.json`, forecasting on
+      `forecast/{today}.json`; no `|| true`; a crash turns the run red after the sample commits.
+- [x] **D9 (med)** NPS and races catch up: due from the slot (3rd / Monday) until a pull succeeds.
+      A failed fetch keeps the last good file (races used to write an empty list), exits 1, and a
+      final `daily_capture.yml` step turns the run red after the commit.
+- [ ] **Watch after merge:** first sentinel run with the traffic step (16:30 UTC) and the first
+      traffic run's grade/forecast steps. Not yet observed live.
+- Not in scope (graded weakened or low): D1, D2, D4, D5, D10, D11, D12.
+
 ## Experiments lane (Refactor 2 Lane 4, 2026-09-08) — one reversible $0 experiment a week
 
 - [x] **Skeleton landed 2026-09-08** — `experiments/RUNBOOK.md` (propose → approval gate → apply →

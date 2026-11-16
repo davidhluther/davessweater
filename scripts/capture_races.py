@@ -21,13 +21,18 @@ search payload — they require a per-race details call, which would multiply AP
 calls against the repo-is-the-API sharing rule; is_registration_open is carried
 as the available magnitude proxy instead.
 
-Cadence: weekly. Race calendars move slowly, so one pull a week (Mondays, NY, the
-same gate shape as capture_str_pacing.py) is plenty. --force overrides for
+Cadence: weekly. Race calendars move slowly, so one pull a week is plenty. The
+slot is Monday (NY), but the gate is catch-up, not a single day: the pull is
+DUE on any day until a successful pull lands on or after the most recent
+Monday. A skipped daily run or a failed Monday fetch retries the next day
+instead of losing the week (Argon D9, 2026-11-16). --force overrides for
 testing.
 
-Fail-closed, stdlib only: a fetch failure writes an empty list and the script
-ALWAYS exits 0, so a RunSignup outage can never fail the daily workflow.
-Consumers gate on fetched_at.
+Fail-closed and loud, stdlib only: a fetch failure leaves the existing file
+untouched (it used to overwrite it with an empty list) and exits 1, so the pull
+stays due and retries tomorrow. The daily workflow runs this step with
+continue-on-error so the other captures still commit, then a final step turns
+the run red. Consumers gate on fetched_at.
 """
 
 import json
@@ -52,8 +57,35 @@ TIMEOUT_S = 30
 
 
 def is_sample_day(today: date) -> bool:
-    """Race pulls run once a week, Mondays (owner cadence directive)."""
+    """The weekly slot is Monday (owner cadence directive)."""
     return today.weekday() in SAMPLE_WEEKDAYS
+
+
+def last_slot(today: date) -> date:
+    """The most recent sample-day slot on or before today."""
+    for back in range(7):
+        d = today - timedelta(days=back)
+        if is_sample_day(d):
+            return d
+    raise ValueError("SAMPLE_WEEKDAYS is empty")
+
+
+def last_success_date(path: Path = None) -> date | None:
+    """Date (NY) of the last successful pull. Legacy files written by a failed
+    fetch carry fetch_ok: false and don't count."""
+    path = path or OUT_PATH
+    try:
+        data = json.loads(path.read_text())
+        if data.get("fetch_ok") is False:
+            return None
+        return datetime.fromisoformat(data["fetched_at"]).astimezone(NY).date()
+    except (OSError, ValueError, TypeError, KeyError, AttributeError):
+        return None
+
+
+def is_due(today: date, last_success: date | None) -> bool:
+    """Catch-up gate: due until a pull succeeds on/after the latest Monday."""
+    return last_success is None or last_success < last_slot(today)
 
 
 def api_url(end_date: date) -> str:
@@ -128,14 +160,24 @@ def main() -> int:
     force = "--force" in sys.argv
     now = datetime.now(NY)
     today = now.date()
-    if not is_sample_day(today) and not force:
-        print(f"{today} is not a race sample day (Mondays); skipping pull (exit 0).")
+    last = last_success_date()
+    if not force and not is_due(today, last):
+        print(f"Race pull not due on {today} (last success {last}, on/after this "
+              f"week's Monday slot {last_slot(today)}); skipping (exit 0).")
         return 0
+    if not is_sample_day(today) and not force:
+        print(f"Catch-up race pull on {today}: last success {last} predates the "
+              f"Monday slot {last_slot(today)}.")
 
     horizon = today + timedelta(days=WINDOW_DAYS)
     raw = fetch_races(horizon)
-    ok = raw is not None
-    races = within_window([s for s in (slim(r) for r in (raw or [])) if s], today, horizon)
+    if raw is None:
+        print("ERROR: RunSignup fetch failed; kept the existing file unchanged. The "
+              "pull stays due and retries on the next daily run (exit 1).",
+              file=sys.stderr)
+        return 1
+    ok = True
+    races = within_window([s for s in (slim(r) for r in raw) if s], today, horizon)
 
     out = {
         "fetched_at": now.isoformat(),

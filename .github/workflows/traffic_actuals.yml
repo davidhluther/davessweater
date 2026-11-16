@@ -86,23 +86,35 @@ jobs:
         env:
           TOMTOM_API_KEY: ${{ secrets.TOMTOM_API_KEY }}
 
-      # Predict→grade loop, ONCE a day, on whichever run happens to be the
-      # day's first. The old gate ("UTC hour == 12") silently skipped every
-      # day 07-26/27 because GitHub fired the 12:07 cron at 13:49 and 15:08 —
-      # cron delays routinely exceed the hour window. Gate on the OUTPUT
-      # instead: run iff today's forecast file doesn't exist yet, which any
-      # delayed (or manually dispatched) run satisfies exactly once per day.
-      # Grade yesterday BEFORE forecasting today. Both scripts are fail-soft;
-      # the trailing `|| true` guards the step.
-      - name: Grade yesterday, then forecast today + tomorrow (first daily run only)
+      # Predict→grade loop. Each half is gated on its OWN output, so a delayed
+      # or manually dispatched run still does it exactly once a day, and one
+      # half can never block the other. (The old step gated grading on TODAY's
+      # forecast being absent, so once the forecast existed — e.g. grading
+      # crashed behind `|| true` on the first run — yesterday was never graded;
+      # Argon D7, 2026-11-16.) Grade first: it reads yesterday's forecast, the
+      # forecast writes today's. compare_traffic.py writes nothing when an
+      # input is missing (a gap day), so it simply retries on the next run.
+      - name: Grade yesterday's traffic forecast (until graded)
+        id: grade
+        if: steps.mount.outputs.mounted == 'true'
+        run: |
+          yesterday="$(TZ=America/New_York date -d yesterday +%F)"
+          if [ -f "${DS_PRIVATE_DATA_DIR}/traffic/comparisons/${yesterday}.json" ]; then
+            echo "Traffic comparison for ${yesterday} already exists; nothing to grade."
+          else
+            python scripts/compare_traffic.py --date "${yesterday}"
+          fi
+        continue-on-error: true
+
+      - name: Forecast today + tomorrow (until today's forecast exists)
+        id: forecast
         if: steps.mount.outputs.mounted == 'true'
         run: |
           today="$(TZ=America/New_York date +%F)"
-          if [ ! -f "${DS_PRIVATE_DATA_DIR}/traffic/forecast/${today}.json" ]; then
-            python scripts/compare_traffic.py || true
-            python scripts/forecast_traffic.py || true
+          if [ -f "${DS_PRIVATE_DATA_DIR}/traffic/forecast/${today}.json" ]; then
+            echo "Forecast for ${today} already exists; skipping."
           else
-            echo "Forecast for ${today} already exists; skipping traffic model."
+            python scripts/forecast_traffic.py
           fi
         continue-on-error: true
 
@@ -119,14 +131,20 @@ jobs:
           git pull origin HEAD --no-rebase -X ours || true
           git push || (sleep 5 && git pull origin HEAD --no-rebase -X ours && git push)
 
-      # The predict→grade backstop that used to live only in the public
-      # sentinel. The sentinel cannot see this dataset any more, so the check
-      # runs here, where the store is mounted. --traffic-only also treats an
-      # unmounted store as a failure, which is what makes the interim state
-      # below loud rather than silent.
-      - name: Traffic freshness backstop
-        if: steps.mount.outputs.mounted == 'true'
-        run: python scripts/check_freshness.py --traffic-only
+      # The traffic freshness backstop lives in freshness_sentinel.yml, which
+      # mounts the private store itself. Running it here only fired when this
+      # job ran, so a missed cron slot alerted nobody (Argon D8, 2026-11-16).
+
+      # A crash in the model steps above must not be silent. They run with
+      # continue-on-error so the sample still commits; this turns the run red.
+      - name: Fail loudly when the traffic model crashed
+        if: always() && (steps.grade.outcome == 'failure' || steps.forecast.outcome == 'failure')
+        env:
+          GRADE_OUTCOME: ${{ steps.grade.outcome }}
+          FORECAST_OUTCOME: ${{ steps.forecast.outcome }}
+        run: |
+          echo "::error::Traffic model step failed (grade: ${GRADE_OUTCOME}, forecast: ${FORECAST_OUTCOME}). Each retries on the next run."
+          exit 1
 
       # Until the private repo and its token exist, every run above is skipped.
       # That is a real outage of the dataset, so the job goes red rather than

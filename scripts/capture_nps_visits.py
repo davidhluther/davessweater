@@ -19,17 +19,21 @@ UnitCode, UnitName} — but only when the request carries Accept: application/js
 (the service defaults to XML otherwise). History reaches back to 1979.
 
 Cadence: monthly. NPS publishes the prior month partway into the next month, so
-one pull early each month is plenty — the run self-gates on day-of-month (the
-3rd) like capture_str_pacing.py gates on weekday. --force overrides for testing.
+one pull early each month is plenty. The slot is the 3rd, but the gate is
+catch-up, not a single day: the pull is DUE on any day on or after this month's
+3rd until a successful pull lands (fetched_at on or after the 3rd). A skipped
+daily run or a failed fetch on the 3rd retries the next day instead of losing
+the month (Argon D9, 2026-11-16). --force overrides for testing.
 
 Idempotent rolling merge: each run re-fetches the full history and rewrites
 data/calibration/nps_blri_visits.json keyed by year-month, so NPS's routine
 back-revisions of older months are picked up and the file converges to the
 service's current truth no matter when it last ran.
 
-Fail-closed, stdlib only: a fetch failure leaves the existing file untouched and
-the script ALWAYS exits 0, so an NPS outage can never fail the daily workflow.
-Consumers gate on fetched_at.
+Fail-closed and loud, stdlib only: a fetch failure leaves the existing file
+untouched (so the pull stays due and retries tomorrow) and exits 1. The daily
+workflow runs this step with continue-on-error so the other captures still
+commit, then a final step turns the run red. Consumers gate on fetched_at.
 """
 
 import json
@@ -62,8 +66,30 @@ def api_url(end_year: int) -> str:
 
 
 def is_capture_day(today: date) -> bool:
-    """Monthly NPS pulls run once, on the 3rd (owner cadence directive)."""
+    """The monthly slot is the 3rd (owner cadence directive)."""
     return today.day == CAPTURE_DAY
+
+
+def last_success_date(path: Path = None) -> date | None:
+    """Date (NY) of the last successful pull, read from the file's fetched_at.
+    The file is only ever written on success, so its fetched_at is the last
+    success. None when the file is missing or unreadable."""
+    path = path or OUT_PATH
+    try:
+        stamp = json.loads(path.read_text()).get("fetched_at")
+        return datetime.fromisoformat(stamp).astimezone(NY).date()
+    except (OSError, ValueError, TypeError, AttributeError):
+        return None
+
+
+def is_due(today: date, last_success: date | None) -> bool:
+    """Catch-up gate: due on/after this month's slot (the 3rd) until a pull
+    succeeds on/after that slot. Before the 3rd nothing new is due this month;
+    a missed prior month was already caught up by its own later days."""
+    slot = today.replace(day=CAPTURE_DAY)
+    if today < slot:
+        return False
+    return last_success is None or last_success < slot
 
 
 def month_key(year: int, month: int) -> str:
@@ -142,16 +168,21 @@ def main() -> int:
     force = "--force" in sys.argv
     now = datetime.now(NY)
     today = now.date()
-    if not is_capture_day(today) and not force:
-        print(f"{today} is not the monthly capture day (the {CAPTURE_DAY}rd); "
-              "skipping NPS pull (exit 0).")
+    last = last_success_date()
+    if not force and not is_due(today, last):
+        print(f"NPS pull not due on {today} (last success {last}; monthly slot "
+              f"is the {CAPTURE_DAY}rd); skipping (exit 0).")
         return 0
+    if not is_capture_day(today) and not force:
+        print(f"Catch-up NPS pull on {today}: last success {last} predates this "
+              f"month's slot.")
 
     existing = load_existing()
     fetched = fetch_history(today.year)
     if fetched is None:
-        print("Kept existing NPS file unchanged (fetch failed; exit 0).")
-        return 0
+        print("ERROR: NPS fetch failed; kept the existing file unchanged. The pull "
+              "stays due and retries on the next daily run (exit 1).", file=sys.stderr)
+        return 1
 
     months = merge_months(existing, fetched)
     out = {

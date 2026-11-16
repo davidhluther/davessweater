@@ -12,8 +12,14 @@ name: "🚨 Freshness Sentinel"
 # regardless of which cron time is authoritative, and off the top of the hour
 # per GitHub's guidance to avoid the most congested minute.
 #
+# It also owns the traffic freshness check (moved here from traffic_actuals.yml
+# 2026-11-16, Argon D8): that check used to run only inside the job it guards,
+# so a missed traffic cron alerted nobody. The sentinel clones the private
+# traffic store read-only with the same deploy key and runs --traffic-only,
+# which treats an unmounted store as a failure.
+#
 # No untrusted input reaches this workflow (schedule + manual dispatch only,
-# no PR/issue-triggered event data), and it never writes to the repo.
+# no PR/issue-triggered event data), and it never writes to either repo.
 on:
   schedule:
     - cron: '30 16 * * *'  # late morning Eastern, safely after the daily captures
@@ -21,6 +27,10 @@ on:
 
 permissions:
   contents: read
+
+env:
+  DS_PRIVATE_DATA_DIR: ${{ github.workspace }}/private-data
+  PRIVATE_DATA_REPO: davidhluther/davessweater-data
 
 jobs:
   check:
@@ -36,3 +46,30 @@ jobs:
       # non-zero (a loud red run + notification) when the pipeline looks stale.
       - name: Check pipeline freshness
         run: python scripts/check_freshness.py
+
+      # Read-only shallow clone of the private traffic store. No commit or push
+      # ever happens from this job. A missing key or failed clone is left for
+      # the next step to report as a failure.
+      - name: Mount the private traffic store (read-only)
+        if: always()
+        env:
+          DS_PRIVATE_DATA_KEY: ${{ secrets.DS_PRIVATE_DATA_KEY }}
+        run: |
+          if [ -z "${DS_PRIVATE_DATA_KEY}" ]; then
+            echo "::warning::DS_PRIVATE_DATA_KEY is not set; the traffic check below will fail."
+            exit 0
+          fi
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "${DS_PRIVATE_DATA_KEY}" > ~/.ssh/ds_data_key
+          chmod 600 ~/.ssh/ds_data_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/ds_data_key -o IdentitiesOnly=yes" \
+            git clone --depth 1 "git@github.com:${PRIVATE_DATA_REPO}.git" private-data \
+            || echo "::warning::Could not clone the private data repo; the traffic check below will fail."
+          rm -f ~/.ssh/ds_data_key
+
+      # Runs even when the weather check above failed, so both report.
+      # --traffic-only fails when the store is not mounted.
+      - name: Check traffic freshness (private store)
+        if: always()
+        run: python scripts/check_freshness.py --traffic-only
