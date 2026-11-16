@@ -133,17 +133,18 @@ def _best_rays_prediction(rays_data, target_date):
         pred["today_high_f"] = forecast.get("today_high_f")
         pred["tonight_low_f"] = forecast.get("tonight_low_f")
 
-    # Pick the daily entry for this date. Prefer an exact date match; if a
-    # capture hiccup leaves daily[] mis-anchored (no entry on target_date),
-    # fall back to daily[0] (post-fix, this is the capture day) or the nearest
-    # future entry — so a date glitch never strips Ray's wind/precip fields.
+    # Pick the daily entry for this date by EXACT date only. A capture whose
+    # daily[] has rows but none on target_date is mis-anchored (the date-align
+    # bug class), so the whole capture is suspect: return None and leave the
+    # day unscored. Falling back to daily[0] or the nearest future row scored
+    # another day's forecast against target_date's actuals (Argon D3,
+    # 2026-11-16). A capture with no daily[] at all keeps its strip values.
     daily = rays_data.get("daily") or []
     match = None
     if daily:
         match = next((d for d in daily if d.get("date") == target_date), None)
         if match is None:
-            future = [d for d in daily if d.get("date") and d["date"] >= target_date]
-            match = min(future, key=lambda d: d["date"]) if future else daily[0]
+            return None
 
     if match:
         if pred.get("today_high_f") is None and match.get("high_f") is not None:
@@ -505,6 +506,9 @@ def run_daily_comparison(target_date=None):
     if not actuals_path.exists():
         print(f"  ERROR: No actuals found for {target_date}")
         print(f"  Run: python capture_openmeteo.py --actuals --date {target_date}")
+        # Archive lag: yesterday can't be scored yet, but today's forecasts
+        # must still refresh (Argon D6).
+        _build_forecasts_safely()
         return None
     with open(actuals_path) as f:
         actuals = json.load(f)
@@ -664,6 +668,7 @@ def run_daily_comparison(target_date=None):
     # a partial/failed run can't quietly seed a phantom day.
     if not any("score" in d for d in comparison["sources"].values()):
         print(f"  No source scored for {target_date}; skipping comparison write.")
+        _build_forecasts_safely()  # forecasts never wait on scoring (Argon D6)
         return None
 
     # Save comparison
@@ -677,11 +682,28 @@ def run_daily_comparison(target_date=None):
     # Update running score
     _update_running_scores(target_date, comparison)
 
-    # Emit the newest unscored forecasts for the "what they're predicting now" section
-    build_latest_forecasts()
-    build_forecast_5day()
+    # Emit the newest unscored forecasts for the "what they're predicting now"
+    # section. Every exit path of this function rebuilds them, scored or not:
+    # archive lag (1-5 days) can leave yesterday unscoreable, and the homepage
+    # forecast must not go stale with it (Argon D6, 2026-11-16).
+    _build_forecasts_safely()
 
     return comparison
+
+
+def _build_forecasts_safely():
+    """Rebuild latest_forecasts.json + forecast_5day.json. Each builder runs on
+    its own so one failing can't block the other; a failure re-raises after
+    both have run, so the workflow step goes red instead of passing quietly."""
+    errors = []
+    for build in (build_latest_forecasts, build_forecast_5day):
+        try:
+            build()
+        except Exception as e:  # noqa: BLE001 — collected and re-raised below
+            print(f"  ERROR: {build.__name__} failed: {e!r}")
+            errors.append(e)
+    if errors:
+        raise errors[0]
 
 
 def _update_running_scores(date, comparison):
@@ -1063,8 +1085,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.forecasts_only:
-        build_latest_forecasts()
-        build_forecast_5day()
+        _build_forecasts_safely()
     elif args.sweater_only:
         # Quick sweater check using current Open-Meteo data
         from capture_openmeteo import fetch_json, FORECAST_URL

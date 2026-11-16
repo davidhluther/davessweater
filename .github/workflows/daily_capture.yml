@@ -151,14 +151,20 @@ jobs:
         continue-on-error: true
 
       # Calibration: Blue Ridge Parkway monthly visitation (NPS Stats API,
-      # keyless). Self-gates to one pull a month (the 3rd); exits 0 otherwise.
+      # keyless). Slot is the 3rd, with catch-up: the pull stays due every day
+      # after the 3rd until one succeeds, so a missed run can't lose the month.
+      # A failed fetch exits 1; continue-on-error lets the other captures
+      # commit, and "Fail loudly on missed periodic pulls" below turns the run
+      # red (Argon D9, 2026-11-16).
       - name: Capture NPS Blue Ridge Parkway visitation (monthly)
+        id: nps
         run: python scripts/capture_nps_visits.py
         continue-on-error: true
 
       # Event magnitude: races within 40mi of Boone (RunSignup open API,
-      # keyless). Self-gates to a weekly (Monday) pull; exits 0 otherwise.
+      # keyless). Slot is Monday, with the same catch-up and loud failure as NPS.
       - name: Capture nearby races (RunSignup)
+        id: races
         run: python scripts/capture_races.py
         continue-on-error: true
 
@@ -221,3 +227,15 @@ jobs:
           git commit -m "Daily capture $(date +%Y-%m-%d)" || echo "No changes to commit"
           git pull origin main --no-rebase -X ours || true
           git push origin main || (sleep 5 && git pull origin main --no-rebase -X ours && git push origin main)
+
+      # Runs after the commit so every other capture still lands. A failed NPS
+      # or race pull stays due (catch-up) and retries tomorrow, but the run goes
+      # red today so the miss is never silent (Argon D9, 2026-11-16).
+      - name: Fail loudly on missed periodic pulls (NPS, races)
+        if: always() && (steps.nps.outcome == 'failure' || steps.races.outcome == 'failure')
+        env:
+          NPS_OUTCOME: ${{ steps.nps.outcome }}
+          RACES_OUTCOME: ${{ steps.races.outcome }}
+        run: |
+          echo "::error::Periodic pull failed (NPS: ${NPS_OUTCOME}, races: ${RACES_OUTCOME}). It stays due and retries on the next daily run."
+          exit 1
