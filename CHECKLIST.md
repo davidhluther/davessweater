@@ -933,13 +933,34 @@ intro + packing list. Plan: `~/.claude/plans/…-gm-playful-flask.md`.
       params in `generateStaticParams` — use the bottom-up pattern (child emits complete {category, slug}
       pairs).
 
+## Late crons and the sentinel race (11/16) — PR open, awaiting owner merge
+
+- [x] **Measured:** GitHub creates this repo's scheduled runs hours after their cron. Daily Capture
+      (`0 10 * * *`) mean creation hour by month, UTC: July 12.0, August 12.0, September 14.6, October 15.8,
+      November 17.7 (16:06 to 20:26). The :07 traffic crons lag four to six hours too, so moving off the top
+      of the hour will not restore mornings by itself. Source: `gh run list` createdAt, 200 runs.
+- [x] **Sentinel race:** the 16:30 UTC sentinel passed only because it was late too. The manual run at
+      16:27 UTC on 11/16 failed with "no predictions/2026-11-16/ directory".
+- [x] **Fix on `claude/cron-sentinel-wait`:** the sentinel runs on Daily Capture completion
+      (`workflow_run`) plus a 23:47 UTC backstop; `check_freshness.py --backstop` checks the most recent
+      settled Eastern day (yesterday before noon), so a backstop delayed past midnight does not false-alarm.
+      Capture and compare crons moved to :07 and :37. Tests in `tests/test_check_freshness.py` and
+      `tests/test_workflow_gates.py`.
+- [ ] **Merge** on the owner's yes, then confirm the next sentinel run shows event `workflow_run` right
+      after the capture, and the backstop passes.
+- [ ] **Owner decision: an outside morning trigger.** A cron edit cannot make GitHub fire on time. A
+      reliable 6 AM Eastern capture needs something outside Actions to call `workflow_dispatch` on
+      `daily_capture.yml` (for example a launchd job on the Mac Mini running `gh workflow run`). That is a
+      new scheduled job, so it needs the owner's yes and the shared-skills scheduled-job rules.
+
 ## Pipeline + deploy ops (2026-07-02) — done + watch
 - [x] **Cron-skip incident:** GHA never fired the new 10:00/10:30 UTC crons on their first morning after
       #101's schedule change — no runs, no failures; the static site served 7/1's build until ~12:40 PM
       (owner caught it as stale dates). Recovery: `gh workflow run daily_capture.yml` (Daily Compare chains
       automatically via its `workflow_run` trigger); fresh on prod ~15 min later.
-- [ ] **Watch the 2026-07-03 10:00 UTC firing** — if GHA skips again, move both crons off the top of the
-      hour (:07/:37), the standard mitigation for contended slots.
+- [x] **Watch the 2026-07-03 10:00 UTC firing** — closed 11/16. It fired: `gh run list` shows 30 scheduled capture runs in July.
+      The :07/:37 move is made on `claude/cron-sentinel-wait`, but the evidence says it is not the fix:
+      see "Late crons and the sentinel race (11/16)" below.
 - [x] **Freshness sentinel — ✅ MERGED 2026-07-26 (PR #144).** `scripts/check_freshness.py`
       + `.github/workflows/freshness_sentinel.yml` (16:30 UTC + manual dispatch, read-only, fails red):
       checks BOTH today's `data/predictions/` capture exists AND newest comparison ≤2 days old. 14 new

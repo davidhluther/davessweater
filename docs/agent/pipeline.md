@@ -35,8 +35,10 @@ public/                # served assets (logo-white.png, ray_face.svg, favicon); 
 
 GitHub Actions run the **data** pipeline and commit `data/` to `main`; each push triggers Vercel to rebuild with `next build`. The Actions no longer build HTML.
 
-1. **Daily Capture** (`daily_capture.yml`) — `cron: '0 10 * * *'` (6:00 AM EDT) — Ray's screenshot + scrape, Open-Meteo forecast, iPhone fallback; commits `data/`.
-2. **Daily Compare** (`daily_compare.yml`) — `cron: '30 10 * * *'` (6:30 AM EDT); also on Daily Capture / iPhone-upload completion — fetches yesterday's actuals, runs `compare.py`, exports CSV; commits `data/`.
+1. **Daily Capture** (`daily_capture.yml`) — `cron: '7 10 * * *'` (nominal 6:07 AM EDT; GitHub fires it four to ten hours late, so captures land late morning to mid afternoon Eastern) — Ray's screenshot + scrape, Open-Meteo forecast, iPhone fallback; commits `data/`.
+2. **Daily Compare** (`daily_compare.yml`) — `cron: '37 10 * * *'` (nominal 6:37 AM EDT, same lag); normally runs on Daily Capture / iPhone-upload completion — fetches yesterday's actuals, runs `compare.py`, exports CSV; commits `data/`.
+
+3. **Freshness Sentinel** (`freshness_sentinel.yml`) — runs when Daily Capture completes, plus a `47 23 * * *` backstop that checks the most recent settled day (`check_freshness.py --backstop`). Read-only.
 
 `upload_screenshot.yml` accepts iPhone forecast screenshots via the GitHub API → commits `data/predictions/`. The old `rebuild_on_screenshot.yml` + `build_site.py` were retired at the Next.js cutover; Vercel rebuilds on every `data/` commit.
 

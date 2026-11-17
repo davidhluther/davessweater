@@ -2,7 +2,14 @@ name: "📸 Daily Capture"
 
 on:
   schedule:
-    - cron: '0 10 * * *'  # 6:00 AM EDT / 5:00 AM EST — early so the site shows today's forecasts by morning traffic
+    # Nominal 6:07 AM EDT / 5:07 AM EST. Off the top of the hour per GitHub's
+    # guidance, but do not read it as the run time: GitHub created this run
+    # between 16:06 and 20:26 UTC every day 11/01-11/16 (mean lag about 7.7h,
+    # up from about 2h in July and August). The repo's :07 traffic crons lag
+    # four to six hours as well, so the minute is not the cause. A reliable
+    # morning capture needs an outside trigger (workflow_dispatch); see
+    # CHECKLIST.md. The freshness sentinel waits for this workflow to finish.
+    - cron: '7 10 * * *'
   workflow_dispatch:        # manual trigger for testing
 
 permissions:

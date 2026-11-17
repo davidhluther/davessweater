@@ -79,3 +79,34 @@ def test_periodic_pull_failures_turn_the_capture_run_red():
     assert loud["if"].startswith("always()")
     assert "exit 1" in loud["run"]
     assert names.index(loud["name"]) > names.index("Commit captures")
+
+
+# --- 11/16: the sentinel waits for the capture instead of racing it ----------
+
+def _on(name):
+    doc = yaml.safe_load((WF / name).read_text())
+    return doc.get("on", doc.get(True))  # PyYAML reads a bare `on:` key as True
+
+
+def test_sentinel_runs_when_the_capture_completes():
+    on = _on("freshness_sentinel.yml")
+    capture_name = yaml.safe_load((WF / "daily_capture.yml").read_text())["name"]
+    assert on["workflow_run"]["workflows"] == [capture_name]
+    assert on["workflow_run"]["types"] == ["completed"]
+    # The old fixed 16:30 UTC cron raced a capture GitHub fires hours late.
+    assert all(c["cron"] != "30 16 * * *" for c in on.get("schedule", []))
+
+
+def test_sentinel_backstop_cron_checks_the_settled_day():
+    on = _on("freshness_sentinel.yml")
+    assert len(on["schedule"]) == 1
+    _, steps = _steps("freshness_sentinel.yml")
+    check = next(s for s in steps if s.get("name") == "Check pipeline freshness")
+    assert '"$EVENT_NAME" = "schedule"' in check["run"]
+    assert "check_freshness.py --backstop" in check["run"]
+
+
+def test_capture_and_compare_crons_are_off_the_top_of_the_hour():
+    for name in ("daily_capture.yml", "daily_compare.yml"):
+        for c in _on(name)["schedule"]:
+            assert not c["cron"].startswith("0 "), (name, c["cron"])
