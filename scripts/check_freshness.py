@@ -52,7 +52,10 @@ are the backstop that would have caught it. Three traffic checks:
 Read-only: this workflow must never commit anything, it just goes red loudly
 so the owner notices a skipped run instead of a slowly staling site.
 
-Usage: python scripts/check_freshness.py [--date YYYY-MM-DD] [--traffic-only]
+Usage: python scripts/check_freshness.py [--date YYYY-MM-DD] [--backstop] [--traffic-only]
+--backstop sets the reference date to the most recent Eastern day whose capture
+should be finished (yesterday before noon Eastern, today after), for the
+sentinel's late backstop cron. See settled_date().
 --traffic-only runs the three traffic checks alone and REQUIRES the private
 traffic store to be mounted (the sentinel mounts it read-only and runs this as
 a second step; moved out of traffic_actuals.yml 2026-11-16 so a missed traffic
@@ -63,7 +66,7 @@ Default date ("today") is the current date in America/New_York.
 """
 import os
 import sys
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -260,12 +263,35 @@ def run_checks(today: str, traffic_only: bool = False):
     return problems, lines
 
 
-def _target_date(argv):
+# Backstop mode (added 2026-11-16). The sentinel's main run now waits for the
+# Daily Capture workflow to finish (a workflow_run trigger), so it can no longer
+# race a capture that GitHub fires hours late. A separate evening cron is the
+# backstop for a capture that never fires at all. GitHub delays that cron by
+# hours too, so it can land after midnight Eastern, when "today" is a new day
+# whose capture slot has not come round yet. Before this hour Eastern, the
+# backstop therefore checks yesterday: the most recent day whose capture should
+# be finished.
+BACKSTOP_CUTOFF_HOUR = 12
+
+
+def settled_date(now: datetime) -> str:
+    """The most recent Eastern date whose daily capture should be complete at
+    `now`: today from BACKSTOP_CUTOFF_HOUR on, yesterday before it."""
+    local = now.astimezone(EST)
+    if local.hour < BACKSTOP_CUTOFF_HOUR:
+        return (local.date() - timedelta(days=1)).isoformat()
+    return local.date().isoformat()
+
+
+def _target_date(argv, now=None):
     if "--date" in argv:
         i = argv.index("--date")
         if i + 1 < len(argv):
             return argv[i + 1]
-    return datetime.now(EST).strftime("%Y-%m-%d")
+    now = now or datetime.now(EST)
+    if "--backstop" in argv:
+        return settled_date(now)
+    return now.astimezone(EST).strftime("%Y-%m-%d")
 
 
 def main():

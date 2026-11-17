@@ -372,3 +372,38 @@ def test_traffic_only_passes_on_a_healthy_mounted_store(tmp_path, monkeypatch):
     problems, lines = f.run_checks("2026-07-28", traffic_only=True)
     assert problems == []
     assert len(lines) == 4
+
+
+# ── backstop reference date (2026-11-16) ────────────────────────────────
+from datetime import datetime, timezone
+
+
+def _utc(y, mo, d, h, mi=0):
+    return datetime(y, mo, d, h, mi, tzinfo=timezone.utc)
+
+
+def test_settled_date_is_today_in_the_evening_eastern():
+    # 23:47 UTC on 11/16 is 18:47 EST: the capture slot has passed, check today.
+    assert f.settled_date(_utc(2026, 11, 16, 23, 47)) == "2026-11-16"
+
+
+def test_settled_date_is_yesterday_after_midnight_eastern():
+    # The backstop cron delayed past midnight Eastern (04:30 UTC 11/17 = 23:30 EST
+    # 11/16 is still the 16th; 06:30 UTC = 01:30 EST is the 17th): check the 16th.
+    assert f.settled_date(_utc(2026, 11, 17, 4, 30)) == "2026-11-16"
+    assert f.settled_date(_utc(2026, 11, 17, 6, 30)) == "2026-11-16"
+
+
+def test_settled_date_respects_daylight_time():
+    # 15:59 UTC on 07/16 is 11:59 EDT, before the cutoff: yesterday.
+    assert f.settled_date(_utc(2026, 7, 16, 15, 59)) == "2026-07-15"
+    assert f.settled_date(_utc(2026, 7, 16, 16, 0)) == "2026-07-16"
+
+
+def test_target_date_backstop_flag_uses_settled_date():
+    now = _utc(2026, 11, 17, 6, 30)
+    assert f._target_date(["--backstop"], now=now) == "2026-11-16"
+    # Without the flag the reference stays the calendar date in Eastern.
+    assert f._target_date([], now=now) == "2026-11-17"
+    # An explicit --date always wins.
+    assert f._target_date(["--backstop", "--date", "2026-01-02"], now=now) == "2026-01-02"

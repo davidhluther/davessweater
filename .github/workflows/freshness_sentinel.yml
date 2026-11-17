@@ -8,9 +8,17 @@ name: "🚨 Freshness Sentinel"
 # runs on its own late-morning schedule and reads the committed data instead,
 # so a skipped run still gets caught.
 #
-# Scheduled comfortably after both capture crons (currently ~10:00/10:30 UTC)
-# regardless of which cron time is authoritative, and off the top of the hour
-# per GitHub's guidance to avoid the most congested minute.
+# When it runs (changed 2026-11-16). It used to run on its own 16:30 UTC cron,
+# assumed to be "safely after" the 10:00 UTC capture. GitHub fires this repo's
+# crons four to ten hours late (capture created 16:06-20:26 UTC through 11/16),
+# so the sentinel only passed because it was late too: a manual run at 16:27
+# UTC on 11/16 failed with no predictions/2026-11-16/ directory. Now:
+#   1. workflow_run: it runs when Daily Capture completes (success or failure),
+#      so it checks today's capture after it has been committed, never before.
+#   2. A late-evening backstop cron catches a capture that never fired at all.
+#      It runs check_freshness.py --backstop, which checks the most recent
+#      Eastern day whose capture should be done, so a backstop GitHub delays
+#      past midnight does not false-alarm on a day that has not been captured yet.
 #
 # It also owns the traffic freshness check (moved here from traffic_actuals.yml
 # 2026-11-16, Argon D8): that check used to run only inside the job it guards,
@@ -21,8 +29,12 @@ name: "🚨 Freshness Sentinel"
 # No untrusted input reaches this workflow (schedule + manual dispatch only,
 # no PR/issue-triggered event data), and it never writes to either repo.
 on:
+  workflow_run:
+    workflows: ["📸 Daily Capture"]
+    types: [completed]
+    branches: [main]
   schedule:
-    - cron: '30 16 * * *'  # late morning Eastern, safely after the daily captures
+    - cron: '47 23 * * *'  # backstop: 6:47 PM EST / 7:47 PM EDT, off the top of the hour
   workflow_dispatch:
 
 permissions:
@@ -36,7 +48,10 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
+      # ref: main so a workflow_run trigger sees the capture's own commit.
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - uses: actions/setup-python@v5
         with:
@@ -44,8 +59,17 @@ jobs:
 
       # Read-only: this must never commit. It only reads data/ and exits
       # non-zero (a loud red run + notification) when the pipeline looks stale.
+      # The backstop cron checks the most recent settled day; every other
+      # trigger (capture completion, manual dispatch) checks today.
       - name: Check pipeline freshness
-        run: python scripts/check_freshness.py
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT_NAME" = "schedule" ]; then
+            python scripts/check_freshness.py --backstop
+          else
+            python scripts/check_freshness.py
+          fi
 
       # Read-only shallow clone of the private traffic store. No commit or push
       # ever happens from this job. A missing key or failed clone is left for
