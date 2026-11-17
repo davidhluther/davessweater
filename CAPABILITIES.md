@@ -9,6 +9,11 @@ and the leaf-season model row in section 2 was retired. All other rows carry the
 a second pass added the shared design gate's MECHANICAL-layer row to section 1, proven
 by a live run against `/` and `/roads` — see that row for the exact verdict.)
 
+Record check 2026-11-16: rows compared against the 11/16 portfolio findings. No live row changed
+on `main` that day. Pending rows ride in their own PRs: the NWS classifier (#174), the sentinel trigger
+and cron comments (#175), and the October report card (#176). Open stalls are listed in `CHECKLIST.md`
+under "Stalled and open as of 11/16".
+
 **What this file answers:** what the site and its pipeline can do *right now*, and what
 proves it. It is not the task list — `CHECKLIST.md` is the durable record of what was
 decided and finished, and stays the single source of truth for outstanding work. Rows
