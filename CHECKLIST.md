@@ -1825,6 +1825,11 @@ SERP (Ray's #2, DR 46) — a page play, not a post; the winnable wedge is the ac
       rescore and shows Ray's 73.3 / Open-Meteo 92.3 where today's data gives 69.7 / 90.9; (2) June's "Apple Weather 88.0" mixed
       12 real iPhone captures with 17 Open-Meteo fallback days, and July to September ran on the fallback (1 real capture in July),
       so the new cards drop the Apple row. Keep this row open for the October card (due ~Nov 1).
+      **11/16: October card drafted late on `claude/report-card-2026-10`** (`rays-weather-report-card-october-2026.md`,
+      `reportMonth: 2026-10`), built the same way from `data/comparisons/2026-10-*.json`, 31 clean days for every source.
+      Method check: the same script reproduces every September figure in the published card. Awaiting owner merge.
+      NWS figures carry the plural-classifier bug (PR #174); per the owner's 07/27 ruling there is no site note.
+      Keep this row open for the November card (due ~12/01).
 - [ ] **ARTICLE CADENCE — owner directive 2026-07-28: "do it honestly in the cadence."** Owner asked
       why there are only ~4 articles and wanted more "backdated/published over time"; DS IA flagged that
       backdating would put false dates into BlogPosting schema, the sitemap, and RSS on a site whose whole
