@@ -4,7 +4,7 @@ This file is the durable single source of truth for outstanding work. Read it at
 start of each session and keep it current — check items off, add new ones, and update it
 in the same change that completes a task. Do not rely on chat memory; this file wins.
 
-## Argon audit pipeline gaps (2026-11-16) — PR open, awaiting owner merge
+## Argon audit pipeline gaps (2026-11-16) — MERGED 11/16 (PR #173), post-merge runs green
 
 - [x] **D6 (high)** `compare.py`: `latest_forecasts.json` + `forecast_5day.json` now rebuild on
       every `run_daily_comparison` exit path (no actuals, nothing scored, scored). Archive lag no
@@ -20,9 +20,36 @@ in the same change that completes a task. Do not rely on chat memory; this file 
 - [x] **D9 (med)** NPS and races catch up: due from the slot (3rd / Monday) until a pull succeeds.
       A failed fetch keeps the last good file (races used to write an empty list), exits 1, and a
       final `daily_capture.yml` step turns the run red after the commit.
-- [ ] **Watch after merge:** first sentinel run with the traffic step (16:30 UTC) and the first
-      traffic run's grade/forecast steps. Not yet observed live.
+- [x] **Watch after merge:** done 11/16. #173 merged 16:23 UTC. The first scheduled sentinel run after it
+      (created 00:20 UTC 11/17, head `e3714094`) passed with the traffic step, and traffic runs at 21:55 and
+      00:08 UTC passed with separate grade and forecast steps. The 16:27 UTC manual sentinel failure ran on
+      the pre-merge head and was the capture race, not #173 (see "Late crons and the sentinel race", PR #175).
 - Not in scope (graded weakened or low): D1, D2, D4, D5, D10, D11, D12.
+
+## Stalled and open as of 11/16 (record check against `main`, GitHub, and the live site)
+
+Each line says what is stuck, why, and the PR or decision that moves it. Verified 11/16 unless marked.
+
+- [ ] **NWS plural-precip classifier fix** — written 07/28 (`bc1d5703`) on a branch that never merged.
+      Re-applied as **PR #174**, waiting on the owner's merge. History stays as is (07/27 ruling).
+- [ ] **Late crons and the sentinel race** — GitHub creates the capture run 4 to 10 hours after its cron;
+      the 16:30 UTC sentinel only passed because it was late too. **PR #175** makes the sentinel wait for the
+      capture. Morning captures need an outside trigger, an owner decision (see that section).
+- [ ] **October report card** — due ~11/01, not on `main`. Drafted as **PR #176** from 31 clean days.
+- [ ] **PR #170, `/tourism`** — open since 09/03, conflicting with `main`; `davessweater.com/tourism`
+      returns 404. Built for leaf season, which has passed. Owner decision: rebuild on `main` for ski
+      season, or close and keep the branch. Not touched here.
+- [ ] **Experiments lane** — idle since 10/23. `experiments/STATE.json` on `main` still shows
+      `foscoe-title-meta-ctr` as `measuring` with a 10/23 window end and `last_status: running`, and
+      `active_experiment` is a human-only key, so the weekly run proposes nothing. The 11/11 digest records
+      the experiment closed with a revert (not verified here; the lane worktree reportedly holds unpushed
+      state commits). Owner action: clear the key, or approve a session to clear it. Not touched here.
+- [ ] **Leaf grading** — `data/leaf/observations.json` holds 6 rows, all from 2025; zero 2026 observations.
+      The `ds-leaf-grading` routine has been paused since 09/25 on the owner's word. The three-way grading
+      planned for the week of 11/10 has nothing to grade. Owner decision: backfill from the sources' dated
+      reports, or say on `/leaf` that 2026 went ungraded.
+- [ ] **Checklist debt** — many unchecked boxes date from July (fireworks follow-ups, the 07/28 spend-limit
+      block). A prune pass is proposed, not done.
 
 ## Experiments lane (Refactor 2 Lane 4, 2026-09-08) — one reversible $0 experiment a week
 
