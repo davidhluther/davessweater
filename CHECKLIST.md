@@ -425,6 +425,24 @@ as Static). This pass added no routes and did not move the number.
   "no other errors" is not established — three URLs were inspected individually. That is
   a limit of what was looked at, not a finding about the site.
 
+## NWS precip-type classifier plural fix (found 07/27, re-applied 11/16)
+
+- [x] **Root cause:** `scripts/sources/nws.py` matched precip words with a trailing `\b`, so every
+      plural NWS term ("Showers", "Thunderstorms", "Flurries", "Sprinkles") classified as `none`.
+      NWS was then graded against a dry forecast it never made. Present since the adapter shipped (#60).
+- [x] **Fix written 07/28** as commit `bc1d5703` on `claude/elated-agnesi-e95954`, which never reached
+      `main`. Re-applied by hand on `claude/nws-plural-precip` 11/16 with its 24 tests. "Shower" is a
+      form-neutral token: rain unless the text names snow, so "Snow Showers" stays snow, not mixed.
+- [x] **Raw text kept from now on:** `short_forecast` and `detailed_forecast` are stored verbatim
+      (outside `fields_provided`), so the next classifier change can be replayed.
+- [x] **History left as is.** Owner ruling 07/27: no rewrite, no site note. Stored rows hold only the
+      classified `precip_type`, and api.weather.gov serves no past forecasts, so nothing can re-derive them.
+      Rows likely affected since NWS precip chance was stored (07/28 to 11/15): 429 scored NWS rows
+      across Boone and the 17 towns typed `none` while NWS itself gave a 30% or higher chance; 414 of
+      those were wet days. Boone alone: 27. This is an upper-bound proxy, not verified against text: the chance is the max of the day and night periods, while the type reads the day text only.
+- [ ] **Merge** `claude/nws-plural-precip` on the owner's yes, then confirm the next capture's
+      `data/predictions/{date}/nws_forecast.json` carries `short_forecast`.
+
 ## Decisions made
 - **Migrating presentation to Next.js** (owner's standard stack) and growing DS from a low-effort
   joke into a substantive, Ray's-Weather-class local weather site; the **Right/Wrong Ray accuracy

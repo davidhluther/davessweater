@@ -4,7 +4,9 @@ conftest.py adds scripts/ to sys.path, so we can import directly from sources/nw
 No network calls are made — we supply a hand-built sample payload that mirrors the
 real NWS API shape (properties.periods[]).
 """
-from sources.nws import normalize_periods
+import pytest
+
+from sources.nws import _precip_type, normalize_periods
 
 # Minimal realistic sample — two days (4 periods: day/night pairs).
 # NWS periods alternate isDaytime True / False.
@@ -207,3 +209,113 @@ def test_no_following_night_low_is_none():
     # NIGHT_FIRST_PERIODS: the single daytime entry has no nighttime pair
     result = normalize_periods(NIGHT_FIRST_PERIODS)
     assert result[0]["low_f"] is None
+
+
+# ---------------------------------------------------------------------------
+# Precip-type classification from forecast text
+#
+# NWS writes its precip words in the plural far more often than the singular
+# ("Chance Showers And Thunderstorms", "Snow Showers Likely", "Flurries").
+# precip is a 20-point field, so a word the classifier cannot see is scored as
+# a "no precipitation" claim the forecast never made.
+# ---------------------------------------------------------------------------
+
+def _classify(short_forecast, detailed_forecast=None):
+    """Classify one daytime period through the real normalize_periods path."""
+    period = {
+        "number": 1,
+        "isDaytime": True,
+        "startTime": "2026-01-15T06:00:00-05:00",
+        "endTime": "2026-01-15T18:00:00-05:00",
+        "temperature": 40,
+        "temperatureUnit": "F",
+        "windSpeed": "5 mph",
+        "windDirection": "N",
+        "shortForecast": short_forecast,
+        "detailedForecast": (
+            detailed_forecast if detailed_forecast is not None
+            else short_forecast + "."
+        ),
+    }
+    return normalize_periods([period])[0]["precip_type"]
+
+
+PRECIP_TEXT_CASES = [
+    # Plural forms — the shape NWS actually publishes.
+    ("Showers Likely", "rain"),
+    ("Chance Showers And Thunderstorms", "rain"),
+    ("Scattered Thunderstorms", "rain"),
+    ("Sprinkles possible this afternoon", "rain"),
+    ("Areas of drizzle", "rain"),
+    ("Flurries", "snow"),
+    ("Snow Flurries Likely", "snow"),
+    ("Snow Showers Likely", "snow"),
+    ("Areas of blowing snow with icy patches", "snow"),
+    # Singular forms must keep working.
+    ("Rain Shower", "rain"),
+    ("Heavy Snow", "snow"),
+    ("Chance Thunderstorm", "rain"),
+    # A bare "shower" is a rain shower unless the text names snow.
+    ("Isolated Showers", "rain"),
+    ("Rain And Snow Showers", "mixed"),
+    # Dry text must stay dry — no false positives from the looser match.
+    ("Sunny", "none"),
+    ("Mostly Cloudy", "none"),
+    ("Partly Sunny", "none"),
+    ("Patchy Fog", "none"),
+]
+
+
+@pytest.mark.parametrize("text,expected", PRECIP_TEXT_CASES)
+def test_precip_type_from_forecast_text(text, expected):
+    assert _classify(text) == expected
+
+
+# ---------------------------------------------------------------------------
+# Raw forecast text is kept so a future classifier change can be replayed
+# against history instead of being unrepairable (the plural-precip bug was
+# unfixable in history precisely because only the verdict was stored).
+# ---------------------------------------------------------------------------
+
+def test_source_text_is_preserved():
+    result = normalize_periods(SAMPLE_PERIODS)
+    assert result[1]["short_forecast"] == "Rain Showers"
+    assert result[1]["detailed_forecast"] == (
+        "Rain showers likely. Chance of thunderstorms late."
+    )
+
+
+def test_stored_text_replays_to_the_stored_precip_type():
+    """The whole point: the verdict must be re-derivable from what we kept."""
+    for day in normalize_periods(SAMPLE_PERIODS) + normalize_periods(SNOW_PERIODS):
+        replayed = _precip_type(day["short_forecast"], day["detailed_forecast"])
+        assert replayed == day["precip_type"]
+
+
+def test_missing_source_text_is_none_not_an_error():
+    periods = [dict(SAMPLE_PERIODS[0])]
+    del periods[0]["shortForecast"]
+    del periods[0]["detailedForecast"]
+    result = normalize_periods(periods)
+    assert result[0]["short_forecast"] is None
+    assert result[0]["detailed_forecast"] is None
+
+
+def test_source_text_is_not_a_scored_field():
+    # fields_provided is the scoring contract; raw text must stay out of it.
+    for day in normalize_periods(SAMPLE_PERIODS):
+        assert "short_forecast" not in day["fields_provided"]
+        assert "detailed_forecast" not in day["fields_provided"]
+
+
+def test_live_boone_period_with_only_plural_precip_words():
+    """Regression: verified live 2026-07-27 against gridpoint RNK/17,16.
+
+    Every precip word in this period is plural, so the classifier used to
+    return "none" for a forecast that plainly called for showers.
+    """
+    assert _classify(
+        "Chance Showers And Thunderstorms",
+        "A chance of showers and thunderstorms between 7am and 11am, then "
+        "showers and thunderstorms likely after 11am.",
+    ) == "rain"
